@@ -31,6 +31,8 @@ public class ServerThread extends Thread
 			System.out.println("Username: " + username);
 			System.out.println("Password: " + password);
 			
+			server.login(username, password);
+			
 			while (true) {
 				//... read the next message ...
 				String message = din.readUTF();

@@ -13,8 +13,8 @@ public class Server
 	private static Connection con = null;
 	
 	//Fake Variables
-	private static String someInputedUsername = "Greg";
-	private static String someInputedHashedPassword = "1234";
+	//private static String someInputedUsername = "Greg";
+	//private static String someInputedHashedPassword = "1234";
 	
 	//Define Server Listening port
 	private static int listenPort = 7777;
@@ -29,7 +29,7 @@ public class Server
 		listen( port );
 	}
 	
-	private static void login ( String userName, String password) { 
+	public static String login (String userName, String password) { 
 		try { 
 			//Debug
 			System.out.println("1");
@@ -60,21 +60,20 @@ public class Server
 			String username = rs.getString("username"); //Grab the field from the database and set it to the String 'username'
 			String hashedPassword = rs.getString("password"); //Grab the field from the database and set it to the String 'password'
 			
-			System.out.print(" key= " + username + someInputedUsername);
-			System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
-			System.out.print("\n");
+			//System.out.print(" key= " + username + someInputedUsername);
+			//System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
+			//System.out.print("\n");
 			
 			//Here is where we find if the User's Inputed information is correct
-			if ((someInputedUsername.equals(username)) && (someInputedHashedPassword.equals(hashedPassword))) { 
+			if ((userName.equals(username)) && (password.equals(hashedPassword))) { 
 				//Run some command that let's user log in!
-				System.out.println("You're logged in!!!!");
+				String returnMessage = "You're logged in!!!!";
+				return returnMessage;
 				}
+			//else { return "Failed"; }
 			}
-			stmt.close();		
-		}
-		
-	
-		catch ( SQLException e) { 
+				stmt.close();		
+		}catch ( SQLException e) { 
 				e.printStackTrace ( );
 		}
 		catch ( ClassNotFoundException h) { 
@@ -86,6 +85,7 @@ public class Server
 				catch( Exception e) { } 
 			}
 		}
+		return "Failed";
 	}
 		
 	
