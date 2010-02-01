@@ -54,6 +54,11 @@ public class Client extends Panel implements Runnable
 			// from them
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
+			
+			//Sending user information over the socket to the Server
+			dout.writeUTF(username); //Sending Username
+			dout.writeUTF(password); //Sending Password
+			
 			// Start a background thread for receiving messages
 			new Thread( this ).start();
 		} catch( IOException ie ) { System.out.println( ie ); }
