@@ -22,12 +22,7 @@ public class Server
 	
 	private void login ( String userName, String password) { 
 		//Here we will have to have some mysql code to verify with our Database that their username is correct.
-		//JDBC URL for the database
-		String url = "jdbc:mysql://athenachat.org/" +
-				"mysql?user=CHANGEME&password=CHANGEME";
-		//
-		Statement stmt;
-		ResultSet rs;
+		
 	}
 	
 	private void listen( int port ) throws IOException {
