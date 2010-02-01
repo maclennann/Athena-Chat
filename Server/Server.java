@@ -173,6 +173,6 @@ public class Server
 		// accepting connections.
 		//new Server( port );
 		
-		login( "db72292", "2112gregoryfl");
+		login( "", "");
 	}
 }

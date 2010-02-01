@@ -1,26 +1,26 @@
 what,kind,bundleId,bundleVersion,description,time
-started,bundle,org.eclipse.update.configurator,3.3.0.v20090312,"org.eclipse.update.configurator",1265050359734
-started,bundle,org.eclipse.update.core,3.2.300.v20090525,"org.eclipse.update.core",1265050359734
-started,bundle,org.eclipse.update.scheduler,3.2.200.v20081127,"org.eclipse.update.scheduler",1265050359734
-os,sysinfo,,,"win32",1265050359734
-arch,sysinfo,,,"x86",1265050359734
-ws,sysinfo,,,"win32",1265050359734
-locale,sysinfo,,,"en_US",1265050359734
-processors,sysinfo,,,"2",1265050359750
-java.runtime.name,sysinfo,,,"Java(TM) SE Runtime Environment",1265050359750
-java.runtime.version,sysinfo,,,"1.6.0_16-b01",1265050359750
-java.specification.name,sysinfo,,,"Java Platform API Specification",1265050359750
-java.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1265050359750
-java.specification.version,sysinfo,,,"1.6",1265050359750
-java.vendor,sysinfo,,,"Sun Microsystems Inc.",1265050359750
-java.version,sysinfo,,,"1.6.0_16",1265050359750
-java.vm.info,sysinfo,,,"mixed mode",1265050359750
-java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1265050359750
-java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1265050359750
-java.vm.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1265050359750
-java.vm.specification.version,sysinfo,,,"1.0",1265050359750
-java.vm.vendor,sysinfo,,,"Sun Microsystems Inc.",1265050359750
-java.vm.version,sysinfo,,,"14.2-b01",1265050359750
-started,bundle,org.eclipse.core.variables,3.2.200.v20090521,"org.eclipse.core.variables",1265050360140
-activated,view,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.PackageExplorer",1265050365796
-opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1265050371078
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.file.save",1265050750000
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050768921
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050769703
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.newWizard",1265050769765
+started,bundle,org.eclipse.mylyn.java.ui,3.2.2.v20090912-0400-e3x,"org.eclipse.mylyn.java.ui",1265050770234
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.edit.text.contentAssist.proposals",1265050770703
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.edit.text.contentAssist.proposals",1265050772046
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.file.save",1265050776531
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050778578
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050784718
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050790296
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050796718
+activated,view,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.PackageExplorer",1265050802078
+started,bundle,org.eclipse.compare,3.5.0.I20090514-0808,"org.eclipse.compare",1265050802718
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050805062
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050807125
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050809343
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050812828
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050813765
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050845921
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050859359
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050861984
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.edit.delete",1265050862046
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050870718
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1265050894281
