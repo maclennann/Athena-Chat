@@ -10,7 +10,7 @@ public class Server
 	private ServerSocket ss;
 	
 	//Define the MySQL connection
-	private Connection con = null;
+	private static Connection con = null;
 	
 	//Define Server Listening port
 	private static int listenPort = 7777;
@@ -25,27 +25,53 @@ public class Server
 		listen( port );
 	}
 	
-	private void login ( String userName, String password) { 
+	private static void login ( String userName, String password) { 
 		try { 
+			//Debug
+			System.out.println("1");
+			
 		//Here we will have to have some mysql code to verify with our Database that their username is correct.
 		//JDBC URL for the database
-		String url = "jdbc:mysql://athenachat.org/" +
-				"mysql?user=CHANGEME&password=CHANGEME";
+		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
 		//Defining the Statement and ResultSet holders
 		Statement stmt;
 		ResultSet rs; 
 		
 		//NO IDEA WHAT THIS IS
-		Class.forName("org.gjt.mm.mysql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
 		
 		//Here is where the connection is made
-		con = DriverManager.getConnection(url);
+		String pw = "12345678";
+		String un = "db72292_athena";
+		
+		con = DriverManager.getConnection(url, un, pw);
+		
+		stmt = con.createStatement();
+		rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id");
+		System.out.println("\nResults are:");
+		
+		while(rs.next()) { 
+			int a = rs.getInt("user_id");
+			String str = rs.getString("username");
+			
+			System.out.print(" key= " + a);
+			System.out.print(" str= " + str);
+			System.out.print("\n");
+			}
+			stmt.close();
+		
 		}
 		catch ( SQLException e) { 
 				e.printStackTrace ( );
 		}
-		catch ( ClassNotFoundException f) { 
+		/*catch ( IllegalAccessException f){ 
 				f.printStackTrace();
+		}
+		catch ( InstantiationException g) {
+				g.printStackTrace();
+		}*/
+		catch ( ClassNotFoundException h) { 
+				h.printStackTrace();
 		}
 		finally { 
 			if( con != null) { 
@@ -128,11 +154,13 @@ public class Server
 	}
 	// Main routine
 	// Usage: java Server <port>
-	static public void main( String args[] ) throws Exception {
+	 public static void main( String args[] ) throws Exception {
 		// Get the port # from the command line
-		int port = listenPort;
+		//int port = listenPort;
 		// Create a Server object, which will automatically begin
 		// accepting connections.
-		new Server( port );
+		//new Server( port );
+		
+		login( "db72292", "2112gregoryfl");
 	}
 }

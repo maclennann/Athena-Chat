@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="22" version="2.0">
+<workbench progressCount="20" version="2.0">
 <workbenchAdvisor/>
-<window height="768" width="1024" x="460" y="152">
+<window height="768" maximized="true" width="1024" x="291" y="211">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -13,11 +13,14 @@
 <coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="129" y="22"/>
 <coolItem id="org.eclipse.jdt.ui.JavaElementCreationActionSet" itemType="typeToolBarContribution" x="99" y="22"/>
 <coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="99" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="130" y="22"/>
 <coolItem id="org.eclipse.wst.xml.ui.perspective.NewFileToolBar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="org.eclipse.wst.xml.ui.design.DesignToolBar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="group.nav" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="190" y="22"/>
 <coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.jdt.ui.ClassFileEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="org.eclipse.jdt.ui.CompilationUnitEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
@@ -26,10 +29,16 @@
 <editorArea activeWorkbook="DefaultEditorWorkbook">
 <info part="DefaultEditorWorkbook">
 <folder appearance="1" expanded="2">
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
 </folder>
 </info>
 </editorArea>
+<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Server.java" partName="Server.java" path="D:/msysgit/msysgit/git/Athena-Chat/Server/Server.java" title="Server.java" tooltip="Server/Server.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/Server/Server.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="5" selectionOffset="2977" selectionTopPixel="1026"/>
+</editor>
 </editors>
 <views>
 <view id="org.eclipse.jdt.ui.TypeHierarchy" partName="Hierarchy">
@@ -37,6 +46,10 @@
 </view>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<expanded>
+<category IMemento.internal.id="Warnings (5 items)"/>
+<category IMemento.internal.id="Errors"/>
+</expanded>
 <columnWidths org.eclipse.ui.ide.locationField="64" org.eclipse.ui.ide.markerType="94" org.eclipse.ui.ide.pathField="124" org.eclipse.ui.ide.resourceField="94" org.eclipse.ui.ide.severityAndDescriptionField="300"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
@@ -44,6 +57,9 @@
 <visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
 </viewState>
+</view>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<viewState/>
 </view>
 <view id="org.eclipse.jdt.ui.PackageExplorer" partName="Package Explorer">
 <viewState group_libraries="1" layout="2" linkWithEditor="0" rootMode="1" workingSetName="">
@@ -91,7 +107,7 @@
 <view id="org.eclipse.jdt.ui.SourceView" partName="Declaration"/>
 <view id="org.eclipse.jdt.ui.JavadocView" partName="Javadoc"/>
 </views>
-<perspectives activePart="org.eclipse.jdt.ui.PackageExplorer" activePerspective="org.eclipse.jdt.ui.JavaPerspective">
+<perspectives activePart="org.eclipse.jdt.ui.CompilationUnitEditor" activePerspective="org.eclipse.jdt.ui.JavaPerspective">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.eclipse.jdt.internal.ui.JavaPerspectiveFactory" id="org.eclipse.jdt.ui.JavaPerspective" label="Java"/>
 <alwaysOnActionSet id="org.eclipse.mylyn.context.ui.actionSet"/>
@@ -150,6 +166,7 @@
 <view id="org.eclipse.ui.views.ProblemView"/>
 <view id="org.eclipse.jdt.ui.JavadocView"/>
 <view id="org.eclipse.jdt.ui.SourceView"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="org.eclipse.ui.views.ContentOutline"/>
 <view id="org.eclipse.mylyn.tasks.ui.views.tasks"/>
 <fastViewBars/>
@@ -178,18 +195,19 @@
 </info>
 <info part="org.eclipse.ui.editorss" ratio="0.25" ratioLeft="250" ratioRight="750" relationship="2" relative="left"/>
 <info folder="true" part="bottom" ratio="0.7496136" ratioLeft="485" ratioRight="162" relationship="4" relative="org.eclipse.ui.editorss">
-<folder activePageID="org.eclipse.ui.views.ProblemView" appearance="2" expanded="2">
+<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
 <page content="org.eclipse.jdt.ui.JavadocView" label="Javadoc"/>
 <page content="org.eclipse.jdt.ui.SourceView" label="Declaration"/>
+<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="LabelNotFound"/>
-<page content="org.eclipse.ui.console.ConsoleView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.BookmarkView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.ProgressView" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
 <part id="1"/>
 <part id="2"/>
+<part id="3"/>
 </presentation>
 </folder>
 </info>
@@ -216,7 +234,125 @@
 </perspective>
 </perspectives>
 <workingSets/>
-<navigationHistory/>
+<navigationHistory>
+<editors>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" uri="file:/D:/msysgit/msysgit/git/Athena-Chat/Server/Server.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Server/Server.java"/>
+<editor factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" org.eclipse.jdt.ui.ClassFileIdentifier="=Server/C:\/Sun\/SDK\/jdk\/jre\/lib\/rt.jar&lt;java.net(ServerSocket.class"/>
+<editor factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" org.eclipse.jdt.ui.ClassFileIdentifier="=Server/C:\/Sun\/SDK\/jdk\/jre\/lib\/rt.jar&lt;java.net(PlainSocketImpl.class"/>
+</editors>
+<item historyLabel="Server.java" index="0">
+<position info="not_deleted" x="13" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="2118" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1906" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1153" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1154" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1684" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1714" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1826" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1853" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1881" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1792" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1253" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1270" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1371" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1411" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1436" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1437" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1472" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1473" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1516" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1557" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1588" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1595" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1622" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1623" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="715" y="0"/>
+</item>
+<item historyLabel="ServerSocket.class" index="2">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="715" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1545" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="1996" y="32"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="324" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="4660" y="10"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="324" y="0"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="698" y="17"/>
+</item>
+<item historyLabel="Server.java" index="1">
+<position info="not_deleted" x="4763" y="21"/>
+</item>
+<item historyLabel="PlainSocketImpl.class" index="3">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item active="true" historyLabel="Server.java" index="1">
+<position info="not_deleted" x="4763" y="21"/>
+</item>
+</navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
 <workbenchWindowAdvisor/>
@@ -232,5 +368,18 @@
 </trimArea>
 </trimLayout>
 </window>
-<mruList/>
+<mruList>
+<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" name="PlainSocketImpl.class" tooltip="java.net.PlainSocketImpl">
+<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=Server/C:\/Sun\/SDK\/jdk\/jre\/lib\/rt.jar&lt;java.net(PlainSocketImpl.class"/>
+</file>
+<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" name="ServerSocket.class" tooltip="java.net.ServerSocket">
+<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=Server/C:\/Sun\/SDK\/jdk\/jre\/lib\/rt.jar&lt;java.net(ServerSocket.class"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Server.java" tooltip="Server/Server.java">
+<persistable path="/Server/Server.java"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Server.java" tooltip="D:\msysgit\msysgit\git\Athena-Chat\Server\Server.java">
+<persistable uri="file:/D:/msysgit/msysgit/git/Athena-Chat/Server/Server.java"/>
+</file>
+</mruList>
 </workbench>
