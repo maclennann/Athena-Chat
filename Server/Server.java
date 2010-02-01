@@ -2,10 +2,15 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.sql.*;
+
 public class Server
 {
 	// The ServerSocket we'll use for accepting new connections
 	private ServerSocket ss;
+	
+	//Define the MySQL connection
+	private Connection con = null;
 	
 	//Define Server Listening port
 	private static int listenPort = 7777;
@@ -21,14 +26,35 @@ public class Server
 	}
 	
 	private void login ( String userName, String password) { 
+		try { 
 		//Here we will have to have some mysql code to verify with our Database that their username is correct.
 		//JDBC URL for the database
 		String url = "jdbc:mysql://athenachat.org/" +
 				"mysql?user=CHANGEME&password=CHANGEME";
-		//
+		//Defining the Statement and ResultSet holders
 		Statement stmt;
-		ResultSet rs;
+		ResultSet rs; 
+		
+		//NO IDEA WHAT THIS IS
+		Class.forName("org.gjt.mm.mysql.Driver");
+		
+		//Here is where the connection is made
+		con = DriverManager.getConnection(url);
+		}
+		catch ( SQLException e) { 
+				e.printStackTrace ( );
+		}
+		catch ( ClassNotFoundException f) { 
+				f.printStackTrace();
+		}
+		finally { 
+			if( con != null) { 
+				try { con.close( ); }
+				catch( Exception e) { } 
+			}
+		}
 	}
+		
 	
 	private void listen( int port ) throws IOException {
 		// Create the ServerSocket
