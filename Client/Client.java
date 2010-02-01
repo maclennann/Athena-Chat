@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.JOptionPane;
 
+
 public class Client extends Panel implements Runnable
 {
 	// Need to include authentication 
