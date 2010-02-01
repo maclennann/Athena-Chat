@@ -1,0 +1,14 @@
+what,kind,bundleId,bundleVersion,description,time
+stopped,bundle,org.eclipse.mylyn.context.ui,3.2.2.v20090912-0400-e3x,"org.eclipse.mylyn.context.ui",1264978970419
+stopped,bundle,org.eclipse.mylyn.help.ui,3.2.2.v20090912-0400-e3x,"org.eclipse.mylyn.help.ui",1264978970420
+stopped,bundle,org.eclipse.mylyn.tasks.bugs,3.2.2.v20090912-0400-e3x,"org.eclipse.mylyn.tasks.bugs",1264978970420
+stopped,bundle,org.eclipse.mylyn.tasks.ui,3.2.2.v20090912-0400-e3x,"org.eclipse.mylyn.tasks.ui",1264978970420
+stopped,bundle,org.eclipse.wst.dtd.ui,1.0.400.v200904300717,"org.eclipse.wst.dtd.ui",1264978970422
+stopped,bundle,org.eclipse.wst.xsd.ui,1.2.204.v200909021537,"org.eclipse.wst.xsd.ui",1264978970424
+stopped,bundle,org.eclipse.wst.xml.ui,1.1.1.v200908242115,"org.eclipse.wst.xml.ui",1264978970424
+stopped,bundle,org.eclipse.wst.common.ui,1.1.402.v200901262305,"org.eclipse.wst.common.ui",1264978970425
+stopped,bundle,org.eclipse.wst.sse.ui,1.1.101.v200908261807,"org.eclipse.wst.sse.ui",1264978970426
+stopped,bundle,org.eclipse.search,3.5.1.r351_v20090708-0800,"org.eclipse.search",1264978970426
+stopped,bundle,org.eclipse.ltk.ui.refactoring,3.4.100.v20090604,"org.eclipse.ltk.ui.refactoring",1264978970426
+stopped,bundle,org.eclipse.team.cvs.ui,3.3.201.R35x_v20090826-0905,"org.eclipse.team.cvs.ui",1264978970457
+stopped,bundle,org.eclipse.team.ui,3.5.0.I20090430-0408,"org.eclipse.team.ui",1264978970484

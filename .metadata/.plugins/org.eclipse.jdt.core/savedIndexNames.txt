@@ -1,0 +1,2 @@
+INDEX VERSION 1.126+D:\msysgit\msysgit\git\Athena-Chat\.metadata\.plugins\org.eclipse.jdt.core
+137624701.index

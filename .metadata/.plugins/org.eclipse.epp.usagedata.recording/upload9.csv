@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+java.runtime.name,sysinfo,,,"Java(TM) SE Runtime Environment",1264979001305
+java.runtime.version,sysinfo,,,"1.6.0_17-b04",1264979001305
+java.specification.name,sysinfo,,,"Java Platform API Specification",1264979001305
+java.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1264979001305
+java.specification.version,sysinfo,,,"1.6",1264979001305
+java.vendor,sysinfo,,,"Sun Microsystems Inc.",1264979001305
+java.version,sysinfo,,,"1.6.0_17",1264979001305
+java.vm.info,sysinfo,,,"mixed mode",1264979001305
+java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1264979001305
+java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1264979001305
+java.vm.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1264979001305
+java.vm.specification.version,sysinfo,,,"1.0",1264979001305
+java.vm.vendor,sysinfo,,,"Sun Microsystems Inc.",1264979001305
+java.vm.version,sysinfo,,,"14.3-b01",1264979001305
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1264979007011
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1264979017529
+started,bundle,org.eclipse.core.filesystem,1.2.0.v20090507,"org.eclipse.core.filesystem",1264979017565
+started,bundle,org.eclipse.debug.core,3.5.0.v20090526-1600,"org.eclipse.debug.core",1264979017926
+started,bundle,org.eclipse.jdt.launching,3.5.0.v20090527,"org.eclipse.jdt.launching",1264979017940
+started,bundle,org.eclipse.ltk.core.refactoring,3.5.0.v20090513-2000,"org.eclipse.ltk.core.refactoring",1264979018655
+started,bundle,org.eclipse.ltk.ui.refactoring,3.4.100.v20090604,"org.eclipse.ltk.ui.refactoring",1264979018939
+started,bundle,org.eclipse.compare.core,3.5.0.I20090430-0408,"org.eclipse.compare.core",1264979019187
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1264979019252
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1264979019395
+executed,command,org.eclipse.ui.ide,3.5.1.M20090826-0800,"org.eclipse.ui.edit.text.openLocalFile",1264979019437
