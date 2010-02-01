@@ -13,8 +13,8 @@ public class Server
 	private static Connection con = null;
 	
 	//Fake Variables
-	private static String someInputedUsername = " Greg";
-	private static String someInputedHashedPassword = " 1234";
+	private static String someInputedUsername = "Greg";
+	private static String someInputedHashedPassword = "1234";
 	
 	//Define Server Listening port
 	private static int listenPort = 7777;
@@ -41,30 +41,31 @@ public class Server
 		Statement stmt;
 		ResultSet rs; 
 		
-		//NO IDEA WHAT THIS IS
+		//Using the forName method to load the appropriate driver for JDBC
 		Class.forName("com.mysql.jdbc.Driver");
 		
-		//Here is where the connection is made
-		String pw = "12345678";
-		String un = "db72292_athena";
+		String un = "db72292_athena"; //Database Username
+		String pw = "12345678"; //Database Password
 		
+		//Here is where the connection is made
 		con = DriverManager.getConnection(url, un, pw);
 		
-		stmt = con.createStatement();
-		rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id");
-		System.out.println("\nResults are:");
+		
+		stmt = con.createStatement(); //
+		rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id"); //Here is where the query goes that we would like to run.
+		System.out.println("\nResults are:"); //Don't need this, just for debug.
 		
 		//Here is where we get the results
 		while(rs.next()) { 
-			String username = rs.getString("username");
-			String hashedPassword = rs.getString("password");
+			String username = rs.getString("username"); //Grab the field from the database and set it to the String 'username'
+			String hashedPassword = rs.getString("password"); //Grab the field from the database and set it to the String 'password'
 			
 			System.out.print(" key= " + username + someInputedUsername);
 			System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
 			System.out.print("\n");
 			
-			//Here is where we find if the User's Inputted information is correct
-			if ((someInputedUsername == username) && (someInputedHashedPassword == hashedPassword)) { 
+			//Here is where we find if the User's Inputed information is correct
+			if ((someInputedUsername.equals(username)) && (someInputedHashedPassword.equals(hashedPassword))) { 
 				//Run some command that let's user log in!
 				System.out.println("You're logged in!!!!");
 				}
@@ -76,12 +77,6 @@ public class Server
 		catch ( SQLException e) { 
 				e.printStackTrace ( );
 		}
-		/*catch ( IllegalAccessException f){ 
-				f.printStackTrace();
-		}
-		catch ( InstantiationException g) {
-				g.printStackTrace();
-		}*/
 		catch ( ClassNotFoundException h) { 
 				h.printStackTrace();
 		}
@@ -168,11 +163,12 @@ public class Server
 	// Usage: java Server <port>
 	 public static void main( String args[] ) throws Exception {
 		// Get the port # from the command line
-		//int port = listenPort;
-		// Create a Server object, which will automatically begin
-		// accepting connections.
-		//new Server( port );
+		int port = listenPort;
 		
-		login( "db72292", "2112gregoryfl");
+		 // Create a Server object, which will automatically begin accepting connections.
+		new Server( port );
+		
+		//Call the login function [Need to grab the information from the client (maybe put it in the constructor?)]
+		login( "Greg", "12345678");
 	}
 }
