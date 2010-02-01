@@ -12,6 +12,10 @@ public class Server
 	//Define the MySQL connection
 	private static Connection con = null;
 	
+	//Fake Variables
+	private static String someInputedUsername = " Greg";
+	private static String someInputedHashedPassword = " 1234";
+	
 	//Define Server Listening port
 	private static int listenPort = 7777;
 	
@@ -50,17 +54,25 @@ public class Server
 		rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id");
 		System.out.println("\nResults are:");
 		
+		//Here is where we get the results
 		while(rs.next()) { 
-			int a = rs.getInt("user_id");
-			String str = rs.getString("username");
+			String username = rs.getString("username");
+			String hashedPassword = rs.getString("password");
 			
-			System.out.print(" key= " + a);
-			System.out.print(" str= " + str);
+			System.out.print(" key= " + username + someInputedUsername);
+			System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
 			System.out.print("\n");
+			
+			//Here is where we find if the User's Inputted information is correct
+			if ((someInputedUsername == username) && (someInputedHashedPassword == hashedPassword)) { 
+				//Run some command that let's user log in!
+				System.out.println("You're logged in!!!!");
+				}
 			}
-			stmt.close();
-		
+			stmt.close();		
 		}
+		
+	
 		catch ( SQLException e) { 
 				e.printStackTrace ( );
 		}
