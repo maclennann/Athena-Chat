@@ -1,11 +1,12 @@
-// $Id$
 import java.io.*;
-import java.net.*;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.*;
+import java.io.*;
+import java.net.*;
+
 public class ServerThread extends Thread
 {
 	//Define the MySQL connection
@@ -15,6 +16,7 @@ public class ServerThread extends Thread
 	private Server server;
 	// The Socket connected to our client
 	private Socket socket;
+	
 	// Constructor.
 	public ServerThread( Server server, Socket socket ) {
 		// Save the parameters
@@ -23,6 +25,7 @@ public class ServerThread extends Thread
 		//Start up the thread
 		start();
 	}
+	
 	//This runs in a separate thread when start() is called in the
 	//constructor.
 	public void run() {
@@ -31,6 +34,10 @@ public class ServerThread extends Thread
 			//is using a DataOutputStream to write to us
 			DataInputStream din = new DataInputStream( socket.getInputStream() );
 			//Over and over, forever ...
+			try{
+				Class.forName("com.mysql.jdbc.Driver");
+			}
+			catch(ClassNotFoundException ex){}
 			
 			//Getting the Username and Password over the stream before the actual connection
 			String username = din.readUTF(); // Get Username
@@ -39,7 +46,7 @@ public class ServerThread extends Thread
 			System.out.println("Username: " + username);
 			System.out.println("Password: " + password);
 			
-			login(username, password);
+			System.out.println(login(username, password));
 			
 			while (true) {
 				//... read the next message ...
@@ -49,6 +56,7 @@ public class ServerThread extends Thread
 				//... and have the server send it to all clients
 				server.sendToAll( message );
 			}
+			
 		} catch( EOFException ie ) {
 			//This doesn't need an error message
 		} catch( IOException ie ) {
@@ -66,51 +74,53 @@ public class ServerThread extends Thread
 			//Debug
 			System.out.println("1");
 			
-		//Here we will have to have some mysql code to verify with our Database that their username is correct.
-		//JDBC URL for the database
-		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
-		//Defining the Statement and ResultSet holders
-		Statement stmt;
-		ResultSet rs; 
+			//Here we will have to have some mysql code to verify with our Database that their username is correct.
+			//JDBC URL for the database
+			String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
+			//Defining the Statement and ResultSet holders
+			Statement stmt;
+			ResultSet rs; 
 		
-		//Using the forName method to load the appropriate driver for JDBC
-		Class.forName("com.mysql.jdbc.Driver");
+			//Using the forName method to load the appropriate driver for JDBC
 		
-		String un = "db72292_athena"; //Database Username
-		String pw = "12345678"; //Database Password
+			String un = "db72292_athena"; //Database Username
+			String pw = "12345678"; //Database Password
 		
-		//Here is where the connection is made
-		con = DriverManager.getConnection(url, un, pw);
+			//Here is where the connection is made
+			con = DriverManager.getConnection(url, un, pw);
 		
 		
-		stmt = con.createStatement(); //
-		rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id"); //Here is where the query goes that we would like to run.
-		System.out.println("\nResults are:"); //Don't need this, just for debug.
+			stmt = con.createStatement(); //
+			rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id"); //Here is where the query goes that we would like to run.
+			System.out.println("\nResults are:"); //Don't need this, just for debug.
 		
-		//Here is where we get the results
-		while(rs.next()) { 
-			String username = rs.getString("username"); //Grab the field from the database and set it to the String 'username'
-			String hashedPassword = rs.getString("password"); //Grab the field from the database and set it to the String 'password'
+			//Here is where we get the results
+			while(rs.next()) { 
+				String username = rs.getString("username"); //Grab the field from the database and set it to the String 'username'
+				String hashedPassword = rs.getString("password"); //Grab the field from the database and set it to the String 'password'
 			
-			//System.out.print(" key= " + username + someInputedUsername);
-			//System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
-			//System.out.print("\n");
+				//System.out.print(" key= " + username + someInputedUsername);
+				//System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
+				//System.out.print("\n");
 			
-			//Here is where we find if the User's Inputed information is correct
-			if ((userName.equals(username)) && (password.equals(hashedPassword))) { 
-				//Run some command that let's user log in!
-				String returnMessage = "You're logged in!!!!";
-				return returnMessage;
+				//Here is where we find if the User's Inputed information is correct
+				if ((userName.equals(username)) && (password.equals(hashedPassword))) { 
+					//Run some command that let's user log in!
+					String returnMessage = "You're logged in!!!!";
+					return returnMessage;
 				}
-			//else { return "Failed"; }
-			}
-				stmt.close();		
+				//else { return "Failed"; }
+		}
+		
+		stmt.close();
+		
 		}catch ( SQLException e) { 
 				e.printStackTrace ( );
 		}
-		catch ( ClassNotFoundException h) { 
-				h.printStackTrace();
-		}
+		//	catch ( ClassNotFoundException h) { 
+		//		h.printStackTrace();
+		//}
+		
 		finally { 
 			if( con != null) { 
 				try { con.close( ); }
