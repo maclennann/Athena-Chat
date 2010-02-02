@@ -1,4 +1,20 @@
-// $Id$
+/****************************************************
+ * Athena: Encrypted Messaging Application v.0.0.1
+ * By: 	
+ * 			Gregory LeBlanc
+ * 			Norm Maclennan 
+ * 			Stephen Failla
+ * 
+ * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
+ * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
+ * using a randomly generated email address
+ * 
+ * File: Server.java
+ * 
+ * This is where the detailed description of the file will go.
+ * 
+ *
+ ****************************************************/
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -126,7 +142,7 @@ public class Server
 	}
 	
 	// Send a message to all clients (utility routine)
-	void sendToAll( String message ) {
+	/*void sendToAll( String message ) {
 		// We synchronize on this because another thread might be
 		// calling removeConnection() and this would screw us up
 		// as we tried to walk through the list
@@ -141,7 +157,7 @@ public class Server
 				} catch( IOException ie ) { System.out.println( ie ); }
 			}
 		}
-	}
+	}*/
 	
 	// Remove a socket, and it's corresponding output stream, from our
 	// list. This is usually called by a connection thread that has

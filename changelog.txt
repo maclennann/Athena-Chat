@@ -1,0 +1,23 @@
+ChangeLog: 
+^Must be updated every night^
+
+2/1/2010:
+	##Implemented Emo Method
+	!!Depreciated Emo Method
+	##Implemented sendMessage Method
+		@@ sendMessage finds the recipiant user's socket in the first hashtable (userToSocket), then finds that user's dataOutputStream from the second hashtable (outputStreams)
+		@@ Then it sends the user's message using writeUTF
+	##Implemented login Method
+		@@ login takes in the username and the password, searches the database for the username, and then matches the password in the database to the password given
+		@@ If login information does not match entries in the database, kill the thread
+		
+	##Implemented dbConnect Method
+		@@ This is the function that we will use to return an object of type Connection. This has the database information stored such that if/when the information changes we only have to change it in one place. 
+	
+	##Implemented updateHashTable Method
+		@@ Grabs all the usernames and passwords from the database and stores them inside the HashTable authentication
+	
+	##Implemented mapUserSocket Method
+		@@ Takes in the username and userSocket and places those values into a HashTable called userToSocket
+		
+	!!Depreciated sendToAll Method
