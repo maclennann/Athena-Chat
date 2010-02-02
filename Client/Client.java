@@ -18,7 +18,7 @@ public class Client extends Panel implements Runnable
 	
 	
 	// The socket connecting us to the server
-	private Socket socket;
+	public Socket socket;
 	
 	// The streams we communicate to the server; these come
 	// from the socket
@@ -47,8 +47,7 @@ public class Client extends Panel implements Runnable
 			
 			String username = JOptionPane.showInputDialog("Please enter your username"); // Get username from the user
 			String password = JOptionPane.showInputDialog("Please enter your password"); // Get Password from the user
-			
-			
+						
 			// We got a connection! Tell the world
 			System.out.println( "connected to "+socket );
 			// Let's grab the streams and create DataInput/Output streams
@@ -69,6 +68,10 @@ public class Client extends Panel implements Runnable
 		try {
 			// Send it to the server
 			dout.writeUTF( message );
+			
+			// Append own message to IM window
+			ta.append(message + "\n");
+			
 			// Clear out text input field
 			tf.setText( "" );
 		} catch( IOException ie ) { System.out.println( ie ); }
@@ -76,6 +79,10 @@ public class Client extends Panel implements Runnable
 	// Background thread runs this: show messages from other window
 	public void run() {
 		try {
+			//
+			String toUser = JOptionPane.showInputDialog("Please input the user you want to talk to!");			
+			dout.writeUTF(toUser);
+			
 			// Receive messages one-by-one, forever
 			while (true) {
 				// Get the next message

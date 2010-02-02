@@ -15,17 +15,15 @@ public class Server
 	//Define the MySQL connection
 	private static Connection con = null;
 	
-	//Fake Variables
-	//private static String someInputedUsername = "Greg";
-	//private static String someInputedHashedPassword = "1234";
-	
 	//Define Server Listening port
 	private static int listenPort = 7777;
 	
 	// A mapping from sockets to DataOutputStreams. This will
 	// help us avoid having to create a DataOutputStream each time
 	// we want to write to a stream.
-	private Hashtable outputStreams = new Hashtable();
+	public Hashtable outputStreams = new Hashtable();
+	public Hashtable userToSocket = new Hashtable();
+	
 	// Constructor and while-accept loop all in one.
 	public Server( int port ) throws IOException {
 		// All we have to do is listen
@@ -89,6 +87,9 @@ public class Server
 	}
 		
 }
+	public void mapUserSocket(String username, Socket userSocket) { 
+		userToSocket.put(username, userSocket);
+	}
 	
 	private void listen( int port ) throws IOException {
 		// Create the ServerSocket

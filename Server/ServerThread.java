@@ -1,7 +1,10 @@
 import java.io.*;
 import java.sql.*;
+import java.util.Enumeration;
 import java.io.*;
 import java.net.*;
+
+import com.sun.org.apache.xpath.internal.FoundIndex;
 
 public class ServerThread extends Thread
 {
@@ -11,7 +14,7 @@ public class ServerThread extends Thread
 	// The Server that spawned us
 	private static Server server;
 	// The Socket connected to our client
-	private static Socket socket;
+	public Socket socket;
 	
 	// Constructor.
 	public ServerThread( Server server, Socket socket ) {
@@ -46,13 +49,18 @@ public class ServerThread extends Thread
 			//Login!
 			System.out.println(login(username, password));
 			
+			//Maps username to socket after user logs in
+			server.mapUserSocket(username, socket);	
+			
+			String toUser = din.readUTF();
+			
 			while (true) {
 				//... read the next message ...
 				String message = din.readUTF();
 				//... tell the world ...
 				System.out.println( "Sending "+message );
 				//... and have the server send it to all clients
-				server.sendToAll( message );
+				sendMessage(toUser, message);
 			}
 			
 		} catch( EOFException ie ) {
@@ -72,7 +80,38 @@ public class ServerThread extends Thread
 		this.destroy();			
 	}
 	
-	public static String login (String clientName, String clientPassword) { 
+	void sendMessage(String toUser, String message) {
+		// We synchronize on this because another thread might be
+		// calling removeConnection() and this would screw us up
+		// as we tried to walk through the list
+
+		// For each client ...
+			Socket foundSocket = null;
+			DataOutputStream dout = null;
+			
+			System.out.print(toUser);
+			if ((server.userToSocket.containsKey(toUser))) { 
+				System.out.print("Found user.. Continuing...");
+				// ... get the output stream ...
+				//System.out.print(foundSocket);
+				foundSocket = (Socket) server.userToSocket.get(toUser);
+				System.out.print("Found Socket: " + foundSocket);
+			}
+			
+			if (server.outputStreams.containsKey(foundSocket)) { 
+				// ... get the output stream ...
+				//System.out.print(foundSocket);
+				dout = (DataOutputStream) server.outputStreams.get(foundSocket);
+			}
+			
+				// ... and send the message
+				try {
+					dout.writeUTF( message );
+				} catch( IOException ie ) { System.out.println( ie ); }
+	}
+
+	
+	public String login (String clientName, String clientPassword) { 
 			System.out.print("We are in login.");
 
 				System.out.print("HAIII");
