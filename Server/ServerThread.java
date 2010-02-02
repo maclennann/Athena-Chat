@@ -1,8 +1,4 @@
 import java.io.*;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.*;
 import java.io.*;
 import java.net.*;
@@ -13,9 +9,9 @@ public class ServerThread extends Thread
 	private static Connection con = null;
 	
 	// The Server that spawned us
-	private Server server;
+	private static Server server;
 	// The Socket connected to our client
-	private Socket socket;
+	private static Socket socket;
 	
 	// Constructor.
 	public ServerThread( Server server, Socket socket ) {
@@ -34,10 +30,6 @@ public class ServerThread extends Thread
 			//is using a DataOutputStream to write to us
 			DataInputStream din = new DataInputStream( socket.getInputStream() );
 			//Over and over, forever ...
-			try{
-				Class.forName("com.mysql.jdbc.Driver");
-			}
-			catch(ClassNotFoundException ex){}
 			
 			//Getting the Username and Password over the stream before the actual connection
 			String username = din.readUTF(); // Get Username
@@ -66,29 +58,22 @@ public class ServerThread extends Thread
 			//The connection is closed for one reason or another,
 			//so have the server dealing with it
 			server.removeConnection( socket );
+			
+			//Create the connection from 
+			Connection con = server.dbConnect();
 		}
 	}
 	
-	public static String login (String userName, String password) { 
+	//Deprecated
+	public void emo () { 
+		this.destroy();			
+	}
+	
+	public static String login (String clientName, String clientPassword) { 
 		try { 
-			//Debug
-			System.out.println("1");
-			
-			//Here we will have to have some mysql code to verify with our Database that their username is correct.
-			//JDBC URL for the database
-			String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
 			//Defining the Statement and ResultSet holders
 			Statement stmt;
 			ResultSet rs; 
-		
-			//Using the forName method to load the appropriate driver for JDBC
-		
-			String un = "db72292_athena"; //Database Username
-			String pw = "12345678"; //Database Password
-		
-			//Here is where the connection is made
-			con = DriverManager.getConnection(url, un, pw);
-		
 		
 			stmt = con.createStatement(); //
 			rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id"); //Here is where the query goes that we would like to run.
@@ -96,31 +81,23 @@ public class ServerThread extends Thread
 		
 			//Here is where we get the results
 			while(rs.next()) { 
-				String username = rs.getString("username"); //Grab the field from the database and set it to the String 'username'
-				String hashedPassword = rs.getString("password"); //Grab the field from the database and set it to the String 'password'
-			
-				//System.out.print(" key= " + username + someInputedUsername);
-				//System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
-				//System.out.print("\n");
-			
+				String hashedPassword = server.authentication.get(clientName).toString(); //Grabbing the HashedPassword from the Database
+				
 				//Here is where we find if the User's Inputed information is correct
-				if ((userName.equals(username)) && (password.equals(hashedPassword))) { 
+				if (clientPassword.equals(hashedPassword)) { 
 					//Run some command that let's user log in!
 					String returnMessage = "You're logged in!!!!";
 					return returnMessage;
-				}
-				//else { return "Failed"; }
+				}else { 
+					server.removeConnection(socket);
+					return "Login Failed"; }
 		}
 		
 		stmt.close();
 		
 		}catch ( SQLException e) { 
 				e.printStackTrace ( );
-		}
-		//	catch ( ClassNotFoundException h) { 
-		//		h.printStackTrace();
-		//}
-		
+		}		
 		finally { 
 			if( con != null) { 
 				try { con.close( ); }
@@ -129,4 +106,5 @@ public class ServerThread extends Thread
 		}
 		return "Failed";
 	}
+	
 }

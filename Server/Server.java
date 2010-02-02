@@ -9,6 +9,9 @@ public class Server
 	// The ServerSocket we'll use for accepting new connections
 	private ServerSocket ss;
 	
+	//Create Public HashTable for the Username/Hashed Passwords
+	public static Hashtable authentication = new Hashtable();
+	
 	//Define the MySQL connection
 	private static Connection con = null;
 	
@@ -29,65 +32,63 @@ public class Server
 		listen( port );
 	}
 	
-	public static String login (String userName, String password) { 
-		try { 
-			//Debug
-			System.out.println("1");
-			
+	public static Connection dbConnect () { 
 		//Here we will have to have some mysql code to verify with our Database that their username is correct.
 		//JDBC URL for the database
 		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
-		//Defining the Statement and ResultSet holders
-		Statement stmt;
-		ResultSet rs; 
-		
+	
 		//Using the forName method to load the appropriate driver for JDBC
-		Class.forName("com.mysql.jdbc.Driver");
-		
+	
 		String un = "db72292_athena"; //Database Username
 		String pw = "12345678"; //Database Password
 		
+		//Try to set the Driver for the JDBC
+		try{
+			Class.forName("com.mysql.jdbc.Driver");
+			}catch(ClassNotFoundException ex){}
+	
 		//Here is where the connection is made
+		try{ 		
 		con = DriverManager.getConnection(url, un, pw);
+		return con;
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+			}
+	}
+	
+	//Function to update hash table of usernames/sockets
+	private static void updateHashTable () { 
 		
+		try { 
 		
-		stmt = con.createStatement(); //
-		rs = stmt.executeQuery("SELECT * from Users ORDER BY user_id"); //Here is where the query goes that we would like to run.
-		System.out.println("\nResults are:"); //Don't need this, just for debug.
+		Connection getHashed = dbConnect();
+		
+		//Defining the Statement and ResultSet holders
+		Statement stmt;
+		ResultSet rs; 
+	
+		stmt = getHashed.createStatement(); //
+		rs = stmt.executeQuery("SELECT * from Users"); //Here is where the query goes that we would like to run.
 		
 		//Here is where we get the results
 		while(rs.next()) { 
 			String username = rs.getString("username"); //Grab the field from the database and set it to the String 'username'
 			String hashedPassword = rs.getString("password"); //Grab the field from the database and set it to the String 'password'
 			
-			//System.out.print(" key= " + username + someInputedUsername);
-			//System.out.print(" str= " + hashedPassword + someInputedHashedPassword);
-			//System.out.print("\n");
-			
-			//Here is where we find if the User's Inputed information is correct
-			if ((userName.equals(username)) && (password.equals(hashedPassword))) { 
-				//Run some command that let's user log in!
-				String returnMessage = "You're logged in!!!!";
-				return returnMessage;
-				}
-			//else { return "Failed"; }
-			}
-				stmt.close();		
-		}catch ( SQLException e) { 
-				e.printStackTrace ( );
+			authentication.put(hashedPassword, username);
+	    }
+		
+	     Enumeration name  = authentication.elements();
+	     for (Enumeration OMFG = name; OMFG.hasMoreElements();) { 
+	    	 System.out.println(OMFG.nextElement());
 		}
-		catch ( ClassNotFoundException h) { 
-				h.printStackTrace();
-		}
-		finally { 
-			if( con != null) { 
-				try { con.close( ); }
-				catch( Exception e) { } 
-			}
-		}
-		return "Failed";
+
+	}catch(SQLException ex) {
+		ex.printStackTrace();
 	}
 		
+}
 	
 	private void listen( int port ) throws IOException {
 		// Create the ServerSocket
@@ -117,11 +118,12 @@ public class Server
 			new ServerThread( this, s );
 		}
 	}
-	// Get an enumeration of all the OutputStreams, one for each client
-	// connected to us
+	
+	// Get an enumeration of all the OutputStreams, one for each client connected to us
 	Enumeration getOutputStreams() {
 		return outputStreams.elements();
 	}
+	
 	// Send a message to all clients (utility routine)
 	void sendToAll( String message ) {
 		// We synchronize on this because another thread might be
@@ -139,6 +141,7 @@ public class Server
 			}
 		}
 	}
+	
 	// Remove a socket, and it's corresponding output stream, from our
 	// list. This is usually called by a connection thread that has
 	// discovered that the connection to the client is dead.
@@ -159,16 +162,23 @@ public class Server
 			}
 		}
 	}
+	
+	
 	// Main routine
 	// Usage: java Server <port>
 	 public static void main( String args[] ) throws Exception {
+		 /*Upon Starting Server
+		 *1. UpdateHashTable
+		 *2. Listen for connections 
+		 */
+		
+		updateHashTable();
+		
 		// Get the port # from the command line
 		int port = listenPort;
 		
 		 // Create a Server object, which will automatically begin accepting connections.
 		new Server( port );
-		
-		//Call the login function [Need to grab the information from the client (maybe put it in the constructor?)]
-		login( "Greg", "12345678");
+
 	}
 }

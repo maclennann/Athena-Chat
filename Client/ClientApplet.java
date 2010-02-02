@@ -9,6 +9,6 @@ public void init() {
 //String host = getParameter( "host" );
 //int port = Integer.parseInt( getParameter( "port" ) );
 setLayout( new BorderLayout() );
-add( "Center", new Client( "192.168.1.138", 7777 ) );
+add( "Center", new Client( "192.168.1.131", 7777 ) );
 }
 }
