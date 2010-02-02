@@ -1,6 +1,12 @@
 ChangeLog: 
 ^Must be updated every night^
 
+2/2/2010:
+	##Weekly code review (Norm)
+	##Added TODO notes in code.
+		@@ Marks where code needs work. What we have to remove, add, or change
+	##Added "detailed file notes" and fixed/added comments in all files
+
 2/1/2010:
 	##Implemented Emo Method
 	!!Depreciated Emo Method

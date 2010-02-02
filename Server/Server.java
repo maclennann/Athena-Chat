@@ -11,8 +11,12 @@
  * 
  * File: Server.java
  * 
- * This is where the detailed description of the file will go.
+ * This runs the code for the auth/messaging server. A client will connect to this server via ServerSocket ss. Each connection is handled by a thread
+ * of ServerThread. Server handles the record-keeping and connection handling.
  * 
+ * When the server starts up, we create a hash table of all of the usernames and passwords for all users, minimizing database transactions.
+ *
+ * As new users connect, their username is mapped to a socket, which is mapped to a datastream so we can communicate with the user.
  *
  ****************************************************/
 import java.io.*;
@@ -22,126 +26,139 @@ import java.sql.*;
 
 public class Server
 {
-	// The ServerSocket we'll use for accepting new connections
+	//This socket will accept new connection
 	private ServerSocket ss;
 	
-	//Create Public HashTable for the Username/Hashed Passwords
+	//This will be a table holding the usernames and hashed passwords pulled from the database
+	//See: updateHashTable()
 	public static Hashtable authentication = new Hashtable();
 	
-	//Define the MySQL connection
+	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
 	
-	//Define Server Listening port
+	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
 	
-	// A mapping from sockets to DataOutputStreams. This will
-	// help us avoid having to create a DataOutputStream each time
-	// we want to write to a stream.
+	//A hashtable that keeps track of the outputStreams linked to each socket
 	public Hashtable outputStreams = new Hashtable();
+
+	//A hashtable mapping each user to a socket
+	//used to find which stream to use to send data to clients
 	public Hashtable userToSocket = new Hashtable();
 	
-	// Constructor and while-accept loop all in one.
+	// Constructor. Starts listening on the defined port.
 	public Server( int port ) throws IOException {
-		// All we have to do is listen
 		listen( port );
 	}
 	
+	//Connect to the database. Returns the connection it established, or null
 	public static Connection dbConnect () { 
-		//Here we will have to have some mysql code to verify with our Database that their username is correct.
-		//JDBC URL for the database
+
+		//Location of the database
 		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
 	
-		//Using the forName method to load the appropriate driver for JDBC
-	
+		//database username and password. shhhhh.
 		String un = "db72292_athena"; //Database Username
 		String pw = "12345678"; //Database Password
 		
-		//Try to set the Driver for the JDBC
+		//Load the JDBC driver
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			}catch(ClassNotFoundException ex){}
+		}catch(ClassNotFoundException ex){}
 	
-		//Here is where the connection is made
+		//Connect to the database using the driver
 		try{ 		
 		con = DriverManager.getConnection(url, un, pw);
+
+		//Return the established connection
 		return con;
+
 		}catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 			}
 	}
 	
-	//Function to update hash table of usernames/sockets
+	//Writes all usernames and password hashes from the database into a hash table
 	private static void updateHashTable () { 
-		
 		try { 
+			//Use dbConnect() to connect to the database
+			Connection getHashed = dbConnect();
 		
-		Connection getHashed = dbConnect();
-		
-		//Defining the Statement and ResultSet holders
-		Statement stmt;
-		ResultSet rs; 
-	
-		stmt = getHashed.createStatement(); //
-		rs = stmt.executeQuery("SELECT * from Users"); //Here is where the query goes that we would like to run.
-		
-		//Here is where we get the results
-		while(rs.next()) { 
-			String username = rs.getString("username"); //Grab the field from the database and set it to the String 'username'
-			String hashedPassword = rs.getString("password"); //Grab the field from the database and set it to the String 'password'
+			//Create a statement and resultset for the query
+			Statement stmt;
+			ResultSet rs; 
 			
-			authentication.put(username, hashedPassword);
-	    }
+			//Return all usernames and hashes passwords
+			stmt = getHashed.createStatement(); //
+			rs = stmt.executeQuery("SELECT * from Users"); //Here is where the query goes that we would like to run.
 		
-	     Enumeration name  = authentication.elements();
-	     for (Enumeration OMFG = name; OMFG.hasMoreElements();) { 
-	    	 System.out.println(OMFG.nextElement());
-		}
+			//Iterate through the results and write them to a hashtables
+			while(rs.next()) { 
+				String username = rs.getString("username");
+				String hashedPassword = rs.getString("password");
+			
+				//Write username and hashed password to next element of hash table
+				authentication.put(username, hashedPassword);
+			}
+		
+			/*Debug code to print out all of the usernames in the hash table
+			Enumeration name  = authentication.elements();
+			for (Enumeration OMFG = name; OMFG.hasMoreElements();) { 
+	    			 System.out.println(OMFG.nextElement());
+			}*/
 
-	}catch(SQLException ex) {
+		}catch(SQLException ex) {
 		ex.printStackTrace();
-	}
+		}
 		
-}
+	}
+
+	//Adds a user (and the socket he is on) to the hashtable for later reference
+	//Called after user authenticates
 	public void mapUserSocket(String username, Socket userSocket) { 
 		userToSocket.put(username, userSocket);
 	}
 	
+	//Server listens for client connections, and passes them off to its own thread
 	private void listen( int port ) throws IOException {
 		// Create the ServerSocket
 		ss = new ServerSocket( port );
+
 		// Tell the world we're ready to go
 		System.out.println( "Listening on "+ss );
 		
-		// Keep accepting connections forever 
-		// This is true, but we need to make it such that the connection gets sent to the correct client -> client 
+		//Accept client connections forever
 		while (true) {
-			// Grab the next incoming connection
+
+			//Accept a new connection on the serversocket
+			//Create a socket for it
 			Socket s = ss.accept();
-			// Tell the world we've got it
+
+			//Debug text announcing a new connection
 			System.out.println( "Connection from "+s );
-			// Create a DataOutputStream for writing data to the
-			// other side
-			
-			// How are we going to send the DataOutputStream to the correct client?
+
+			//DataOuputStream to send data from the client's socket
 			DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
 			
-			// Save this stream so we don't need to make it again (Maybe here we can have an extra field in outputStreams 
-			//Where we can define the client
+			//Map the outputstream to the socket for later reference
 			outputStreams.put( s, dout );
 			
-			// Create a new thread for this connection, and then forget
-			// about it
+			//Handle the rest of the connection in the new thread
 			new ServerThread( this, s );
 		}
 	}
 	
-	// Get an enumeration of all the OutputStreams, one for each client connected to us
+	// Get an enumeration of all the OutputStreams.
+	//TODO: This isn't really usefully without a sendToAll.
+	//      sendToAll should be re-implemented for broadcast messages
+	//	(for example, user sign-ons)
 	Enumeration getOutputStreams() {
 		return outputStreams.elements();
 	}
 	
 	// Send a message to all clients (utility routine)
+	//TODO: Reimplement to broadcast user logins.
 	/*void sendToAll( String message ) {
 		// We synchronize on this because another thread might be
 		// calling removeConnection() and this would screw us up
@@ -159,17 +176,20 @@ public class Server
 		}
 	}*/
 	
-	// Remove a socket, and it's corresponding output stream, from our
-	// list. This is usually called by a connection thread that has
-	// discovered that the connection to the client is dead.
+	//Remove a socket once a client disconnects
+	//TODO: Remove the entries from the hashtable so sending messages
+	//	doesn't get confused
 	void removeConnection( Socket s ) {
 		// Synchronize so we don't mess up sendToAll() while it walks
-		// down the list of all output streams
+		// down the list of all output streams.
 		synchronized( outputStreams ) {
-			// Tell the world
+			// Debug text
 			System.out.println( "Removing connection to "+s );
+
 			// Remove it from our hashtable/list
+			// TODO: As above, remove from userToSocket, as well
 			outputStreams.remove( s );
+
 			// Make sure it's closed
 			try {
 				s.close();
@@ -181,17 +201,19 @@ public class Server
 	}
 	
 	
-	// Main routine
-	// Usage: java Server <port>
+	//Server program starts.
 	 public static void main( String args[] ) throws Exception {
-		 /*Upon Starting Server
-		 *1. UpdateHashTable
-		 *2. Listen for connections 
-		 */
+		/*Upon Starting Server
+		*1. UpdateHashTable
+		*2. Listen for connections 
+		*3. The Universe collapses in on itself
+		*/
 		
+		//Read all usernames and hashed passwords into hashtable from database
 		updateHashTable();
 		
 		// Get the port # from the command line
+		// TODO: This doesn't actually do anything
 		int port = listenPort;
 		
 		 // Create a Server object, which will automatically begin accepting connections.

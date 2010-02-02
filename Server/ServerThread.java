@@ -11,7 +11,8 @@
  * 
  * File: ServerThread.java
  * 
- * This is where the detailed description of the file will go.
+ * Each connection from a client gets its own thread. User logs in, thread handles sending messages to other users.
+ * Sender's thread handles sending to recipient's socket.
  *
  ****************************************************/
 import java.io.*;
@@ -25,127 +26,141 @@ import com.sun.org.apache.xpath.internal.FoundIndex;
 public class ServerThread extends Thread
 {
 	//Define the MySQL connection
+	//TODO: Does this need to be static?
 	private static Connection con = null;
 	
-	// The Server that spawned us
+	// The Server that created this thread
+	//TODO: There is only one instance of server (and is already mostly-static).
+	//	We can just remove this object and talk to Server directly
 	private static Server server;
-	// The Socket connected to our client
+
+	//Our current socket
 	public Socket socket;
 	
-	// Constructor.
+	// Constructor. Instantiate this thread on the current socket
 	public ServerThread( Server server, Socket socket ) {
-		// Save the parameters
+		// Remember which socket we are on
 		this.server = server;
 		this.socket = socket;
 		//Start up the thread
 		start();
 	}
 	
-	//This runs in a separate thread when start() is called in the
-	//constructor.
+	//This runs when the thread starts. It controls everything.
 	public void run() {
 		try {
-			//Create a DataInputStream for communication; the client
-			//is using a DataOutputStream to write to us
+			//Create a datainputstream on the current socket to accept data from the client
 			DataInputStream din = new DataInputStream( socket.getInputStream() );
-			//Over and over, forever ...
 			
-			//Getting the Username and Password over the stream before the actual connection
+			//Getting the Username and Password over the stream for authentication
 			String username = din.readUTF(); // Get Username
 			String password = din.readUTF(); // Get Password
 			
+			//Debug statements
 			System.out.println("Username: " + username);
 			System.out.println("Password: " + password);
 			
 			
-			//Create the connection from 
+			//Connect to the database 
+			//TODO: We don't actually need to do this anymore.
+			//	We have a hashtable
 			Connection con = server.dbConnect();
 			System.out.print("Connection established..");
 			
-			//Login!
+			//Authenticate the user. Output outcome
 			System.out.println(login(username, password));
 			
 			//Maps username to socket after user logs in
 			server.mapUserSocket(username, socket);	
 			
+			//Find out who the user wants to talk do
+			//TODO: Do this in a better way, obviously
 			String toUser = din.readUTF();
 			
+			//Route around messages coming in from the client while they are connected
+			//TODO: Special message to end connection/destroy socket?
 			while (true) {
-				//... read the next message ...
+				//Get the client's message from the inputstream
 				String message = din.readUTF();
-				//... tell the world ...
+
+				//Debug statement
 				System.out.println( "Sending "+message );
-				//... and have the server send it to all clients
+
+				//Route the message to user toUser
 				sendMessage(toUser, username, message);
 			}
 			
 		} catch( EOFException ie ) {
-			//This doesn't need an error message
+			
 		} catch( IOException ie ) {
-			//This does; tell the world!
 			ie.printStackTrace();
 		} finally {
-			//The connection is closed for one reason or another,
-			//so have the server dealing with it
+			//Socket is closed, remove it from the list
 			server.removeConnection( socket );
 		}
 	}
 	
 	//Deprecated
+	//TODO: We don't need this at all
 	public void emo () { 
 		this.destroy();			
 	}
 	
+	//Routes message message from user fromUser (this thread/socket) to user toUser (another socket)
 	void sendMessage(String toUser, String fromUser, String message) {
-		// We synchronize on this because another thread might be
-		// calling removeConnection() and this would screw us up
-		// as we tried to walk through the list
+		Socket foundSocket = null;
+		DataOutputStream dout = null;
+			
+		//Debug statement: who is this going to?
+		System.out.print(toUser);
 
-		// For each client ...
-			Socket foundSocket = null;
-			DataOutputStream dout = null;
+		//Look up the socket associated with the with whom we want to talk
+		//We will use this to find which outputstream to send out
+		if ((server.userToSocket.containsKey(toUser))) { 
+			System.out.print("Found user.. Continuing...");
+			foundSocket = (Socket) server.userToSocket.get(toUser);
+			System.out.print("Found Socket: " + foundSocket);
+		}
 			
-			System.out.print(toUser);
-			if ((server.userToSocket.containsKey(toUser))) { 
-				System.out.print("Found user.. Continuing...");
-				// ... get the output stream ...
-				//System.out.print(foundSocket);
-				foundSocket = (Socket) server.userToSocket.get(toUser);
-				System.out.print("Found Socket: " + foundSocket);
-			}
+		//Find the outputstream associated with toUser's socket
+		//We send data through this outputstream to send the message
+		if (server.outputStreams.containsKey(foundSocket)) { 
+			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
+		}
 			
-			if (server.outputStreams.containsKey(foundSocket)) { 
-				// ... get the output stream ...
-				//System.out.print(foundSocket);
-				dout = (DataOutputStream) server.outputStreams.get(foundSocket);
-			}
-			
-				// ... and send the message
-				try {
-					dout.writeUTF(fromUser);
-					dout.writeUTF(message);
-				} catch( IOException ie ) { System.out.println( ie ); }
+		//Send the message, and the user it is from
+		try {
+			dout.writeUTF(fromUser);
+			dout.writeUTF(message);
+		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 
-	
+	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) { 
-			System.out.print("We are in login.");
 
-				System.out.print("HAIII");
-				String hashedPassword = server.authentication.get(clientName).toString(); //Grabbing the HashedPassword from the Database
-				//System.out.println(server.authentication.get(clientName)); //Grabbing the HashedPassword from the Database
-				System.out.print("FHDHFSFHDSAAFS:" + hashedPassword);
-				System.out.print("Name:" + clientName);
+		//Debug messages.
+		//TODO: Come up with better debug messages
+		System.out.print("We are in login.");
+		System.out.print("HAIII");
+
+		String hashedPassword = server.authentication.get(clientName).toString(); //Grabbing the HashedPassword from the Database
+		//System.out.println(server.authentication.get(clientName)); //Grabbing the HashedPassword from the Database
+
+		//Debug messages.
+		//TODO: Come up with better debug messages
+		System.out.print("FHDHFSFHDSAAFS:" + hashedPassword);
+		System.out.print("Name:" + clientName);
 				
-				//Here is where we find if the User's Inputed information is correct
-				if (clientPassword.equals(hashedPassword)) { 
-					//Run some command that let's user log in!
-					String returnMessage = "You're logged in!!!!";
-					return returnMessage;
-				}else { 
-					//Add Login Fail handler
-					server.removeConnection(socket);
-					return "Login Failed";  
-					}	
-		}				
+		//Verify the password hash provided from the user matches the one in the server's hashtable
+		if (clientPassword.equals(hashedPassword)) { 
+			//Run some command that lets user log in!
+			//TODO: We need to broadcast a message letting everyone know a user logged in?
+			String returnMessage = "You're logged in!!!!";
+			return returnMessage;
+		}else { 
+			//Add Login Fail handler
+			server.removeConnection(socket);
+			return "Login Failed";  
+		}	
+	}				
 }

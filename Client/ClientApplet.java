@@ -11,19 +11,20 @@
  * 
  * File: ClientApplet.java
  * 
- * This is where the detailed description of the file will go.
+ * Creates the window for the client and sets connection variables.
  *
  ****************************************************/
 import java.applet.*;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
-public class ClientApplet extends Applet
-{
-public void init() {
-//String host = getParameter( "host" );
-//int port = Integer.parseInt( getParameter( "port" ) );
-setLayout( new BorderLayout() );
-add( "Center", new Client( "192.168.1.138", 7777 ) );
-}
+
+//Creates the physical applet, calls the client code
+public class ClientApplet extends Applet{
+	public void init() {
+		setLayout( new BorderLayout() );
+		
+		//Create a client. Auth server IP and port.
+		add( "Center", new Client( "192.168.1.138", 7777 ) );
+	}
 }

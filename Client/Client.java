@@ -27,8 +27,7 @@ public class Client extends Panel implements Runnable
 	//Global username variabl
 	String username;
 	
-	// Need to include authentication 
-	// Need to re-do GUI 
+	//TODO: GUI components and window for username/password
 	
 	// Components for the visual display of the chat windows
 	private TextField tf = new TextField();
@@ -38,51 +37,57 @@ public class Client extends Panel implements Runnable
 	// The socket connecting us to the server
 	public Socket socket;
 	
-	// The streams we communicate to the server; these come
-	// from the socket
+	// The datastreams we use to move data through the socket
 	private DataOutputStream dout;
 	private DataInputStream din;
 	
 	// Constructor
 	public Client( String host, int port ) {
 		
-		// Set up the screen
+		//Simple window layout for IM session.
+		//TODO: Better GUI.
 		setLayout( new BorderLayout() );
 		add( "North", tf );
 		add( "Center", ta );
 		
-		// We want to receive messages when someone types a line
-		// and hits return, using an anonymous class as a callback
+		//ActionListener on the 'tf' text field will send messages the user wants to send.
 		tf.addActionListener( new ActionListener() {
 			public void actionPerformed( ActionEvent e ) {
 				processMessage( e.getActionCommand() );
 			}
 		} );
-		// Connect to the server
+
+		//Try to connect with and authenticate to the socket
 		try {
-			// Initiate the connection
+			//Connect to auth server at defined port over socket
 			socket = new Socket( host, port );
 			
-			username = JOptionPane.showInputDialog("Please enter your username"); // Get username from the user
-			String password = JOptionPane.showInputDialog("Please enter your password"); // Get Password from the user
+			//Get the username and password for the user for authentication
+			username = JOptionPane.showInputDialog("Please enter your username");
+			String password = JOptionPane.showInputDialog("Please enter your password");
 						
-			// We got a connection! Tell the world
+			//Connection established debug code.
 			System.out.println( "connected to "+socket );
-			// Let's grab the streams and create DataInput/Output streams
-			// from them
+
+			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
 			
-			//Sending user information over the socket to the Server
+			//Send username and password over the socket for authentication
 			dout.writeUTF(username); //Sending Username
 			dout.writeUTF(password); //Sending Password
 			
 			// Start a background thread for receiving messages
+			// See the 'run()' method
 			new Thread( this ).start();
+
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
-	// Gets called when the user types something
+
+	//Called from the actionListener on the tf textfield
+	//User wants to send a message
 	private void processMessage( String message ) {
+		//Try to send the message
 		try {
 			// Send it to the server
 			dout.writeUTF( message );
@@ -92,20 +97,23 @@ public class Client extends Panel implements Runnable
 			
 			// Clear out text input field
 			tf.setText( "" );
+		//Catch the IOException
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
+
 	// Background thread runs this: show messages from other window
 	public void run() {
 		try {
-			//
+			//User chooses the remote client they want to talk to
+			//TODO: Do this in a less-stupid way. Buddylist with all active sockets
 			String toUser = JOptionPane.showInputDialog("Please input the user you want to talk to!");			
 			dout.writeUTF(toUser);
 			
-			// Receive messages one-by-one, forever
+			//While the thread is running and the socket is open
 			while (true) {
-				// Get the from user 
+				// Who is the message from? 
 				String fromUser = din.readUTF();
-				// Get the message
+				// What is the message?
 				String message = din.readUTF();
 				// Print it to our text window
 				ta.append( fromUser + ": " + message+"\n" );
