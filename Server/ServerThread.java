@@ -60,7 +60,7 @@ public class ServerThread extends Thread
 				//... tell the world ...
 				System.out.println( "Sending "+message );
 				//... and have the server send it to all clients
-				sendMessage(toUser, message);
+				sendMessage(toUser, username, message);
 			}
 			
 		} catch( EOFException ie ) {
@@ -80,7 +80,7 @@ public class ServerThread extends Thread
 		this.destroy();			
 	}
 	
-	void sendMessage(String toUser, String message) {
+	void sendMessage(String toUser, String fromUser, String message) {
 		// We synchronize on this because another thread might be
 		// calling removeConnection() and this would screw us up
 		// as we tried to walk through the list
@@ -106,7 +106,8 @@ public class ServerThread extends Thread
 			
 				// ... and send the message
 				try {
-					dout.writeUTF( message );
+					dout.writeUTF(fromUser);
+					dout.writeUTF(message);
 				} catch( IOException ie ) { System.out.println( ie ); }
 	}
 

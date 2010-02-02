@@ -9,6 +9,9 @@ import javax.swing.JOptionPane;
 
 public class Client extends Panel implements Runnable
 {
+	//Global username variabl
+	String username;
+	
 	// Need to include authentication 
 	// Need to re-do GUI 
 	
@@ -45,7 +48,7 @@ public class Client extends Panel implements Runnable
 			// Initiate the connection
 			socket = new Socket( host, port );
 			
-			String username = JOptionPane.showInputDialog("Please enter your username"); // Get username from the user
+			username = JOptionPane.showInputDialog("Please enter your username"); // Get username from the user
 			String password = JOptionPane.showInputDialog("Please enter your password"); // Get Password from the user
 						
 			// We got a connection! Tell the world
@@ -70,7 +73,7 @@ public class Client extends Panel implements Runnable
 			dout.writeUTF( message );
 			
 			// Append own message to IM window
-			ta.append(message + "\n");
+			ta.append(username + ": " + message + "\n");
 			
 			// Clear out text input field
 			tf.setText( "" );
@@ -85,10 +88,12 @@ public class Client extends Panel implements Runnable
 			
 			// Receive messages one-by-one, forever
 			while (true) {
-				// Get the next message
+				// Get the from user 
+				String fromUser = din.readUTF();
+				// Get the message
 				String message = din.readUTF();
 				// Print it to our text window
-				ta.append( message+"\n" );
+				ta.append( fromUser + ": " + message+"\n" );
 			}
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
