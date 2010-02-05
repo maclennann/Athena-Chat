@@ -22,9 +22,9 @@ import java.net.*;
 import javax.swing.JOptionPane;
 import javax.swing.*;
 
-public class Client extends JFrame 
+public class Client extends Panel implements Runnable
 {
-	//Global username variabl
+	//Global username variable
 	String username;
 	
 	//TODO: GUI components and window for username/password
@@ -79,7 +79,7 @@ public class Client extends JFrame
 			
 			// Start a background thread for receiving messages
 			// See the 'run()' method
-			new Thread( this ).start();
+			new Thread(this).start();
 
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}

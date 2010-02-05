@@ -31,6 +31,9 @@ public class ServerThread extends Thread
 	// The Server that created this thread
 	private static Server server;
 
+	//Define Global Variable Username
+	String username;
+	
 	//Our current socket
 	public Socket socket;
 	
@@ -50,7 +53,7 @@ public class ServerThread extends Thread
 			DataInputStream din = new DataInputStream( socket.getInputStream() );
 			
 			//Getting the Username and Password over the stream for authentication
-			String username = din.readUTF(); // Get Username
+			username = din.readUTF(); // Get Username
 			String password = din.readUTF(); // Get Password
 			
 			//Debug statements
@@ -85,7 +88,7 @@ public class ServerThread extends Thread
 
 				//Route the message to user toUser
 				sendMessage(toUser, username, message);
-				server.removeConnection( socket, username );
+//				//server.removeConnection( socket, username );
 			}
 			
 		} catch( EOFException ie ) {
@@ -94,7 +97,7 @@ public class ServerThread extends Thread
 			ie.printStackTrace();
 		} finally {
 			//Socket is closed, remove it from the list
-			//server.removeConnection( socket, username );
+			server.removeConnection( socket, username );
 		}
 	}
 	
@@ -118,7 +121,7 @@ public class ServerThread extends Thread
 			System.out.print("Found user.. Continuing...");
 			foundSocket = (Socket) server.userToSocket.get(toUser);
 			System.out.print("Found Socket: " + foundSocket);
-		}
+		} else { sendMessage(fromUser, "UnavailableUser", toUser); return; } 
 			
 		//Find the outputstream associated with toUser's socket
 		//We send data through this outputstream to send the message
