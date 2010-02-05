@@ -59,7 +59,7 @@ public class Server
 	
 		//database username and password. shhhhh.
 		String un = "db72292_athena"; //Database Username
-		String pw = "12345678"; //Database Password
+		String pw = "xZN?uhwx"; //Database Password
 		
 		//Load the JDBC driver
 		try{

@@ -26,12 +26,9 @@ import com.sun.org.apache.xpath.internal.FoundIndex;
 public class ServerThread extends Thread
 {
 	//Define the MySQL connection
-	//TODO: Does this need to be static?
-	private static Connection con = null;
+	// private Connection con = null;
 	
 	// The Server that created this thread
-	//TODO: There is only one instance of server (and is already mostly-static).
-	//	We can just remove this object and talk to Server directly
 	private static Server server;
 
 	//Our current socket
@@ -64,8 +61,8 @@ public class ServerThread extends Thread
 			//Connect to the database 
 			//TODO: We don't actually need to do this anymore.
 			//	We have a hashtable
-			Connection con = server.dbConnect();
-			System.out.print("Connection established..");
+			// Connection con = server.dbConnect();
+			// System.out.print("Connection established..");
 			
 			//Authenticate the user. Output outcome
 			System.out.println(login(username, password));
@@ -141,7 +138,6 @@ public class ServerThread extends Thread
 		//Debug messages.
 		//TODO: Come up with better debug messages
 		System.out.print("We are in login.");
-		System.out.print("HAIII");
 
 		String hashedPassword = server.authentication.get(clientName).toString(); //Grabbing the HashedPassword from the Database
 		//System.out.println(server.authentication.get(clientName)); //Grabbing the HashedPassword from the Database
