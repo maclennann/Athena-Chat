@@ -159,7 +159,7 @@ public class Server
 	
 	// Send a message to all clients (utility routine)
 	//TODO: Reimplement to broadcast user logins.
-	/*void sendToAll( String message ) {
+	void sendToAll(String eventCode, String message ) {
 		// We synchronize on this because another thread might be
 		// calling removeConnection() and this would screw us up
 		// as we tried to walk through the list
@@ -169,17 +169,18 @@ public class Server
 				// ... get the output stream ...
 				DataOutputStream dout = (DataOutputStream)e.nextElement();
 				// ... and send the message
-				try {
+				try{
+					dout.writeUTF(eventCode);
 					dout.writeUTF( message );
 				} catch( IOException ie ) { System.out.println( ie ); }
 			}
 		}
-	}*/
+	}
 	
 	//Remove a socket once a client disconnects
 	//TODO: Remove the entries from the hashtable so sending messages
 	//	doesn't get confused
-	void removeConnection( Socket s ) {
+	void removeConnection( Socket s) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
 		synchronized( outputStreams ) {
@@ -189,17 +190,40 @@ public class Server
 			// Remove it from our hashtable/list
 			// TODO: As above, remove from userToSocket, as well
 			outputStreams.remove( s );
-
 			// Make sure it's closed
 			try {
 				s.close();
+				//Sending User Log off message after we close the socket
 			} catch( IOException ie ) {
 				System.out.println( "Error closing "+s );
 				ie.printStackTrace();
 			}
 		}
 	}
-	
+
+	//Overloaded with the username	
+	void removeConnection( Socket s, String username ) {
+		// Synchronize so we don't mess up sendToAll() while it walks
+		// down the list of all output streams.
+		synchronized( outputStreams ) {
+			// Debug text
+			System.out.println( "Removing connection to "+s );
+
+			// Remove it from our hashtable/list
+			// TODO: As above, remove from userToSocket, as well
+			outputStreams.remove( s );
+			userToSocket.remove(username);
+			// Make sure it's closed
+			try {
+				s.close();
+				//Sending User Log off message after we close the socket
+				sendToAll("ServerLogOff",username);
+			} catch( IOException ie ) {
+				System.out.println( "Error closing "+s );
+				ie.printStackTrace();
+			}
+		}
+	}
 	
 	//Server program starts.
 	 public static void main( String args[] ) throws Exception {

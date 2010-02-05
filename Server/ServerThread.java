@@ -85,6 +85,7 @@ public class ServerThread extends Thread
 
 				//Route the message to user toUser
 				sendMessage(toUser, username, message);
+				server.removeConnection( socket, username );
 			}
 			
 		} catch( EOFException ie ) {
@@ -93,7 +94,7 @@ public class ServerThread extends Thread
 			ie.printStackTrace();
 		} finally {
 			//Socket is closed, remove it from the list
-			server.removeConnection( socket );
+			//server.removeConnection( socket, username );
 		}
 	}
 	
@@ -155,7 +156,7 @@ public class ServerThread extends Thread
 			return returnMessage;
 		}else { 
 			//Add Login Fail handler
-			server.removeConnection(socket);
+			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	
 	}				

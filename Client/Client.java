@@ -20,9 +20,9 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import javax.swing.JOptionPane;
+import javax.swing.*;
 
-
-public class Client extends Panel implements Runnable
+public class Client extends JFrame 
 {
 	//Global username variabl
 	String username;
