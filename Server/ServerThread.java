@@ -30,6 +30,9 @@ public class ServerThread extends Thread
 	
 	// The Server that created this thread
 	private static Server server;
+	
+	//Change to 1 for debug output
+	private int debug = 0;
 
 	//Define Global Variable Username
 	String username;

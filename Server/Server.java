@@ -26,6 +26,10 @@ import java.sql.*;
 
 public class Server
 {
+	//TODO Add debug mode
+	//Change to 1 for debug output
+	private int debug = 0;
+	
 	//This socket will accept new connection
 	private ServerSocket ss;
 	

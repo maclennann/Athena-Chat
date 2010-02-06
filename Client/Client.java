@@ -26,6 +26,8 @@ import javax.xml.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -114,29 +116,40 @@ public class Client extends Panel implements Runnable
 	}
 	
 	//This method will be used to add to the buddy list
-	private void buddyList() throws Exception {
+	private void buddyList(String usernameToAdd) throws Exception {
+
+		//Using the DocumentBuilderFactory class, create a DocumentBuilder (docFactory)
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		//Use the DocumentBuilderFactory to instanciate a DocumentBuilder (docBuilder)
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		org.w3c.dom.Document buddyListDoc = docBuilder.parse("./buddylist.xml");
+		//use the DocumentBuilder object to create a Document (buddyListDoc)
+		org.w3c.dom.Document buddyListDoc = docBuilder.newDocument();		
 		
+		//Create the Source input for the buddyListDoc
+		Source source = new DOMSource(buddyListDoc);
+		
+		//Use the File class to create the new Buddy list file (buddylist.xml) - NOTE: File name will probably change
+		//Perhaps it should be encrypted?
+		//TODO Encrypt buddylist.xml
+		File buddyListfile = new File("./buddylist.xml");
+		
+		//Create StreamResult object for the buddyListFile
+		Result result = new StreamResult(buddyListfile);
+		
+		//Here is where we create the rootElement
+		Element rootElement = buddyListDoc.createElement("buddylist");
+	        buddyListDoc.appendChild(rootElement);
+	        
 		//Add an attribute to the buddylist node
-		Node buddyListNode = buddyListDoc.createElement("username");
-		buddyListNode.setTextContent("xanasasis13");
+	    Element buddyName = buddyListDoc.createElement("username");
+	    buddyName.appendChild(buddyListDoc.createTextNode(usernameToAdd));
+	    rootElement.appendChild(buddyName);
 		
-		//Write the XML to the file!
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		//Write the DOM document to the file
+		Transformer xformer = TransformerFactory.newInstance().newTransformer();
+		xformer.transform(source, result);
+}
 		
-		//Initialize StreamResult with File object to save to file
-		StreamResult result = new StreamResult(new StringWriter());
-		DOMSource source = new DOMSource(buddyListDoc);
-		transformer.transform(source, result);
-		
-		//Output to file
-		String xmlString = result.getWriter().toString();
-		System.out.println(xmlString);
-		
-	}
 
 
 	// Background thread runs this: show messages from other window
@@ -152,6 +165,11 @@ public class Client extends Panel implements Runnable
 			if (answer.equals("yes")) {
 				String usernameToAdd = JOptionPane.showInputDialog("Enter the username");
 				buddyList(usernameToAdd);
+			} else if (answer.equals("no")) { 
+				JOptionPane.showMessageDialog(null, "Ok continuing..");
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Wrong answer - try again.");
 			}
 			
 			
@@ -165,6 +183,8 @@ public class Client extends Panel implements Runnable
 				ta.append( fromUser + ": " + message+"\n" );
 			}
 
-		} catch( IOException ie ) { System.out.println( ie ); }
+		} catch( IOException ie ) { System.out.println( ie ); } 
+		catch (Exception e) { System.out.println(e); }
+		
 	}
 }
