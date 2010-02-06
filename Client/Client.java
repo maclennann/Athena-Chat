@@ -19,8 +19,20 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import javax.swing.JOptionPane;
 import javax.swing.*;
+
+//Making the XML buddy list file
+import javax.xml.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.*;
+import com.sun.xml.internal.txw2.Document;
 
 public class Client extends Panel implements Runnable
 {
@@ -100,6 +112,32 @@ public class Client extends Panel implements Runnable
 		//Catch the IOException
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
+	
+	//This method will be used to add to the buddy list
+	private void buddyList() throws Exception {
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		org.w3c.dom.Document buddyListDoc = docBuilder.parse("./buddylist.xml");
+		
+		//Add an attribute to the buddylist node
+		Node buddyListNode = buddyListDoc.createElement("username");
+		buddyListNode.setTextContent("xanasasis13");
+		
+		//Write the XML to the file!
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		
+		//Initialize StreamResult with File object to save to file
+		StreamResult result = new StreamResult(new StringWriter());
+		DOMSource source = new DOMSource(buddyListDoc);
+		transformer.transform(source, result);
+		
+		//Output to file
+		String xmlString = result.getWriter().toString();
+		System.out.println(xmlString);
+		
+	}
+
 
 	// Background thread runs this: show messages from other window
 	public void run() {
@@ -109,7 +147,15 @@ public class Client extends Panel implements Runnable
 			String toUser = JOptionPane.showInputDialog("Please input the user you want to talk to!");			
 			dout.writeUTF(toUser);
 			
-			//While the thread is running and the socket is open
+			//Add user to your buddy list?
+			String answer = JOptionPane.showInputDialog("Do you want to add a user to your buddy list?");
+			if (answer.equals("yes")) {
+				String usernameToAdd = JOptionPane.showInputDialog("Enter the username");
+				buddyList(usernameToAdd);
+			}
+			
+			
+			
 			while (true) {
 				// Who is the message from? 
 				String fromUser = din.readUTF();
@@ -118,6 +164,7 @@ public class Client extends Panel implements Runnable
 				// Print it to our text window
 				ta.append( fromUser + ": " + message+"\n" );
 			}
+
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 }
