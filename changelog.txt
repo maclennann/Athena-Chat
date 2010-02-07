@@ -1,5 +1,14 @@
 ChangeLog: 
-^Must be updated every night^
+
+2/6/2010:
+	##Added XML-generating code to be implemented for buddylist
+	##Added JComboBox for choosing which user to send to.
+		@@ List is hard coded right now, work off of buddylist XML
+		   eventually switch to real buddylist
+	##Made a routeMessage() method in ServerThread for better modularity
+	##Numerous small changes to all files
+	!!BUG: One time, the user/socket was not removed correctly.
+		@@ Caused lots of EOFExceptions on server.
 
 2/2/2010:
 	##Weekly code review (Norm)

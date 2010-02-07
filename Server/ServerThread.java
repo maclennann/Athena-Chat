@@ -76,44 +76,35 @@ public class ServerThread extends Thread
 			//Maps username to socket after user logs in
 			server.mapUserSocket(username, socket);	
 			
-			//Find out who the user wants to talk do
-			//TODO: Do this in a better way, obviously
-			String toUser; // = din.readUTF();
-			
 			//Route around messages coming in from the client while they are connected
-			//TODO: Special message to end connection/destroy socket?
+			//TODO: Special message to end connection/destroy socket? Maybe?
 			while (true) {
-				//Who does the user want to talk to?
-				toUser = din.readUTF();
-				
-				//Get the client's message from the inputstream
-				String message = din.readUTF();
-
-				//Debug statement
-				System.out.println( "Sending "+message );
-
-				//Route the message to user toUser
-				sendMessage(toUser, username, message);
-//				//server.removeConnection( socket, username );
+				//Take in messages from this thread's client and route them to another client
+				routeMessage(din);
 			}
 			
-		} catch( EOFException ie ) {
-			
-		} catch( IOException ie ) {
-			ie.printStackTrace();
-		} finally {
+		} catch( EOFException ie ) {}
+		catch( IOException ie ) {ie.printStackTrace();} 
+		finally {
 			//Socket is closed, remove it from the list
 			server.removeConnection( socket, username );
 		}
 	}
 	
-	//Deprecated
-	//TODO: We don't need this at all
-	public void emo () { 
-		this.destroy();			
+	//Takes in a recipient and message from this thread's user
+	//and routes the message to the recipient.
+	//TODO: Can this be merged into sendMessage?
+	public void routeMessage(DataInputStream din){
+		try {
+			String toUser=din.readUTF();
+			String message=din.readUTF();
+			sendMessage(toUser, username, message);
+			
+		} catch (IOException e) {e.printStackTrace();}
 	}
 	
-	//Routes message message from user fromUser (this thread/socket) to user toUser (another socket)
+	//Sends message message from user fromUser (this thread/socket) to user toUser (another socket)
+	//TODO: Separate findOuputSteam from this method?
 	void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
 		DataOutputStream dout = null;
@@ -123,6 +114,7 @@ public class ServerThread extends Thread
 
 		//Look up the socket associated with the with whom we want to talk
 		//We will use this to find which outputstream to send out
+		//If we cannot find the user or socket, send back an error
 		if ((server.userToSocket.containsKey(toUser))) { 
 			System.out.print("Found user.. Continuing...");
 			foundSocket = (Socket) server.userToSocket.get(toUser);
@@ -131,9 +123,10 @@ public class ServerThread extends Thread
 			
 		//Find the outputstream associated with toUser's socket
 		//We send data through this outputstream to send the message
+		//If we cannot find the outputstream, send back an error
 		if (server.outputStreams.containsKey(foundSocket)) { 
 			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
-		}
+		} else { sendMessage(fromUser, "MissingSocket", toUser); return; }
 			
 		//Send the message, and the user it is from
 		try {

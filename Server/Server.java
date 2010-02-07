@@ -59,13 +59,15 @@ public class Server
 	public static Connection dbConnect () { 
 
 		//Location of the database
+		//TODO: DB Server on LAN with auth server (maybe same computer) only accessable from auth server
+		//		of course, we need a real auth server first.
 		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
 	
 		//database username and password. shhhhh.
 		String un = "db72292_athena"; //Database Username
 		String pw = "xZN?uhwx"; //Database Password
 		
-		//Load the JDBC driver
+		//Load the JDBC driver. Make sure the mysql jar is in your classpath
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 		}catch(ClassNotFoundException ex){}
@@ -154,25 +156,19 @@ public class Server
 	}
 	
 	// Get an enumeration of all the OutputStreams.
-	//TODO: This isn't really usefully without a sendToAll.
-	//      sendToAll should be re-implemented for broadcast messages
-	//	(for example, user sign-ons)
 	Enumeration getOutputStreams() {
 		return outputStreams.elements();
 	}
 	
 	// Send a message to all clients (utility routine)
-	//TODO: Reimplement to broadcast user logins.
+	//TODO: Reimplement to broadcast user logins/offs and other system-wide messages
 	void sendToAll(String eventCode, String message ) {
-		// We synchronize on this because another thread might be
-		// calling removeConnection() and this would screw us up
-		// as we tried to walk through the list
+		//make sure the outputStreams hashtable is up-to-date
 		synchronized( outputStreams ) {
-			// For each client ...
+			
+			//Get the outputStream for each socket and send message
 			for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
-				// ... get the output stream ...
 				DataOutputStream dout = (DataOutputStream)e.nextElement();
-				// ... and send the message
 				try{
 					dout.writeUTF(eventCode);
 					dout.writeUTF( message );
@@ -181,9 +177,7 @@ public class Server
 		}
 	}
 	
-	//Remove a socket once a client disconnects
-	//TODO: Remove the entries from the hashtable so sending messages
-	//	doesn't get confused
+	//Just remove a socket (i.e. the user has failed to login)
 	void removeConnection( Socket s) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
@@ -191,8 +185,7 @@ public class Server
 			// Debug text
 			System.out.println( "Removing connection to "+s );
 
-			// Remove it from our hashtable/list
-			// TODO: As above, remove from userToSocket, as well
+			// Remove socket from our hashtable/list
 			outputStreams.remove( s );
 			// Make sure it's closed
 			try {
@@ -205,21 +198,22 @@ public class Server
 		}
 	}
 
-	//Overloaded with the username	
+	//Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
 	void removeConnection( Socket s, String username ) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
 		synchronized( outputStreams ) {
 			// Debug text
-			System.out.println( "Removing connection to "+s );
+			System.out.println( "Removing connection to "+s+"\nUser:"+username );
 
-			// Remove it from our hashtable/list
-			// TODO: As above, remove from userToSocket, as well
+			// Remove thread's entries from hashtables
 			outputStreams.remove( s );
 			userToSocket.remove(username);
-			// Make sure it's closed
+			
+			// Make sure the socket is closed
 			try {
 				s.close();
+				
 				//Sending User Log off message after we close the socket
 				sendToAll("ServerLogOff",username);
 			} catch( IOException ie ) {
@@ -234,8 +228,7 @@ public class Server
 		/*Upon Starting Server
 		*1. UpdateHashTable
 		*2. Listen for connections 
-		*3. The Universe collapses in on itself
-		*/
+		*3. The Universe collapses in on itself*/
 		
 		//Read all usernames and hashed passwords into hashtable from database
 		updateHashTable();

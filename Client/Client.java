@@ -43,6 +43,8 @@ public class Client extends Panel implements Runnable
 	String toUser;
 	
 	//TODO: GUI components and window for username/password
+	
+	//TODO: Make otherUsers array read from buddylist.xml
 	String[] otherUsers = {"Norm", "Steve", "Greg"};
 	
 	// Components for the visual display of the chat windows
@@ -104,20 +106,19 @@ public class Client extends Panel implements Runnable
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
 	private void processMessage( String message ) {
-		//Try to send the message
 		try {
+			//Get user to send message to from ComboBox
 			toUser = userBox.getSelectedItem().toString();
-			dout.writeUTF(toUser);
 			
-			// Send it to the server
-			dout.writeUTF( message );
+			//Send recipient's name and message to server
+			dout.writeUTF(toUser);
+			dout.writeUTF(message);
 			
 			// Append own message to IM window
 			ta.append(username + ": " + message + "\n");
 			
 			// Clear out text input field
 			tf.setText( "" );
-		//Catch the IOException
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
@@ -136,11 +137,14 @@ public class Client extends Panel implements Runnable
 		
 		//Use the File class to create the new Buddy list file (buddylist.xml) - NOTE: File name will probably change
 		//Perhaps it should be encrypted?
-		//TODO Encrypt buddylist.xml
+		//TODO: Encrypt buddylist.xml with user's public key?
 		File buddyListfile = new File("./buddylist.xml");
 		
 		//Create StreamResult object for the buddyListFile
 		Result result = new StreamResult(buddyListfile);
+		
+		//TODO: What if the root (and maybe some buddies) already exist.
+		//		right now it completely overwrites.
 		
 		//Here is where we create the rootElement
 		Element rootElement = buddyListDoc.createElement("buddylist");
@@ -154,19 +158,21 @@ public class Client extends Panel implements Runnable
 		//Write the DOM document to the file
 		Transformer xformer = TransformerFactory.newInstance().newTransformer();
 		xformer.transform(source, result);
-}
+	}
 		
-
+	//When the client receives a message.
 	public void recvMesg(DataInputStream din){
 		try{
 			// Who is the message from? 
 			String fromUser = din.readUTF();
 			// What is the message?
 			String message = din.readUTF();
+			
 			// Print it to our text window
 			ta.append( fromUser + ": " + message+"\n" );
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
+	
 	// Background thread runs this: show messages from other window
 	public void run() {
 		try {
@@ -176,6 +182,7 @@ public class Client extends Panel implements Runnable
 			//dout.writeUTF(toUser);
 			
 			//Add user to your buddy list?
+			//TODO: Obviously, break this out into a method that can be called from a GUI action.
 			String answer = JOptionPane.showInputDialog("Do you want to add a user to your buddy list?");
 			if (answer.equals("yes")) {
 				String usernameToAdd = JOptionPane.showInputDialog("Enter the username");
