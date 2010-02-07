@@ -40,13 +40,15 @@ public class Client extends Panel implements Runnable
 {
 	//Global username variable
 	String username;
+	String toUser;
 	
 	//TODO: GUI components and window for username/password
+	String[] otherUsers = {"Norm", "Steve", "Greg"};
 	
 	// Components for the visual display of the chat windows
 	private TextField tf = new TextField();
 	private TextArea ta = new TextArea();
-	
+	private JComboBox userBox = new JComboBox(otherUsers);
 	
 	// The socket connecting us to the server
 	public Socket socket;
@@ -63,6 +65,7 @@ public class Client extends Panel implements Runnable
 		setLayout( new BorderLayout() );
 		add( "North", tf );
 		add( "Center", ta );
+		add( "South", userBox);
 		
 		//ActionListener on the 'tf' text field will send messages the user wants to send.
 		tf.addActionListener( new ActionListener() {
@@ -103,6 +106,9 @@ public class Client extends Panel implements Runnable
 	private void processMessage( String message ) {
 		//Try to send the message
 		try {
+			toUser = userBox.getSelectedItem().toString();
+			dout.writeUTF(toUser);
+			
 			// Send it to the server
 			dout.writeUTF( message );
 			
@@ -151,14 +157,23 @@ public class Client extends Panel implements Runnable
 }
 		
 
-
+	public void recvMesg(DataInputStream din){
+		try{
+			// Who is the message from? 
+			String fromUser = din.readUTF();
+			// What is the message?
+			String message = din.readUTF();
+			// Print it to our text window
+			ta.append( fromUser + ": " + message+"\n" );
+		} catch( IOException ie ) { System.out.println( ie ); }
+	}
 	// Background thread runs this: show messages from other window
 	public void run() {
 		try {
 			//User chooses the remote client they want to talk to
 			//TODO: Do this in a less-stupid way. Buddylist with all active sockets
-			String toUser = JOptionPane.showInputDialog("Please input the user you want to talk to!");			
-			dout.writeUTF(toUser);
+			//String toUser = JOptionPane.showInputDialog("Please input the user you want to talk to!");			
+			//dout.writeUTF(toUser);
 			
 			//Add user to your buddy list?
 			String answer = JOptionPane.showInputDialog("Do you want to add a user to your buddy list?");
@@ -172,15 +187,9 @@ public class Client extends Panel implements Runnable
 				JOptionPane.showMessageDialog(null, "Wrong answer - try again.");
 			}
 			
-			
-			
+			//Receive messages until something breaks or we disconnect
 			while (true) {
-				// Who is the message from? 
-				String fromUser = din.readUTF();
-				// What is the message?
-				String message = din.readUTF();
-				// Print it to our text window
-				ta.append( fromUser + ": " + message+"\n" );
+				recvMesg(din);
 			}
 
 		} catch( IOException ie ) { System.out.println( ie ); } 

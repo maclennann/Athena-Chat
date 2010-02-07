@@ -78,11 +78,14 @@ public class ServerThread extends Thread
 			
 			//Find out who the user wants to talk do
 			//TODO: Do this in a better way, obviously
-			String toUser = din.readUTF();
+			String toUser; // = din.readUTF();
 			
 			//Route around messages coming in from the client while they are connected
 			//TODO: Special message to end connection/destroy socket?
 			while (true) {
+				//Who does the user want to talk to?
+				toUser = din.readUTF();
+				
 				//Get the client's message from the inputstream
 				String message = din.readUTF();
 
