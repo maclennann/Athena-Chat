@@ -109,10 +109,13 @@ public class ServerThread extends Thread
 			String toUser=din.readUTF();
 			String message=din.readUTF();
 			if (toUser.equals("Aegis")) { 
+				System.out.println("AEGIS WING IS THE BEST GAME EVER");
 				sendToAegis(Integer.parseInt(message));
 				return;
+			}else { 
+				System.out.println(":( norm is mean");
+				sendMessage(toUser, username, message);
 			}
-			sendMessage(toUser, username, message);
 			
 		} catch (IOException e) {e.printStackTrace();}
 	}
