@@ -1,5 +1,14 @@
 ChangeLog: 
-
+2/9/2010:
+	##Weekly code review(Greg/Norm)
+	##
+	
+2/08/2010:
+	##Added BuddyList method
+		@@Uses XML Parsers to input usernames into buddylist.xml
+	##Added createUsername method 
+		@@Not completed yet
+	
 2/6/2010:
 	##Added XML-generating code to be implemented for buddylist
 	##Added JComboBox for choosing which user to send to.
