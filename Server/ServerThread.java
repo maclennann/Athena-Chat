@@ -133,9 +133,13 @@ public class ServerThread extends Thread
 			
 			//Here will be the wxWidget code for the new menu (assumingly)
 			//But for now just some JOption
-			din.readUTF();
+			System.out.println(din.readUTF());
+			System.out.println(din.readUTF());
+			System.out.println(din.readUTF());
+			System.out.println(din.readUTF());
+			System.out.println(din.readUTF());
 			String newUser = din.readUTF();
-			din.readUTF();
+			//din.readUTF();
 			String newPassword = din.readUTF();
 			
 			
