@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.sql.*;
+import javax.swing.JOptionPane;
 
 public class Server
 {
@@ -50,7 +51,7 @@ public class Server
 	//used to find which stream to use to send data to clients
 	public Hashtable userToSocket = new Hashtable();
 	
-	// Constructor. Starts listening on the defined port.
+	//Constructor. Starts listening on the defined port.
 	public Server( int port ) throws IOException {
 		listen( port );
 	}
@@ -63,27 +64,28 @@ public class Server
 		//		of course, we need a real auth server first.
 		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
 	
-		//database username and password. shhhhh.
+		//Database username and password. shhhhh.
 		String un = "db72292_athena"; //Database Username
 		String pw = "xZN?uhwx"; //Database Password
 		
-		//Load the JDBC driver. Make sure the mysql jar is in your classpath
+		//Load the JDBC driver. Make sure the mysql jar is in your classpath!
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 		}catch(ClassNotFoundException ex){}
 	
 		//Connect to the database using the driver
 		try{ 		
-		con = DriverManager.getConnection(url, un, pw);
+			con = DriverManager.getConnection(url, un, pw);
 
-		//Return the established connection
-		return con;
+			//Return the established connection
+			return con;
 
 		}catch (SQLException e) {
 			e.printStackTrace();
 			return null;
-			}
+		}
 	}
+	
 	
 	//Writes all usernames and password hashes from the database into a hash table
 	private static void updateHashTable () { 
@@ -96,7 +98,7 @@ public class Server
 			ResultSet rs; 
 			
 			//Return all usernames and hashes passwords
-			stmt = getHashed.createStatement(); //
+			stmt = getHashed.createStatement(); 
 			rs = stmt.executeQuery("SELECT * from Users"); //Here is where the query goes that we would like to run.
 		
 			//Iterate through the results and write them to a hashtables
@@ -108,14 +110,8 @@ public class Server
 				authentication.put(username, hashedPassword);
 			}
 		
-			/*Debug code to print out all of the usernames in the hash table
-			Enumeration name  = authentication.elements();
-			for (Enumeration OMFG = name; OMFG.hasMoreElements();) { 
-	    			 System.out.println(OMFG.nextElement());
-			}*/
-
 		}catch(SQLException ex) {
-		ex.printStackTrace();
+			ex.printStackTrace();
 		}
 		
 	}
@@ -126,7 +122,7 @@ public class Server
 		userToSocket.put(username, userSocket);
 	}
 	
-	//Server listens for client connections, and passes them off to its own thread
+	//Server listens for client connections, and passes them off to their own thread
 	private void listen( int port ) throws IOException {
 		// Create the ServerSocket
 		ss = new ServerSocket( port );
@@ -190,7 +186,6 @@ public class Server
 			// Make sure it's closed
 			try {
 				s.close();
-				//Sending User Log off message after we close the socket
 			} catch( IOException ie ) {
 				System.out.println( "Error closing "+s );
 				ie.printStackTrace();
@@ -233,12 +228,8 @@ public class Server
 		//Read all usernames and hashed passwords into hashtable from database
 		updateHashTable();
 		
-		// Get the port # from the command line
-		// TODO: This doesn't actually do anything
-		int port = listenPort;
-		
 		 // Create a Server object, which will automatically begin accepting connections.
-		new Server( port );
+		new Server( listenPort );
 
 	}
 }

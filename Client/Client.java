@@ -19,9 +19,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.*;
 
-//Making the XML buddy list file
+//XML Imports
 import javax.xml.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,19 +36,20 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.*;
 import com.sun.xml.internal.txw2.Document;
+import org.w3c.dom.*;
+
 
 public class Client extends Panel implements Runnable
 {
 	//Global username variable
-	String username;
-	String toUser;
+	private String username;
+	private String toUser;
 	
 	//TODO: GUI components and window for username/password
 	
 	//TODO: Make otherUsers array read from buddylist.xml
+	//String array of buddies for choosing user to send message to
 	String[] otherUsers = {"Norm", "Steve", "Greg"};
 	
 	// Components for the visual display of the chat windows
@@ -102,6 +107,56 @@ public class Client extends Panel implements Runnable
 
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
+	
+	//TODO Make this work. Enable (Somehow) communication between the client and the server
+	public static boolean createUsername() { 
+		try { 
+			//Use dbConnect() to connect to the database
+			Connection createUser = dbConnect();
+			
+			//Create a statement and resultset for the query
+			Statement stmt;
+			Statement insertSTMT;
+			ResultSet rs; 
+			
+			//Here will be the wxWidget code for the new menu (assumingly)
+			//But for now just some JOption
+			String newUser = JOptionPane.showInputDialog("Please enter your username you wish to have.");
+			//Let's check to see if this username is already in the database			
+			
+			//Return true if the username is already registered
+			stmt = createUser.createStatement(); //
+			//Here is where the query goes that we would like to run.
+			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser); 
+		
+			//Test to see if there are any results
+			if (rs.next()) { 
+			JOptionPane.showMessageDialog(null, "Sorry, this username is already taken, please try again.");
+			return false;
+			}
+			else { 
+				//Grab the users new password
+				//TODO MAKE THIS A PASSWORD FIELD
+				String newPassword = JOptionPane.showInputDialog("Please enter your password you wish to have.");
+				
+				String insertString = "insert into Users values('" + newUser + "', '" + newPassword + "'";
+				insertSTMT = con.createStatement();
+				insertSTMT.executeUpdate(insertString);
+				
+				//Close Connections
+				stmt.close();
+				insertSTMT.close();
+				con.close();
+				
+				JOptionPane.showMessageDialog(null, "User created. Please log in!");
+				return true;
+			}
+		}catch (SQLException se) { 
+			System.out.print(se.toString());
+			return false;
+		}			
+	}
+	
 
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
@@ -144,16 +199,16 @@ public class Client extends Panel implements Runnable
 		Result result = new StreamResult(buddyListfile);
 		
 		//TODO: What if the root (and maybe some buddies) already exist.
-		//		right now it completely overwrites.
+		//Right now it completely overwrites.
 		
 		//Here is where we create the rootElement
 		Element rootElement = buddyListDoc.createElement("buddylist");
 	        buddyListDoc.appendChild(rootElement);
 	        
 		//Add an attribute to the buddylist node
-	    Element buddyName = buddyListDoc.createElement("username");
-	    buddyName.appendChild(buddyListDoc.createTextNode(usernameToAdd));
-	    rootElement.appendChild(buddyName);
+	    	Element buddyName = buddyListDoc.createElement("username");
+	    	buddyName.appendChild(buddyListDoc.createTextNode(usernameToAdd));
+	    	rootElement.appendChild(buddyName);
 		
 		//Write the DOM document to the file
 		Transformer xformer = TransformerFactory.newInstance().newTransformer();
@@ -170,16 +225,16 @@ public class Client extends Panel implements Runnable
 			
 			// Print it to our text window
 			ta.append( fromUser + ": " + message+"\n" );
-		} catch( IOException ie ) { System.out.println( ie ); }
+		}catch ( IOException ie ) { System.out.println( ie ); }
 	}
 	
 	// Background thread runs this: show messages from other window
 	public void run() {
 		try {
-			//User chooses the remote client they want to talk to
-			//TODO: Do this in a less-stupid way. Buddylist with all active sockets
-			//String toUser = JOptionPane.showInputDialog("Please input the user you want to talk to!");			
-			//dout.writeUTF(toUser);
+			//TODO: Talk to the server correctly
+			while (!(Server.createUsername())){
+				createUsername();
+			}
 			
 			//Add user to your buddy list?
 			//TODO: Obviously, break this out into a method that can be called from a GUI action.

@@ -25,6 +25,6 @@ public class ClientApplet extends Applet{
 		setLayout( new BorderLayout() );
 		
 		//Create a client. Auth server IP and port.
-		add( "Center", new Client( "192.168.1.4", 7777 ) );
+		add( "Center", new Client( "192.168.1.138", 7777 ) );
 	}
 }

@@ -21,21 +21,20 @@ import java.util.Enumeration;
 import java.io.*;
 import java.net.*;
 
+//TODO: Do we really need this? It does nothing ATM.
 import com.sun.org.apache.xpath.internal.FoundIndex;
 
 public class ServerThread extends Thread
 {
-	//Define the MySQL connection
-	// private Connection con = null;
+	//Change to 1 for debug output
+	private int debug = 0;
 	
 	// The Server that created this thread
 	private static Server server;
 	
-	//Change to 1 for debug output
-	private int debug = 0;
-
-	//Define Global Variable Username
-	String username;
+	//Define Global Variable Username / Password
+	private String username;
+	private String password;
 	
 	//Our current socket
 	public Socket socket;
@@ -57,21 +56,15 @@ public class ServerThread extends Thread
 			
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); // Get Username
-			String password = din.readUTF(); // Get Password
+			password = din.readUTF(); // Get Password
 			
 			//Debug statements
-			System.out.println("Username: " + username);
-			System.out.println("Password: " + password);
+			if (debug==1)System.out.println("Username: " + username);
+			if (debug==1)System.out.println("Password: " + password);
 			
-			
-			//Connect to the database 
-			//TODO: We don't actually need to do this anymore.
-			//	We have a hashtable
-			// Connection con = server.dbConnect();
-			// System.out.print("Connection established..");
-			
-			//Authenticate the user. Output outcome
-			System.out.println(login(username, password));
+			//Authenticate the user.
+			String loginOutcome = login(username, password);
+			if (debug==1)System.out.println(loginOutcome);
 			
 			//Maps username to socket after user logs in
 			server.mapUserSocket(username, socket);	
@@ -83,9 +76,10 @@ public class ServerThread extends Thread
 				routeMessage(din);
 			}
 			
-		} catch( EOFException ie ) {}
-		catch( IOException ie ) {ie.printStackTrace();} 
-		finally {
+		} catch ( EOFException ie ) {
+		} catch ( IOException ie ) {
+			ie.printStackTrace();
+		}finally {
 			//Socket is closed, remove it from the list
 			server.removeConnection( socket, username );
 		}
@@ -137,18 +131,15 @@ public class ServerThread extends Thread
 
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) { 
-
-		//Debug messages.
-		//TODO: Come up with better debug messages
-		System.out.print("We are in login.");
-
+	
 		String hashedPassword = server.authentication.get(clientName).toString(); //Grabbing the HashedPassword from the Database
 		//System.out.println(server.authentication.get(clientName)); //Grabbing the HashedPassword from the Database
 
 		//Debug messages.
 		//TODO: Come up with better debug messages
-		System.out.print("FHDHFSFHDSAAFS:" + hashedPassword);
-		System.out.print("Name:" + clientName);
+		if (debug==1)System.out.println("User logging in...");
+		if (debug==1)System.out.println("Hashed Password:" + hashedPassword);
+		if (debug==1)System.out.println("Username :" + clientName);
 				
 		//Verify the password hash provided from the user matches the one in the server's hashtable
 		if (clientPassword.equals(hashedPassword)) { 
@@ -157,7 +148,7 @@ public class ServerThread extends Thread
 			String returnMessage = "You're logged in!!!!";
 			return returnMessage;
 		}else { 
-			//Add Login Fail handler
+			//Login fail handler
 			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	
