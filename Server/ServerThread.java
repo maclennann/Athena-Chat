@@ -145,7 +145,8 @@ public class ServerThread extends Thread
 			//Here is where the query goes that we would like to run.
 			try { 
 				rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser);
-				System.out.println(rs);
+				System.out.println("newUser: " + newUser);
+				//System.out.println(rs);
 			} catch (SQLException ie) { 
 			}
 			
