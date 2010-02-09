@@ -134,13 +134,9 @@ public class ServerThread extends Thread
 			//Here will be the wxWidget code for the new menu (assumingly)
 			//But for now just some JOption
 			System.out.println(din.readUTF());
-			System.out.println(din.readUTF());
-			System.out.println(din.readUTF());
-			System.out.println(din.readUTF());
-			System.out.println(din.readUTF());
 			String newUser = din.readUTF();
-			//din.readUTF();
-			String newPassword = din.readUTF();
+			System.out.println(din.readUTF());
+			String newPassword = din.readUTF();			
 			
 			
 			//Let's check to see if this username is already in the database			
@@ -150,7 +146,6 @@ public class ServerThread extends Thread
 			try { 
 				rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser);
 				System.out.println("newUser: " + newUser);
-				//System.out.println(rs);
 			} catch (SQLException ie) { 
 			}
 			
