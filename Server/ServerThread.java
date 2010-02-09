@@ -129,7 +129,7 @@ public class ServerThread extends Thread
 			//Create a statement and resultset for the query
 			Statement stmt;
 			Statement insertSTMT;
-			ResultSet rs; 
+			ResultSet rs = null; 
 			
 			//Here will be the wxWidget code for the new menu (assumingly)
 			//But for now just some JOption
@@ -143,7 +143,12 @@ public class ServerThread extends Thread
 			//Return true if the username is already registered
 			stmt = con.createStatement();
 			//Here is where the query goes that we would like to run.
-			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser); 
+			try { 
+				rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser);
+				System.out.println(rs);
+			} catch (SQLException ie) { 
+			}
+			
 		
 			//Test to see if there are any results
 			if (rs.next()) { 
