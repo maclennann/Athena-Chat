@@ -21,6 +21,8 @@ import java.util.Enumeration;
 import java.io.*;
 import java.net.*;
 
+import javax.swing.JOptionPane;
+
 //TODO: Do we really need this? It does nothing ATM.
 import com.sun.org.apache.xpath.internal.FoundIndex;
 
@@ -28,6 +30,10 @@ public class ServerThread extends Thread
 {
 	//Change to 1 for debug output
 	private int debug = 0;
+	
+	//Create the DataInputStream on the current socket 
+	public DataInputStream din = null;
+	public DataOutputStream dout = null;
 	
 	// The Server that created this thread
 	private static Server server;
@@ -52,7 +58,7 @@ public class ServerThread extends Thread
 	public void run() {
 		try {
 			//Create a datainputstream on the current socket to accept data from the client
-			DataInputStream din = new DataInputStream( socket.getInputStream() );
+			din = new DataInputStream( socket.getInputStream() );
 			
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); // Get Username
@@ -85,6 +91,16 @@ public class ServerThread extends Thread
 		}
 	}
 	
+	//Method that handles client to server messages
+	public void sendToAegis(int eventCode) {
+		
+		switch(eventCode) { 
+		case 000: createUsername();
+		break;
+		default: return;
+		}
+	}
+	
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
 	//TODO: Can this be merged into sendMessage?
@@ -92,16 +108,71 @@ public class ServerThread extends Thread
 		try {
 			String toUser=din.readUTF();
 			String message=din.readUTF();
+			if (toUser.equals("Aegis")) { 
+				sendToAegis(Integer.parseInt(message));
+				return;
+			}
 			sendMessage(toUser, username, message);
 			
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	
+	//TODO Make this work. Enable (Somehow) communication between the client and the server
+	public boolean createUsername() { 
+		try { 
+			//Use dbConnect() to connect to the database
+			Connection con = server.dbConnect();
+			
+			//Create a statement and resultset for the query
+			Statement stmt;
+			Statement insertSTMT;
+			ResultSet rs; 
+			
+			//Here will be the wxWidget code for the new menu (assumingly)
+			//But for now just some JOption
+			String newUser = din.readUTF();
+			String newPassword = din.readUTF();
+			
+			
+			//Let's check to see if this username is already in the database			
+			//Return true if the username is already registered
+			stmt = con.createStatement();
+			//Here is where the query goes that we would like to run.
+			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser); 
+		
+			//Test to see if there are any results
+			if (rs.next()) { 
+				dout.writeUTF("Username has already been taken");
+				return false;
+			}
+			else { 
+				//Grab the users new password
+				String insertString = "insert into Users values('" + newUser + "', '" + newPassword + "'";
+				insertSTMT = con.createStatement();
+				insertSTMT.executeUpdate(insertString);
+				
+				//Close Connections
+				stmt.close();
+				insertSTMT.close();
+				con.close();
+				
+				dout.writeUTF("User created succesfully.");
+				return true;
+			}
+		}catch (SQLException se) { 
+			System.out.print(se.toString());
+			return false;
+		}catch (IOException ie) { 
+			System.out.println(ie.toString());
+			return false;
+		}
+	}
+
+	
 	//Sends message message from user fromUser (this thread/socket) to user toUser (another socket)
 	//TODO: Separate findOuputSteam from this method?
 	void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
-		DataOutputStream dout = null;
 			
 		//Debug statement: who is this going to?
 		System.out.print(toUser);

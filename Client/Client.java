@@ -50,7 +50,7 @@ public class Client extends Panel implements Runnable
 	
 	//TODO: Make otherUsers array read from buddylist.xml
 	//String array of buddies for choosing user to send message to
-	String[] otherUsers = {"Norm", "Steve", "Greg"};
+	String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};
 	
 	// Components for the visual display of the chat windows
 	private TextField tf = new TextField();
@@ -106,55 +106,6 @@ public class Client extends Panel implements Runnable
 			new Thread(this).start();
 
 		} catch( IOException ie ) { System.out.println( ie ); }
-	}
-	
-	//TODO Make this work. Enable (Somehow) communication between the client and the server
-	public static boolean createUsername() { 
-		try { 
-			//Use dbConnect() to connect to the database
-			Connection createUser = dbConnect();
-			
-			//Create a statement and resultset for the query
-			Statement stmt;
-			Statement insertSTMT;
-			ResultSet rs; 
-			
-			//Here will be the wxWidget code for the new menu (assumingly)
-			//But for now just some JOption
-			String newUser = JOptionPane.showInputDialog("Please enter your username you wish to have.");
-			//Let's check to see if this username is already in the database			
-			
-			//Return true if the username is already registered
-			stmt = createUser.createStatement(); //
-			//Here is where the query goes that we would like to run.
-			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser); 
-		
-			//Test to see if there are any results
-			if (rs.next()) { 
-			JOptionPane.showMessageDialog(null, "Sorry, this username is already taken, please try again.");
-			return false;
-			}
-			else { 
-				//Grab the users new password
-				//TODO MAKE THIS A PASSWORD FIELD
-				String newPassword = JOptionPane.showInputDialog("Please enter your password you wish to have.");
-				
-				String insertString = "insert into Users values('" + newUser + "', '" + newPassword + "'";
-				insertSTMT = con.createStatement();
-				insertSTMT.executeUpdate(insertString);
-				
-				//Close Connections
-				stmt.close();
-				insertSTMT.close();
-				con.close();
-				
-				JOptionPane.showMessageDialog(null, "User created. Please log in!");
-				return true;
-			}
-		}catch (SQLException se) { 
-			System.out.print(se.toString());
-			return false;
-		}			
 	}
 	
 
@@ -231,10 +182,6 @@ public class Client extends Panel implements Runnable
 	// Background thread runs this: show messages from other window
 	public void run() {
 		try {
-			//TODO: Talk to the server correctly
-			while (!(Server.createUsername())){
-				createUsername();
-			}
 			
 			//Add user to your buddy list?
 			//TODO: Obviously, break this out into a method that can be called from a GUI action.
