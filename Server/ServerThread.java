@@ -142,22 +142,21 @@ public class ServerThread extends Thread
 			//Let's check to see if this username is already in the database			
 			//Return true if the username is already registered
 			stmt = con.createStatement();
+			System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+newPassword);
+
 			//Here is where the query goes that we would like to run.
-			try { 
-				rs = stmt.executeQuery("SELECT * FROM Users WHERE username = " + newUser);
-				System.out.println("newUser: " + newUser);
-			} catch (SQLException ie) { 
-			}
+			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser+"'");
+			System.out.println("newUser: " + newUser);
 			
 		
 			//Test to see if there are any results
 			if (rs.next()) { 
-				dout.writeUTF("Username has already been taken");
+				sendMessage(username,"Aegis","Username ("+newUser+")  has already been taken");
 				return false;
 			}
 			else { 
 				//Grab the users new password
-				String insertString = "insert into Users values('" + newUser + "', '" + newPassword + "'";
+				String insertString = "insert into Users (username, password) values('" + newUser + "', '" + newPassword + "')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 				
@@ -166,7 +165,8 @@ public class ServerThread extends Thread
 				insertSTMT.close();
 				con.close();
 				
-				dout.writeUTF("User created succesfully.");
+				sendMessage(username, "Aegis", "User created succesfully.");
+				server.updateHashTable();
 				return true;
 			}
 		}catch (SQLException se) { 
