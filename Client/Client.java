@@ -152,6 +152,12 @@ public class Client
 			
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
+	
+	// Method to disconnect
+	public static void disconnect() { 
+		socket.close();
+		dout.close();
+	}
 
 	// Background thread runs this: show messages from other window
 	public static void main(String[] args) {
