@@ -130,6 +130,7 @@ public class Client
 	
 	// Background thread runs this: show messages from other window
 	public static void main(String[] args) {
+		
 		clientResource = new ClientApplet();
 		clientResource.setVisible(true);
 		
