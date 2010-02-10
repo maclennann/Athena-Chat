@@ -128,12 +128,8 @@ public class Client
 		}catch ( IOException ie ) { System.out.println( ie ); }
 	}
 	
-	// Background thread runs this: show messages from other window
-	public static void main(String[] args) {
-	
-		clientResource = new ClientApplet();
-	//	clientResource.setVisible(true);
-		
+	// Method to connect the user
+	public static void connect() { 
 		//Try to connect with and authenticate to the socket
 		try {
 			//Connect to auth server at defined port over socket
@@ -155,8 +151,15 @@ public class Client
 			dout.writeUTF(password); //Sending Password
 			
 		} catch( IOException ie ) { System.out.println( ie ); }
+	}
+
+	// Background thread runs this: show messages from other window
+	public static void main(String[] args) {
+	
+		clientResource = new ClientApplet();
+	//	clientResource.setVisible(true);
 		
-		try {
+				try {
 			
 			//Add user to your buddy list?
 			//TODO: Obviously, break this out into a method that can be called from a GUI action.
