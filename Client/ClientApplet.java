@@ -33,101 +33,106 @@ public class ClientApplet extends JFrame
 	// Components for the visual display of the chat windows
 	public TextField tf = new TextField();
 	public JTextArea mainConsole = new JTextArea();
-	public JComboBox userBox = new JComboBox(otherUsers);
-	public JButton sendMessage = new JButton("Send Message");
+	public JList userBox = new JList(otherUsers);
+	//public JButton sendMessage = new JButton("Send Message");
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
 	public JMenuItem connect, disconnect, exit;
 	public JPanel panel;
-	public JFrame frame;
+	public JFrame imContentFrame, buddyListFrame; //Is that it?
 
 	ClientApplet () { 
-		
-		//Initialize chat window
-		frame = new JFrame("Athena Chat Application");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800, 700);
-		frame.setResizable(true);
-	    
-	    //Build the first menu.
-        file = new JMenu("File");
-        file.setMnemonic(KeyEvent.VK_A);
-        file.getAccessibleContext().setAccessibleDescription(
-                "The only menu in this program that has menu items");
-    
-        //Initialize menu button
-        connect = new JMenuItem("Connect");
-        connect.setMnemonic(KeyEvent.VK_H);
-        file.add(connect);
-        
-        //Initialize menu button
-        disconnect = new JMenuItem("Disconnect");
-        disconnect.setMnemonic(KeyEvent.VK_H);
-        file.add(disconnect);     
-        
-        //Initialize menu button
-        exit = new JMenuItem("Exit");
-        exit.setMnemonic(KeyEvent.VK_H);
-        file.add(exit);
-        
-        menuBar.add(file);
-        
-        //Build the second menu.
-        edit = new JMenu("Edit");
-        edit.setMnemonic(KeyEvent.VK_A);
-        edit.getAccessibleContext().setAccessibleDescription(
-                "The only menu in this program that has menu items");
-        menuBar.add(edit);
-       
-      //Build the third menu.
-        encryption = new JMenu("Encryption");
-        encryption.setMnemonic(KeyEvent.VK_A);
-        encryption.getAccessibleContext().setAccessibleDescription(
-                "The only menu in this program that has menu items");
-        menuBar.add(encryption);
-
-       //Create universal text area 
-		mainConsole.setSize(750, 500);
-		mainConsole.setEditable(false);
 	
-		//Create text response area and listener function
-		tf.setSize(700, 50);
-		userBox.setSize(700, 30);
+		//Initialize chat window
+		//This is the main frame for the IMs
+		imContentFrame = new JFrame("Athena Chat Application");
+		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		imContentFrame.setSize(800, 700);
+		imContentFrame.setResizable(true);
+		    
+		//Build the first menu.
+	        file = new JMenu("File");
+	        file.setMnemonic(KeyEvent.VK_A);
+	        file.getAccessibleContext().setAccessibleDescription(
+	                "The only menu in this program that has menu items");
+	    
+	        //Initialize menu button
+	        connect = new JMenuItem("Connect");
+	        connect.setMnemonic(KeyEvent.VK_H);
+	        file.add(connect);
+	        
+	        //Initialize menu button
+	        disconnect = new JMenuItem("Disconnect");
+	        disconnect.setMnemonic(KeyEvent.VK_H);
+	        file.add(disconnect);     
+	        
+	        //Initialize menu button
+	        exit = new JMenuItem("Exit");
+	        exit.setMnemonic(KeyEvent.VK_H);
+        	file.add(exit);
+        
+	        menuBar.add(file);
+	        
+		//Build the second menu.
+	        edit = new JMenu("Edit");
+	        edit.setMnemonic(KeyEvent.VK_A);
+        	edit.getAccessibleContext().setAccessibleDescription(
+	                "The only menu in this program that has menu items");
+	        menuBar.add(edit);
+	       
+		//Build the third menu.
+	        encryption = new JMenu("Encryption");
+	        encryption.setMnemonic(KeyEvent.VK_A);
+	        encryption.getAccessibleContext().setAccessibleDescription(
+	                "The only menu in this program that has menu items");
+	        menuBar.add(encryption);
+	
+		//Create universal text area 
+	//	mainConsole.setSize(750, 500);
+		mainConsole.setEditable(false);
 		
+		//Create text response area and listener function
+	//	tf.setSize(700, 50);
+	//	userBox.setSize(700, 30);
+		tf.setBounds(10, 515, 580, 30);	
 		tf.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent event) {
 				Client.processMessage(tf.getText());
 			}
 		});
-		
-		//sendMessage.setBounds(0, 750, 50, 20);
-		sendMessage.setSize(50, 100);
+			
+	//	sendMessage.setBounds(0, 750, 50, 20);
+	//	sendMessage.setSize(50, 100);
 		//ActionListener for sendMessage button
-		sendMessage.addActionListener(new ActionListener() { 
-			public void actionPerformed(ActionEvent event) {  
+	//	sendMessage.addActionListener(new ActionListener() { 
+	//		public void actionPerformed(ActionEvent event) {  
 				//Call Send Message Function				
-				Client.processMessage(tf.getText());
-			}});
-		
+	//			Client.processMessage(tf.getText());
+	//	}});
+			
 		//frame.setJMenuBar(menuBar);
+		JScrollPane buddylist = new JScrollPane(userBox);
+		buddylist.setBounds(595,10,200,535);	
 		
 		//Put a ScrollPane over our textarea. <3 scrolling
 		JScrollPane scrollPane = new JScrollPane(mainConsole);
-		scrollPane.setBounds(10,60,780,500);
+		//JScrollPane buddyList = new JScrollPane (userBox);
+		scrollPane.setBounds(10,10,580,500);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setOpaque(true);
-	
+		userBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		//Generate panel by adding appropriate components
-		panel = new JPanel(new BorderLayout());
-		panel.add(userBox, BorderLayout.NORTH);
-		panel.add(tf, BorderLayout.SOUTH);
-		panel.add(sendMessage, BorderLayout.EAST);
-		panel.add(scrollPane, BorderLayout.CENTER);
-    
+		panel = new JPanel();
+		panel.setLayout(null);
+		panel.add(buddylist);
+		panel.add(tf);
+	//	panel.add(sendMessage);
+		panel.add(scrollPane);
+	    
 		//Initialize window frame
-        frame.setJMenuBar(menuBar);
-        frame.setContentPane(panel);
-        frame.setVisible(true);
+		imContentFrame.setJMenuBar(menuBar);
+	        imContentFrame.setContentPane(panel);
+	        imContentFrame.setVisible(true);
         
 	}
 }

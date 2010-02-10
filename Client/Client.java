@@ -36,7 +36,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import com.sun.xml.internal.txw2.Document;
+//import com.sun.xml.internal.txw2.Document;
 import org.w3c.dom.*;
 
 
@@ -63,7 +63,7 @@ public class Client
 	public static void processMessage( String message ) {
 		try {
 			//Get user to send message to from ComboBox
-			toUser = clientResource.userBox.getSelectedItem().toString();
+			toUser = clientResource.userBox.getSelectedValue().toString();
 			
 			//Send recipient's name and message to server
 			dout.writeUTF(toUser);
@@ -130,14 +130,14 @@ public class Client
 	
 	// Background thread runs this: show messages from other window
 	public static void main(String[] args) {
-		
+	
 		clientResource = new ClientApplet();
-		clientResource.setVisible(true);
+	//	clientResource.setVisible(true);
 		
 		//Try to connect with and authenticate to the socket
 		try {
 			//Connect to auth server at defined port over socket
-			socket = new Socket( "192.168.1.131", 7777 );
+			socket = new Socket( "192.168.1.4", 7777 );
 			
 			//Get the username and password for the user for authentication
 			username = JOptionPane.showInputDialog("Please enter your username");
