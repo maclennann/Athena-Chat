@@ -40,96 +40,45 @@ import com.sun.xml.internal.txw2.Document;
 import org.w3c.dom.*;
 
 
-public class Client extends Panel implements Runnable
+public class Client
 {
 	//Global username variable
-	private String username;
-	private String toUser;
+	private static String username;
+	private static String toUser;
 	
-	//TODO: GUI components and window for username/password
+	//Created GUI builder object
+	public static ClientApplet clientResource;
 	
 	//TODO: Make otherUsers array read from buddylist.xml
-	//String array of buddies for choosing user to send message to
-	String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};
-	
-	// Components for the visual display of the chat windows
-	private TextField tf = new TextField();
-	private TextArea ta = new TextArea();
-	private JComboBox userBox = new JComboBox(otherUsers);
-	
+
 	// The socket connecting us to the server
-	public Socket socket;
+	public static Socket socket;
 	
 	// The datastreams we use to move data through the socket
-	private DataOutputStream dout;
-	private DataInputStream din;
+	private static DataOutputStream dout;
+	private static DataInputStream din;
 	
-	// Constructor
-	public Client( String host, int port ) {
-		
-		//Simple window layout for IM session.
-		//TODO: Better GUI.
-		setLayout( new BorderLayout() );
-		add( "North", tf );
-		add( "Center", ta );
-		add( "South", userBox);
-		
-		//ActionListener on the 'tf' text field will send messages the user wants to send.
-		tf.addActionListener( new ActionListener() {
-			public void actionPerformed( ActionEvent e ) {
-				processMessage( e.getActionCommand() );
-			}
-		} );
-
-		//Try to connect with and authenticate to the socket
-		try {
-			//Connect to auth server at defined port over socket
-			socket = new Socket( host, port );
-			
-			//Get the username and password for the user for authentication
-			username = JOptionPane.showInputDialog("Please enter your username");
-			String password = JOptionPane.showInputDialog("Please enter your password");
-						
-			//Connection established debug code.
-			System.out.println( "connected to "+socket );
-
-			//Bind the datastreams to the socket in order to send/receive
-			din = new DataInputStream( socket.getInputStream() );
-			dout = new DataOutputStream( socket.getOutputStream() );
-			
-			//Send username and password over the socket for authentication
-			dout.writeUTF(username); //Sending Username
-			dout.writeUTF(password); //Sending Password
-			
-			// Start a background thread for receiving messages
-			// See the 'run()' method
-			new Thread(this).start();
-
-		} catch( IOException ie ) { System.out.println( ie ); }
-	}
-	
-
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
-	private void processMessage( String message ) {
+	public static void processMessage( String message ) {
 		try {
 			//Get user to send message to from ComboBox
-			toUser = userBox.getSelectedItem().toString();
+			toUser = clientResource.userBox.getSelectedItem().toString();
 			
 			//Send recipient's name and message to server
 			dout.writeUTF(toUser);
 			dout.writeUTF(message);
 			
 			// Append own message to IM window
-			ta.append(username + ": " + message + "\n");
+			clientResource.mainConsole.append(username + ": " + message + "\n");
 			
 			// Clear out text input field
-			tf.setText( "" );
+			clientResource.tf.setText( "" );
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
 	//This method will be used to add to the buddy list
-	private void buddyList(String usernameToAdd) throws Exception {
+	private static void buddyList(String usernameToAdd) throws Exception {
 
 		//Using the DocumentBuilderFactory class, create a DocumentBuilder (docFactory)
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -167,7 +116,7 @@ public class Client extends Panel implements Runnable
 	}
 		
 	//When the client receives a message.
-	public void recvMesg(DataInputStream din){
+	public static void recvMesg(DataInputStream din){
 		try{
 			// Who is the message from? 
 			String fromUser = din.readUTF();
@@ -175,12 +124,37 @@ public class Client extends Panel implements Runnable
 			String message = din.readUTF();
 			
 			// Print it to our text window
-			ta.append( fromUser + ": " + message+"\n" );
+			clientResource.mainConsole.append( fromUser + ": " + message+"\n" );
 		}catch ( IOException ie ) { System.out.println( ie ); }
 	}
 	
 	// Background thread runs this: show messages from other window
-	public void run() {
+	public static void main(String[] args) {
+		clientResource = new ClientApplet();
+		clientResource.setVisible(true);
+		
+		//Try to connect with and authenticate to the socket
+		try {
+			//Connect to auth server at defined port over socket
+			socket = new Socket( "192.168.1.131", 7777 );
+			
+			//Get the username and password for the user for authentication
+			username = JOptionPane.showInputDialog("Please enter your username");
+			String password = JOptionPane.showInputDialog("Please enter your password");
+						
+			//Connection established debug code.
+			System.out.println( "connected to "+socket );
+
+			//Bind the datastreams to the socket in order to send/receive
+			din = new DataInputStream( socket.getInputStream() );
+			dout = new DataOutputStream( socket.getOutputStream() );
+			
+			//Send username and password over the socket for authentication
+			dout.writeUTF(username); //Sending Username
+			dout.writeUTF(password); //Sending Password
+			
+		} catch( IOException ie ) { System.out.println( ie ); }
+		
 		try {
 			
 			//Add user to your buddy list?
