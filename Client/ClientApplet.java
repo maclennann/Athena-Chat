@@ -32,81 +32,61 @@ public class ClientApplet extends JFrame
 	
 	// Components for the visual display of the chat windows
 	public TextField tf = new TextField();
-	public TextArea mainConsole = new TextArea();
+	public JTextArea mainConsole = new JTextArea();
 	public JComboBox userBox = new JComboBox(otherUsers);
-	public JButton sendMessage = new JButton();
-	public JMenuBar menuBar;
+	public JButton sendMessage = new JButton("Send Message");
+	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
 	public JMenuItem connect, disconnect, exit;
-	//public JPanel panel;
+	public JPanel panel;
 	public JFrame frame;
 
 	ClientApplet () { 
-		frame = new JFrame("MenuLookDemo");
-		
-        //Display the window.
-		frame.setSize(800,670);
-        frame.setVisible(true);
-        
-        //Create the menu bar.
-	    menuBar = new JMenuBar();
+		frame = new JFrame("Athena Chat Application");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(800, 700);
+		frame.setResizable(true);
 	    
 	  //Build the first menu.
         file = new JMenu("File");
         file.setMnemonic(KeyEvent.VK_A);
         file.getAccessibleContext().setAccessibleDescription(
                 "The only menu in this program that has menu items");
-        menuBar.add(file);
         
-        connect = new JCheckBoxMenuItem("Connect");
+        connect = new JMenuItem("Connect");
         connect.setMnemonic(KeyEvent.VK_H);
         file.add(connect);
         
-        disconnect = new JCheckBoxMenuItem("Disconnect");
+        disconnect = new JMenuItem("Disconnect");
         disconnect.setMnemonic(KeyEvent.VK_H);
         file.add(disconnect);     
         
-        exit = new JCheckBoxMenuItem("Disconnect");
+        exit = new JMenuItem("Disconnect");
         exit.setMnemonic(KeyEvent.VK_H);
         file.add(exit);
         
-      //Build the second menu.
+        menuBar.add(file);
+        
+        //Build the second menu.
         edit = new JMenu("Edit");
         edit.setMnemonic(KeyEvent.VK_A);
         edit.getAccessibleContext().setAccessibleDescription(
                 "The only menu in this program that has menu items");
         menuBar.add(edit);
-
-        
+       
       //Build the third menu.
         encryption = new JMenu("Encryption");
         encryption.setMnemonic(KeyEvent.VK_A);
         encryption.getAccessibleContext().setAccessibleDescription(
                 "The only menu in this program that has menu items");
         menuBar.add(encryption);
-        
-	    
-		//panel = new JPanel();
-		///getContentPane().add(frame);
-		//panel.setLayout(null);
 
-		setDefaultCloseOperation(javax.swing.
-				WindowConstants.DISPOSE_ON_CLOSE);
-		setTitle("Athena");
-		setSize(800, 670);
-		JLabel labelOne = new JLabel("Client Application for Encrypted Messaging Using Rijndael Algorithm\n(CAEMURA) v0.9 June 22, 2009\n\n");
-		
-		labelOne.setBounds(10,1,800,100);
-		mainConsole.setBounds(10, 60, 780, 500);
+        
+		mainConsole.setSize(750, 500);
 		mainConsole.setEditable(false);
 		
-		tf.setBounds(10, 570, 700, 30);
-		userBox.setBounds(10, 10, 700, 30);
-		
-		//Put a ScrollPane over our textarea. <3 scrolling
-		JScrollPane scrollPane = new JScrollPane(mainConsole);
-		scrollPane.setBounds(10,60,780,500);
-		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		tf.setSize(700, 50);
+		userBox.setSize(700, 30);
 		
 		tf.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent event) {
@@ -114,21 +94,33 @@ public class ClientApplet extends JFrame
 			}
 		});
 		
-		sendMessage.setBounds(10, 600, 150,30);
+		//sendMessage.setBounds(0, 750, 50, 20);
+		sendMessage.setSize(50, 100);
 		//ActionListener for sendMessage button
 		sendMessage.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent event) {  
 				//Call Send Message Function				
 				Client.processMessage(tf.getText());
-			}
-		});
+			}});
 		
-		//Add everything to the panel
-		frame.add(tf);
-		frame.add(mainConsole);
-		frame.add(userBox);
-		frame.add(sendMessage);
-		//frame.add(frame);
-		frame.setJMenuBar(menuBar);
+		//frame.setJMenuBar(menuBar);
+		
+		//Put a ScrollPane over our textarea. <3 scrolling
+		JScrollPane scrollPane = new JScrollPane(mainConsole);
+		scrollPane.setBounds(10,60,780,500);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setOpaque(true);
+		
+		panel = new JPanel(new BorderLayout());
+		panel.add(userBox, BorderLayout.NORTH);
+		panel.add(tf, BorderLayout.SOUTH);
+		panel.add(sendMessage, BorderLayout.EAST);
+		panel.add(scrollPane, BorderLayout.CENTER);
+    
+		//Initialize window frame
+        frame.setJMenuBar(menuBar);
+        frame.setContentPane(panel);
+        frame.setVisible(true);
+        
 	}
 }
