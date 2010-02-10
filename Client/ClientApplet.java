@@ -42,26 +42,31 @@ public class ClientApplet extends JFrame
 	public JFrame frame;
 
 	ClientApplet () { 
+		
+		//Initialize chat window
 		frame = new JFrame("Athena Chat Application");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 700);
 		frame.setResizable(true);
 	    
-	  //Build the first menu.
+	    //Build the first menu.
         file = new JMenu("File");
         file.setMnemonic(KeyEvent.VK_A);
         file.getAccessibleContext().setAccessibleDescription(
                 "The only menu in this program that has menu items");
-        
+    
+        //Initialize menu button
         connect = new JMenuItem("Connect");
         connect.setMnemonic(KeyEvent.VK_H);
         file.add(connect);
         
+        //Initialize menu button
         disconnect = new JMenuItem("Disconnect");
         disconnect.setMnemonic(KeyEvent.VK_H);
         file.add(disconnect);     
         
-        exit = new JMenuItem("Disconnect");
+        //Initialize menu button
+        exit = new JMenuItem("Exit");
         exit.setMnemonic(KeyEvent.VK_H);
         file.add(exit);
         
@@ -81,10 +86,11 @@ public class ClientApplet extends JFrame
                 "The only menu in this program that has menu items");
         menuBar.add(encryption);
 
-        
+       //Create universal text area 
 		mainConsole.setSize(750, 500);
 		mainConsole.setEditable(false);
-		
+	
+		//Create text response area and listener function
 		tf.setSize(700, 50);
 		userBox.setSize(700, 30);
 		
@@ -110,7 +116,8 @@ public class ClientApplet extends JFrame
 		scrollPane.setBounds(10,60,780,500);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setOpaque(true);
-		
+	
+		//Generate panel by adding appropriate components
 		panel = new JPanel(new BorderLayout());
 		panel.add(userBox, BorderLayout.NORTH);
 		panel.add(tf, BorderLayout.SOUTH);
