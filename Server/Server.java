@@ -88,7 +88,7 @@ public class Server
 	
 	
 	//Writes all usernames and password hashes from the database into a hash table
-	private static void updateHashTable () { 
+	public static void updateHashTable () { 
 		try { 
 			//Use dbConnect() to connect to the database
 			Connection getHashed = dbConnect();
@@ -107,7 +107,11 @@ public class Server
 				String hashedPassword = rs.getString("password");
 			
 				//Write username and hashed password to next element of hash table
-				authentication.put(username, hashedPassword);
+				if (authentication.containsKey(username)) { 
+					//DO nothing
+				} else { 
+					authentication.put(username, hashedPassword);
+				}
 			}
 		
 		}catch(SQLException ex) {
