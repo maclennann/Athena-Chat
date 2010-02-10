@@ -100,7 +100,24 @@ public class ClientApplet extends JFrame
 				Client.processMessage(tf.getText());
 			}
 		});
+		
+		connect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				Client.connect();
+			}
+		});
+
+		disconnect.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				Client.disconnect();
+			}
+		});
 			
+		exit.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				Client.exit();
+			}
+		});
 	//	sendMessage.setBounds(0, 750, 50, 20);
 	//	sendMessage.setSize(50, 100);
 		//ActionListener for sendMessage button

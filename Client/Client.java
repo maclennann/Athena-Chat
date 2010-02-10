@@ -24,7 +24,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.*;
-
+import java.lang.Thread;
+import java.lang.Runnable;
 //XML Imports
 import javax.xml.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -58,6 +59,14 @@ public class Client
 	private static DataOutputStream dout;
 	private static DataInputStream din;
 	
+	static Thread listeningProcedure;
+	static int connected=0;	
+
+	//Exit the program
+	public static void exit(){
+		System.exit(0);
+	}
+
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
 	public static void processMessage( String message ) {
@@ -125,9 +134,12 @@ public class Client
 			
 			// Print it to our text window
 			clientResource.mainConsole.append( fromUser + ": " + message+"\n" );
-		}catch ( IOException ie ) { System.out.println( ie ); }
+		}catch ( IOException ie ) {
+			//If we can't use the inputStream, we probably aren't connected
+			 connected=0; 
+		}
 	}
-	
+
 	// Method to connect the user
 	public static void connect() { 
 		//Try to connect with and authenticate to the socket
@@ -136,6 +148,7 @@ public class Client
 			socket = new Socket( "192.168.1.4", 7777 );
 			
 			//Get the username and password for the user for authentication
+			//This should be in it's own fancy window
 			username = JOptionPane.showInputDialog("Please enter your username");
 			String password = JOptionPane.showInputDialog("Please enter your password");
 						
@@ -149,14 +162,29 @@ public class Client
 			//Send username and password over the socket for authentication
 			dout.writeUTF(username); //Sending Username
 			dout.writeUTF(password); //Sending Password
-			
+			connected=1;
+			//Thread created to listen for messages coming in from the server
+			listeningProcedure = new Thread(
+				new Runnable() {
+					public void run() {
+						while(true) {
+							if(connected==1)Client.recvMesg(din);
+		      				}
+		  	}});	
+
+			listeningProcedure.start();
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
 	// Method to disconnect
 	public static void disconnect() { 
-		socket.close();
-		dout.close();
+		try{
+			socket.close();
+			dout.close();
+			din.close();
+			connected=0;
+			listeningProcedure.interrupt();
+		}catch(Exception e){}
 	}
 
 	// Background thread runs this: show messages from other window
@@ -164,9 +192,10 @@ public class Client
 	
 		clientResource = new ClientApplet();
 	//	clientResource.setVisible(true);
-		
-				try {
-			
+
+//THIS SHOULD BE A METHOD		
+				//try {
+		/*	
 			//Add user to your buddy list?
 			//TODO: Obviously, break this out into a method that can be called from a GUI action.
 			String answer = JOptionPane.showInputDialog("Do you want to add a user to your buddy list?");
@@ -179,14 +208,17 @@ public class Client
 			else {
 				JOptionPane.showMessageDialog(null, "Wrong answer - try again.");
 			}
-			
-			//Receive messages until something breaks or we disconnect
-			while (true) {
-				recvMesg(din);
-			}
+		*/	
+//THAT SHOULD BE A METHOD
 
-		} catch( IOException ie ) { System.out.println( ie ); } 
-		catch (Exception e) { System.out.println(e); }
+			//Receive messages until something breaks or we disconnect
+	//		while (true) {
+	//			recvMesg(din);
+	//		}
+	//		}
+
+	//	}// catch( IOException ie ) { System.out.println( ie ); } 
+	//	catch (Exception e) { System.out.println(e); }
 		
 	}
 }
