@@ -47,7 +47,7 @@ public class ClientApplet extends JFrame
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application");
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		imContentFrame.setSize(800, 700);
+		imContentFrame.setSize(800, 605);
 		imContentFrame.setResizable(true);
 		    
 		//Build the first menu.
@@ -112,7 +112,7 @@ public class ClientApplet extends JFrame
 			
 		//frame.setJMenuBar(menuBar);
 		JScrollPane buddylist = new JScrollPane(userBox);
-		buddylist.setBounds(595,10,200,535);	
+		buddylist.setBounds(595,10,195,538);	
 		
 		//Put a ScrollPane over our textarea. <3 scrolling
 		JScrollPane scrollPane = new JScrollPane(mainConsole);
