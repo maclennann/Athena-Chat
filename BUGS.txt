@@ -1,0 +1,5 @@
+2/11/10:
+	## Make the main text window inside the tab UNEDITABLE (assume it's just .setEditable(false)
+	## When not connected - do not allow user to be able to attempt to send messages
+		@@ Right now it just shows up as `null`:`message`
+
