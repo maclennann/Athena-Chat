@@ -19,6 +19,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -40,6 +43,7 @@ public class ClientApplet extends JFrame
 	public JMenuItem connect, disconnect, exit;
 	public JPanel panel;
 	public JFrame imContentFrame, buddyListFrame; //Is that it?
+	public JTabbedPane imTabbedPane = new JTabbedPane();
 
 	ClientApplet () { 
 
@@ -49,7 +53,7 @@ public class ClientApplet extends JFrame
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		imContentFrame.setSize(800, 605);
 		imContentFrame.setResizable(true);
-		    
+		
 		//Build the first menu.
 	        file = new JMenu("File");
 	        file.setMnemonic(KeyEvent.VK_A);
@@ -118,8 +122,21 @@ public class ClientApplet extends JFrame
 			
 		//frame.setJMenuBar(menuBar);
 		JScrollPane buddylist = new JScrollPane(userBox);
-		buddylist.setBounds(595,10,195,538);	
-
+		buddylist.setBounds(595,10,195,538);
+		//Actionlistener for the Buddylist
+		MouseListener mouseListener = new MouseAdapter() {
+      			public void mouseClicked(MouseEvent mouseEvent) {
+		        JList theList = (JList) mouseEvent.getSource();
+		        if (mouseEvent.getClickCount() == 2) {
+		          int index = theList.locationToIndex(mouseEvent.getPoint());
+		          if (index >= 0) {
+		            Object o = theList.getModel().getElementAt(index);
+				imTabbedPane.addTab(o.toString(), null);
+          				}
+			        }
+		      }
+	        };
+		userBox.addMouseListener(mouseListener);
 		//Put a ScrollPane over our textarea. <3 scrolling
 		JScrollPane scrollPane = new JScrollPane(mainConsole);
 		scrollPane.setBounds(10,10,580,500);
@@ -132,6 +149,7 @@ public class ClientApplet extends JFrame
 		panel.setLayout(null);
 		panel.add(buddylist);
 		panel.add(tf);
+		panel.add(imTabbedPane);
 		panel.add(scrollPane);
 
 		//Initialize window frame
