@@ -126,16 +126,7 @@ public class ClientApplet extends JFrame
                         //Get the buddy that was double-clicked
                         Object o = theList.getModel().getElementAt(index);
                         if(imTabbedPane.indexOfTab(o.toString())==-1){
-                            //Create a hashtable mapping a username to the jpanel in a tab
-                            tabPanels.put(o.toString(),new MapTextArea(o.toString()));
-                            //Make a temporary object for that jpanel
-                            MapTextArea temp = (MapTextArea)tabPanels.get(o.toString());
-                            //Actually pull the jpanel out
-                            JPanel tempPanel = temp.getJPanel();
-                            //Create a tab with that jpanel on it
-                            imTabbedPane.addTab(o.toString(),null,tempPanel,"Something");
-                            //Focus the new tab
-                            imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
+                            makeTab(o.toString());
                         }else{
                             //Focust the tab for this username
                             imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
@@ -158,6 +149,19 @@ public class ClientApplet extends JFrame
 	    imContentFrame.setVisible(true);
         
 	}
+	
+	public void makeTab(String user){
+	    //Create a hashtable mapping a username to the jpanel in a tab
+        tabPanels.put(user,new MapTextArea(user));
+        //Make a temporary object for that jpanel
+        MapTextArea temp = (MapTextArea)tabPanels.get(user);
+        //Actually pull the jpanel out
+        JPanel tempPanel = temp.getJPanel();
+        //Create a tab with that jpanel on it
+        imTabbedPane.addTab(user,null,tempPanel,"Something");
+        //Focus the new tab
+        imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+    }
 }
 //Write comments when I figure out what this actually does
 class MapTextArea { 
@@ -179,6 +183,7 @@ class MapTextArea {
 		mySP.setBounds(10,10,559,450);
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		mySP.setOpaque(true);
+		myTA.setEditable(false);
 		username = user;
 		myJPanel.add(mySP);
 		myJPanel.add(myTF);
@@ -186,13 +191,10 @@ class MapTextArea {
                         public void actionPerformed(ActionEvent event) {
                                 Client.processMessage(myTF.getText());
                         }
-        });
+        	});
 
-        Font font = new Font("Arial",Font.PLAIN,17);
-        myTA.setFont(font);
-        myTA.setForeground(Color.BLUE);
-
-		
+	        Font font = new Font("Arial",Font.PLAIN,17);
+        	myTA.setFont(font);
 	}
 	
 	public void setUserName(String user){

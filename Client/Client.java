@@ -14,6 +14,7 @@
  * This is where the detailed description of the file will go.
  *
  ****************************************************/
+
 import java.applet.*;
 import java.awt.Color;
 import java.awt.*;
@@ -27,6 +28,7 @@ import java.sql.Statement;
 import javax.swing.*;
 import java.lang.Thread;
 import java.lang.Runnable;
+
 //XML Imports
 import javax.xml.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -45,7 +47,7 @@ import org.w3c.dom.*;
 public class Client
 {
 	//Global username variable
-	private static String username;
+	private static String username="null";
 	private static String toUser;
 	
 	//Created GUI builder object
@@ -70,25 +72,25 @@ public class Client
 
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
-	public static void processMessage( String message ) {
-		try {
-			//Get user to send message to from active tab
-			toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+	public static void processMessage( String message ) {	
+		//Get user to send message to from active tab
+		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+		MapTextArea print = (MapTextArea)clientResource.tabPanels.get(toUser);
 			
-			MapTextArea print = (MapTextArea)clientResource.tabPanels.get(toUser);
-			print.setTextColor(Color.BLUE);
+		if(username.equals("null")){print.writeToTextArea("Error: You are not connected!\n");print.moveToEnd();print.clearTextField();}
+		else{
 			print.writeToTextArea(username+": ");
-			print.setTextColor(Color.BLACK);
 			print.writeToTextArea(message+"\n");
-			
-			//Send recipient's name and message to server
-			dout.writeUTF(toUser);
-			dout.writeUTF(message);
-			// Append own message to IM window
-            print.moveToEnd();
-			// Clear out text input field
-			print.clearTextField();
-		} catch( IOException ie ) { System.out.println( ie ); }
+			try{
+				//Send recipient's name and message to server
+				dout.writeUTF(toUser);
+				dout.writeUTF(message);
+				// Append own message to IM window
+        			print.moveToEnd();
+				// Clear out text input field
+				print.clearTextField();
+			} catch( IOException ie ) { print.writeToTextArea("Error: You are not connected!\n");print.moveToEnd();print.clearTextField(); }
+		}
 	}
 	
 	//This method will be used to add to the buddy list
@@ -136,6 +138,9 @@ public class Client
 			String fromUser = din.readUTF();
 			// What is the message?
 			String message = din.readUTF();
+			if(!clientResource.tabPanels.containsKey(fromUser)){
+				clientResource.makeTab(fromUser);
+			}
 			MapTextArea print = (MapTextArea)clientResource.tabPanels.get(fromUser);
 			print.setTextColor(Color.blue);
 			print.writeToTextArea(fromUser+": ");

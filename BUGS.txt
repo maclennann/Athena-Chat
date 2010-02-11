@@ -1,5 +1,17 @@
 2/11/10:
+	## Program will not spawn new tab for incoming message that would open the tab.
+		!! IN PROGRESS: I think this has been resolved, but I have been unable to run server to test.
+		!! Created ClientApplet.makeTab(String) which will make a tab and associated MapTextArea object.
+		!! If a tab for a user doesn't exist, create a tab first. Everything else runs as before.
+		!! Ref - Client:142    ClientApplet:153
 	## Make the main text window inside the tab UNEDITABLE (assume it's just .setEditable(false)
+		!! RESOLVED: myTF.setEditable(false);
+                !! ClientApplet:186
 	## When not connected - do not allow user to be able to attempt to send messages
 		@@ Right now it just shows up as `null`:`message`
+		!! RESOLVED: Checked to see if username is null before attempted to send.
+		!! Client:80
 	## In (Linux 2.6.31.9-174.fc12.i686 (Fedora) Default Res: (1680x1050) text input field (tf) is cut off by the bottom - even if I stretch the window out.
+		@@ Openbox WM.
+		@@ Widget placement appears off on all components.
+		@@ Screenshot URL to follow:
