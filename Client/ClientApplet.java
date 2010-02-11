@@ -171,3 +171,51 @@ public class ClientApplet extends JFrame
         
 	}
 }
+//Write comments when I figure out what this actually does
+public class mapTextArea { 
+
+	public JPanel myJPanel;
+	public JTextArea myTA;
+	public JTextField myTF;
+
+	//Constructor
+	mapTextArea(String username, int tabIndex) { 
+		myJPanel = new JPanel();
+		myTA = new JTextArea();
+		myTF = new JTextField();
+	}
+	
+	public void setUserName(String user){
+		username = user;
+	}
+	
+	public String getUserName(){
+		return username;
+	}
+	
+	public JPanel returnJPanel() { 
+		return myJPanel;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
