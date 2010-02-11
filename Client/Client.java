@@ -77,10 +77,12 @@ public class Client
 			//Send recipient's name and message to server
 			dout.writeUTF(toUser);
 			dout.writeUTF(message);
-			
+			int length = toUser.length() + message.length();
+			System.out.println("LENGTH OF THE MESSAGE AND SHIT:"+length);
 			// Append own message to IM window
 			clientResource.mainConsole.append(username + ": " + message + "\n");
-			
+
+clientResource.mainConsole.selectAll();
 			// Clear out text input field
 			clientResource.tf.setText( "" );
 		} catch( IOException ie ) { System.out.println( ie ); }
@@ -145,7 +147,7 @@ public class Client
 		//Try to connect with and authenticate to the socket
 		try {
 			//Connect to auth server at defined port over socket
-			socket = new Socket( "192.168.1.4", 7777 );
+			socket = new Socket( "127.0.0.1", 7777 );
 			
 			//Get the username and password for the user for authentication
 			//This should be in it's own fancy window
