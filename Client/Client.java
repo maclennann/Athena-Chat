@@ -133,7 +133,8 @@ clientResource.mainConsole.selectAll();
 			String fromUser = din.readUTF();
 			// What is the message?
 			String message = din.readUTF();
-			
+			MapTextArea print = (MapTextArea)clientResource.tabPanels.get(fromUser);
+			print.writeToTextArea(message);
 			// Print it to our text window
 			clientResource.mainConsole.append( fromUser + ": " + message+"\n" );
 		}catch ( IOException ie ) {

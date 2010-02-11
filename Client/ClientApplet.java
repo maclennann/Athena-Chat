@@ -25,7 +25,7 @@ import java.awt.event.MouseListener;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
-
+import java.util.Hashtable;
 //Creates the physical applet, calls the client code
 public class ClientApplet extends JFrame 
 {
@@ -44,6 +44,7 @@ public class ClientApplet extends JFrame
 	public JPanel panel;
 	public JFrame imContentFrame, buddyListFrame; //Is that it?
 	public JTabbedPane imTabbedPane = new JTabbedPane();
+	public Hashtable tabPanels = new Hashtable();
 
 	ClientApplet () { 
 
@@ -121,6 +122,7 @@ public class ClientApplet extends JFrame
 		});
 			
 		//frame.setJMenuBar(menuBar);
+		//COMMENT FUCK FUCK FUCK FUCK FCUK THE FUCK OUT OF THIS!$#!@#@!$!$
 		JScrollPane buddylist = new JScrollPane(userBox);
 		buddylist.setBounds(595,10,195,538);
 		//Actionlistener for the Buddylist
@@ -132,14 +134,13 @@ public class ClientApplet extends JFrame
 		          if (index >= 0) {
 		            Object o = theList.getModel().getElementAt(index);
 				if(imTabbedPane.indexOfTab(o.toString())==-1){
-					JPanel shit = new JPanel();
-					shit.setLayout(null);
-					JLabel blah = new JLabel(o.toString());
-					tf.setBounds(10,100,200,30);
-					shit.add(blah);
-					shit.add(tf);
-					imTabbedPane.addTab(o.toString(), null, shit,"Something");
+					tabPanels.put(o.toString(),new MapTextArea(o.toString()));
 
+					MapTextArea temp = (MapTextArea)tabPanels.get(o.toString());
+					JPanel tempPanel = temp.getJPanel();
+					
+
+					imTabbedPane.addTab(o.toString(),null,tempPanel,"Something");
 					imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
 				}else{
 					imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
@@ -172,17 +173,31 @@ public class ClientApplet extends JFrame
 	}
 }
 //Write comments when I figure out what this actually does
-public class mapTextArea { 
+class MapTextArea { 
 
 	public JPanel myJPanel;
 	public JTextArea myTA;
 	public JTextField myTF;
+	String username=null;
+	int tabIndex=-1;
 
 	//Constructor
-	mapTextArea(String username, int tabIndex) { 
+	MapTextArea(String user) { 
 		myJPanel = new JPanel();
+		myJPanel.setLayout(null);
 		myTA = new JTextArea();
 		myTF = new JTextField();
+		myTF.setBounds(10,100,100,30);
+		myTA.setBounds(10,10,100,100);
+		username = user;
+		myJPanel.add(myTA);
+		myJPanel.add(myTF);
+		myTF.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent event) {
+                                Client.processMessage(myTF.getText());
+                        }
+                });
+		
 	}
 	
 	public void setUserName(String user){
@@ -193,9 +208,23 @@ public class mapTextArea {
 		return username;
 	}
 	
-	public JPanel returnJPanel() { 
+	public void setTabIndex(int index){
+		tabIndex = index;
+	}
+
+	public int getTabIndex() {
+		return tabIndex;
+	}
+
+	public JPanel getJPanel() { 
 		return myJPanel;
 	}
+	
+	public void writeToTextArea(String message){
+		myTA.append(message);
+	}
+
+	
 }
 
 
