@@ -42,7 +42,7 @@ public class ClientApplet extends JFrame
 	public JFrame imContentFrame, buddyListFrame; //Is that it?
 
 	ClientApplet () { 
-	
+
 		//Initialize chat window
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application");
@@ -88,12 +88,9 @@ public class ClientApplet extends JFrame
 	        menuBar.add(encryption);
 	
 		//Create universal text area 
-	//	mainConsole.setSize(750, 500);
 		mainConsole.setEditable(false);
 		
 		//Create text response area and listener function
-	//	tf.setSize(700, 50);
-	//	userBox.setSize(700, 30);
 		tf.setBounds(10, 515, 580, 30);	
 		tf.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent event) {
@@ -118,34 +115,25 @@ public class ClientApplet extends JFrame
 				Client.exit();
 			}
 		});
-	//	sendMessage.setBounds(0, 750, 50, 20);
-	//	sendMessage.setSize(50, 100);
-		//ActionListener for sendMessage button
-	//	sendMessage.addActionListener(new ActionListener() { 
-	//		public void actionPerformed(ActionEvent event) {  
-				//Call Send Message Function				
-	//			Client.processMessage(tf.getText());
-	//	}});
 			
 		//frame.setJMenuBar(menuBar);
 		JScrollPane buddylist = new JScrollPane(userBox);
 		buddylist.setBounds(595,10,195,538);	
-		
+
 		//Put a ScrollPane over our textarea. <3 scrolling
 		JScrollPane scrollPane = new JScrollPane(mainConsole);
-		//JScrollPane buddyList = new JScrollPane (userBox);
 		scrollPane.setBounds(10,10,580,500);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setOpaque(true);
 		userBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 		//Generate panel by adding appropriate components
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.add(buddylist);
 		panel.add(tf);
-	//	panel.add(sendMessage);
 		panel.add(scrollPane);
-	    
+
 		//Initialize window frame
 		imContentFrame.setJMenuBar(menuBar);
 	        imContentFrame.setContentPane(panel);
