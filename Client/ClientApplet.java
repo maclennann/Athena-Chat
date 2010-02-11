@@ -131,8 +131,20 @@ public class ClientApplet extends JFrame
 		          int index = theList.locationToIndex(mouseEvent.getPoint());
 		          if (index >= 0) {
 		            Object o = theList.getModel().getElementAt(index);
-				imTabbedPane.addTab(o.toString(), null);
-          				}
+				if(imTabbedPane.indexOfTab(o.toString())==-1){
+					JPanel shit = new JPanel();
+					shit.setLayout(null);
+					JLabel blah = new JLabel(o.toString());
+					tf.setBounds(10,100,200,30);
+					shit.add(blah);
+					shit.add(tf);
+					imTabbedPane.addTab(o.toString(), null, shit,"Something");
+
+					imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
+				}else{
+					imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
+				}
+          		}
 			        }
 		      }
 	        };
@@ -143,14 +155,14 @@ public class ClientApplet extends JFrame
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setOpaque(true);
 		userBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		imTabbedPane.setBounds(10,10,600,500);
 		//Generate panel by adding appropriate components
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.add(buddylist);
-		panel.add(tf);
+	//	panel.add(tf);
 		panel.add(imTabbedPane);
-		panel.add(scrollPane);
+	//	panel.add(scrollPane);
 
 		//Initialize window frame
 		imContentFrame.setJMenuBar(menuBar);
