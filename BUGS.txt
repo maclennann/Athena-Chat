@@ -14,4 +14,4 @@
 	## In (Linux 2.6.31.9-174.fc12.i686 (Fedora) Default Res: (1680x1050) text input field (tf) is cut off by the bottom - even if I stretch the window out.
 		@@ Openbox WM.
 		@@ Widget placement appears off on all components.
-		@@ Screenshot URL to follow:
+		@@ Screenshot URL to follow: http://i.imgur.com/QKRx7.png
