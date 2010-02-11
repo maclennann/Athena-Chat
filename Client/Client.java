@@ -15,6 +15,7 @@
  *
  ****************************************************/
 import java.applet.*;
+import java.awt.Color;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -71,20 +72,22 @@ public class Client
 	//User wants to send a message
 	public static void processMessage( String message ) {
 		try {
-			//Get user to send message to from ComboBox
-			toUser = clientResource.userBox.getSelectedValue().toString();
+			//Get user to send message to from active tab
+			toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+			
+			MapTextArea print = (MapTextArea)clientResource.tabPanels.get(toUser);
+			print.setTextColor(Color.BLUE);
+			print.writeToTextArea(username+": ");
+			print.setTextColor(Color.BLACK);
+			print.writeToTextArea(message+"\n");
 			
 			//Send recipient's name and message to server
 			dout.writeUTF(toUser);
 			dout.writeUTF(message);
-			int length = toUser.length() + message.length();
-			System.out.println("LENGTH OF THE MESSAGE AND SHIT:"+length);
 			// Append own message to IM window
-			clientResource.mainConsole.append(username + ": " + message + "\n");
-
-clientResource.mainConsole.selectAll();
+            print.moveToEnd();
 			// Clear out text input field
-			clientResource.tf.setText( "" );
+			print.clearTextField();
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
@@ -134,9 +137,10 @@ clientResource.mainConsole.selectAll();
 			// What is the message?
 			String message = din.readUTF();
 			MapTextArea print = (MapTextArea)clientResource.tabPanels.get(fromUser);
-			print.writeToTextArea(message);
-			// Print it to our text window
-			clientResource.mainConsole.append( fromUser + ": " + message+"\n" );
+			print.setTextColor(Color.blue);
+			print.writeToTextArea(fromUser+": ");
+			print.setTextColor(Color.black);
+			print.writeToTextArea(message+"\n");
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
 			 connected=0; 

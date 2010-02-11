@@ -14,6 +14,7 @@
  * Creates the window for the client and sets connection variables.
  *
  ****************************************************/
+import java.awt.Color;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,15 +35,12 @@ public class ClientApplet extends JFrame
 	public static String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};
 	
 	// Components for the visual display of the chat windows
-	public TextField tf = new TextField();
-	public JTextArea mainConsole = new JTextArea();
-	public JList userBox = new JList(otherUsers);
-	//public JButton sendMessage = new JButton("Send Message");
+    public JList userBox = new JList(otherUsers);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
 	public JMenuItem connect, disconnect, exit;
-	public JPanel panel;
-	public JFrame imContentFrame, buddyListFrame; //Is that it?
+	public JPanel panel; //still need this?
+	public JFrame imContentFrame, buddyListFrame;
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable tabPanels = new Hashtable();
 
@@ -92,17 +90,6 @@ public class ClientApplet extends JFrame
 	                "The only menu in this program that has menu items");
 	        menuBar.add(encryption);
 	
-		//Create universal text area 
-		mainConsole.setEditable(false);
-		
-		//Create text response area and listener function
-		tf.setBounds(10, 515, 580, 30);	
-		tf.addActionListener(new ActionListener() { 
-			public void actionPerformed(ActionEvent event) {
-				Client.processMessage(tf.getText());
-			}
-		});
-		
 		connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
 				Client.connect();
@@ -122,53 +109,53 @@ public class ClientApplet extends JFrame
 		});
 			
 		//frame.setJMenuBar(menuBar);
-		//COMMENT FUCK FUCK FUCK FUCK FCUK THE FUCK OUT OF THIS!$#!@#@!$!$
+
 		JScrollPane buddylist = new JScrollPane(userBox);
 		buddylist.setBounds(595,10,195,538);
 		//Actionlistener for the Buddylist
-		MouseListener mouseListener = new MouseAdapter() {
-      			public void mouseClicked(MouseEvent mouseEvent) {
-		        JList theList = (JList) mouseEvent.getSource();
-		        if (mouseEvent.getClickCount() == 2) {
-		          int index = theList.locationToIndex(mouseEvent.getPoint());
-		          if (index >= 0) {
-		            Object o = theList.getModel().getElementAt(index);
-				if(imTabbedPane.indexOfTab(o.toString())==-1){
-					tabPanels.put(o.toString(),new MapTextArea(o.toString()));
-
-					MapTextArea temp = (MapTextArea)tabPanels.get(o.toString());
-					JPanel tempPanel = temp.getJPanel();
-					
-
-					imTabbedPane.addTab(o.toString(),null,tempPanel,"Something");
-					imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
-				}else{
-					imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
-				}
-          		}
-			        }
-		      }
-	        };
+		
+		//Opens a tab or focuses a tab when a username in the buddylist is double-clicked
+        MouseListener mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+                JList theList = (JList) mouseEvent.getSource();
+                //If it was doubleclicked
+                if (mouseEvent.getClickCount() == 2) {
+                    //Find out what was double-clicked
+                    int index = theList.locationToIndex(mouseEvent.getPoint());
+                    if (index >= 0) {
+                        //Get the buddy that was double-clicked
+                        Object o = theList.getModel().getElementAt(index);
+                        if(imTabbedPane.indexOfTab(o.toString())==-1){
+                            //Create a hashtable mapping a username to the jpanel in a tab
+                            tabPanels.put(o.toString(),new MapTextArea(o.toString()));
+                            //Make a temporary object for that jpanel
+                            MapTextArea temp = (MapTextArea)tabPanels.get(o.toString());
+                            //Actually pull the jpanel out
+                            JPanel tempPanel = temp.getJPanel();
+                            //Create a tab with that jpanel on it
+                            imTabbedPane.addTab(o.toString(),null,tempPanel,"Something");
+                            //Focus the new tab
+                            imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
+                        }else{
+                            //Focust the tab for this username
+                            imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
+                        }
+        }}}};
+        
 		userBox.addMouseListener(mouseListener);
-		//Put a ScrollPane over our textarea. <3 scrolling
-		JScrollPane scrollPane = new JScrollPane(mainConsole);
-		scrollPane.setBounds(10,10,580,500);
-		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setOpaque(true);
 		userBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		imTabbedPane.setBounds(10,10,600,500);
+		imTabbedPane.setBounds(10,10,580,537);
+
 		//Generate panel by adding appropriate components
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.add(buddylist);
-	//	panel.add(tf);
 		panel.add(imTabbedPane);
-	//	panel.add(scrollPane);
 
 		//Initialize window frame
 		imContentFrame.setJMenuBar(menuBar);
-	        imContentFrame.setContentPane(panel);
-	        imContentFrame.setVisible(true);
+	    imContentFrame.setContentPane(panel);
+	    imContentFrame.setVisible(true);
         
 	}
 }
@@ -187,16 +174,24 @@ class MapTextArea {
 		myJPanel.setLayout(null);
 		myTA = new JTextArea();
 		myTF = new JTextField();
-		myTF.setBounds(10,100,100,30);
-		myTA.setBounds(10,10,100,100);
+		myTF.setBounds(10,469,560,30);
+		JScrollPane mySP = new JScrollPane(myTA);
+		mySP.setBounds(10,10,559,450);
+		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		mySP.setOpaque(true);
 		username = user;
-		myJPanel.add(myTA);
+		myJPanel.add(mySP);
 		myJPanel.add(myTF);
 		myTF.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
                                 Client.processMessage(myTF.getText());
                         }
-                });
+        });
+
+        Font font = new Font("Arial",Font.PLAIN,17);
+        myTA.setFont(font);
+        myTA.setForeground(Color.BLUE);
+
 		
 	}
 	
@@ -220,31 +215,19 @@ class MapTextArea {
 		return myJPanel;
 	}
 	
+	public void setTextColor(Color color){
+	    myTA.setForeground(color);
+    }
+    
 	public void writeToTextArea(String message){
 		myTA.append(message);
 	}
-
 	
+	public void moveToEnd(){
+	    myTA.selectAll();	
+    }
+    
+    public void clearTextField(){
+        myTF.setText("");
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
