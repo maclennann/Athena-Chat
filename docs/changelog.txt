@@ -1,6 +1,7 @@
 ChangeLog: 
 2/10/2010:
 	##Fixed the GUI a lot
+	##Added dynamic, tabbed GUI for each chat
 
 2/9/2010:
 	##Weekly code review(Greg/Norm)

@@ -1,0 +1,21 @@
+BOTH:
+	## Encryption!!!
+		@@ Research KDC protocols
+		@@ Use D-H for session keys? Is there a better option?
+		@@ Revamp database to deal with hashed keys and things
+	## Make the code many many times more efficient
+
+CLIENT:
+	## Hash password before sending it to the server.
+	## Swing window for putting in username and password
+		@@ Can they save their password?
+	## Swing window for various preferences
+		@@ What preferences (aside from theme)?
+	## BUDDYLIST
+		@@ Working XML writer and parser
+		@@ Do we encrypt buddylist? With what? What information is stored in it?
+
+SERVER:
+	## Create a thread to route messages, free up the console for an admin interface
+	## Create more eventcodes to/from the Server for special functions
+	## Hash passwords in DB

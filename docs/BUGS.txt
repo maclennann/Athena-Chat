@@ -1,6 +1,7 @@
-2/11/10:
+CLIENT:
+  2/11/10:
 	## Program will not spawn new tab for incoming message that would open the tab.
-		!! IN PROGRESS: I think this has been resolved, but I have been unable to run server to test.
+		!! RESOLVED: Wrote a makeTab(String) to run when there isn't a tab for a user.
 		!! Created ClientApplet.makeTab(String) which will make a tab and associated MapTextArea object.
 		!! If a tab for a user doesn't exist, create a tab first. Everything else runs as before.
 		!! Ref - Client:142    ClientApplet:153
@@ -12,6 +13,13 @@
 		!! RESOLVED: Checked to see if username is null before attempted to send.
 		!! Client:80
 	## In (Linux 2.6.31.9-174.fc12.i686 (Fedora) Default Res: (1680x1050) text input field (tf) is cut off by the bottom - even if I stretch the window out.
+		!! IN PROGRESS: Issue with certain GTK themes when running with GTK swing theme.
 		@@ Openbox WM.
 		@@ Widget placement appears off on all components.
 		@@ Screenshot URL to follow: http://i.imgur.com/QKRx7.png
+
+SERVER:
+ 2/12/10:
+	## When a user disconnects, something does close cleanly causing a lot of exceptions to be printed
+	## If 000 is sent to Aegis, but the newuser process is not followed, it crashes.
+		@@ Should have it return to regular method if the process is not followed instead of excepting
