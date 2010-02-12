@@ -184,6 +184,7 @@ class MapTextArea {
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		mySP.setOpaque(true);
 		myTA.setEditable(false);
+		myTA.setLineWrap(true);
 		username = user;
 		myJPanel.add(mySP);
 		myJPanel.add(myTF);
