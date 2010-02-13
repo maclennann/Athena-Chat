@@ -23,6 +23,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.sql.*;
+
+//Do we need JOptionPane?
 import javax.swing.JOptionPane;
 
 public class Server
@@ -43,6 +45,8 @@ public class Server
 	
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
+
+	//Will control listener thread when we do that
 	private int isListening = 1;
 	
 	//A hashtable that keeps track of the outputStreams linked to each socket
@@ -199,6 +203,7 @@ public class Server
 
 			// Remove socket from our hashtable/list
 			outputStreams.remove( s );
+
 			// Make sure it's closed
 			try {
 				s.close();
@@ -215,8 +220,7 @@ public class Server
 		// down the list of all output streams.
 		synchronized( outputStreams ) {
 			// Debug text
-			System.out.println( "User Disconnected:"+username+"\n\n" );
-
+			System.out.println( "User Disconnected: "+username+"\n\n" );
 
 			// Remove thread's entries from hashtables
 			outputStreams.remove( s );

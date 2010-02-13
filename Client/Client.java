@@ -40,17 +40,21 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+//TODO: Linux doesn't seem to have this library
 //import com.sun.xml.internal.txw2.Document;
 import org.w3c.dom.*;
 
 
 public class Client
 {
+	static int debug=0;
 	//Global username variable
 	private static String username="null";
+
+	//Recipient for message
 	private static String toUser;
 	
-	//Created GUI builder object
+	//Client's GUI
 	public static ClientApplet clientResource;
 	
 	//TODO: Make otherUsers array read from buddylist.xml
@@ -62,8 +66,14 @@ public class Client
 	private static DataOutputStream dout;
 	private static DataInputStream din;
 	
+	//Temporary object for the JPanel in a tab
+	static	MapTextArea print;
+
+	//Thread that will be used to listen for incoming messages
 	static Thread listeningProcedure;
-	static int connected=0;	
+
+	//If the client is connect to the server
+	static int connected = 0;	
 
 	//Exit the program
 	public static void exit(){
@@ -75,12 +85,21 @@ public class Client
 	public static void processMessage( String message ) {	
 		//Get user to send message to from active tab
 		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
-		MapTextArea print = (MapTextArea)clientResource.tabPanels.get(toUser);
+		
+		//Get the JPanel in the active tab
+		print = (MapTextArea)clientResource.tabPanels.get(toUser);
 			
-		if(username.equals("null")){print.writeToTextArea("Error: You are not connected!\n");print.moveToEnd();print.clearTextField();}
+		//See if the user is logged in. If yes, send it. If no, error.
+		if(username.equals("null")){
+			print.writeToTextArea("Error: You are not connected!\n");
+			print.moveToEnd();
+			print.clearTextField();}
 		else{
+			//Print the message locally
 			print.writeToTextArea(username+": ");
 			print.writeToTextArea(message+"\n");
+
+			//Send the message
 			try{
 				//Send recipient's name and message to server
 				dout.writeUTF(toUser);
@@ -89,7 +108,11 @@ public class Client
         			print.moveToEnd();
 				// Clear out text input field
 				print.clearTextField();
-			} catch( IOException ie ) { print.writeToTextArea("Error: You are not connected!\n");print.moveToEnd();print.clearTextField(); }
+			} catch( IOException ie ) { 
+				print.writeToTextArea("Error: You are not connected!\n");
+				print.moveToEnd();
+				print.clearTextField();
+			}
 		}
 	}
 	
@@ -138,17 +161,21 @@ public class Client
 			String fromUser = din.readUTF();
 			// What is the message?
 			String message = din.readUTF();
+			
+			//If there isn't already a tab for the conversation, make one
 			if(!clientResource.tabPanels.containsKey(fromUser)){
 				clientResource.makeTab(fromUser);
 			}
-			MapTextArea print = (MapTextArea)clientResource.tabPanels.get(fromUser);
+
+			//Write message to the correct tab
+			print = (MapTextArea)clientResource.tabPanels.get(fromUser);
 			print.setTextColor(Color.blue);
 			print.writeToTextArea(fromUser+": ");
 			print.setTextColor(Color.black);
 			print.writeToTextArea(message+"\n");
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
-			 connected=0; 
+			connected=0; 
 		}
 	}
 
@@ -159,14 +186,20 @@ public class Client
 			try{
 			//Connect to auth server at defined port over socket
 			socket = new Socket( "127.0.0.1", 7777 );
-			}catch (Exception e){ JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);return;}
+			}catch (Exception e){ 
+				//We can't connect to the server at the specified port for some reason
+				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
 			//Get the username and password for the user for authentication
 			//This should be in it's own fancy window
 			username = JOptionPane.showInputDialog("Please enter your username");
 			String password = JOptionPane.showInputDialog("Please enter your password");
 						
 			//Connection established debug code.
-			System.out.println( "connected to "+socket );
+			if(debug==1)System.out.println( "connected to "+socket );
+			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
@@ -181,27 +214,28 @@ public class Client
 			listeningProcedure = new Thread(
 				new Runnable() {
 					public void run() {
+						//While we are connected to the server, receive messages
 						while(connected ==1) {
 							Client.recvMesg(din);
 		      				}
 		  	}});	
 
+			//Start the thread
 			listeningProcedure.start();
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
-	// Method to disconnect
+	// Disconnect from the server
 	public static void disconnect() { 
 		try{
 			socket.close();
 			dout.close();
 			din.close();
 			connected=0;
-			listeningProcedure.interrupt();
 		}catch(Exception e){}
 	}
 
-	// Background thread runs this: show messages from other window
+	// Create the GUI for the client.
 	public static void main(String[] args) {
 	
 		clientResource = new ClientApplet();
@@ -212,7 +246,6 @@ public class Client
 		try {
 			
 			//Add user to your buddy list?
-			//TODO: Obviously, break this out into a method that can be called from a GUI action.
 			String answer = JOptionPane.showInputDialog("Do you want to add a user to your buddy list?");
 			if (answer.equals("yes")) {
 				String usernameToAdd = JOptionPane.showInputDialog("Enter the username");

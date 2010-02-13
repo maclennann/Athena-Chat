@@ -6,6 +6,7 @@ ChangeLog:
 		@@Set to 1 in constructor, set to 0 on any exception caused by dead datastreams. 
 		@@User/Socket is removed from hashtables and thread terminates.
 	##Client handles errors in a way more informative to users
+	##Cleaned up code. Mini code review
 
 02/10/2010:
 	##Fixed the GUI a lot

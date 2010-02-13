@@ -18,11 +18,13 @@
  * Thread's life is governed by an int isAlive. Set to 1 in the constructor, and set to 0 when user is likey disconnected.
  *
  ****************************************************/
+
 import java.io.*;
 import java.sql.*;
 import java.util.Enumeration;
 import java.io.*;
 import java.net.*;
+
 //TODO: Do we need JOptionPane for server?! It's not used anywhere else.
 import javax.swing.JOptionPane;
 
@@ -47,13 +49,17 @@ public class ServerThread extends Thread
 	
 	//Our current socket
 	public Socket socket;
+
+	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive=1;
 	
 	// Constructor. Instantiate this thread on the current socket
 	public ServerThread( Server server, Socket socket ) {
+
 		// Remember which socket we are on
 		this.server = server;
 		this.socket = socket;
+
 		//Start up the thread
 		start();
 	}
@@ -65,8 +71,8 @@ public class ServerThread extends Thread
 			din = new DataInputStream( socket.getInputStream() );
 			
 			//Getting the Username and Password over the stream for authentication
-			username = din.readUTF(); // Get Username
-			password = din.readUTF(); // Get Password
+			username = din.readUTF(); 
+			password = din.readUTF(); 
 			
 			//Debug statements
 			if (debug==1)System.out.println("Username: " + username);
@@ -80,7 +86,6 @@ public class ServerThread extends Thread
 			server.mapUserSocket(username, socket);	
 			
 			//Route around messages coming in from the client while they are connected
-			//TODO: Special message to end connection/destroy socket? Maybe?
 			while (isAlive==1) {
 				//Take in messages from this thread's client and route them to another client
 				routeMessage(din);
@@ -98,32 +103,33 @@ public class ServerThread extends Thread
 	public void sendToAegis(int eventCode) {
 		
 		switch(eventCode) { 
-		case 000: createUsername();
-		break;
-		default: return;
+			case 000: createUsername();
+			break;
+			default: return;
 		}
 	}
 	
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
-	//TODO: Can this be merged into sendMessage?
 	public void routeMessage(DataInputStream din){
 		try {
 			String toUser=din.readUTF();
 			String message=din.readUTF();
+
+			//Is the message an eventcode meant for the server?
 			if (toUser.equals("Aegis")) { 
-				if(debug==1)System.out.println("AEGIS WING IS THE BEST GAME EVER");
+				if(debug==1)System.out.println("Server eventcode detected!");
 				sendToAegis(Integer.parseInt(message));
 				return;
 			}else { 
-				if(debug==1)System.out.println(":( norm is mean");
+				if(debug==1)System.out.println("Routing normal message");
 				sendMessage(toUser, username, message);
 			}
 			
 		} catch (IOException e) {isAlive=0;}
 	}
 	
-	//TODO Make this work better. Enable (Somehow) communication between the client and the server
+	//TODO Make this work better.
 	public boolean createUsername() { 
 		try { 
 			//Use dbConnect() to connect to the database
@@ -134,23 +140,18 @@ public class ServerThread extends Thread
 			Statement insertSTMT;
 			ResultSet rs = null; 
 			
-			//Here will be the wxWidget code for the new menu (assumingly)
-			//But for now just some JOption
+			//Disregard two messages, the two others are the username and password
 			System.out.println(din.readUTF());
 			String newUser = din.readUTF();
 			System.out.println(din.readUTF());
 			String newPassword = din.readUTF();			
 			
-			
-			//Let's check to see if this username is already in the database			
-			//Return true if the username is already registered
 			stmt = con.createStatement();
 			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+newPassword);
 
-			//Here is where the query goes that we would like to run.
+			//See if the username already exists.
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser+"'");
 			if(debug==1)System.out.println("newUser: " + newUser);
-			
 		
 			//Test to see if there are any results
 			if (rs.next()) { 
@@ -168,6 +169,7 @@ public class ServerThread extends Thread
 				insertSTMT.close();
 				con.close();
 				
+				//Inform of our success
 				sendMessage(username, "Aegis", "User created succesfully.");
 				server.updateHashTable();
 				return true;
@@ -202,6 +204,7 @@ public class ServerThread extends Thread
 		//Find the outputstream associated with toUser's socket
 		//We send data through this outputstream to send the message
 		//If we cannot find the outputstream, send back an error
+		//This should not fail
 		if (server.outputStreams.containsKey(foundSocket)) { 
 			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
 		} else { sendMessage(fromUser, "MissingSocket", toUser); return; }
@@ -216,8 +219,8 @@ public class ServerThread extends Thread
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) { 
 	
-		String hashedPassword = server.authentication.get(clientName).toString(); //Grabbing the HashedPassword from the Database
-		//System.out.println(server.authentication.get(clientName)); //Grabbing the HashedPassword from the Database
+		//Get the password from the hashtable
+		String hashedPassword = server.authentication.get(clientName).toString();
 
 		//Debug messages.
 		//TODO: Come up with better debug messages
