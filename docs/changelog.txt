@@ -1,19 +1,26 @@
 ChangeLog: 
-2/10/2010:
+
+02/13/2010:
+	##ServerThread instances close cleanly when a user disconnects, preventing spamming the console.
+		@@Thread life is now governed by int isAlive. 
+		@@Set to 1 in constructor, set to 0 on any exception caused by dead datastreams. 
+		@@User/Socket is removed from hashtables and thread terminates.
+	##Client handles errors in a way more informative to users
+02/10/2010:
 	##Fixed the GUI a lot
 	##Added dynamic, tabbed GUI for each chat
 
-2/9/2010:
+02/09/2010:
 	##Weekly code review(Greg/Norm)
 	##Changed from an applet to a GUI
 	
-2/08/2010:
+02/08/2010:
 	##Added BuddyList method
 		@@Uses XML Parsers to input usernames into buddylist.xml
 	##Added createUsername method 
 		@@Not completed yet
 	
-2/6/2010:
+02/06/2010:
 	##Added XML-generating code to be implemented for buddylist
 	##Added JComboBox for choosing which user to send to.
 		@@ List is hard coded right now, work off of buddylist XML
@@ -23,13 +30,13 @@ ChangeLog:
 	!!BUG: One time, the user/socket was not removed correctly.
 		@@ Caused lots of EOFExceptions on server.
 
-2/2/2010:
+02/02/2010:
 	##Weekly code review (Norm)
 	##Added TODO notes in code.
 		@@ Marks where code needs work. What we have to remove, add, or change
 	##Added "detailed file notes" and fixed/added comments in all files
 
-2/1/2010:
+02/01/2010:
 	##Implemented Emo Method
 	!!Depreciated Emo Method
 	##Implemented sendMessage Method

@@ -43,6 +43,7 @@ public class Server
 	
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
+	private int isListening = 1;
 	
 	//A hashtable that keeps track of the outputStreams linked to each socket
 	public Hashtable outputStreams = new Hashtable();
@@ -62,6 +63,7 @@ public class Server
 		//Location of the database
 		//TODO: DB Server on LAN with auth server (maybe same computer) only accessable from auth server
 		//		of course, we need a real auth server first.
+		//TODO: Don't store DB location, username, or password in the source. Break it out into a conf file.
 		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
 	
 		//Database username and password. shhhhh.
@@ -136,7 +138,6 @@ public class Server
 		
 		//Accept client connections forever
 		while (true) {
-
 			//Accept a new connection on the serversocket
 			//Create a socket for it
 			Socket s = ss.accept();
@@ -154,6 +155,7 @@ public class Server
 			new ServerThread( this, s );
 		}
 	}
+	
 	
 	// Get an enumeration of all the OutputStreams.
 	Enumeration getOutputStreams() {

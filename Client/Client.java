@@ -156,9 +156,10 @@ public class Client
 	public static void connect() { 
 		//Try to connect with and authenticate to the socket
 		try {
+			try{
 			//Connect to auth server at defined port over socket
 			socket = new Socket( "127.0.0.1", 7777 );
-			
+			}catch (Exception e){ JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.","Connection Error",JOptionPane.ERROR_MESSAGE);return;}
 			//Get the username and password for the user for authentication
 			//This should be in it's own fancy window
 			username = JOptionPane.showInputDialog("Please enter your username");
@@ -179,8 +180,8 @@ public class Client
 			listeningProcedure = new Thread(
 				new Runnable() {
 					public void run() {
-						while(true) {
-							if(connected==1)Client.recvMesg(din);
+						while(connected ==1) {
+							Client.recvMesg(din);
 		      				}
 		  	}});	
 
@@ -203,11 +204,12 @@ public class Client
 	public static void main(String[] args) {
 	
 		clientResource = new ClientApplet();
-	//	clientResource.setVisible(true);
-
-//THIS SHOULD BE A METHOD		
-				//try {
-		/*	
+	}
+				
+	//TODO: Make buddylist actually work
+	public static void addBuddy(){
+		try {
+			
 			//Add user to your buddy list?
 			//TODO: Obviously, break this out into a method that can be called from a GUI action.
 			String answer = JOptionPane.showInputDialog("Do you want to add a user to your buddy list?");
@@ -220,17 +222,10 @@ public class Client
 			else {
 				JOptionPane.showMessageDialog(null, "Wrong answer - try again.");
 			}
-		*/	
-//THAT SHOULD BE A METHOD
+			
 
-			//Receive messages until something breaks or we disconnect
-	//		while (true) {
-	//			recvMesg(din);
-	//		}
-	//		}
-
-	//	}// catch( IOException ie ) { System.out.println( ie ); } 
-	//	catch (Exception e) { System.out.println(e); }
+		} catch( IOException ie ) { System.out.println( ie ); } 
+		catch (Exception e) { System.out.println(e); }
 		
 	}
 }

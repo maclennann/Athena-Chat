@@ -12,7 +12,10 @@
  * File: ServerThread.java
  * 
  * Each connection from a client gets its own thread. User logs in, thread handles sending messages to other users.
+ *
  * Sender's thread handles sending to recipient's socket.
+ *
+ * Thread's life is governed by an int isAlive. Set to 1 in the constructor, and set to 0 when user is likey disconnected.
  *
  ****************************************************/
 import java.io.*;
@@ -20,7 +23,7 @@ import java.sql.*;
 import java.util.Enumeration;
 import java.io.*;
 import java.net.*;
-
+//TODO: Do we need JOptionPane for server?! It's not used anywhere else.
 import javax.swing.JOptionPane;
 
 //TODO: Do we really need this? It does nothing ATM.
@@ -44,6 +47,7 @@ public class ServerThread extends Thread
 	
 	//Our current socket
 	public Socket socket;
+	private int isAlive=1;
 	
 	// Constructor. Instantiate this thread on the current socket
 	public ServerThread( Server server, Socket socket ) {
@@ -77,14 +81,13 @@ public class ServerThread extends Thread
 			
 			//Route around messages coming in from the client while they are connected
 			//TODO: Special message to end connection/destroy socket? Maybe?
-			while (true) {
+			while (isAlive==1) {
 				//Take in messages from this thread's client and route them to another client
 				routeMessage(din);
 			}
 			
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
-			ie.printStackTrace();
 		}finally {
 			//Socket is closed, remove it from the list
 			server.removeConnection( socket, username );
@@ -117,10 +120,10 @@ public class ServerThread extends Thread
 				sendMessage(toUser, username, message);
 			}
 			
-		} catch (IOException e) {e.printStackTrace();}
+		} catch (IOException e) {isAlive=0;}
 	}
 	
-	//TODO Make this work. Enable (Somehow) communication between the client and the server
+	//TODO Make this work better. Enable (Somehow) communication between the client and the server
 	public boolean createUsername() { 
 		try { 
 			//Use dbConnect() to connect to the database
