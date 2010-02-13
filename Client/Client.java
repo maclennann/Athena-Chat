@@ -159,7 +159,7 @@ public class Client
 			try{
 			//Connect to auth server at defined port over socket
 			socket = new Socket( "127.0.0.1", 7777 );
-			}catch (Exception e){ JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.","Connection Error",JOptionPane.ERROR_MESSAGE);return;}
+			}catch (Exception e){ JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);return;}
 			//Get the username and password for the user for authentication
 			//This should be in it's own fancy window
 			username = JOptionPane.showInputDialog("Please enter your username");
@@ -176,6 +176,7 @@ public class Client
 			dout.writeUTF(username); //Sending Username
 			dout.writeUTF(password); //Sending Password
 			connected=1;
+
 			//Thread created to listen for messages coming in from the server
 			listeningProcedure = new Thread(
 				new Runnable() {

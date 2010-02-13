@@ -22,3 +22,4 @@ SERVER:
 		!! RESOLVED: Thread runs respective to int isAlive. If routeMessage() can no longer run, isAlive is switched to 0 and the thread exits.
 	## If 000 is sent to Aegis, but the newuser process is not followed, it crashes.
 		@@ Should have it return to regular method if the process is not followed instead of excepting
+		@@ Issue is related to it not being passed an int. Though I guess that won't be an issue once we implement a sane way of moving eventcodes back and forth.

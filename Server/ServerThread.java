@@ -112,11 +112,11 @@ public class ServerThread extends Thread
 			String toUser=din.readUTF();
 			String message=din.readUTF();
 			if (toUser.equals("Aegis")) { 
-				System.out.println("AEGIS WING IS THE BEST GAME EVER");
+				if(debug==1)System.out.println("AEGIS WING IS THE BEST GAME EVER");
 				sendToAegis(Integer.parseInt(message));
 				return;
 			}else { 
-				System.out.println(":( norm is mean");
+				if(debug==1)System.out.println(":( norm is mean");
 				sendMessage(toUser, username, message);
 			}
 			
@@ -145,11 +145,11 @@ public class ServerThread extends Thread
 			//Let's check to see if this username is already in the database			
 			//Return true if the username is already registered
 			stmt = con.createStatement();
-			System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+newPassword);
+			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+newPassword);
 
 			//Here is where the query goes that we would like to run.
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser+"'");
-			System.out.println("newUser: " + newUser);
+			if(debug==1)System.out.println("newUser: " + newUser);
 			
 		
 			//Test to see if there are any results
@@ -188,15 +188,15 @@ public class ServerThread extends Thread
 		Socket foundSocket = null;
 			
 		//Debug statement: who is this going to?
-		System.out.print(toUser);
+		if(debug==1)System.out.print(toUser);
 
 		//Look up the socket associated with the with whom we want to talk
 		//We will use this to find which outputstream to send out
 		//If we cannot find the user or socket, send back an error
 		if ((server.userToSocket.containsKey(toUser))) { 
-			System.out.print("Found user.. Continuing...");
+			if(debug==1)System.out.print("Found user.. Continuing...");
 			foundSocket = (Socket) server.userToSocket.get(toUser);
-			System.out.print("Found Socket: " + foundSocket);
+			if(debug==1)System.out.print("Found Socket: " + foundSocket);
 		} else { sendMessage(fromUser, "UnavailableUser", toUser); return; } 
 			
 		//Find the outputstream associated with toUser's socket

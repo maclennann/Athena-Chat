@@ -134,8 +134,18 @@ public class Server
 		ss = new ServerSocket( port );
 
 		// Tell the world we're ready to go
-		System.out.println( "Listening on "+ss );
-		
+		//System.out.println( "Listening on "+ss );
+		System.out.println("*******************************************");
+		System.out.println("**     Welcome to Athena Chat Server     **");
+		System.out.println("**            Codename: Aegis            **");
+		System.out.println("**                                       **");
+		System.out.println("**     v0.0.1a                           **");
+		System.out.println("**                                       **");
+		System.out.println("**     Server accepting connections:     **");
+		System.out.println("**     Port 7777                         **");
+		System.out.println("**                                       **");
+		System.out.println("*******************************************");
+
 		//Accept client connections forever
 		while (true) {
 			//Accept a new connection on the serversocket
@@ -143,7 +153,7 @@ public class Server
 			Socket s = ss.accept();
 
 			//Debug text announcing a new connection
-			System.out.println( "Connection from "+s );
+			System.out.println( "Connection Established:\n "+s+"\n\n" );
 
 			//DataOuputStream to send data from the client's socket
 			DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
@@ -185,7 +195,7 @@ public class Server
 		// down the list of all output streams.
 		synchronized( outputStreams ) {
 			// Debug text
-			System.out.println( "Removing connection to "+s );
+			System.out.println( "Connection Terminated:\n"+s+"\n\n" );
 
 			// Remove socket from our hashtable/list
 			outputStreams.remove( s );
@@ -205,7 +215,8 @@ public class Server
 		// down the list of all output streams.
 		synchronized( outputStreams ) {
 			// Debug text
-			System.out.println( "Removing connection to "+s+"\nUser:"+username );
+			System.out.println( "User Disconnected:"+username+"\n\n" );
+
 
 			// Remove thread's entries from hashtables
 			outputStreams.remove( s );
