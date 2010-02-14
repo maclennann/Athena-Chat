@@ -191,12 +191,14 @@ public class Client
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-
+			JPasswordField passwd = new JPasswordField();
+			String password="";
 			//Get the username and password for the user for authentication
 			//This should be in it's own fancy window
 			username = JOptionPane.showInputDialog("Please enter your username");
-			String password = JOptionPane.showInputDialog("Please enter your password");
-						
+			int action = JOptionPane.showConfirmDialog(null, passwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION);  
+			if(action < 0)JOptionPane.showMessageDialog(null,"Cancel, X or escape key selected");  
+			else password = new String(passwd.getPassword());	
 			//Connection established debug code.
 			if(debug==1)System.out.println( "connected to "+socket );
 			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
