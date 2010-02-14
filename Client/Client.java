@@ -47,7 +47,9 @@ import org.w3c.dom.*;
 
 public class Client
 {
+	//Print debug messages?
 	static int debug=0;
+
 	//Global username variable
 	private static String username="null";
 
@@ -162,6 +164,14 @@ public class Client
 			// What is the message?
 			String message = din.readUTF();
 			
+			//If the message is an unavailabe user response		
+			if(fromUser.equals("UnavailableUser")){
+				print = (MapTextArea)clientResource.tabPanels.get(message);
+				print.writeToTextArea(fromUser+": ");
+				print.writeToTextArea(message+"\n");
+				return;
+			}
+
 			//If there isn't already a tab for the conversation, make one
 			if(!clientResource.tabPanels.containsKey(fromUser)){
 				clientResource.makeTab(fromUser);
