@@ -184,6 +184,7 @@ public class Client
 			print.writeToTextArea(fromUser+": ");
 			print.setTextColor(Color.black);
 			print.writeToTextArea(message+"\n");
+			print.moveToEnd();
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
 			connected=0; 
@@ -196,7 +197,7 @@ public class Client
 		try {
 			try{
 			//Connect to auth server at defined port over socket
-			socket = new Socket( "127.0.0.1", 7777 );
+			socket = new Socket( "192.168.1.117", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
