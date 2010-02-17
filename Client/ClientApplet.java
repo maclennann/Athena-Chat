@@ -33,11 +33,11 @@ import java.util.Hashtable;
 //TODO: Rename it to something else. It's not an applet
 public class ClientApplet extends JFrame 
 {
-	public static Hashtable userStatus;
+	public Hashtable userStatus = new Hashtable();;
 	
 	//Define the listmodel for the JList
 	DefaultListModel listModel = new DefaultListModel();
-
+	
 	//String array of buddies for choosing user to send message to
 	public static String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};	
 	
@@ -57,6 +57,8 @@ public class ClientApplet extends JFrame
 		
 
 	ClientApplet () { 
+	
+		listModel.addElement("Aegis");
 
 		//Initialize chat window
 		//This is the main frame for the IMs

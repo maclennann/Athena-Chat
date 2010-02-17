@@ -248,7 +248,7 @@ public class ServerThread extends Thread
 	public void checkUserAvailibility() {
 	try { 
 		String findUser = din.readUTF();
-		System.out.println("USername receiveddd:\n\n\n\n" + findUser);
+		System.out.println("Username receiveddd:\n" + findUser);
 			if ((server.userToSocket.containsKey(findUser))) { 
 				sendMessage("Greg","Aegis","1");
 				System.out.println("Made it into the if!! Answer is 1 (online)\n");

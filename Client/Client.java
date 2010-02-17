@@ -139,9 +139,9 @@ public class Client
 			Thread.sleep(4000);	
 			dout.writeUTF(findUserName);
 			System.out.println("CheckUSerAvailibility's DOUT Cleared");
-			din.readUTF();
+			//din.readUTF();
 			System.out.println("CheckUSerAvailibility's DIN Cleared");
-			result = Integer.parseInt(din.readUTF());
+			//result = Integer.parseInt(din.readUTF());
 			System.out.println("CheckUSerAvailibility's DIN2 Cleared");
 			clientResource.mapUserStatus(findUserName, result);
 		} catch (java.io.IOException e) { 
@@ -272,18 +272,17 @@ public class Client
 			//Check entire buddylist and fill hashtable with user online statuses
 			for (int i=0; i < clientResource.otherUsers.length; i++) { 
 				System.out.println("LENGTHHH:" + clientResource.otherUsers.length);
-				System.out.println(i);
+				System.out.println("Name: " + clientResource.otherUsers[i]);
 				checkUserAvailibility(clientResource.otherUsers[i]);
 			}
 			//Counter
 			int x=0;
 			//Loop through the HashTable of available users and place them in the JList
-			for (Enumeration e = clientResource.userStatus.elements(); e.hasMoreElements(); ) { 				
-				while (x < 1) {
-					clientResource.newBuddyListItems(clientResource.userStatus.get(e.nextElement()).toString());
-					x++;
+			for (Enumeration e = clientResource.userStatus.keys(); e.hasMoreElements(); ) { 				
+					System.out.println("omg:" + e.nextElement().toString());
+					clientResource.newBuddyListItems(e.nextElement().toString());
+
 			}
-		}
 			//clientResource.newBuddyListItems(userArr);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
