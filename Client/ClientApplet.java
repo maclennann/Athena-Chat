@@ -115,6 +115,8 @@ public class ClientApplet extends JFrame
 		//ActionListener to make the disconnect menu item disconnect
 		disconnect.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
+				//Clear the Buddy list when disconnected
+				listModel.clear();
 				Client.disconnect();
 			}
 		});

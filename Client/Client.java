@@ -284,6 +284,7 @@ public class Client
 	}
 
 	// Startup method to initiate the buddy list
+	//TODO Make sure the user's status gets changed when they sign on/off
 	public static void instanciateBuddyList() { 
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < clientResource.otherUsers.length; i++) { 
