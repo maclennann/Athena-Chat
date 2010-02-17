@@ -54,8 +54,10 @@ public class ClientApplet extends JFrame
 	public void newBuddyListItems(String availableUser) { 
 		listModel.addElement(availableUser);
 	}
-		
-
+	//Method to remove user from the JList who signs off 	
+	public void buddySignOff(String offlineUser) { 
+		listModel.removeElement(offlineUser);
+	}
 	ClientApplet () { 
 	
 		listModel.addElement("Aegis");

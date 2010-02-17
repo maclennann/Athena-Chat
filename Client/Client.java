@@ -173,6 +173,11 @@ public class Client
 				print.writeToTextArea(message+"\n");
 				return;
 			}
+			
+			if(fromUser.equals("ServerLogOff")) { 
+				clientResource.buddySignOff(message);
+				return;
+			}
 
 			//If there isn't already a tab for the conversation, make one
 			if(!clientResource.tabPanels.containsKey(fromUser)){
@@ -214,7 +219,7 @@ public class Client
 			else password = new String(passwd.getPassword());	
 			
 			//Connection established debug code.
-			if(debug==1)System.out.println( "connected to "+socket );
+			if(debug==1)System.out.println( "Connected to "+socket );
 			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
