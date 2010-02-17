@@ -33,7 +33,7 @@ import java.util.Hashtable;
 //TODO: Rename it to something else. It's not an applet
 public class ClientApplet extends JFrame 
 {
-	public Hashtable userStatus = new Hashtable();;
+	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();;
 	
 	//Define the listmodel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -194,8 +194,7 @@ public class ClientApplet extends JFrame
 		System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
 	}
-			
-		
+//End of class ClientApplet		
 }
 
 //This class holds all of the JComponents and acts as an interface to each conversation's tab

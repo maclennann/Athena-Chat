@@ -288,8 +288,8 @@ public class Client
 		//Counter
 		int x=0;
 		//Loop through the HashTable of available users and place them in the JList
-		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); e.hasMoreElements(); ) {
-				if (f.nextElement().equals("1")) { 
+		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); x++ ) {
+				if (f.nextElement().toString().equals("1")) { 
 				System.out.println("Online user:" + e.nextElement().toString());
 				clientResource.newBuddyListItems(e.nextElement().toString());
 				}
