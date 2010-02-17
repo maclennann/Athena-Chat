@@ -135,7 +135,8 @@ public class Client
 	public static void checkUserAvailibility(String findUserName) {
 		try { 
 			int result = 0;
-			systemMessage("001");	
+			systemMessage("001");
+			Thread.sleep(4000);	
 			dout.writeUTF(findUserName);
 			System.out.println("CheckUSerAvailibility's DOUT Cleared");
 			din.readUTF();
