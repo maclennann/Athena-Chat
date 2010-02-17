@@ -137,8 +137,11 @@ public class Client
 			int result = 0;
 			systemMessage("001");	
 			dout.writeUTF(findUserName);
+			System.out.println("CheckUSerAvailibility's DOUT Cleared");
 			din.readUTF();
+			System.out.println("CheckUSerAvailibility's DIN Cleared");
 			result = Integer.parseInt(din.readUTF());
+			System.out.println("CheckUSerAvailibility's DIN2 Cleared");
 			clientResource.mapUserStatus(findUserName, result);
 		} catch (java.io.IOException e) { 
 		}
@@ -266,6 +269,7 @@ public class Client
 			listeningProcedure.start();
 			//Check entire buddylist and fill hashtable with user online statuses
 			for (int i=0; i < clientResource.otherUsers.length; i++) { 
+				System.out.println("LENGTHHH:" + clientResource.otherUsers.length);
 				System.out.println(i);
 				checkUserAvailibility(clientResource.otherUsers[i]);
 			}
