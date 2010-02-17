@@ -17,6 +17,7 @@
 import java.awt.Color;
 import java.applet.*;
 import java.awt.*;
+import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -32,12 +33,13 @@ import java.util.Hashtable;
 //TODO: Rename it to something else. It's not an applet
 public class ClientApplet extends JFrame 
 {
-	
+	public static Hashtable userStatus = null;
+
 	//String array of buddies for choosing user to send message to
-	public static String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};
+	public static String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};	
 	
 	// Components for the visual display of the chat windows
-	public JList userBox = new JList(otherUsers);
+	public JList userBox;
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
 	public JMenuItem connect, disconnect, exit;
@@ -45,6 +47,12 @@ public class ClientApplet extends JFrame
 	public JFrame imContentFrame, buddyListFrame;
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable tabPanels = new Hashtable();
+
+	public JList newBuddyList(String[] availableUsers) { 
+		userBox = new JList(availableUsers);
+		return userBox;
+	}
+		
 
 	ClientApplet () { 
 
@@ -177,6 +185,12 @@ public class ClientApplet extends JFrame
 		//Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
 	}
+	//Makes a new hashtable with user's online status
+	public void mapUserStatus(String username, int status) { 
+		userStatus.put(username, status);
+	}
+			
+		
 }
 
 //This class holds all of the JComponents and acts as an interface to each conversation's tab
@@ -203,6 +217,7 @@ class MapTextArea {
 		myTA = new JTextArea();
 		myTA.setEditable(false);
 		myTA.setLineWrap(true);
+		myTA.setWrapStyleWord(true);
 		JScrollPane mySP = new JScrollPane(myTA);
 		mySP.setBounds(10,10,559,450);
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);

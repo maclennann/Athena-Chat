@@ -105,6 +105,8 @@ public class ServerThread extends Thread
 		switch(eventCode) { 
 			case 000: createUsername();
 			break;
+			case 001: checkUserAvailibility();
+			break;
 			default: return;
 		}
 	}
@@ -239,5 +241,13 @@ public class ServerThread extends Thread
 			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	
-	}				
+	}
+	
+	public void checkUserAvailibility() {
+		String findUser= din.readUTF();
+		if ((server.userToSocket.containsKey(username))) { 
+			dout.writeUTF("1");
+		} else { doubt.writeUTF("0"; } 
+	}
+					
 }

@@ -28,6 +28,7 @@ import java.sql.Statement;
 import javax.swing.*;
 import java.lang.Thread;
 import java.lang.Runnable;
+import java.util.Enumeration;
 
 //XML Imports
 import javax.xml.*;
@@ -118,6 +119,31 @@ public class Client
 			}
 		}
 	}
+
+	//Called from the actionListener on the tf textfield
+	//User wants to send a message
+	public static void systemMessage( String message ) {	
+			//Send the message
+			try{
+				//Send recipient's name and message to server
+				dout.writeUTF("Aegis");
+				dout.writeUTF(message);
+			} catch( IOException ie ) {
+			}
+	}
+
+	public static void checkUserAvailibility(String findUserName) {
+		try { 
+			int result = 0;
+			systemMessage("001");	
+			dout.writeUTF(findUserName);
+			result = Integer.parseInt(din.readUTF());
+			clientResource.mapUserStatus(findUserName, result);
+		} catch (java.io.IOException e) { 
+		}
+	}			
+				
+			
 	
 	//This method will be used to add to the buddy list
 	private static void buddyList(String usernameToAdd) throws Exception {
@@ -237,6 +263,18 @@ public class Client
 
 			//Start the thread
 			listeningProcedure.start();
+			//Check entire buddylist and fill hashtable with user online statuses
+			for (int i=0; i < clientResource.otherUsers.length; i++) { 
+				checkUserAvailibility(clientResource.otherUsers[i]);
+			}
+			
+			int x=0;
+			String[] userArr = null;
+			for (Enumeration e = clientResource.userStatus.elements(); e.hasMoreElements(); ) { 
+				userArr[x] = clientResource.userStatus.get((String)e.nextElement()).toString();
+				x++;
+			}
+			clientResource.newBuddyList(userArr);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
