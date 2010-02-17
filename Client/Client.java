@@ -266,6 +266,7 @@ public class Client
 			listeningProcedure.start();
 			//Check entire buddylist and fill hashtable with user online statuses
 			for (int i=0; i < clientResource.otherUsers.length; i++) { 
+				System.out.println(i);
 				checkUserAvailibility(clientResource.otherUsers[i]);
 			}
 			

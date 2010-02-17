@@ -250,7 +250,9 @@ public class ServerThread extends Thread
 		System.out.println("USername receiveddd:\n\n\n\n" + findUser);
 			if ((server.userToSocket.containsKey(findUser))) { 
 				sendMessage(username,"Aegis","1");
+				System.out.println("Made it into the if!! Answer is 1 (online)\n");
 			} else { sendMessage(username,"Aegis","0");
+				System.out.println("Made it in theif!! Answer is 0 (offline)\n");
 			} 
 		} catch ( java.io.IOException e ) { }
 	}
