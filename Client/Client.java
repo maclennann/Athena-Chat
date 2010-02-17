@@ -304,12 +304,13 @@ public class Client
 			//System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
 			dout.writeUTF(findUserName);
-			System.out.println("Username sent - now listening for result...");
+			//Grab result
+			result = Integer.parseInt(din.readUTF());
+			//System.out.println("Username sent - now listening for result...");
 			//Listening for the result
 			//Must get rid of the first result
 			//System.out.println(din.readUTF().toString());
-			//Grab result
-			result = Integer.parseInt(din.readUTF());
+
 			//Print result 
 			System.out.println("Result fo user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
