@@ -243,7 +243,7 @@ public class ServerThread extends Thread
 		Socket foundSocket = null;
 		
 		//Debug statement: who is this going to?
-		if(debug==1)System.out.print(toUser);
+		if(debug==1)System.out.println("Who is this message going to? " + toUser);
 
 		//Look up the socket associated with the with whom we want to talk
 		//We will use this to find which outputstream to send out
@@ -266,7 +266,7 @@ public class ServerThread extends Thread
 		try {
 			dout.writeUTF(toUser);
 			dout.writeUTF(message);
-			System.out.println("Message sent.");
+			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
