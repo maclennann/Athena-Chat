@@ -136,7 +136,7 @@ public class ServerThread extends Thread
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
-			sendMessage(username, "Aegis", "Access granted. Send me the username.");
+			sendMessage("Greg", "Aegis", "Access granted. Send me the username.");
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username
