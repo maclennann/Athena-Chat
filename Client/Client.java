@@ -145,6 +145,7 @@ public class Client
 			System.out.println("CheckUSerAvailibility's DIN2 Cleared");
 			clientResource.mapUserStatus(findUserName, result);
 		} catch (java.io.IOException e) { 
+		} catch (java.lang.InterruptedException ie ) { 
 		}
 	}			
 				
@@ -278,10 +279,9 @@ public class Client
 			int x=0;
 			String[] userArr = null;
 			for (Enumeration e = clientResource.userStatus.elements(); e.hasMoreElements(); ) { 
-				userArr[x] = clientResource.userStatus.get(e.nextElement()).toString();
-				x++;
+				clientResource.newBuddyListItems(clientResource.userStatus.get(e.nextElement()).toString());
 			}
-			clientResource.newBuddyList(userArr);
+			//clientResource.newBuddyListItems(userArr);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	

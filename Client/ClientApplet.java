@@ -34,12 +34,15 @@ import java.util.Hashtable;
 public class ClientApplet extends JFrame 
 {
 	public static Hashtable userStatus;
+	
+	//Define the listmodel for the JList
+	DefaultListModel listModel = new DefaultListModel();
 
 	//String array of buddies for choosing user to send message to
 	public static String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};	
 	
 	// Components for the visual display of the chat windows
-	public JList userBox;
+	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
 	public JMenuItem connect, disconnect, exit;
@@ -48,9 +51,8 @@ public class ClientApplet extends JFrame
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable tabPanels = new Hashtable();
 
-	public JList newBuddyList(String[] availableUsers) { 
-		userBox = new JList(availableUsers);
-		return userBox;
+	public void newBuddyListItems(String availableUser) { 
+		listModel.addElement(availableUser);
 	}
 		
 
