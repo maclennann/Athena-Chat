@@ -271,7 +271,7 @@ public class Client
 			int x=0;
 			String[] userArr = null;
 			for (Enumeration e = clientResource.userStatus.elements(); e.hasMoreElements(); ) { 
-				userArr[x] = clientResource.userStatus.get((String)e.nextElement()).toString();
+				userArr[x] = clientResource.userStatus.get(e.nextElement()).toString();
 				x++;
 			}
 			clientResource.newBuddyList(userArr);

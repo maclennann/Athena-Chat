@@ -106,6 +106,7 @@ public class ServerThread extends Thread
 			case 000: createUsername();
 			break;
 			case 001: checkUserAvailibility();
+			System.out.println("*******************Checking User Availibility**********************");
 			break;
 			default: return;
 		}
@@ -246,6 +247,7 @@ public class ServerThread extends Thread
 	public void checkUserAvailibility() {
 	try { 
 		String findUser= din.readUTF();
+		System.out.println("USername receiveddd:\n\n\n\n" + findUser);
 			if ((server.userToSocket.containsKey(username))) { 
 			dout.writeUTF("1");
 			} else { dout.writeUTF("0"); } 
