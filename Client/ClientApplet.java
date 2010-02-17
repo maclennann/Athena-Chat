@@ -33,7 +33,7 @@ import java.util.Hashtable;
 //TODO: Rename it to something else. It's not an applet
 public class ClientApplet extends JFrame 
 {
-	public static Hashtable userStatus = null;
+	public static Hashtable userStatus;
 
 	//String array of buddies for choosing user to send message to
 	public static String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};	
@@ -187,6 +187,7 @@ public class ClientApplet extends JFrame
 	}
 	//Makes a new hashtable with user's online status
 	public void mapUserStatus(String username, int status) { 
+		System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
 	}
 			
