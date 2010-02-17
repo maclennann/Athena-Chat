@@ -245,9 +245,11 @@ public class ServerThread extends Thread
 	
 	public void checkUserAvailibility() {
 		String findUser= din.readUTF();
-		if ((server.userToSocket.containsKey(username))) { 
+		try { 
+			if ((server.userToSocket.containsKey(username))) { 
 			dout.writeUTF("1");
-		} else { dout.writeUTF("0"); } 
+			} else { dout.writeUTF("0"); } 
+		} catch ( java.io.IOException e ) { }
 	}
 					
 }
