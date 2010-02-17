@@ -301,7 +301,7 @@ public class Client
 			//First contact with Aegis!
 			systemMessage("001");
 			//Listen for the incoming Acknowledge message
-			System.out.println(din.readUTF().toString());
+			//System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
 			dout.writeUTF(findUserName);
 			System.out.println("Username sent - now listening for result...");

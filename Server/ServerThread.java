@@ -136,16 +136,16 @@ public class ServerThread extends Thread
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
-			sendMessage("Greg", "Aegis", "Access granted. Send me the username.");
+			sendSystemMessage("Greg", "Access granted. Send me the username.");
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username
 			System.out.println("Username received: " + findUser);
 				//Check to see if the username is in the current Hashtable, return result
 				if ((server.userToSocket.containsKey(findUser))) { 
-					sendMessage("Greg","Aegis","1");
+					sendSystemMessage("Greg","1");
 					System.out.println("(Online)\n");
-				} else { sendMessage("Greg","Aegis","0");
+				} else { sendSystemMessage("Greg","0");
 					System.out.println("(Offline)\n");
 				} 
 			} catch ( java.io.IOException e ) { }
@@ -237,7 +237,37 @@ public class ServerThread extends Thread
 			dout.writeUTF(message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
+	
+	//Send system Messages to selected user
+	void sendSystemMessage(String toUser, String message) { 
+		Socket foundSocket = null;
+		
+		//Debug statement: who is this going to?
+		if(debug==1)System.out.print(toUser);
 
+		//Look up the socket associated with the with whom we want to talk
+		//We will use this to find which outputstream to send out
+		//If we cannot find the user or socket, send back an error
+		if ((server.userToSocket.containsKey(toUser))) { 
+			if(debug==1)System.out.print("Found user.. Continuing...");
+			foundSocket = (Socket) server.userToSocket.get(toUser);
+			if(debug==1)System.out.print("Found Socket: " + foundSocket);
+		} 
+			
+		//Find the outputstream associated with toUser's socket
+		//We send data through this outputstream to send the message
+		//If we cannot find the outputstream, send back an error
+		//This should not fail
+		if (server.outputStreams.containsKey(foundSocket)) { 
+			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
+		} 
+			
+		//Send the message, and the user it is from
+		try {
+			dout.writeUTF(toUser);
+			dout.writeUTF(message);
+		} catch( IOException ie ) { System.out.println( ie ); }
+	}
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) { 
 	
