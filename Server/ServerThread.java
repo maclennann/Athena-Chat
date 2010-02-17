@@ -247,7 +247,7 @@ public class ServerThread extends Thread
 		String findUser= din.readUTF();
 		if ((server.userToSocket.containsKey(username))) { 
 			dout.writeUTF("1");
-		} else { doubt.writeUTF("0"; } 
+		} else { dout.writeUTF("0"; } 
 	}
 					
 }
