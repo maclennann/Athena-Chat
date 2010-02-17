@@ -281,8 +281,7 @@ public class Client
 	public static void instanciateBuddyList() { 
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < clientResource.otherUsers.length; i++) { 
-			System.out.println("LENGTHHH:" + clientResource.otherUsers.length);
-			System.out.println("Name: " + clientResource.otherUsers[i]);
+			System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
 			checkUserStatus(clientResource.otherUsers[i]);
 		}
 		//Counter

@@ -143,9 +143,9 @@ public class ServerThread extends Thread
 			System.out.println("Username received: " + findUser);
 				//Check to see if the username is in the current Hashtable, return result
 				if ((server.userToSocket.containsKey(findUser))) { 
-					sendMessage(username,"Aegis","1");
+					sendMessage("Greg","Aegis","1");
 					System.out.println("(Online)\n");
-				} else { sendMessage(username,"Aegis","0");
+				} else { sendMessage("Greg","Aegis","0");
 					System.out.println("(Offline)\n");
 				} 
 			} catch ( java.io.IOException e ) { }
