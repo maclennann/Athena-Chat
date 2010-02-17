@@ -136,7 +136,7 @@ public class ServerThread extends Thread
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
-			sendSystemMessage("Greg", "Access granted. Send me the username.");
+			sendSystemMessage(username, "Access granted. Send me the username.");
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username
@@ -144,9 +144,9 @@ public class ServerThread extends Thread
 				//Check to see if the username is in the current Hashtable, return result
 				Thread.sleep(4000);
 				if ((server.userToSocket.containsKey(findUser))) { 
-					sendSystemMessage("Greg","1");
+					sendSystemMessage(username,"1");
 					System.out.println("(Online)\n");
-				} else { sendSystemMessage("Greg","0");
+				} else { sendSystemMessage(username,"0");
 					System.out.println("(Offline)\n");
 				} 
 			} catch ( java.io.IOException e ) { }

@@ -235,12 +235,13 @@ public class Client
 							Client.recvMesg(din);
 		      				}
 		  	}});	
-
+			//Instanciate Buddy List
+			instanciateBuddyList();
+			
 			//Start the thread
 			listeningProcedure.start();
 			
-			//Instanciate Buddy List
-			instanciateBuddyList();
+
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
@@ -287,9 +288,11 @@ public class Client
 		//Counter
 		int x=0;
 		//Loop through the HashTable of available users and place them in the JList
-		for (Enumeration e = clientResource.userStatus.keys(); e.hasMoreElements(); ) { 				
-				System.out.println("omg:" + e.nextElement().toString());
+		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); e.hasMoreElements(); ) {
+				if (f.nextElement().equals("1")) { 
+				System.out.println("Online user:" + e.nextElement().toString());
 				clientResource.newBuddyListItems(e.nextElement().toString());
+				}
 		}
 	}
 	
@@ -301,16 +304,12 @@ public class Client
 			//First contact with Aegis!
 			systemMessage("001");
 			//Listen for the incoming Acknowledge message
-			//System.out.println("Message received from server: " + din.readUTF().toString());
+			System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
 			dout.writeUTF(findUserName);
+			System.out.println("Username sent - now listening for result...");
 			//Grab result
 			result = Integer.parseInt(din.readUTF());
-			//System.out.println("Username sent - now listening for result...");
-			//Listening for the result
-			//Must get rid of the first result
-			//System.out.println(din.readUTF().toString());
-
 			//Print result 
 			System.out.println("Result fo user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
