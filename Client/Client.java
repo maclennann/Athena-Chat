@@ -275,12 +275,15 @@ public class Client
 				System.out.println(i);
 				checkUserAvailibility(clientResource.otherUsers[i]);
 			}
-			
+			//Counter
 			int x=0;
-			String[] userArr = null;
-			for (Enumeration e = clientResource.userStatus.elements(); e.hasMoreElements(); ) { 
-				clientResource.newBuddyListItems(clientResource.userStatus.get(e.nextElement()).toString());
+			//Loop through the HashTable of available users and place them in the JList
+			for (Enumeration e = clientResource.userStatus.elements(); e.hasMoreElements(); ) { 				
+				while (x < 1) {
+					clientResource.newBuddyListItems(clientResource.userStatus.get(e.nextElement()).toString());
+					x++;
 			}
+		}
 			//clientResource.newBuddyListItems(userArr);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
