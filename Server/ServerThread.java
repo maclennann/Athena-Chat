@@ -264,7 +264,7 @@ public class ServerThread extends Thread
 			
 		//Send the message, and the user it is from
 		try {
-			dout.writeUTF(toUser);
+			//dout.writeUTF(toUser);
 			dout.writeUTF(message);
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
