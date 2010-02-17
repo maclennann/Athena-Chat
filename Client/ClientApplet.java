@@ -1,5 +1,5 @@
 /****************************************************
- * Athena: Encrypted Messaging Application v.0.0.1
+ * Athena: Encrypted Messaging Application v.0.0.2
  * By: 	
  * 			Gregory LeBlanc
  * 			Norm Maclennan 
@@ -81,11 +81,15 @@ public class ClientApplet extends JFrame
 	        edit = new JMenu("Edit");
 	        edit.setMnemonic(KeyEvent.VK_A);
 	        menuBar.add(edit);
+	        
+	        //TODO Add items to the edit menu
 	       
 		//Create the encryption menu.
 	        encryption = new JMenu("Encryption");
 	        encryption.setMnemonic(KeyEvent.VK_A);
 	        menuBar.add(encryption);
+	        
+	        //TODO Add itemsto the encryption menu
 	
 		//ActionListener to make the connect menu item connect
 		connect.addActionListener(new ActionListener() {
@@ -194,19 +198,24 @@ class MapTextArea {
 		//Create the JPanel and put all of the components in it
 		myJPanel = new JPanel();
 		myJPanel.setLayout(null);
+		
+		//Create the textarea and the scrollpane around it
 		myTA = new JTextArea();
-		myTF = new JTextField();
-		myTF.setBounds(10,469,560,30);
+		myTA.setEditable(false);
+		myTA.setLineWrap(true);
 		JScrollPane mySP = new JScrollPane(myTA);
 		mySP.setBounds(10,10,559,450);
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		mySP.setOpaque(true);
-		myTA.setEditable(false);
-		myTA.setLineWrap(true);
-		username = user;
 		myJPanel.add(mySP);
+		
+		//Create the textfield
+		myTF = new JTextField();
+		myTF.setBounds(10,469,560,30);
 		myJPanel.add(myTF);
-
+		
+		username = user;
+		
 		//Add an actionlistener to the textfield to send messages
 		myTF.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
@@ -214,6 +223,7 @@ class MapTextArea {
                         }
         	});
 
+		//Set font to Arial
 	        Font font = new Font("Arial",Font.PLAIN,17);
         	myTA.setFont(font);
 	}

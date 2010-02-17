@@ -1,5 +1,5 @@
 /****************************************************
- * Athena: Encrypted Messaging Application v.0.0.1
+ * Athena: Encrypted Messaging Application v.0.0.2
  * By: 	
  * 			Gregory LeBlanc
  * 			Norm Maclennan 

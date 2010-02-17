@@ -1,5 +1,5 @@
 /****************************************************
- * Athena: Encrypted Messaging Application v.0.0.1
+ * Athena: Encrypted Messaging Application v.0.0.2
  * By: 	
  * 			Gregory LeBlanc
  * 			Norm Maclennan 
@@ -143,7 +143,7 @@ public class Server
 		System.out.println("**     Welcome to Athena Chat Server     **");
 		System.out.println("**            Codename: Aegis            **");
 		System.out.println("**                                       **");
-		System.out.println("**     v0.0.1a                           **");
+		System.out.println("**     v0.0.2a                           **");
 		System.out.println("**                                       **");
 		System.out.println("**     Server accepting connections:     **");
 		System.out.println("**     Port 7777                         **");
@@ -177,7 +177,6 @@ public class Server
 	}
 	
 	// Send a message to all clients (utility routine)
-	//TODO: Reimplement to broadcast user logins/offs and other system-wide messages
 	void sendToAll(String eventCode, String message ) {
 		//make sure the outputStreams hashtable is up-to-date
 		synchronized( outputStreams ) {

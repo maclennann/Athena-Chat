@@ -1,5 +1,5 @@
 /****************************************************
- * Athena: Encrypted Messaging Application v.0.0.1
+ * Athena: Encrypted Messaging Application v.0.0.2
  * By: 	
  * 			Gregory LeBlanc
  * 			Norm Maclennan 
@@ -41,6 +41,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 //TODO: Linux doesn't seem to have this library
+//What should we do with this then?
 //import com.sun.xml.internal.txw2.Document;
 import org.w3c.dom.*;
 
@@ -69,7 +70,7 @@ public class Client
 	private static DataInputStream din;
 	
 	//Temporary object for the JPanel in a tab
-	static	MapTextArea print;
+	static MapTextArea print;
 
 	//Thread that will be used to listen for incoming messages
 	static Thread listeningProcedure;
@@ -204,11 +205,12 @@ public class Client
 			JPasswordField passwd = new JPasswordField();
 			String password="";
 			//Get the username and password for the user for authentication
-			//This should be in it's own fancy window
+			//TODO This should be in it's own fancy window
 			username = JOptionPane.showInputDialog("Please enter your username");
 			int action = JOptionPane.showConfirmDialog(null, passwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION);  
 			if(action < 0)JOptionPane.showMessageDialog(null,"Cancel, X or escape key selected");  
 			else password = new String(passwd.getPassword());	
+			
 			//Connection established debug code.
 			if(debug==1)System.out.println( "connected to "+socket );
 			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
