@@ -137,6 +137,7 @@ public class Client
 			int result = 0;
 			systemMessage("001");	
 			dout.writeUTF(findUserName);
+			din.readUTF();
 			result = Integer.parseInt(din.readUTF());
 			clientResource.mapUserStatus(findUserName, result);
 		} catch (java.io.IOException e) { 
