@@ -307,7 +307,7 @@ public class Client
 			System.out.println("Username sent - now listening for result...");
 			//Listening for the result
 			//Must get rid of the first result
-			System.out.println(din.readUTF().toString());
+			//System.out.println(din.readUTF().toString());
 			//Grab result
 			result = Integer.parseInt(din.readUTF());
 			//Print result 

@@ -249,9 +249,9 @@ public class ServerThread extends Thread
 		//We will use this to find which outputstream to send out
 		//If we cannot find the user or socket, send back an error
 		if ((server.userToSocket.containsKey(toUser))) { 
-			if(debug==1)System.out.print("Found user.. Continuing...");
+			if(debug==1)System.out.println("Found user.. Continuing...");
 			foundSocket = (Socket) server.userToSocket.get(toUser);
-			if(debug==1)System.out.print("Found Socket: " + foundSocket);
+			if(debug==1)System.out.println("Found Socket: " + foundSocket);
 		} 
 			
 		//Find the outputstream associated with toUser's socket
@@ -266,6 +266,7 @@ public class ServerThread extends Thread
 		try {
 			dout.writeUTF(toUser);
 			dout.writeUTF(message);
+			System.out.println("Message sent.");
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
