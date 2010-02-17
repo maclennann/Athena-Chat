@@ -39,7 +39,7 @@ public class ClientApplet extends JFrame
 	DefaultListModel listModel = new DefaultListModel();
 	
 	//String array of buddies for choosing user to send message to
-	public static String[] otherUsers = {"Norm", "Steve", "Greg", "Aegis"};	
+	public static String[] otherUsers = {"Norm", "Steve", "Greg"};	
 	
 	// Components for the visual display of the chat windows
 	public JList userBox = new JList(listModel);

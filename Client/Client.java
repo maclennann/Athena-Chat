@@ -289,10 +289,17 @@ public class Client
 		int x=0;
 		//Loop through the HashTable of available users and place them in the JList
 		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); x++ ) {
-				if (f.nextElement().toString().equals("1")) { 
-				System.out.println("Online user:" + e.nextElement().toString());
-				clientResource.newBuddyListItems(e.nextElement().toString());
-				}
+				try { 
+					String currentE = e.nextElement().toString();
+					System.out.println("E: " + currentE);
+				
+					String currentF = f.nextElement().toString();
+					System.out.println("F: " + currentF);
+					if (currentF.equals("1")) { 
+						System.out.println("Online user:" + currentE);
+						clientResource.newBuddyListItems(currentE);
+					}
+				} catch (java.util.NoSuchElementException ie) { } 
 		}
 	}
 	
