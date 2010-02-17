@@ -153,8 +153,8 @@ public class ClientApplet extends JFrame
 		}}}};
 
 		//Add the mouselistener to the buddylist        
-		userBox.addMouseListener(mouseListener);
-		userBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		//userBox.addMouseListener(mouseListener);
+		//userBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		//Places the area for the tabs
 		imTabbedPane.setBounds(10,10,580,537);
