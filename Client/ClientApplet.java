@@ -86,10 +86,10 @@ public class ClientApplet extends JFrame
 	        exit.setMnemonic(KeyEvent.VK_H);
         	file.add(exit);
         
-		//Add the file menu to the menubar
+        	//Add the file menu to the menubar
 	        menuBar.add(file);
 	        
-		//Create the edit menu.
+	        //Create the edit menu.
 	        edit = new JMenu("Edit");
 	        edit.setMnemonic(KeyEvent.VK_A);
 	        menuBar.add(edit);
@@ -101,7 +101,7 @@ public class ClientApplet extends JFrame
 	        encryption.setMnemonic(KeyEvent.VK_A);
 	        menuBar.add(encryption);
 	        
-	        //TODO Add itemsto the encryption menu
+	        //TODO Add items to the encryption menu
 	
 		//ActionListener to make the connect menu item connect
 		connect.addActionListener(new ActionListener() {

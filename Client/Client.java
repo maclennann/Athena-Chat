@@ -120,37 +120,6 @@ public class Client
 		}
 	}
 
-	//Called from the actionListener on the tf textfield
-	//User wants to send a message
-	public static void systemMessage( String message ) {	
-			//Send the message
-			try{
-				//Send recipient's name and message to server
-				dout.writeUTF("Aegis");
-				dout.writeUTF(message);
-			} catch( IOException ie ) {
-			}
-	}
-
-	public static void checkUserAvailibility(String findUserName) {
-		try { 
-			int result = 0;
-			systemMessage("001");
-			Thread.sleep(4000);	
-			dout.writeUTF(findUserName);
-			System.out.println("CheckUSerAvailibility's DOUT Cleared");
-			//din.readUTF();
-			System.out.println("CheckUSerAvailibility's DIN Cleared");
-			//result = Integer.parseInt(din.readUTF());
-			System.out.println("CheckUSerAvailibility's DIN2 Cleared");
-			clientResource.mapUserStatus(findUserName, result);
-		} catch (java.io.IOException e) { 
-		} catch (java.lang.InterruptedException ie ) { 
-		}
-	}			
-				
-			
-	
 	//This method will be used to add to the buddy list
 	private static void buddyList(String usernameToAdd) throws Exception {
 
@@ -269,21 +238,9 @@ public class Client
 
 			//Start the thread
 			listeningProcedure.start();
-			//Check entire buddylist and fill hashtable with user online statuses
-			for (int i=0; i < clientResource.otherUsers.length; i++) { 
-				System.out.println("LENGTHHH:" + clientResource.otherUsers.length);
-				System.out.println("Name: " + clientResource.otherUsers[i]);
-				checkUserAvailibility(clientResource.otherUsers[i]);
-			}
-			//Counter
-			int x=0;
-			//Loop through the HashTable of available users and place them in the JList
-			for (Enumeration e = clientResource.userStatus.keys(); e.hasMoreElements(); ) { 				
-					System.out.println("omg:" + e.nextElement().toString());
-					clientResource.newBuddyListItems(e.nextElement().toString());
-
-			}
-			//clientResource.newBuddyListItems(userArr);
+			
+			//Instanciate Buddy List
+			instanciateBuddyList();
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
@@ -297,12 +254,7 @@ public class Client
 		}catch(Exception e){}
 	}
 
-	// Create the GUI for the client.
-	public static void main(String[] args) {
-	
-		clientResource = new ClientApplet();
-	}
-				
+		
 	//TODO: Make buddylist actually work
 	public static void addBuddy(){
 		try {
@@ -323,5 +275,62 @@ public class Client
 		} catch( IOException ie ) { System.out.println( ie ); } 
 		catch (Exception e) { System.out.println(e); }
 		
+	}
+
+	// Startup method to initiate the buddy list
+	public static void instanciateBuddyList() { 
+		//Check entire buddylist and fill hashtable with user online statuses
+		for (int i=0; i < clientResource.otherUsers.length; i++) { 
+			System.out.println("LENGTHHH:" + clientResource.otherUsers.length);
+			System.out.println("Name: " + clientResource.otherUsers[i]);
+			checkUserStatus(clientResource.otherUsers[i]);
+		}
+		//Counter
+		int x=0;
+		//Loop through the HashTable of available users and place them in the JList
+		for (Enumeration e = clientResource.userStatus.keys(); e.hasMoreElements(); ) { 				
+				System.out.println("omg:" + e.nextElement().toString());
+				clientResource.newBuddyListItems(e.nextElement().toString());
+		}
+	}
+	
+	public static void checkUserStatus(String findUserName) {
+		try { 
+			//Initalize Result
+			int result = -1;
+			//Run the systemMessage Method to let Aegis know what we're about to do
+			//First contact with Aegis!
+			systemMessage("001");
+			//Listen for the incoming Acknowledge message
+			System.out.println(din.readUTF().toString());
+			//Go ahead and send Aegis the user name we want to find 
+			dout.writeUTF(findUserName);
+			System.out.println("Username sent - now listening for result...");
+			//Listening for the result
+			//Must get rid of the first result
+			System.out.println(din.readUTF().toString());
+			//Grab result
+			result = Integer.parseInt(din.readUTF());
+			//Print result 
+			System.out.println("Result fo user " + findUserName + " is " + result + ".");
+			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
+			clientResource.mapUserStatus(findUserName, result);
+			} catch (java.io.IOException e) { 
+		}	}	
+	
+	//Use this method if Contact with Aegis is needed
+	public static void systemMessage( String message ) {	
+		//Send the message
+		try{
+			//Send recipient's name and message to server
+			dout.writeUTF("Aegis");
+			dout.writeUTF(message);
+		} catch( IOException ie ) {
+		}
+}
+	// Create the GUI for the client.
+	public static void main(String[] args) {
+	
+		clientResource = new ClientApplet();
 	}
 }

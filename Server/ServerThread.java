@@ -35,7 +35,7 @@ import com.sun.org.apache.xpath.internal.FoundIndex;
 public class ServerThread extends Thread
 {
 	//Change to 1 for debug output
-	private int debug = 0;
+	private int debug = 1;
 	
 	//Create the DataInputStream on the current socket 
 	public DataInputStream din = null;
@@ -100,19 +100,6 @@ public class ServerThread extends Thread
 		}
 	}
 	
-	//Method that handles client to server messages
-	public void sendToAegis(int eventCode) {
-		
-		switch(eventCode) { 
-			case 000: createUsername();
-			break;
-			case 001: checkUserAvailibility();
-			System.out.println("*******************Checking User Availibility**********************");
-			break;
-			default: return;
-		}
-	}
-	
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
 	public void routeMessage(DataInputStream din){
@@ -123,7 +110,7 @@ public class ServerThread extends Thread
 			//Is the message an eventcode meant for the server?
 			if (toUser.equals("Aegis")) { 
 				if(debug==1)System.out.println("Server eventcode detected!");
-				sendToAegis(Integer.parseInt(message));
+				systemMessageListener(Integer.parseInt(message));
 				return;
 			}else { 
 				if(debug==1)System.out.println("Routing normal message");
@@ -131,6 +118,37 @@ public class ServerThread extends Thread
 			}
 			
 		} catch (IOException e) {isAlive=0;}
+	}
+	
+	//Method that handles client to server messages
+	public void systemMessageListener(int eventCode) {
+		
+		switch(eventCode) { 
+			case 000: createUsername();
+			break;
+			case 001: negotiateClientStatus();
+			System.out.println("Event code received. negotiateClientStatus() run.");
+			break;
+			default: return;
+		}
+	}
+	
+	public void negotiateClientStatus() {
+		try { 
+			//Acknowledge connection. Make sure we are doing the right thing
+			sendMessage(username, "Aegis", "Access granted. Send me the username.");
+			//Listen for the username
+			String findUser = din.readUTF();
+			//Print out the received username
+			System.out.println("Username received: " + findUser);
+				//Check to see if the username is in the current Hashtable, return result
+				if ((server.userToSocket.containsKey(findUser))) { 
+					sendMessage(username,"Aegis","1");
+					System.out.println("(Online)\n");
+				} else { sendMessage(username,"Aegis","0");
+					System.out.println("(Offline)\n");
+				} 
+			} catch ( java.io.IOException e ) { }
 	}
 	
 	//TODO Make this work better.
@@ -244,18 +262,5 @@ public class ServerThread extends Thread
 			return "Login Failed";  
 		}	
 	}
-	
-	public void checkUserAvailibility() {
-	try { 
-		String findUser = din.readUTF();
-		System.out.println("Username receiveddd:\n" + findUser);
-			if ((server.userToSocket.containsKey(findUser))) { 
-				sendMessage("Greg","Aegis","1");
-				System.out.println("Made it into the if!! Answer is 1 (online)\n");
-			} else { sendMessage("Greg","Aegis","0");
-				System.out.println("Made it in theif!! Answer is 0 (offline)\n");
-			} 
-		} catch ( java.io.IOException e ) { }
-	}
-					
 }
+
