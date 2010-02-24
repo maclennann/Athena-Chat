@@ -1,5 +1,12 @@
 ChangeLog: 
 
+02/23/2010:
+	## BACKLOG: Dynamic buddylist partially implemented
+		@@List is created from otherUsers[], and it displays who is online when you sign on
+		@@When they sign off, they are removed from your list
+		@@TODO: dynamic update when a buddy signs in
+	## Code Review
+
 02/13/2010:
 	##ServerThread instances close cleanly when a user disconnects, preventing spamming the console.
 		@@Thread life is now governed by int isAlive. 

@@ -142,6 +142,7 @@ public class ServerThread extends Thread
 			//Print out the received username
 			System.out.println("Username received: " + findUser);
 				//Check to see if the username is in the current Hashtable, return result
+				//TODO: Do we need to sleep?
 				Thread.sleep(50);
 				if ((server.userToSocket.containsKey(findUser))) { 
 					sendSystemMessage(username,"1");
