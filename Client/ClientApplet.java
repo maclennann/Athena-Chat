@@ -17,6 +17,7 @@
 import java.awt.Color;
 import java.applet.*;
 import java.awt.*;
+import java.awt.Graphics;
 import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,8 +25,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.*;
 import java.net.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.Hashtable;
 
@@ -50,15 +54,18 @@ public class ClientApplet extends JFrame
 	public JFrame imContentFrame, buddyListFrame;
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable tabPanels = new Hashtable();
+	public BufferedImage addUserIcon;
 
-
+	//Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) { 
 		listModel.addElement(availableUser);
 	}
 	//Method to remove user from the JList who signs off 	
 	public void buddySignOff(String offlineUser) { 
 		listModel.removeElement(offlineUser);
-	}
+	} 
+	
+
 	ClientApplet () { 
 		
 		listModel.addElement("Aegis");
@@ -70,6 +77,7 @@ public class ClientApplet extends JFrame
 		imContentFrame.setSize(800, 605);
 		imContentFrame.setResizable(true);
 		
+	
 		//Create the file menu.
 	        file = new JMenu("File");
 	        file.setMnemonic(KeyEvent.VK_A);
@@ -149,6 +157,15 @@ public class ClientApplet extends JFrame
 		JScrollPane buddylist = new JScrollPane(userBox);
 		buddylist.setBounds(595,10,195,538);
 		
+		//Adds the Icons to Pane
+		Image addUserIcon = Toolkit.getDefaultToolkit().getImage("../images/addUser.png");
+		Image removeUserIcon = Toolkit.getDefaultToolkit().getImage("../images/removeUser.png");
+		DrawingPanel addBuddyPanel = new DrawingPanel(addUserIcon);		
+		DrawingPanel removeBuddyPanel = new DrawingPanel(removeUserIcon);
+		addBuddyPanel.setBounds(595,558, 41, 50);
+		removeBuddyPanel.setBounds(650,558, 41, 50);
+		
+		
 		//MouseListener for the BuddyList
 		//Opens a tab or focuses a tab when a username in the buddylist is double-clicked
         	MouseListener mouseListener = new MouseAdapter() {
@@ -185,7 +202,10 @@ public class ClientApplet extends JFrame
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.add(buddylist);
+		panel.add(addBuddyPanel);
+		panel.add(removeBuddyPanel);
 		panel.add(imTabbedPane);
+		//panel.add(g);
 
 		//Initialize window frame
 		imContentFrame.setJMenuBar(menuBar);
@@ -310,5 +330,22 @@ class MapTextArea {
 	//Clear the text out of the textfield
 	public void clearTextField(){
 		myTF.setText("");
+	}
+}
+
+//This class instanciates a DrawingPanel which is used to paint icons onto the main Panel
+class DrawingPanel extends JPanel { 
+	Image img;
+	int x, y;
+	
+	DrawingPanel (Image img) {
+		this.img = img;
+	}
+	
+	public void paintComponent (Graphics g) { 
+		super.paintComponent(g);
+		
+		//Draw image 
+		g.drawImage(img, x, y, this);
 	}
 }

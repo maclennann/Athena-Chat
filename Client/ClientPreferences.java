@@ -27,7 +27,6 @@ public class ClientPreferences extends JFrame {
 	ClientPreferences() { 
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
-		preferences.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		preferences.setSize(800,600);
 		preferences.setResizable(false);
 		contentPane.setLayout(null);
