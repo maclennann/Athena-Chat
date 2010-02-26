@@ -94,6 +94,9 @@ public class ServerThread extends Thread
 			
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally {
 			//Socket is closed, remove it from the list
 			server.removeConnection( socket, username );
@@ -273,7 +276,7 @@ public class ServerThread extends Thread
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
-	public String login (String clientName, String clientPassword) { 
+	public String login (String clientName, String clientPassword) throws InterruptedException { 
 	
 		//Get the password from the hashtable
 		String hashedPassword = server.authentication.get(clientName).toString();
@@ -289,6 +292,7 @@ public class ServerThread extends Thread
 			//Run some command that lets user log in!
 			//TODO: We need to broadcast a message letting everyone know a user logged in?
 			String returnMessage = "You're logged in!!!!"; //Depreciated - See next line
+			Thread.sleep(5000);
 			server.sendToAll("ServerLogOn", username);
 			return returnMessage;
 		}else { 
