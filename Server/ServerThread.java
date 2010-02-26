@@ -85,10 +85,7 @@ public class ServerThread extends Thread
 			
 			//Maps username to socket after user logs in
 			server.mapUserSocket(username, socket);	
-			
-			//Send Message to all users accouncing user is logged in:
-			server.sendToAll("ServerLogOn", username);
-			
+						
 			//Route around messages coming in from the client while they are connected
 			while (isAlive==1) {
 				//Take in messages from this thread's client and route them to another client
@@ -131,6 +128,8 @@ public class ServerThread extends Thread
 			break;
 			case 001: negotiateClientStatus();
 			System.out.println("Event code received. negotiateClientStatus() run.");
+			break;
+			case 002; server.sendToAll("ServerLogOn", username);
 			break;
 			default: return;
 		}

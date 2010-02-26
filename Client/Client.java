@@ -307,6 +307,9 @@ public class Client
 					}
 				} catch (java.util.NoSuchElementException ie) { } 
 		}
+		
+		//Send Message to Aegis letting it know we're logged in
+		systemMessage("002");
 	}
 	
 	public static void checkUserStatus(String findUserName) {
