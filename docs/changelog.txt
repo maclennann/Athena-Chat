@@ -1,4 +1,10 @@
 ChangeLog: 
+02/26/2010: 
+	## CREATED NEW CLASS: DrawingPanel
+		@@Creates drawingPanels to paint onto other panels
+		@@Used for painting the add, remove user (plus more later) images into the main window
+	## Implemented and painted the add, remove user images onto the main window
+	## The buddylist now updates when a user logs on
 02/25/2010:
 	## CREATED NEW CLASS: ClientLogin	
 		@@Creates the login Swing window

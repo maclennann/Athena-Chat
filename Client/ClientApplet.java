@@ -158,6 +158,7 @@ public class ClientApplet extends JFrame
 		buddylist.setBounds(595,10,195,538);
 		
 		//Adds the Icons to Pane
+		//TODO Add ActionListeners to the images to bring up the add/remove user windows
 		Image addUserIcon = Toolkit.getDefaultToolkit().getImage("../images/addUser.png");
 		Image removeUserIcon = Toolkit.getDefaultToolkit().getImage("../images/removeUser.png");
 		DrawingPanel addBuddyPanel = new DrawingPanel(addUserIcon);		
