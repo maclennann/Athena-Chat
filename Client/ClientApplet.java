@@ -108,7 +108,7 @@ public class ClientApplet extends JFrame
 		//ActionListener to make the connect menu item connect
 		connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
-				Client.connect();
+				//Client.connect();
 			}
 		});
 

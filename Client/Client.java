@@ -60,6 +60,7 @@ public class Client
 	
 	//Client's GUI
 	public static ClientApplet clientResource;
+	public static ClientLogin loginGUI;
 	
 	//TODO: Make otherUsers array read from buddylist.xml
 
@@ -198,7 +199,7 @@ public class Client
 	}
 
 	// Method to connect the user
-	public static void connect() { 
+	public static void connect(String username, char[] password) { 
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
@@ -209,14 +210,6 @@ public class Client
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			JPasswordField passwd = new JPasswordField();
-			String password="";
-			//Get the username and password for the user for authentication
-			//TODO This should be in it's own fancy window
-			username = JOptionPane.showInputDialog("Please enter your username");
-			int action = JOptionPane.showConfirmDialog(null, passwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION);  
-			if(action < 0)JOptionPane.showMessageDialog(null,"Cancel, X or escape key selected");  
-			else password = new String(passwd.getPassword());	
 			
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
@@ -227,10 +220,13 @@ public class Client
 			dout = new DataOutputStream( socket.getOutputStream() );
 			
 			//Send username and password over the socket for authentication
+			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
+			String plainTextPassword = new String(password);
 			dout.writeUTF(username); //Sending Username
-			dout.writeUTF(password); //Sending Password
+			dout.writeUTF(plainTextPassword); //Sending Password
 			connected=1;
-
+			clientResource = new ClientApplet();
+			
 			//Thread created to listen for messages coming in from the server
 			listeningProcedure = new Thread(
 				new Runnable() {
@@ -343,6 +339,7 @@ public class Client
 	// Create the GUI for the client.
 	public static void main(String[] args) {
 	
-		clientResource = new ClientApplet();
+		//clientResource = new ClientApplet();
+		loginGUI = new ClientLogin();
 	}
 }
