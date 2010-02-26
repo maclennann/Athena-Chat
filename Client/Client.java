@@ -175,10 +175,15 @@ public class Client
 				print.writeToTextArea(message+"\n");
 				return;
 			}
-			
+			//Remove user from Buddylist
 			if(fromUser.equals("ServerLogOff")) { 
 				clientResource.buddySignOff(message);
 				return;
+			}
+			
+			//Create buddy list entry for user sign on
+			if(fromUser.equals("ServerLogOn")) { 
+				clientResource.newBuddyListItems(message);
 			}
 
 			//If there isn't already a tab for the conversation, make one
@@ -227,7 +232,6 @@ public class Client
 			dout.writeUTF(plainTextPassword); //Sending Password
 			connected=1;
 			clientResource = new ClientApplet();
-			System.out.println("I MADE IT");
 			//Thread created to listen for messages coming in from the server
 			listeningProcedure = new Thread(
 				new Runnable() {
@@ -320,7 +324,7 @@ public class Client
 			//Grab result
 			result = Integer.parseInt(din.readUTF());
 			//Print result 
-			System.out.println("Result fo user " + findUserName + " is " + result + ".");
+			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
 			} catch (java.io.IOException e) { 

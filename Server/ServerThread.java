@@ -288,7 +288,8 @@ public class ServerThread extends Thread
 		if (clientPassword.equals(hashedPassword)) { 
 			//Run some command that lets user log in!
 			//TODO: We need to broadcast a message letting everyone know a user logged in?
-			String returnMessage = "You're logged in!!!!";
+			String returnMessage = "You're logged in!!!!"; //Depreciated - See next line
+			server.sendToAll("ServerLogOn", username);
 			return returnMessage;
 		}else { 
 			//Login fail handler
