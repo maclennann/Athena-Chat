@@ -51,6 +51,7 @@ public class ClientApplet extends JFrame
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable tabPanels = new Hashtable();
 
+
 	public void newBuddyListItems(String availableUser) { 
 		listModel.addElement(availableUser);
 	}
@@ -59,7 +60,7 @@ public class ClientApplet extends JFrame
 		listModel.removeElement(offlineUser);
 	}
 	ClientApplet () { 
-	
+		
 		listModel.addElement("Aegis");
 
 		//Initialize chat window
@@ -198,6 +199,7 @@ public class ClientApplet extends JFrame
 		System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
 	}
+	
 //End of class ClientApplet		
 }
 

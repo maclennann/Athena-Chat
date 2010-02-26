@@ -95,6 +95,7 @@ public class Client
 		print = (MapTextArea)clientResource.tabPanels.get(toUser);
 			
 		//See if the user is logged in. If yes, send it. If no, error.
+		System.out.println("USERNAME: " + username);
 		if(username.equals("null")){
 			print.writeToTextArea("Error: You are not connected!\n");
 			print.moveToEnd();
@@ -226,7 +227,7 @@ public class Client
 			dout.writeUTF(plainTextPassword); //Sending Password
 			connected=1;
 			clientResource = new ClientApplet();
-			
+			System.out.println("I MADE IT");
 			//Thread created to listen for messages coming in from the server
 			listeningProcedure = new Thread(
 				new Runnable() {
@@ -241,7 +242,6 @@ public class Client
 			
 			//Start the thread
 			listeningProcedure.start();
-			
 
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
@@ -335,7 +335,10 @@ public class Client
 			dout.writeUTF(message);
 		} catch( IOException ie ) {
 		}
-}
+	}
+	public static void setUsername(String usernameToSet) { 
+			username = usernameToSet;
+	}
 	// Create the GUI for the client.
 	public static void main(String[] args) {
 	

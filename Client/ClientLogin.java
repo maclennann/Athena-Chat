@@ -41,6 +41,8 @@ public class ClientLogin extends JFrame {
 	public JButton connect = new JButton("Connect");
 	public JButton cancel = new JButton("Cancel");
 	
+	public static ClientApplet clientResource;
+	
 	//Constructor | Here's where the fun begins
 	ClientLogin() { 
 			//Initialize Login window
@@ -69,6 +71,7 @@ public class ClientLogin extends JFrame {
 			//ActionListener to make the connect menu item connect
 			connect.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event){
+					Client.setUsername(username.getText());
 					Client.connect(username.getText(), password.getPassword());
 					login.setVisible(false);
 				}
@@ -86,5 +89,6 @@ public class ClientLogin extends JFrame {
 			login.setContentPane(contentPane);
 			login.setVisible(true);
 			}
+
 	
 }
