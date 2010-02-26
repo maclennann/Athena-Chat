@@ -176,15 +176,20 @@ public class Client
 				return;
 			}
 			//Remove user from Buddylist
-			if(fromUser.equals("ServerLogOff")) { 
+
+			if(fromUser.equals("ServerLogOff")) { 				
 				clientResource.buddySignOff(message);
 				return;
 			}
 			
 			//Create buddy list entry for user sign on
-			if(fromUser.equals("ServerLogOn")) { 
+			if(fromUser.equals("ServerLogOn")) {
+				if(!(message.equals(username))) {
 				clientResource.newBuddyListItems(message);
-			}
+				return;
+				}
+			} 
+			else { // Need this else in order to hide the system messages coming from Aegis
 
 			//If there isn't already a tab for the conversation, make one
 			if(!clientResource.tabPanels.containsKey(fromUser)){
@@ -198,6 +203,7 @@ public class Client
 			print.setTextColor(Color.black);
 			print.writeToTextArea(message+"\n");
 			print.moveToEnd();
+			}
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
 			connected=0; 
