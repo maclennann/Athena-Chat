@@ -1,5 +1,10 @@
 ChangeLog: 
-
+02/25/2010:
+	## CREATED NEW CLASS: ClientLogin	
+		@@Creates the login Swing window
+		@@Implemented methods and components of ClientLogin - to make sure logging in works
+	## Created new method in Client.java
+		@@setUsername(String usernameToSet) - Allows Client to understand who is logged in at one time (because now the username is being sent from ClientLogin window
 02/23/2010:
 	## BACKLOG: Dynamic buddylist partially implemented
 		@@List is created from otherUsers[], and it displays who is online when you sign on

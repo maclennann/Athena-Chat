@@ -7,7 +7,7 @@ BOTH:
 
 CLIENT:
 	## Hash password before sending it to the server.
-	## Swing window for putting in username and password
+	## Swing window for putting in username and password --COMPLETE 2/25/2010
 		@@ Can they save their password?
 	## Swing window for various preferences
 		@@ What preferences (aside from theme)?
