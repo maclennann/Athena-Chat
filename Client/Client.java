@@ -16,7 +16,6 @@
  ****************************************************/
 
 import java.applet.*;
-import java.awt.Color;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -353,7 +352,7 @@ public class Client
 			username = usernameToSet;
 	}
 	// Create the GUI for the client.
-	public static void main(String[] args) {
+	public static void main(String[] args) throws AWTException {
 	
 		//clientResource = new ClientApplet();
 		loginGUI = new ClientLogin();

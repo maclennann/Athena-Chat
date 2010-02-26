@@ -18,7 +18,14 @@
  * @author OlmypuSoft
  *
  */
+import java.awt.AWTException;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -41,16 +48,41 @@ public class ClientLogin extends JFrame {
 	public JButton connect = new JButton("Connect");
 	public JButton cancel = new JButton("Cancel");
 	
+	//Define an icon for the system tray icon
+	public TrayIcon trayIcon;
+	
 	public static ClientApplet clientResource;
 	
 	//Constructor | Here's where the fun begins
-	ClientLogin() { 
+	ClientLogin() throws AWTException { 
 			//Initialize Login window
 			login = new JFrame("Athena Chat Application");
 			login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			login.setSize(200,300);
 			login.setResizable(false);
 			contentPane.setLayout(null);
+			
+			//Define the system tray icon
+			if (SystemTray.isSupported()) { 
+				SystemTray tray = SystemTray.getSystemTray();
+				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+			   
+				ActionListener exitListener = new ActionListener() {
+			        public void actionPerformed(ActionEvent e) {
+			            System.out.println("Exiting...");
+			            System.exit(0);
+			        }
+			    };
+
+				PopupMenu popup = new PopupMenu();
+				MenuItem defaultItem = new MenuItem("Exit");
+				defaultItem.addActionListener(exitListener);
+				popup.add(defaultItem);
+				
+				trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
+				trayIcon.setImageAutoSize(true);
+				tray.add(trayIcon);
+			}
 			
 			//Adjust font sizes
 			connect.setFont(new Font("Dialog", 1, 10));
