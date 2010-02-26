@@ -45,7 +45,7 @@ public class ClientApplet extends JFrame
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
-	public JMenuItem connect, disconnect, exit;
+	public JMenuItem connect, disconnect, exit, preferences;
 	public JPanel panel; //still need this?
 	public JFrame imContentFrame, buddyListFrame;
 	public JTabbedPane imTabbedPane = new JTabbedPane();
@@ -98,6 +98,12 @@ public class ClientApplet extends JFrame
 	        menuBar.add(edit);
 	        
 	        //TODO Add items to the edit menu
+	        
+	        //Create button Edit -> Preferences
+	        preferences = new JMenuItem("Preferences");
+	        preferences.setMnemonic(KeyEvent.VK_H);
+	        edit.add(preferences);
+	        
 	       
 		//Create the encryption menu.
 	        encryption = new JMenu("Encryption");
@@ -126,6 +132,13 @@ public class ClientApplet extends JFrame
 		exit.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
 				Client.exit();
+			}
+		});
+		
+		//ActionListener to make the exit menu item exit
+		preferences.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				ClientPreferences pref = new ClientPreferences();
 			}
 		});
 
