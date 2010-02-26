@@ -129,7 +129,7 @@ public class ServerThread extends Thread
 			case 001: negotiateClientStatus();
 			System.out.println("Event code received. negotiateClientStatus() run.");
 			break;
-			case 002; server.sendToAll("ServerLogOn", username);
+			case 002: server.sendToAll("ServerLogOn", username);
 			break;
 			default: return;
 		}
