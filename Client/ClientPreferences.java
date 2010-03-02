@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,7 +26,7 @@ public class ClientPreferences extends JFrame {
 	
 	//Define components
 	public JFrame preferences;
-	public JPanel contentPane = new JPanel();
+	public JLayeredPane contentPane = new JLayeredPane();
 	public JPanel generalPane, notificationsPane, encryptionPane, formattingPane, themePane;
 	public JScrollPane prefScrollPane = new JScrollPane();
 	public JButton apply = new JButton("Apply");
@@ -38,25 +39,30 @@ public class ClientPreferences extends JFrame {
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
 		preferences.setSize(800,600);
-		preferences.setResizable(false);
+		preferences.setResizable(true);
 		contentPane.setLayout(null);
 		
 		//Initialize the JPanels for each of the options
 		generalPane = new JPanel();
 		generalPane.add(test); // test
-		generalPane.setBounds(185,15,400,445);
+		generalPane.setBounds(185,15,300,445);
+		generalPane.setVisible(false);
 		
 		notificationsPane = new JPanel();
 		notificationsPane.setBounds(175,15,600, 545);
+		notificationsPane.setVisible(false);
 		
 		encryptionPane = new JPanel();
 		encryptionPane.setBounds(175,15,600, 545);
+		encryptionPane.setVisible(false);
 		
 		formattingPane = new JPanel();
 		formattingPane.setBounds(175,15,600, 545);
+		formattingPane.setVisible(false);
 		
 		themePane = new JPanel();
 		themePane.setBounds(175,15,600, 545);
+		themePane.setVisible(false);
 		
 		//Size the components
 		prefScrollPane.setBounds(15, 15, 150, 545);
@@ -82,15 +88,15 @@ public class ClientPreferences extends JFrame {
 		encryptionPanel.setBounds(30,185,75,75);
 		formattingPanel.setBounds(30,270,75,75);
 		themePanel.setBounds(30,355,75,75);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 		
 		//Mouse Listener for the options
 		//MouseListener for the generalPreferences
 	    	MouseListener mouseListenerGeneral = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				generalPane.setVisible(true);
-				contentPane.add(generalPane);	
-				System.out.println("HAIII"); // test
-				
+				System.out.println("OMFG WORK");
 		}};
 		
 		//MouseListener for the notificationsPreferences
@@ -135,9 +141,13 @@ public class ClientPreferences extends JFrame {
 		prefScrollPane.add(encryptionPanel);
 		prefScrollPane.add(formattingPanel);
 		prefScrollPane.add(themePanel);
-		
-		
+				
 		//Add the components to the ContentPane
+		contentPane.add(generalPane, 1);
+		contentPane.add(encryptionPanel);
+		contentPane.add(notificationPanel);
+		contentPane.add(formattingPanel);
+		contentPane.add(themePanel);
 		contentPane.add(prefScrollPane);
 		contentPane.add(apply);
 		contentPane.add(cancel);
