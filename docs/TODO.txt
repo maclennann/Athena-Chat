@@ -5,6 +5,7 @@ BOTH:
 		@@ Revamp database to deal with hashed keys and things
 	## Make the code many many times more efficient
 	## CREATE JAVADOC Comments
+	## SECURE the code. We have EVERYTHING as public.
 
 CLIENT:
 	## Hash password before sending it to the server.
