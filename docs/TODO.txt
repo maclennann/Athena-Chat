@@ -14,8 +14,8 @@ CLIENT:
 	## BUDDYLIST
 		@@ Working XML writer and parser
 		@@ Do we encrypt buddylist? With what? What information is stored in it?
-	## Buddylist should update dynamically on buddy login.
-		@@ Already does for signoff. Copy that code.
+	## Buddylist should update dynamically on buddy login. --COMPLETE 2/25/2010
+		@@ Already does for signoff. Copy that code. 
 
 SERVER:
 	## Create a thread to route messages, free up the console for an admin interface

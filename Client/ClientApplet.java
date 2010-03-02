@@ -74,7 +74,7 @@ public class ClientApplet extends JFrame
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application");
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		imContentFrame.setSize(800, 605);
+		imContentFrame.setSize(800, 683);
 		imContentFrame.setResizable(true);
 		
 	
@@ -334,19 +334,3 @@ class MapTextArea {
 	}
 }
 
-//This class instanciates a DrawingPanel which is used to paint icons onto the main Panel
-class DrawingPanel extends JPanel { 
-	Image img;
-	int x, y;
-	
-	DrawingPanel (Image img) {
-		this.img = img;
-	}
-	
-	public void paintComponent (Graphics g) { 
-		super.paintComponent(g);
-		
-		//Draw image 
-		g.drawImage(img, x, y, this);
-	}
-}
