@@ -36,7 +36,7 @@ public class ClientPreferences extends JFrame {
 	//Define components
 	public JFrame preferences;
 	public JPanel contentPane = new JPanel();
-	public JPanel generalPane, notificationsPane, encryptionPane, formattingPane, themePane;
+	public JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
 	public JScrollPane prefScrollPane = new JScrollPane();
 	public JButton apply = new JButton("Apply");
 	public JButton cancel = new JButton("Cancel");
@@ -54,25 +54,25 @@ public class ClientPreferences extends JFrame {
 		contentPane.setLayout(null);
 		
 		//Initialize the JPanels for each of the options
-		generalPane = new JPanel();
-		generalPane.setBounds(185,15,300,445);
-		generalPane.setVisible(false);
+		generalPanel = new JPanel();
+		generalPanel.setBounds(185,15,300,445);
+		generalPanel.setVisible(false);
 		
-		notificationsPane = new JPanel();
-		notificationsPane.setBounds(185,15,300,445);
-		notificationsPane.setVisible(false);
+		notificationsPanel = new JPanel();
+		notificationsPanel.setBounds(185,15,300,445);
+		notificationsPanel.setVisible(false);
 		
-		encryptionPane = new JPanel();
-		encryptionPane.setBounds(175,15,600, 545);
-		encryptionPane.setVisible(false);
+		encryptionPanel = new JPanel();
+		encryptionPanel.setBounds(175,15,600, 545);
+		encryptionPanel.setVisible(false);
 		
-		formattingPane = new JPanel();
-		formattingPane.setBounds(175,15,600, 545);
-		formattingPane.setVisible(false);
+		formattingPanel = new JPanel();
+		formattingPanel.setBounds(175,15,600, 545);
+		formattingPanel.setVisible(false);
 		
-		themePane = new JPanel();
-		themePane.setBounds(175,15,600, 545);
-		themePane.setVisible(false);
+		themePanel = new JPanel();
+		themePanel.setBounds(175,15,600, 545);
+		themePanel.setVisible(false);
 		
 		//Size the components
 		prefScrollPane.setBounds(15, 15, 150, 545);
@@ -80,24 +80,23 @@ public class ClientPreferences extends JFrame {
 		cancel.setBounds(615,525,75,30);
 		
 		//Add the options to the Scroll Pane
-		//TODO Add ActionListeners to the images to bring up the add/remove user windows
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/generalPref.png");
 		Image notificationPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/notificationsPref.png");
 		Image encryptionPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/encryptionPref.png");
 		Image formattingPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/fontPref.png");
 		Image themePreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/themePref.png");
 		
-		DrawingPanel generalPanel = new DrawingPanel(generalPreferencesImage);		
-		DrawingPanel notificationPanel = new DrawingPanel(notificationPreferencesImage);
-		DrawingPanel encryptionPanel = new DrawingPanel(encryptionPreferencesImage);
-		DrawingPanel formattingPanel = new DrawingPanel(formattingPreferencesImage);
-		DrawingPanel themePanel = new DrawingPanel(themePreferencesImage);
+		DrawingPanel generalDrawingPanel = new DrawingPanel(generalPreferencesImage);		
+		DrawingPanel notificationDrawingPanel = new DrawingPanel(notificationPreferencesImage);
+		DrawingPanel encryptionDrawingPanel = new DrawingPanel(encryptionPreferencesImage);
+		DrawingPanel formattingDrawingPanel = new DrawingPanel(formattingPreferencesImage);
+		DrawingPanel themeDrawingPanel = new DrawingPanel(themePreferencesImage);
 				
-		generalPanel.setBounds(30,15,75,75);
-		notificationPanel.setBounds(30,100,75,75);
-		encryptionPanel.setBounds(30,185,75,75);
-		formattingPanel.setBounds(30,270,75,75);
-		themePanel.setBounds(30,355,75,75);
+		generalDrawingPanel.setBounds(30,15,75,75);
+		notificationDrawingPanel.setBounds(30,100,75,75);
+		encryptionDrawingPanel.setBounds(30,185,75,75);
+		formattingDrawingPanel.setBounds(30,270,75,75);
+		themeDrawingPanel.setBounds(30,355,75,75);
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		
@@ -105,61 +104,55 @@ public class ClientPreferences extends JFrame {
 		//MouseListener for the generalPreferences
 	    	MouseListener mouseListenerGeneral = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				generalPane.setVisible(true);
-				notificationsPane.setVisible(false);
+				generalPanel.setVisible(true);
+				notificationsPanel.setVisible(false);
 				System.out.println("OMFG WORK");
 		}};
 		
 		//MouseListener for the notificationsPreferences
 			MouseListener mouseListenerNotifications = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				notificationsPane.setVisible(true);
-				generalPane.setVisible(false);
+				notificationsPanel.setVisible(true);
+				generalPanel.setVisible(false);
 				System.out.println("OMFG WORKDIE");
 		}};
 		
 		//MouseListener for the encryptionPreferences
 			MouseListener mouseListenerEncryption = new MouseAdapter() {
-			public void mouseClicked(MouseEvent mouseEvent) {
-				//encryptionPane = new JPanel();
-				contentPane.add(encryptionPane);			
+			public void mouseClicked(MouseEvent mouseEvent) {		
 		}};
 		
 		//MouseListener for the formattingPreferences
 			MouseListener mouseListenerFormatting = new MouseAdapter() {
-			public void mouseClicked(MouseEvent mouseEvent) {
-				//formattingPane = new JPanel();
-				contentPane.add(formattingPane);			
+			public void mouseClicked(MouseEvent mouseEvent) {		
 		}};
 		
 		//MouseListener for the themePreferences
 			MouseListener mouseListenerTheme = new MouseAdapter() {
-			public void mouseClicked(MouseEvent mouseEvent) {
-				//themePane = new JPanel();
-				contentPane.add(themePane);			
+			public void mouseClicked(MouseEvent mouseEvent) {			
 		}};
 		
-		//Add the mouselisteners
-		generalPanel.addMouseListener(mouseListenerGeneral);
-		notificationPanel.addMouseListener(mouseListenerNotifications);
-		encryptionPanel.addMouseListener(mouseListenerEncryption);
-		formattingPanel.addMouseListener(mouseListenerFormatting);
-		themePanel.addMouseListener(mouseListenerTheme);
+		//Add the mouselisteners to the Drawing Panels
+		generalDrawingPanel.addMouseListener(mouseListenerGeneral);
+		notificationDrawingPanel.addMouseListener(mouseListenerNotifications);
+		encryptionDrawingPanel.addMouseListener(mouseListenerEncryption);
+		formattingDrawingPanel.addMouseListener(mouseListenerFormatting);
+		themeDrawingPanel.addMouseListener(mouseListenerTheme);
 		
 		
-		//Add the components to the ScrollPane
-		prefScrollPane.add(generalPanel);
-		prefScrollPane.add(notificationPanel);
-		prefScrollPane.add(encryptionPanel);
-		prefScrollPane.add(formattingPanel);
-		prefScrollPane.add(themePanel);
+		//Add the Drawing Panels to the ScrollPane
+		prefScrollPane.add(generalDrawingPanel);
+		prefScrollPane.add(notificationDrawingPanel);
+		prefScrollPane.add(encryptionDrawingPanel);
+		prefScrollPane.add(formattingDrawingPanel);
+		prefScrollPane.add(themeDrawingPanel);
 				
-		//Add the components to the ContentPane
-		contentPane.add(notificationsPane);
-		contentPane.add(generalPane);
-		contentPane.add(encryptionPane);
-		contentPane.add(formattingPane);
-		contentPane.add(themePane);
+		//Add the JPanels to the ContentPane (set to default until the Drawing Panel is clicked)
+		contentPane.add(notificationsPanel);
+		contentPane.add(generalPanel);
+		contentPane.add(encryptionPanel);
+		contentPane.add(formattingPanel);
+		contentPane.add(themePanel);
 		contentPane.add(prefScrollPane);
 		contentPane.add(apply);
 		contentPane.add(cancel);
