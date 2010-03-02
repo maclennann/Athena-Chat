@@ -4,13 +4,16 @@ BOTH:
 		@@ Use D-H for session keys? Is there a better option?
 		@@ Revamp database to deal with hashed keys and things
 	## Make the code many many times more efficient
+	## CREATE JAVADOC Comments
 
 CLIENT:
 	## Hash password before sending it to the server.
+	## Notifications of messages
 	## Swing window for putting in username and password --COMPLETE 2/25/2010
 		@@ Can they save their password?
-	## Swing window for various preferences
-		@@ What preferences (aside from theme)?
+	## Swing window for various preferences -- IN PROCESS 3/1/2010
+		@@ What preferences (aside from theme)? 
+			!! Timestamp option?
 	## BUDDYLIST
 		@@ Working XML writer and parser
 		@@ Do we encrypt buddylist? With what? What information is stored in it?

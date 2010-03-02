@@ -13,26 +13,37 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-/**
+/****************************************************
+ * Athena: Encrypted Messaging Application v.0.0.2
+ * By: 	
+ * 			Gregory LeBlanc
+ * 			Norm Maclennan 
+ * 			Stephen Failla
  * 
- */
-
-/**
- * @author OlympuSoft
+ * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
+ * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
+ * using a randomly generated email address
+ * 
+ * File: ClientPreferences.java
+ * 
+ * Creates the preferences window invoked from ClientApplet
  *
- */
+ ****************************************************/
+
 //Let's make the preferences window
 public class ClientPreferences extends JFrame {
 	
 	//Define components
 	public JFrame preferences;
-	public JLayeredPane contentPane = new JLayeredPane();
+	public JPanel contentPane = new JPanel();
 	public JPanel generalPane, notificationsPane, encryptionPane, formattingPane, themePane;
 	public JScrollPane prefScrollPane = new JScrollPane();
 	public JButton apply = new JButton("Apply");
 	public JButton cancel = new JButton("Cancel");
-	public JLabel test = new JLabel("TEST"); // test
-	//public BufferedImage generalPreferences, notificationPreferences, encryptionPreferences, fomattingPreferences, themePreferences;
+	
+	//TODO Create components for each of the preference menu categories
+	
+	
 	
 	//Constructor
 	ClientPreferences() { 
@@ -44,12 +55,11 @@ public class ClientPreferences extends JFrame {
 		
 		//Initialize the JPanels for each of the options
 		generalPane = new JPanel();
-		generalPane.add(test); // test
 		generalPane.setBounds(185,15,300,445);
 		generalPane.setVisible(false);
 		
 		notificationsPane = new JPanel();
-		notificationsPane.setBounds(175,15,600, 545);
+		notificationsPane.setBounds(185,15,300,445);
 		notificationsPane.setVisible(false);
 		
 		encryptionPane = new JPanel();
@@ -96,14 +106,16 @@ public class ClientPreferences extends JFrame {
 	    	MouseListener mouseListenerGeneral = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				generalPane.setVisible(true);
+				notificationsPane.setVisible(false);
 				System.out.println("OMFG WORK");
 		}};
 		
 		//MouseListener for the notificationsPreferences
 			MouseListener mouseListenerNotifications = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				//notificationsPane = new JPanel();
-				contentPane.add(notificationsPane);			
+				notificationsPane.setVisible(true);
+				generalPane.setVisible(false);
+				System.out.println("OMFG WORKDIE");
 		}};
 		
 		//MouseListener for the encryptionPreferences
@@ -143,11 +155,11 @@ public class ClientPreferences extends JFrame {
 		prefScrollPane.add(themePanel);
 				
 		//Add the components to the ContentPane
-		contentPane.add(generalPane, 1);
-		contentPane.add(encryptionPanel);
-		contentPane.add(notificationPanel);
-		contentPane.add(formattingPanel);
-		contentPane.add(themePanel);
+		contentPane.add(notificationsPane);
+		contentPane.add(generalPane);
+		contentPane.add(encryptionPane);
+		contentPane.add(formattingPane);
+		contentPane.add(themePane);
 		contentPane.add(prefScrollPane);
 		contentPane.add(apply);
 		contentPane.add(cancel);

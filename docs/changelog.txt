@@ -1,4 +1,11 @@
 ChangeLog: 
+03/01/2010:
+	## Moved DrawingPanel to it's own file
+	## Implemented in ClientPreferences:
+		@@ Found images in the /images/ directory that will be used in the Preferences Window
+		@@ Created new JPanels to be the individual option menus
+		@@ Created MouseListeners for each of the images
+		
 02/26/2010: 
 	## CREATED NEW CLASS: DrawingPanel
 		@@Creates drawingPanels to paint onto other panels
