@@ -178,20 +178,12 @@ public class ServerThread extends Thread
 			String newPassword = din.readUTF();		
 			
 			//Ya'll like some hash?
-			try {
 				String hashedPassword = byteArrayToHexString(ServerThread.computeHash(newPassword));
 				System.out.println("HASHEDMOFO: " + hashedPassword);
 								
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
 			stmt = con.createStatement();
-			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+hashedPassword);
+			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ hashedPassword);
 
 			//See if the username already exists.
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser+"'");
@@ -223,6 +215,10 @@ public class ServerThread extends Thread
 			return false;
 		}catch (IOException ie) { 
 			System.out.println(ie.toString());
+			return false;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return false;
 		}
 	}
