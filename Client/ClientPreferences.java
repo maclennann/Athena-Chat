@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -37,7 +38,7 @@ import javax.swing.border.TitledBorder;
  ****************************************************/
 
 //Let's make the preferences window
-public class ClientPreferences extends JFrame {
+public class ClientPreferences extends JPanel {
 	
 	//Define components
 	public JFrame preferences;
@@ -49,28 +50,32 @@ public class ClientPreferences extends JFrame {
 	public Border blackline;
 	public TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
 
-	
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
+	public DrawingPanel generalDrawingPanel;		
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray");
 	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab");
 	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check");
 	
 	//Define components for the Notifications Menu Panel
+	public DrawingPanel notificationDrawingPanel;
 	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications");
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable sounds");
 
 	//Define components for the Encryption Menu Panel
+	public DrawingPanel encryptionDrawingPanel;
 	public JLabel generateNewKeyPairJLabel = new JLabel("Generate new encryption key pair");
 	public JButton generateNewKeyPairJButton = new JButton("Generate!");
 	
 	//Define components for the Formatting Menu Panel
+	public DrawingPanel formattingDrawingPanel;
 	public JComboBox selectFontComboBox = new JComboBox();
 	public JButton toggleBoldJButton = new JButton("Bold");
 	public JButton toggleItalicsJButton = new JButton("Italics");
 	public JButton toggleUnderlineJButton = new JButton("Underlined");
 	
 	//Define components for the Theme Menu Panel
+	public DrawingPanel themeDrawingPanel;
 	public JComboBox selectThemeComboBox = new JComboBox();
 	public JLabel selectThemeJLabel = new JLabel("Select theme");
 	public JButton installNewThemeJButton = new JButton("Install!");
@@ -78,6 +83,8 @@ public class ClientPreferences extends JFrame {
 	
 	//Constructor
 	ClientPreferences() { 
+		
+
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
 		preferences.setSize(800,600);
@@ -104,7 +111,12 @@ public class ClientPreferences extends JFrame {
 		
 		//Initialize the JPanels for each of the options
 		//General Menu Section
-		/*************************************************/			
+		/*************************************************/		
+		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/generalPref.png");
+		generalDrawingPanel = new DrawingPanel(generalPreferencesImage);	
+		generalDrawingPanel.setBounds(30,15,75,75);
+		generalDrawingPanel.setBorder(blackline);
+		
 		generalPanel = new JPanel();
 		generalPanel.setLayout(null);
 		generalPanel.setBorder(generalTitledBorder);
@@ -121,7 +133,12 @@ public class ClientPreferences extends JFrame {
 		/*************************************************/
 		
 		//Notification Menu Section
-		/*************************************************/		
+		/*************************************************/	
+		Image notificationPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/notificationsPref.png");
+		notificationDrawingPanel = new DrawingPanel(notificationPreferencesImage);
+		notificationDrawingPanel.setBounds(30,100,75,75);
+		notificationDrawingPanel.setBorder(blackline);
+		
 		notificationsPanel = new JPanel();
 		notificationsPanel.setLayout(null);
 		notificationsPanel.setBorder(notificationsTitledBorder);
@@ -137,6 +154,11 @@ public class ClientPreferences extends JFrame {
 		
 		//Encrpytion Menu Selection
 		/*************************************************/	
+		Image encryptionPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/encryptionPref.png");
+		encryptionDrawingPanel = new DrawingPanel(encryptionPreferencesImage);
+		encryptionDrawingPanel.setBounds(30,185,75,75);
+		encryptionDrawingPanel.setBorder(blackline);
+		
 		encryptionPanel = new JPanel();
 		encryptionPanel.setLayout(null);
 		encryptionPanel.setBorder(encryptionTitledBorder);
@@ -150,7 +172,12 @@ public class ClientPreferences extends JFrame {
 		encryptionPanel.add(generateNewKeyPairJLabel);
 		
 		//Formatting Menu Selection
-		/*************************************************/			
+		/*************************************************/	
+		Image formattingPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/fontPref.png");
+		formattingDrawingPanel = new DrawingPanel(formattingPreferencesImage);
+		formattingDrawingPanel.setBounds(30,270,75,75);
+		formattingDrawingPanel.setBorder(blackline);
+		
 		formattingPanel = new JPanel();
 		formattingPanel.setLayout(null);
 		formattingPanel.setBorder(formattingTitledBorder);
@@ -170,6 +197,11 @@ public class ClientPreferences extends JFrame {
 		
 		//Theme Menu Selection
 		/*************************************************/	
+		Image themePreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/themePref.png");
+		themeDrawingPanel = new DrawingPanel(themePreferencesImage);
+		themeDrawingPanel.setBounds(30,355,75,75);
+		themeDrawingPanel.setBorder(blackline);
+		
 		themePanel = new JPanel();
 		themePanel.setLayout(null);
 		themePanel.setBorder(themeTitleBorder);
@@ -187,28 +219,7 @@ public class ClientPreferences extends JFrame {
 		themePanel.add(installNewThemeJButton);
 		themePanel.add(installNewThemeJLabel);
 		/*************************************************/	
-		
-		
-		//Add the options to the Scroll Pane
-		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/generalPref.png");
-		Image notificationPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/notificationsPref.png");
-		Image encryptionPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/encryptionPref.png");
-		Image formattingPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/fontPref.png");
-		Image themePreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/themePref.png");
-		
-		DrawingPanel generalDrawingPanel = new DrawingPanel(generalPreferencesImage);		
-		DrawingPanel notificationDrawingPanel = new DrawingPanel(notificationPreferencesImage);
-		DrawingPanel encryptionDrawingPanel = new DrawingPanel(encryptionPreferencesImage);
-		DrawingPanel formattingDrawingPanel = new DrawingPanel(formattingPreferencesImage);
-		DrawingPanel themeDrawingPanel = new DrawingPanel(themePreferencesImage);
-				
-		generalDrawingPanel.setBounds(30,15,75,75);
-		notificationDrawingPanel.setBounds(30,100,75,75);
-		encryptionDrawingPanel.setBounds(30,185,75,75);
-		formattingDrawingPanel.setBounds(30,270,75,75);
-		themeDrawingPanel.setBounds(30,355,75,75);
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+	
 		
 		//Mouse Listener for the options
 		//MouseListener for the generalPreferences
@@ -219,6 +230,11 @@ public class ClientPreferences extends JFrame {
 				encryptionPanel.setVisible(false);
 				formattingPanel.setVisible(false);
 				themePanel.setVisible(false);
+				generalDrawingPanel.repaint();
+				notificationDrawingPanel.repaint();
+				encryptionDrawingPanel.repaint();
+				formattingDrawingPanel.repaint();
+				themeDrawingPanel.repaint();
 		}};
 		
 		//MouseListener for the notificationsPreferences
@@ -229,6 +245,11 @@ public class ClientPreferences extends JFrame {
 				encryptionPanel.setVisible(false);
 				formattingPanel.setVisible(false);
 				themePanel.setVisible(false);
+				generalDrawingPanel.repaint();
+				notificationDrawingPanel.repaint();
+				encryptionDrawingPanel.repaint();
+				formattingDrawingPanel.repaint();
+				themeDrawingPanel.repaint();
 		}};
 		
 		//MouseListener for the encryptionPreferences
@@ -239,6 +260,11 @@ public class ClientPreferences extends JFrame {
 				encryptionPanel.setVisible(true); // set to true
 				formattingPanel.setVisible(false);
 				themePanel.setVisible(false);
+				generalDrawingPanel.repaint();
+				notificationDrawingPanel.repaint();
+				encryptionDrawingPanel.repaint();
+				formattingDrawingPanel.repaint();
+				themeDrawingPanel.repaint();
 		}};
 		
 		//MouseListener for the formattingPreferences
@@ -249,6 +275,11 @@ public class ClientPreferences extends JFrame {
 				encryptionPanel.setVisible(false);
 				formattingPanel.setVisible(true); // set to true
 				themePanel.setVisible(false);
+				generalDrawingPanel.repaint();
+				notificationDrawingPanel.repaint();
+				encryptionDrawingPanel.repaint();
+				formattingDrawingPanel.repaint();
+				themeDrawingPanel.repaint();
 		}};
 		
 		//MouseListener for the themePreferences
@@ -259,7 +290,13 @@ public class ClientPreferences extends JFrame {
 				encryptionPanel.setVisible(false);
 				formattingPanel.setVisible(false);
 				themePanel.setVisible(true); // set to true
+				generalDrawingPanel.repaint();
+				notificationDrawingPanel.repaint();
+				encryptionDrawingPanel.repaint();
+				formattingDrawingPanel.repaint();
+				themeDrawingPanel.repaint();
 		}};
+		
 		
 		//Add the mouselisteners to the Drawing Panels
 		generalDrawingPanel.addMouseListener(mouseListenerGeneral);
@@ -290,7 +327,7 @@ public class ClientPreferences extends JFrame {
 		//Initialize Frame
 		preferences.setContentPane(contentPane);
 		preferences.setVisible(true);
-		
-	}		
+
+	}	
 	
 }

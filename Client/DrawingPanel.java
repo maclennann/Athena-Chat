@@ -30,11 +30,12 @@ public class DrawingPanel extends JPanel {
 		this.img = img;
 	}
 	
-	public void paintComponent (Graphics g) { 
-		super.paintComponent(g);
+	public void paintComponent (Graphics g) { 		
+		   int dy = getSize ().height;
+		   int dx = getSize ().width;		   
+		   super.paintComponent(g);
 		
 		//Draw image 
-		g.drawImage(img, x, y, this);
+		g.drawImage(img, dx, dy, this);
 	}
-
 }
