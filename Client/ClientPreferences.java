@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -5,13 +6,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 /****************************************************
  * Athena: Encrypted Messaging Application v.0.0.2
@@ -40,10 +46,35 @@ public class ClientPreferences extends JFrame {
 	public JScrollPane prefScrollPane = new JScrollPane();
 	public JButton apply = new JButton("Apply");
 	public JButton cancel = new JButton("Cancel");
+	public Border blackline;
+	public TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
+
 	
 	//TODO Create components for each of the preference menu categories
+	//Define components for the General Menu Panel
+	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray");
+	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab");
+	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check");
 	
+	//Define components for the Notifications Menu Panel
+	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications");
+	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable sounds");
+
+	//Define components for the Encryption Menu Panel
+	public JLabel generateNewKeyPairJLabel = new JLabel("Generate new encryption key pair");
+	public JButton generateNewKeyPairJButton = new JButton("Generate!");
 	
+	//Define components for the Formatting Menu Panel
+	public JComboBox selectFontComboBox = new JComboBox();
+	public JButton toggleBoldJButton = new JButton("Bold");
+	public JButton toggleItalicsJButton = new JButton("Italics");
+	public JButton toggleUnderlineJButton = new JButton("Underlined");
+	
+	//Define components for the Theme Menu Panel
+	public JComboBox selectThemeComboBox = new JComboBox();
+	public JLabel selectThemeJLabel = new JLabel("Select theme");
+	public JButton installNewThemeJButton = new JButton("Install!");
+	public JLabel installNewThemeJLabel = new JLabel("Install new theme");
 	
 	//Constructor
 	ClientPreferences() { 
@@ -53,31 +84,110 @@ public class ClientPreferences extends JFrame {
 		preferences.setResizable(true);
 		contentPane.setLayout(null);
 		
-		//Initialize the JPanels for each of the options
-		generalPanel = new JPanel();
-		generalPanel.setBounds(185,15,300,445);
-		generalPanel.setVisible(false);
+		//Initalize borders
+		blackline = BorderFactory.createLineBorder(Color.black);
+		generalTitledBorder = BorderFactory.createTitledBorder(
+			       blackline, "General Options");
+		encryptionTitledBorder = BorderFactory.createTitledBorder(
+			       blackline, "Encryption Options");
+		formattingTitledBorder = BorderFactory.createTitledBorder(
+			       blackline, "Formatting Options");
+		notificationsTitledBorder = BorderFactory.createTitledBorder(
+			       blackline, "Notification Options");
+		themeTitleBorder = BorderFactory.createTitledBorder(
+			       blackline, "Theme Options");
 		
-		notificationsPanel = new JPanel();
-		notificationsPanel.setBounds(185,15,300,445);
-		notificationsPanel.setVisible(false);
-		
-		encryptionPanel = new JPanel();
-		encryptionPanel.setBounds(175,15,600, 545);
-		encryptionPanel.setVisible(false);
-		
-		formattingPanel = new JPanel();
-		formattingPanel.setBounds(175,15,600, 545);
-		formattingPanel.setVisible(false);
-		
-		themePanel = new JPanel();
-		themePanel.setBounds(175,15,600, 545);
-		themePanel.setVisible(false);
-		
-		//Size the components
-		prefScrollPane.setBounds(15, 15, 150, 545);
+		//Size the default components
+		prefScrollPane.setBounds(15, 15, 150, 500);
 		apply.setBounds(700,525,75,30);
 		cancel.setBounds(615,525,75,30);
+		
+		//Initialize the JPanels for each of the options
+		//General Menu Section
+		/*************************************************/			
+		generalPanel = new JPanel();
+		generalPanel.setLayout(null);
+		generalPanel.setBorder(generalTitledBorder);
+		generalPanel.setBounds(185,15,500,500);
+		generalPanel.setVisible(false);		
+		
+		systemTrayCheckBox.setBounds(50,15,200,50);
+		allowESCCheckBox.setBounds(50,55,200,50);
+		enableSpellCheckCheckBox.setBounds(50,95,200,50);
+		
+		generalPanel.add(systemTrayCheckBox);
+		generalPanel.add(allowESCCheckBox);
+		generalPanel.add(enableSpellCheckCheckBox);
+		/*************************************************/
+		
+		//Notification Menu Section
+		/*************************************************/		
+		notificationsPanel = new JPanel();
+		notificationsPanel.setLayout(null);
+		notificationsPanel.setBorder(notificationsTitledBorder);
+		notificationsPanel.setBounds(185,15,500,500);
+		notificationsPanel.setVisible(false);
+		
+		enableNotificationsCheckBox.setBounds(50,15,200,50);
+		enableSoundsCheckBox.setBounds(50,55,200,50);
+		
+		notificationsPanel.add(enableNotificationsCheckBox);
+		notificationsPanel.add(enableSoundsCheckBox);
+		/*************************************************/		
+		
+		//Encrpytion Menu Selection
+		/*************************************************/	
+		encryptionPanel = new JPanel();
+		encryptionPanel.setLayout(null);
+		encryptionPanel.setBorder(encryptionTitledBorder);
+		encryptionPanel.setBounds(185,15,500,500);
+		encryptionPanel.setVisible(false);
+		
+		generateNewKeyPairJLabel.setBounds(50,15,200,50);
+		generateNewKeyPairJButton.setBounds(50,65,100,50);
+
+		encryptionPanel.add(generateNewKeyPairJButton);
+		encryptionPanel.add(generateNewKeyPairJLabel);
+		
+		//Formatting Menu Selection
+		/*************************************************/			
+		formattingPanel = new JPanel();
+		formattingPanel.setLayout(null);
+		formattingPanel.setBorder(formattingTitledBorder);
+		formattingPanel.setBounds(185,15,500,500);
+		formattingPanel.setVisible(false);
+		
+		selectFontComboBox.setBounds(50,35, 200, 50);
+		toggleBoldJButton.setBounds(50,95,100,25);
+		toggleItalicsJButton.setBounds(50,135,100,25);
+		toggleUnderlineJButton.setBounds(50,175,100,25);
+		
+		formattingPanel.add(selectFontComboBox);
+		formattingPanel.add(toggleBoldJButton);
+		formattingPanel.add(toggleItalicsJButton);
+		formattingPanel.add(toggleUnderlineJButton);
+		/*************************************************/	
+		
+		//Theme Menu Selection
+		/*************************************************/	
+		themePanel = new JPanel();
+		themePanel.setLayout(null);
+		themePanel.setBorder(themeTitleBorder);
+		themePanel.setBounds(185,15,500,500);
+		themePanel.setVisible(false);
+		
+		//Define components for the Theme Menu Panel
+		selectThemeComboBox.setBounds(50,65,200,50);
+		selectThemeJLabel.setBounds(50,15,100,50);
+		installNewThemeJButton.setBounds(50,165,100,50);
+		installNewThemeJLabel.setBounds(50,125,100,50);
+		
+		themePanel.add(selectThemeComboBox);
+		themePanel.add(selectThemeJLabel);
+		themePanel.add(installNewThemeJButton);
+		themePanel.add(installNewThemeJLabel);
+		/*************************************************/	
+		
 		
 		//Add the options to the Scroll Pane
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/generalPref.png");
@@ -104,32 +214,51 @@ public class ClientPreferences extends JFrame {
 		//MouseListener for the generalPreferences
 	    	MouseListener mouseListenerGeneral = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				generalPanel.setVisible(true);
+				generalPanel.setVisible(true); // set to true
 				notificationsPanel.setVisible(false);
-				System.out.println("OMFG WORK");
+				encryptionPanel.setVisible(false);
+				formattingPanel.setVisible(false);
+				themePanel.setVisible(false);
 		}};
 		
 		//MouseListener for the notificationsPreferences
 			MouseListener mouseListenerNotifications = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				notificationsPanel.setVisible(true);
 				generalPanel.setVisible(false);
-				System.out.println("OMFG WORKDIE");
+				notificationsPanel.setVisible(true); // set to true
+				encryptionPanel.setVisible(false);
+				formattingPanel.setVisible(false);
+				themePanel.setVisible(false);
 		}};
 		
 		//MouseListener for the encryptionPreferences
 			MouseListener mouseListenerEncryption = new MouseAdapter() {
-			public void mouseClicked(MouseEvent mouseEvent) {		
+			public void mouseClicked(MouseEvent mouseEvent) {	
+				generalPanel.setVisible(false);
+				notificationsPanel.setVisible(false);
+				encryptionPanel.setVisible(true); // set to true
+				formattingPanel.setVisible(false);
+				themePanel.setVisible(false);
 		}};
 		
 		//MouseListener for the formattingPreferences
 			MouseListener mouseListenerFormatting = new MouseAdapter() {
-			public void mouseClicked(MouseEvent mouseEvent) {		
+			public void mouseClicked(MouseEvent mouseEvent) {	
+				generalPanel.setVisible(false);
+				notificationsPanel.setVisible(false);
+				encryptionPanel.setVisible(false);
+				formattingPanel.setVisible(true); // set to true
+				themePanel.setVisible(false);
 		}};
 		
 		//MouseListener for the themePreferences
 			MouseListener mouseListenerTheme = new MouseAdapter() {
-			public void mouseClicked(MouseEvent mouseEvent) {			
+			public void mouseClicked(MouseEvent mouseEvent) {
+				generalPanel.setVisible(false);
+				notificationsPanel.setVisible(false);
+				encryptionPanel.setVisible(false);
+				formattingPanel.setVisible(false);
+				themePanel.setVisible(true); // set to true
 		}};
 		
 		//Add the mouselisteners to the Drawing Panels
