@@ -262,6 +262,7 @@ public class Client
 			dout.close();
 			din.close();
 			connected=0;
+			clientResource.setVisible(false);
 		}catch(Exception e){}
 	}
 

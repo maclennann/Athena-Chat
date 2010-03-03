@@ -21,6 +21,8 @@
  ****************************************************/
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Enumeration;
 import java.io.*;
@@ -51,6 +53,8 @@ public class ServerThread extends Thread
 	//Our current socket
 	public Socket socket;
 
+	//Message digest for the hashed password
+	MessageDigest hashedPassword;
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive=1;
 	
@@ -171,10 +175,22 @@ public class ServerThread extends Thread
 			System.out.println(din.readUTF());
 			String newUser = din.readUTF();
 			System.out.println(din.readUTF());
-			String newPassword = din.readUTF();			
+			String newPassword = din.readUTF();		
+			
+			//Ya'll like some hash?
+			try {
+				String hashedPassword = byteArrayToHexString(ServerThread.computeHash(newPassword));
+								
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			stmt = con.createStatement();
-			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+newPassword);
+			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+hashedPassword);
 
 			//See if the username already exists.
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser+"'");
@@ -187,7 +203,7 @@ public class ServerThread extends Thread
 			}
 			else { 
 				//Grab the users new password
-				String insertString = "insert into Users (username, password) values('" + newUser + "', '" + newPassword + "')";
+				String insertString = "insert into Users (username, password) values('" + newUser + "', '" + hashedPassword + "')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 				
@@ -297,6 +313,27 @@ public class ServerThread extends Thread
 			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	
+	}
+	//This will return the hashed input string
+	public static byte[] computeHash(String toHash) throws Exception { 
+			MessageDigest d = null;
+			d = MessageDigest.getInstance("SHA-1");
+			d.reset();
+			d.update(toHash.getBytes());
+			return d.digest();	
+	}
+	
+	//This will turn a byteArray to a String
+	public static String byteArrayToHexString(byte[] b) { 
+		StringBuffer sb = new StringBuffer(b.length * 2);
+		for (int i = 0; i < b.length; i++) { 
+			int v = b[i] & 0xff;
+			if (v < 16) { 
+				sb.append('0');
+			}
+			sb.append(Integer.toHexString(v));
+		}
+		return sb.toString().toUpperCase();
 	}
 }
 

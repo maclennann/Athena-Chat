@@ -28,6 +28,8 @@ import java.awt.TrayIcon;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -47,80 +49,112 @@ public class ClientLogin extends JFrame {
 	public JLabel passwordLabel = new JLabel("Password");
 	public JButton connect = new JButton("Connect");
 	public JButton cancel = new JButton("Cancel");
-	
+
 	//Define an icon for the system tray icon
 	public TrayIcon trayIcon;
-	
+
 	public static ClientApplet clientResource;
-	
+
 	//Constructor | Here's where the fun begins
 	ClientLogin() throws AWTException { 
-			//Initialize Login window
-			login = new JFrame("Athena Chat Application");
-			login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			login.setSize(200,300);
-			login.setResizable(false);
-			contentPane.setLayout(null);
-			
-			//Define the system tray icon
-			if (SystemTray.isSupported()) { 
-				SystemTray tray = SystemTray.getSystemTray();
-				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
-			   
-				ActionListener exitListener = new ActionListener() {
-			        public void actionPerformed(ActionEvent e) {
-			            System.out.println("Exiting...");
-			            System.exit(0);
-			        }
-			    };
+		//Initialize Login window
+		login = new JFrame("Athena Chat Application");
+		login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		login.setSize(200,300);
+		login.setResizable(false);
+		contentPane.setLayout(null);
 
-				PopupMenu popup = new PopupMenu();
-				MenuItem defaultItem = new MenuItem("Exit");
-				defaultItem.addActionListener(exitListener);
-				popup.add(defaultItem);
-				
-				trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
-				trayIcon.setImageAutoSize(true);
-				tray.add(trayIcon);
-			}
-			
-			//Adjust font sizes
-			connect.setFont(new Font("Dialog", 1, 10));
-			cancel.setFont(new Font("Dialog", 1, 10));
-			usernameLabel.setFont(new Font("Dialog", 1, 10));
-			passwordLabel.setFont(new Font("Dialog", 1, 10));
-			
-			//Size the components
-			usernameLabel.setBounds(50,75,100,25);
-			username.setBounds(50,100,100,25);
-			passwordLabel.setBounds(50,125,100,25);
-			password.setBounds(50,150,100,25);
-			cancel.setBounds(10,200,75,30);
-			connect.setBounds(105,200,75,30);
-			
-			//Let the "Action Begin"
-			
-			//ActionListener to make the connect menu item connect
-			connect.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event){
+		//Define the system tray icon
+		if (SystemTray.isSupported()) { 
+			SystemTray tray = SystemTray.getSystemTray();
+			Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+
+			ActionListener exitListener = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Exiting...");
+					System.exit(0);
+				}
+			};
+
+			PopupMenu popup = new PopupMenu();
+			MenuItem defaultItem = new MenuItem("Exit");
+			defaultItem.addActionListener(exitListener);
+			popup.add(defaultItem);
+
+			trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
+			trayIcon.setImageAutoSize(true);
+			tray.add(trayIcon);
+		}
+
+		//Adjust font sizes
+		connect.setFont(new Font("Dialog", 1, 10));
+		cancel.setFont(new Font("Dialog", 1, 10));
+		usernameLabel.setFont(new Font("Dialog", 1, 10));
+		passwordLabel.setFont(new Font("Dialog", 1, 10));
+
+		//Size the components
+		usernameLabel.setBounds(50,75,100,25);
+		username.setBounds(50,100,100,25);
+		passwordLabel.setBounds(50,125,100,25);
+		password.setBounds(50,150,100,25);
+		cancel.setBounds(10,200,75,30);
+		connect.setBounds(105,200,75,30);
+
+		//Let the "Action Begin"
+
+		//ActionListener to make the connect menu item connect
+		connect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				//Ya'll like some hash?
+				try {
+					String hashedPassword = byteArrayToHexString(ClientLogin.computeHash(password.getText()));
 					Client.setUsername(username.getText());
 					Client.connect(username.getText(), password.getPassword());
-					login.setVisible(false);
+					login.setVisible(false);									
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			});
-			
-			//Add the components to the Frame
-			contentPane.add(usernameLabel);
-			contentPane.add(username);
-			contentPane.add(passwordLabel);
-			contentPane.add(password);
-			contentPane.add(connect);
-			contentPane.add(cancel);
-			
-			//Initialize Frame
-			login.setContentPane(contentPane);
-			login.setVisible(true);
-			}
 
-	
+			}
+		});
+
+		//Add the components to the Frame
+		contentPane.add(usernameLabel);
+		contentPane.add(username);
+		contentPane.add(passwordLabel);
+		contentPane.add(password);
+		contentPane.add(connect);
+		contentPane.add(cancel);
+
+		//Initialize Frame
+		login.setContentPane(contentPane);
+		login.setVisible(true);
+	}
+
+	//This will return the hashed input string
+	public static byte[] computeHash(String toHash) throws Exception { 
+		MessageDigest d = null;
+		d = MessageDigest.getInstance("SHA-1");
+		d.reset();
+		d.update(toHash.getBytes());
+		return d.digest();	
+	}
+
+	//This will turn a byteArray to a String
+	public static String byteArrayToHexString(byte[] b) { 
+		StringBuffer sb = new StringBuffer(b.length * 2);
+		for (int i = 0; i < b.length; i++) { 
+			int v = b[i] & 0xff;
+			if (v < 16) { 
+				sb.append('0');
+			}
+			sb.append(Integer.toHexString(v));
+		}
+		return sb.toString().toUpperCase();
+	}
+
 }
