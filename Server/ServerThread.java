@@ -78,10 +78,10 @@ public class ServerThread extends Thread
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); 
 			password = din.readUTF(); 
-			
+			System.out.println("PASSWORD: " + password);
 			//Ya'll like some hash?
 			String hashedPassword = byteArrayToHexString(computeHash(password));
-			System.out.println("DHFAHFSHFFA" + hashedPassword);
+			System.out.println("DHFAHFSHFFA " + hashedPassword);
 			
 			//Debug statements
 			if (debug==1)System.out.println("Username: " + username);
