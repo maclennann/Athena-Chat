@@ -80,8 +80,8 @@ public class ServerThread extends Thread
 			password = din.readUTF(); 
 			
 			//Ya'll like some hash?
-			String hashedPassword = byteArrayToHexString(ServerThread.computeHash(password));
-			System.out.println(hashedPassword);
+			String hashedPassword = byteArrayToHexString(computeHash(password));
+			System.out.println("DHFAHFSHFFA" + hashedPassword);
 			
 			//Debug statements
 			if (debug==1)System.out.println("Username: " + username);
