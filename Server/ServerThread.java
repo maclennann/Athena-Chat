@@ -81,6 +81,7 @@ public class ServerThread extends Thread
 			
 			//Ya'll like some hash?
 			String hashedPassword = byteArrayToHexString(ServerThread.computeHash(password));
+			System.out.println(hashedPassword);
 			
 			//Debug statements
 			if (debug==1)System.out.println("Username: " + username);
