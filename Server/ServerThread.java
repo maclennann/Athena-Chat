@@ -180,6 +180,7 @@ public class ServerThread extends Thread
 			//Ya'll like some hash?
 			try {
 				String hashedPassword = byteArrayToHexString(ServerThread.computeHash(newPassword));
+				System.out.println("HASHEDMOFO: " + hashedPassword);
 								
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
