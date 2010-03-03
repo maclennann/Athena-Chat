@@ -49,7 +49,7 @@ import org.w3c.dom.*;
 public class Client
 {
 	//Print debug messages?
-	static int debug=0;
+	public static int debug=1;
 
 	//Global username variable
 	private static String username="null";
@@ -94,7 +94,7 @@ public class Client
 		print = (MapTextArea)clientResource.tabPanels.get(toUser);
 			
 		//See if the user is logged in. If yes, send it. If no, error.
-		System.out.println("USERNAME: " + username);
+		if (debug == 1) System.out.println("USERNAME: " + username);
 		if(username.equals("null")){
 			print.writeToTextArea("Error: You are not connected!\n");
 			print.moveToEnd();
@@ -294,7 +294,7 @@ public class Client
 	public static void instanciateBuddyList() { 
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < clientResource.otherUsers.length; i++) { 
-			System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
+			if (debug == 1) System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
 			checkUserStatus(clientResource.otherUsers[i]);
 		}
 		//Counter
@@ -303,12 +303,12 @@ public class Client
 		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); x++ ) {
 				try { 
 					String currentE = e.nextElement().toString();
-					System.out.println("E: " + currentE);
+					if (debug == 1) System.out.println("E: " + currentE);
 				
 					String currentF = f.nextElement().toString();
-					System.out.println("F: " + currentF);
+					if (debug == 1) System.out.println("F: " + currentF);
 					if (currentF.equals("1")) { 
-						System.out.println("Online user:" + currentE);
+						if (debug == 1) System.out.println("Online user:" + currentE);
 						clientResource.newBuddyListItems(currentE);
 					}
 				} catch (java.util.NoSuchElementException ie) { } 
@@ -326,14 +326,14 @@ public class Client
 			//First contact with Aegis!
 			systemMessage("001");
 			//Listen for the incoming Acknowledge message
-			System.out.println("Message received from server: " + din.readUTF().toString());
+			if (debug == 1) System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
 			dout.writeUTF(findUserName);
-			System.out.println("Username sent - now listening for result...");
+			if (debug == 1) System.out.println("Username sent - now listening for result...");
 			//Grab result
 			result = Integer.parseInt(din.readUTF());
 			//Print result 
-			System.out.println("Result for user " + findUserName + " is " + result + ".");
+			if (debug == 1) System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
 			} catch (java.io.IOException e) { 
