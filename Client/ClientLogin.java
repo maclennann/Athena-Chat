@@ -107,13 +107,9 @@ public class ClientLogin extends JFrame {
 			public void actionPerformed(ActionEvent event){
 				//Ya'll like some hash?
 				try {
-					String hashedPassword = byteArrayToHexString(ClientLogin.computeHash(password.getText()));
 					Client.setUsername(username.getText());
-					Client.connect(username.getText(), password.getPassword());
+					Client.connect(username.getText(),password.getPassword());
 					login.setVisible(false);									
-				} catch (NoSuchAlgorithmException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

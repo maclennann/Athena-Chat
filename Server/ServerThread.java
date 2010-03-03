@@ -79,12 +79,15 @@ public class ServerThread extends Thread
 			username = din.readUTF(); 
 			password = din.readUTF(); 
 			
+			//Ya'll like some hash?
+			String hashedPassword = byteArrayToHexString(ServerThread.computeHash(password));
+			
 			//Debug statements
 			if (debug==1)System.out.println("Username: " + username);
 			if (debug==1)System.out.println("Password: " + password);
 			
 			//Authenticate the user.
-			String loginOutcome = login(username, password);
+			String loginOutcome = login(username, hashedPassword);
 			if (debug==1)System.out.println(loginOutcome);
 			
 			//Maps username to socket after user logs in
@@ -98,6 +101,9 @@ public class ServerThread extends Thread
 			
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally {
 			//Socket is closed, remove it from the list
 			server.removeConnection( socket, username );

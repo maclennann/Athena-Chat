@@ -163,6 +163,8 @@ public class ClientApplet extends JFrame
 		Image removeUserIcon = Toolkit.getDefaultToolkit().getImage("../images/removeUser.png");
 		DrawingPanel addBuddyPanel = new DrawingPanel(addUserIcon);		
 		DrawingPanel removeBuddyPanel = new DrawingPanel(removeUserIcon);
+		addBuddyPanel.setVisible(true);
+		removeBuddyPanel.setVisible(true);
 		addBuddyPanel.setBounds(595,558, 41, 50);
 		removeBuddyPanel.setBounds(650,558, 41, 50);
 		

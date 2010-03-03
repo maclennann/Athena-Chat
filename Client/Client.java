@@ -294,7 +294,7 @@ public class Client
 	public static void instanciateBuddyList() { 
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < clientResource.otherUsers.length; i++) { 
-			if (debug == 1) System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
+		 System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
 			checkUserStatus(clientResource.otherUsers[i]);
 		}
 		//Counter
@@ -303,12 +303,12 @@ public class Client
 		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); x++ ) {
 				try { 
 					String currentE = e.nextElement().toString();
-					if (debug == 1) System.out.println("E: " + currentE);
+					System.out.println("E: " + currentE);
 				
 					String currentF = f.nextElement().toString();
-					if (debug == 1) System.out.println("F: " + currentF);
+					System.out.println("F: " + currentF);
 					if (currentF.equals("1")) { 
-						if (debug == 1) System.out.println("Online user:" + currentE);
+						System.out.println("Online user:" + currentE);
 						clientResource.newBuddyListItems(currentE);
 					}
 				} catch (java.util.NoSuchElementException ie) { } 
@@ -326,14 +326,14 @@ public class Client
 			//First contact with Aegis!
 			systemMessage("001");
 			//Listen for the incoming Acknowledge message
-			if (debug == 1) System.out.println("Message received from server: " + din.readUTF().toString());
+			System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
 			dout.writeUTF(findUserName);
-			if (debug == 1) System.out.println("Username sent - now listening for result...");
+			System.out.println("Username sent - now listening for result...");
 			//Grab result
 			result = Integer.parseInt(din.readUTF());
 			//Print result 
-			if (debug == 1) System.out.println("Result for user " + findUserName + " is " + result + ".");
+			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
 			} catch (java.io.IOException e) { 
