@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.io.DataOutputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -59,37 +60,47 @@ public class ClientAddUser extends JPanel {
 		generalTitledBorder = BorderFactory.createTitledBorder(
 			       blackline, "Registration Information");
 		
+		//First Name Input
 		firstNameJTextField = new JTextField();
 		firstNameJLabel.setBounds(15,15,100,25);
 		firstNameJTextField.setBounds(85,15,100,25);
 		
+		//Last Name Input
 		lastNameJTextField = new JTextField();
 		lastNameJLabel.setBounds(15,55,100,25);
 		lastNameJTextField.setBounds(85,55,100,25);
 		
+		//Email Addres Input
 		emailAddressJTextField = new JTextField();
 		emailAddressJLabel.setBounds(15,95,100,25);
 		emailAddressJTextField.setBounds(105,95,100,25);
 		
+		//Confirm Email Address Input
 		confirmEmailAddresJTextField = new JTextField();
 		confirmEmailAddressJLabel.setBounds(15,135,135,25);
 		confirmEmailAddresJTextField.setBounds(155,135,100,25);
 		
+		//Username Input
 		userNameJTextField = new JTextField();
 		userNameJLabel.setBounds(15,175,100,25);
 		userNameJTextField.setBounds(85,175,100,25);
 		
+		//Password Input
+		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		passwordJPasswordField = new JPasswordField();
 		passwordJLabel.setBounds(15,215,100,25);
 		passwordJPasswordField.setBounds(85,215,100,25);
 		
+		//Confirm Password Input
 		confirmpasswordJPasswordField = new JPasswordField();
 		confirmPasswordJLabel.setBounds(15,255,135,25);
 		confirmpasswordJPasswordField.setBounds(135,255,100,25);
 		
+		//Confirm and Cancel JButtons
 		confirmJButton.setBounds(25,290,100,25);
 		cancelJButton.setBounds(150,290,100,25);
 		
+		//Add all the components to the contentPane
 		contentPane.add(firstNameJLabel);
 		contentPane.add(firstNameJTextField);
 		contentPane.add(lastNameJLabel);
@@ -106,11 +117,21 @@ public class ClientAddUser extends JPanel {
 		contentPane.add(confirmpasswordJPasswordField);
 		contentPane.add(confirmJButton);
 		contentPane.add(cancelJButton);
+		
+		//Make sure we can see damn thing
 		contentPane.setVisible(true);
 		contentPane.setBorder(generalTitledBorder);
 		
+		//Let the Frame know what's up
 		addUserJFrame.setContentPane(contentPane);
 		addUserJFrame.setVisible(true);
+	}
+	
+	//This Method will send all of the information over to Aegis for input into the database
+	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password) { 
+		//Invoke Client's systeMessage to tell it what we're about to do, if you know what I mean.	
+		Client.systemMessage("000");
+		DataOutputStream dout = Client.return
 	}
 
 }

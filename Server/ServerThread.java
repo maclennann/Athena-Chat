@@ -38,18 +38,18 @@ public class ServerThread extends Thread
 {
 	//Change to 1 for debug output
 	private int debug = 1;
-	
+
 	//Create the DataInputStream on the current socket 
 	public DataInputStream din = null;
 	public DataOutputStream dout = null;
-	
+
 	// The Server that created this thread
 	private static Server server;
-	
+
 	//Define Global Variable Username / Password
 	private String username;
 	private String password;
-	
+
 	//Our current socket
 	public Socket socket;
 
@@ -57,7 +57,7 @@ public class ServerThread extends Thread
 	MessageDigest hashedPassword;
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive=1;
-	
+
 	// Constructor. Instantiate this thread on the current socket
 	public ServerThread( Server server, Socket socket ) {
 
@@ -68,13 +68,13 @@ public class ServerThread extends Thread
 		//Start up the thread
 		start();
 	}
-	
+
 	//This runs when the thread starts. It controls everything.
 	public void run() {
 		try {
 			//Create a datainputstream on the current socket to accept data from the client
 			din = new DataInputStream( socket.getInputStream() );
-			
+
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); 
 			password = din.readUTF(); 
@@ -82,24 +82,24 @@ public class ServerThread extends Thread
 			//Ya'll like some hash?
 			String hashedPassword = byteArrayToHexString(computeHash(password));
 			System.out.println("DHFAHFSHFFA " + hashedPassword);
-			
+
 			//Debug statements
 			if (debug==1)System.out.println("Username: " + username);
 			if (debug==1)System.out.println("Password: " + password);
-			
+
 			//Authenticate the user.
 			String loginOutcome = login(username, hashedPassword);
 			if (debug==1)System.out.println(loginOutcome);
-			
+
 			//Maps username to socket after user logs in
 			server.mapUserSocket(username, socket);	
-						
+
 			//Route around messages coming in from the client while they are connected
 			while (isAlive==1) {
 				//Take in messages from this thread's client and route them to another client
 				routeMessage(din);
 			}
-			
+
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
 		} catch (Exception e) {
@@ -110,7 +110,7 @@ public class ServerThread extends Thread
 			server.removeConnection( socket, username );
 		}
 	}
-	
+
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
 	public void routeMessage(DataInputStream din){
@@ -127,25 +127,25 @@ public class ServerThread extends Thread
 				if(debug==1)System.out.println("Routing normal message");
 				sendMessage(toUser, username, message);
 			}
-			
+
 		} catch (IOException e) {isAlive=0;}
 	}
-	
+
 	//Method that handles client to server messages
 	public void systemMessageListener(int eventCode) {
-		
+
 		switch(eventCode) { 
-			case 000: createUsername();
-			break;
-			case 001: negotiateClientStatus();
-			System.out.println("Event code received. negotiateClientStatus() run.");
-			break;
-			case 002: server.sendToAll("ServerLogOn", username);
-			break;
-			default: return;
+		case 000: createUsername();
+		break;
+		case 001: negotiateClientStatus();
+		System.out.println("Event code received. negotiateClientStatus() run.");
+		break;
+		case 002: server.sendToAll("ServerLogOn", username);
+		break;
+		default: return;
 		}
 	}
-	
+
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
@@ -154,48 +154,54 @@ public class ServerThread extends Thread
 			String findUser = din.readUTF();
 			//Print out the received username
 			System.out.println("Username received: " + findUser);
-				//Check to see if the username is in the current Hashtable, return result
-				//TODO: Do we need to sleep?
-				Thread.sleep(50);
-				if ((server.userToSocket.containsKey(findUser))) { 
-					sendSystemMessage(username,"1");
-					System.out.println("(Online)\n");
-				} else { sendSystemMessage(username,"0");
-					System.out.println("(Offline)\n");
-				} 
-			} catch ( java.io.IOException e ) { }
-			catch (InterruptedException ie) { } 
+			//Check to see if the username is in the current Hashtable, return result
+			//TODO: Do we need to sleep?
+			Thread.sleep(50);
+			if ((server.userToSocket.containsKey(findUser))) { 
+				sendSystemMessage(username,"1");
+				System.out.println("(Online)\n");
+			} else { sendSystemMessage(username,"0");
+			System.out.println("(Offline)\n");
+			} 
+		} catch ( java.io.IOException e ) { }
+		catch (InterruptedException ie) { } 
 	}
-	
+
 	//TODO Make this work better.
 	public boolean createUsername() { 
 		try { 
 			//Use dbConnect() to connect to the database
 			Connection con = server.dbConnect();
-			
+
 			//Create a statement and resultset for the query
 			Statement stmt;
 			Statement insertSTMT;
 			ResultSet rs = null; 
-			
+
 			//Disregard two messages, the two others are the username and password
+			System.out.println(din.readUTF());
+			String firstName = din.readUTF();
+			System.out.println(din.readUTF());
+			String lastName = din.readUTF();
+			System.out.println(din.readUTF());
+			String emailAddress = din.readUTF();
 			System.out.println(din.readUTF());
 			String newUser = din.readUTF();
 			System.out.println(din.readUTF());
 			String newPassword = din.readUTF();		
-			
+
 			//Ya'll like some hash?
-				String hashedPassword = byteArrayToHexString(ServerThread.computeHash(newPassword));
-				System.out.println("HASHEDMOFO: " + hashedPassword);
-								
-			
+			String hashedPassword = byteArrayToHexString(ServerThread.computeHash(newPassword));
+			System.out.println("HASHEDMOFO: " + hashedPassword);
+
+
 			stmt = con.createStatement();
 			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ hashedPassword);
 
 			//See if the username already exists.
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser+"'");
 			if(debug==1)System.out.println("newUser: " + newUser);
-		
+
 			//Test to see if there are any results
 			if (rs.next()) { 
 				sendMessage(username,"Aegis","Username ("+newUser+")  has already been taken");
@@ -203,15 +209,15 @@ public class ServerThread extends Thread
 			}
 			else { 
 				//Grab the users new password
-				String insertString = "insert into Users (username, password) values('" + newUser + "', '" + hashedPassword + "')";
+				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + hashedPassword + "')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
-				
+
 				//Close Connections
 				stmt.close();
 				insertSTMT.close();
 				con.close();
-				
+
 				//Inform of our success
 				sendMessage(username, "Aegis", "User created succesfully.");
 				server.updateHashTable();
@@ -230,12 +236,12 @@ public class ServerThread extends Thread
 		}
 	}
 
-	
+
 	//Sends message message from user fromUser (this thread/socket) to user toUser (another socket)
 	//TODO: Separate findOuputSteam from this method?
 	void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
-			
+
 		//Debug statement: who is this going to?
 		if(debug==1)System.out.print(toUser);
 
@@ -247,7 +253,7 @@ public class ServerThread extends Thread
 			foundSocket = (Socket) server.userToSocket.get(toUser);
 			if(debug==1)System.out.print("Found Socket: " + foundSocket);
 		} else { sendMessage(fromUser, "UnavailableUser", toUser); return; } 
-			
+
 		//Find the outputstream associated with toUser's socket
 		//We send data through this outputstream to send the message
 		//If we cannot find the outputstream, send back an error
@@ -255,18 +261,18 @@ public class ServerThread extends Thread
 		if (server.outputStreams.containsKey(foundSocket)) { 
 			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
 		} else { sendMessage(fromUser, "MissingSocket", toUser); return; }
-			
+
 		//Send the message, and the user it is from
 		try {
 			dout.writeUTF(fromUser);
 			dout.writeUTF(message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
-	
+
 	//Send system Messages to selected user
 	void sendSystemMessage(String toUser, String message) { 
 		Socket foundSocket = null;
-		
+
 		//Debug statement: who is this going to?
 		if(debug==1)System.out.println("Who is this message going to? " + toUser);
 
@@ -278,7 +284,7 @@ public class ServerThread extends Thread
 			foundSocket = (Socket) server.userToSocket.get(toUser);
 			if(debug==1)System.out.println("Found Socket: " + foundSocket);
 		} 
-			
+
 		//Find the outputstream associated with toUser's socket
 		//We send data through this outputstream to send the message
 		//If we cannot find the outputstream, send back an error
@@ -286,7 +292,7 @@ public class ServerThread extends Thread
 		if (server.outputStreams.containsKey(foundSocket)) { 
 			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
 		} 
-			
+
 		//Send the message, and the user it is from
 		try {
 			//dout.writeUTF(toUser);
@@ -296,7 +302,7 @@ public class ServerThread extends Thread
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) { 
-	
+
 		//Get the password from the hashtable
 		String hashedPassword = server.authentication.get(clientName).toString();
 
@@ -305,7 +311,7 @@ public class ServerThread extends Thread
 		if (debug==1)System.out.println("User logging in...");
 		if (debug==1)System.out.println("Hashed Password:" + hashedPassword);
 		if (debug==1)System.out.println("Username :" + clientName);
-				
+
 		//Verify the password hash provided from the user matches the one in the server's hashtable
 		if (clientPassword.equals(hashedPassword)) { 
 			//Run some command that lets user log in!
@@ -320,13 +326,13 @@ public class ServerThread extends Thread
 	}
 	//This will return the hashed input string
 	public static byte[] computeHash(String toHash) throws Exception { 
-			MessageDigest d = null;
-			d = MessageDigest.getInstance("SHA-1");
-			d.reset();
-			d.update(toHash.getBytes());
-			return d.digest();	
+		MessageDigest d = null;
+		d = MessageDigest.getInstance("SHA-1");
+		d.reset();
+		d.update(toHash.getBytes());
+		return d.digest();	
 	}
-	
+
 	//This will turn a byteArray to a String
 	public static String byteArrayToHexString(byte[] b) { 
 		StringBuffer sb = new StringBuffer(b.length * 2);

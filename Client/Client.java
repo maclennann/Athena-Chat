@@ -352,6 +352,10 @@ public class Client
 	public static void setUsername(String usernameToSet) { 
 			username = usernameToSet;
 	}
+	//This method returns a DOUT for other classes to use
+	public DataOutputStream returnDOUT() { 
+		return dout;
+	}
 	// Create the GUI for the client.
 	public static void main(String[] args) throws AWTException {
 	
