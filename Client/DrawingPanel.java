@@ -36,6 +36,6 @@ public class DrawingPanel extends JPanel {
 		   super.paintComponent(g);
 		
 		//Draw image 
-		g.drawImage(img, dx, dy, this);
+		g.drawImage(img, 0, 0, this);
 	}
 }

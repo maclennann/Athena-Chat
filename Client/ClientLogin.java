@@ -117,6 +117,15 @@ public class ClientLogin extends JFrame {
 
 			}
 		});
+		
+		//ActionListener to make the connect menu item connect
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				ClientAddUser testOfWindow = new ClientAddUser();
+				testOfWindow.setVisible(true);
+			}
+		});
+
 
 		//Add the components to the Frame
 		contentPane.add(usernameLabel);
