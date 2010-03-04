@@ -99,7 +99,7 @@ public class ServerThread extends Thread
 			}
 			if(username.equals("Interupt")) {
 				routeMessage(din);
-				dout.close();
+				
 			} else { 
 			//Route around messages coming in from the client while they are connected
 			while (isAlive==1) {
@@ -207,7 +207,7 @@ public class ServerThread extends Thread
 
 			//Test to see if there are any results
 			if (rs.next()) { 
-				sendMessage(username,"Aegis","Username ("+newUser+")  has already been taken");
+				//sendMessage(username,"Aegis","Username ("+newUser+")  has already been taken");
 				return false;
 			}
 			else { 
@@ -222,7 +222,7 @@ public class ServerThread extends Thread
 				con.close();
 
 				//Inform of our success
-				sendMessage(username, "Aegis", "User created succesfully.");
+				//sendMessage(username, "Aegis", "User created succesfully.");
 				server.updateHashTable();
 				return true;
 			}
