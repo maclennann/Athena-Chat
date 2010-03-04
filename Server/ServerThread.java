@@ -77,6 +77,9 @@ public class ServerThread extends Thread
 
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); 
+			if(username.equals("Interupt")) { 
+				return;
+			} else { 
 			password = din.readUTF(); 
 			System.out.println("PASSWORD: " + password);
 			//Ya'll like some hash?
@@ -98,6 +101,7 @@ public class ServerThread extends Thread
 			while (isAlive==1) {
 				//Take in messages from this thread's client and route them to another client
 				routeMessage(din);
+				}
 			}
 
 		} catch ( EOFException ie ) {

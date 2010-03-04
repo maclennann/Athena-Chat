@@ -1,5 +1,9 @@
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,6 +24,7 @@ import javax.swing.border.TitledBorder;
  *
  */
 public class ClientAddUser extends JPanel {
+	
 	
 	//Define components
 	public JFrame addUserJFrame;
@@ -100,6 +105,15 @@ public class ClientAddUser extends JPanel {
 		confirmJButton.setBounds(25,290,100,25);
 		cancelJButton.setBounds(150,290,100,25);
 		
+		//ActionListener to make the connect menu item connect
+		confirmJButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				String password = new String(passwordJPasswordField.getPassword());
+				System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
+				sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password);
+				}
+		});
+		
 		//Add all the components to the contentPane
 		contentPane.add(firstNameJLabel);
 		contentPane.add(firstNameJTextField);
@@ -129,9 +143,37 @@ public class ClientAddUser extends JPanel {
 	
 	//This Method will send all of the information over to Aegis for input into the database
 	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password) { 
+
+		//Get a connection
+		Client.connect();
+		
+		//Give me back my Fillet of DataOutputStream.
+		DataOutputStream dout = Client.returnDOUT();
+		
+		try {
+			//Tell the server we're not going to log in
+			dout.writeUTF("Interupt");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		//Invoke Client's systeMessage to tell it what we're about to do, if you know what I mean.	
 		Client.systemMessage("000");
-		DataOutputStream dout = Client.return
+		
+
+		
+		//Send Aegis the goods
+		try {
+			dout.writeUTF(firstName);
+			dout.writeUTF(lastName);
+			dout.writeUTF(emailAddress);
+			dout.writeUTF(userName);
+			dout.writeUTF(password);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

@@ -255,6 +255,30 @@ public class Client
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	
+	// Method to connect the user
+	public static void connect() { 
+		//Try to connect with and authenticate to the socket
+		try {
+			try{
+			//Connect to auth server at defined port over socket
+			socket = new Socket( "aegis.athenachat.org", 7777 );
+			}catch (Exception e){ 
+				//We can't connect to the server at the specified port for some reason
+				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			//Connection established debug code.
+			if(debug==1)System.out.println( "Connected to "+socket );
+			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
+
+			//Bind the datastreams to the socket in order to send/receive
+			din = new DataInputStream( socket.getInputStream() );
+			dout = new DataOutputStream( socket.getOutputStream() );
+			
+		} catch( IOException ie ) { System.out.println( ie ); }
+	}
+	
 	// Disconnect from the server
 	public static void disconnect() { 
 		try{
@@ -353,7 +377,7 @@ public class Client
 			username = usernameToSet;
 	}
 	//This method returns a DOUT for other classes to use
-	public DataOutputStream returnDOUT() { 
+	public static DataOutputStream returnDOUT() { 
 		return dout;
 	}
 	// Create the GUI for the client.
