@@ -97,11 +97,15 @@ public class ServerThread extends Thread
 			//Maps username to socket after user logs in
 			server.mapUserSocket(username, socket);	
 			}
+			if(username.equals("Interupt")) {
+				routeMessage(din);
+			} else { 
 			//Route around messages coming in from the client while they are connected
 			while (isAlive==1) {
 				//Take in messages from this thread's client and route them to another client
 				routeMessage(din);
 				}
+			}
 
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {

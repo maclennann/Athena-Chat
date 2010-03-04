@@ -169,6 +169,7 @@ public class ClientAddUser extends JPanel {
 			dout.writeUTF(emailAddress);
 			dout.writeUTF(userName);
 			dout.writeUTF(password);
+			Client.disconnect();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
