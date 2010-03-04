@@ -1,4 +1,13 @@
 ChangeLog: 
+03/03/2010:
+	## CREATED NEW CLASS: ClientAddUser
+		@@Ads a new user to the database
+	## Added new fields to the database
+		@@ FirstName, LastName, Emailaddress
+			
+03/02/2010: 
+	## Enabled Hashing of the passwords in the database
+	## Hashes the provided password from the user before checking the password in the database
 03/01/2010:
 	## Moved DrawingPanel to it's own file
 	## Implemented in ClientPreferences:
