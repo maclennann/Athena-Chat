@@ -182,15 +182,15 @@ public class ServerThread extends Thread
 			ResultSet rs = null; 
 
 			//Disregard two messages, the two others are the username and password
-			System.out.println(din.readUTF());
+			System.out.println("1:" + din.readUTF());
 			String firstName = din.readUTF();
-			System.out.println(din.readUTF());
+			System.out.println("2:" + din.readUTF());
 			String lastName = din.readUTF();
-			System.out.println(din.readUTF());
+			System.out.println("3:" + din.readUTF());
 			String emailAddress = din.readUTF();
-			System.out.println(din.readUTF());
+			System.out.println("4:" + din.readUTF());
 			String newUser = din.readUTF();
-			System.out.println(din.readUTF());
+			System.out.println("5:" + din.readUTF());
 			String newPassword = din.readUTF();		
 
 			//Ya'll like some hash?
