@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -50,6 +51,10 @@ public class ClientLogin extends JFrame {
 	public JButton connect = new JButton("Connect");
 	public JButton cancel = new JButton("Cancel");
 
+	ImageIcon logoicon = new ImageIcon("../images/logo.png");
+	JLabel logo = new JLabel(); 
+	
+
 	//Define an icon for the system tray icon
 	public TrayIcon trayIcon;
 
@@ -57,6 +62,7 @@ public class ClientLogin extends JFrame {
 
 	//Constructor | Here's where the fun begins
 	ClientLogin() throws AWTException { 
+		logo.setIcon(logoicon);
 		//Initialize Login window
 		login = new JFrame("Athena Chat Application");
 		login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,13 +99,13 @@ public class ClientLogin extends JFrame {
 		passwordLabel.setFont(new Font("Dialog", 1, 10));
 
 		//Size the components
-		usernameLabel.setBounds(50,75,100,25);
-		username.setBounds(50,100,100,25);
-		passwordLabel.setBounds(50,125,100,25);
-		password.setBounds(50,150,100,25);
-		cancel.setBounds(10,200,75,30);
-		connect.setBounds(105,200,75,30);
-
+		usernameLabel.setBounds(50,115,100,25);
+		username.setBounds(50,140,100,25);
+		passwordLabel.setBounds(50,165,100,25);
+		password.setBounds(50,190,100,25);
+		cancel.setBounds(10,235,75,30);
+		connect.setBounds(105,235,75,30);
+		logo.setBounds(60,10,100,100);
 		//Let the "Action Begin"
 
 		//ActionListener to make the connect menu item connect
@@ -134,7 +140,7 @@ public class ClientLogin extends JFrame {
 		contentPane.add(password);
 		contentPane.add(connect);
 		contentPane.add(cancel);
-
+		contentPane.add(logo); 
 		//Initialize Frame
 		login.setContentPane(contentPane);
 		login.setVisible(true);
