@@ -29,29 +29,6 @@ import java.lang.Thread;
 import java.lang.Runnable;
 import java.util.Enumeration;
 
-//XML Imports
-import javax.xml.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-//TODO: Linux doesn't seem to have this library
-//What should we do with this then?
-//import com.sun.xml.internal.txw2.Document;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-import com.sun.xml.internal.ws.message.RootElementSniffer;
-
-
 public class Client
 {
 	//Print debug messages?
