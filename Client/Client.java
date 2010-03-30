@@ -122,7 +122,7 @@ public class Client
 				// Clear out text input field
 				print.clearTextField();
 			} catch( IOException ie ) { 
-				print.writeToTextArea("Error: You are not connected!\n");
+				print.writeToTextArea("Error: You are not connfected!\n");
 				print.moveToEnd();
 				print.clearTextField();
 			}
@@ -333,22 +333,46 @@ public class Client
 
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
-	public static void instanciateBuddyList() { 
+	public static void instanciateBuddyList() { 		
+		try { 
+			//Let's get the number of lines in the file
+		    InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
+		    byte[] c = new byte[1024];
+		    int count = 0;
+		    int readChars = 0;
+		    while ((readChars = is.read(c)) != -1) {
+		        for (int i = 0; i < readChars; ++i) {
+		            if (c[i] == '\n')
+		                ++count;
+		        }
+		    }
+
+			String[] usernames = new String[count];
+			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
+			int x=0;
+			String str; 
+			while ((str = in.readLine()) != null) 
+			{ 
+				String foo[] = str.split(","); 
+				//for(int z=0;z<foo.length;z++) usernames[z] = foo[z];
+				usernames[x] = foo[0];
+				x++;
+			}
 		//Check entire buddylist and fill hashtable with user online statuses
-		for (int i=0; i < clientResource.otherUsers.length; i++) { 
+		for (int i=0; i < usernames.length; i++) { 
 			//System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
-			checkUserStatus(clientResource.otherUsers[i]); 
+			checkUserStatus(usernames[i]); 
 			try {
-				buddyList(clientResource.otherUsers[i]);
+				buddyList(usernames[i]);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} // Let's try to make the buddylist.xml file
 		}
 		//Counter
-		int x=0;
+		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
-		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); x++ ) {
+		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); y++ ) {
 			try { 
 				String currentE = e.nextElement().toString();
 				//System.out.println("E: " + currentE);
@@ -368,6 +392,8 @@ public class Client
 
 		//Send Message to Aegis letting it know we're logged in
 		systemMessage("002");
+		} catch (Exception e) { 
+		}
 	}
 
 	public static void checkUserStatus(String findUserName) {
