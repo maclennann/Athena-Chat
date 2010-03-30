@@ -17,7 +17,6 @@
 import java.awt.Color;
 import java.applet.*;
 import java.awt.*;
-import java.awt.Graphics;
 import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -168,6 +167,21 @@ public class ClientApplet extends JFrame
 		addBuddyPanel.setBounds(595,558, 41, 50);
 		removeBuddyPanel.setBounds(650,558, 41, 50);
 		
+		//Mouseistener for the AddUser image
+		MouseListener addBuddyMouseListener = new MouseAdapter() { 
+			public void mouseClicked(MouseEvent mouseEvent) {
+				String usernameToAdd = JOptionPane.showInputDialog("Input the username you'd like to add to your buddylist");
+				try {
+					Client.buddyList(usernameToAdd);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		addBuddyPanel.addMouseListener(addBuddyMouseListener);
+
 		
 		//MouseListener for the BuddyList
 		//Opens a tab or focuses a tab when a username in the buddylist is double-clicked

@@ -157,7 +157,7 @@ public class ClientAddUser extends JPanel {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		//Invoke Client's systeMessage to tell it what we're about to do, if you know what I mean.	
+		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.	
 		Client.systemMessage("000");
 		
 
