@@ -114,6 +114,7 @@ public class ClientLogin extends JFrame {
 				//Ya'll like some hash?
 				try {
 					Client.setUsername(username.getText());
+					
 					Client.connect(username.getText(),password.getPassword());
 					login.setVisible(false);									
 				} catch (Exception e) {

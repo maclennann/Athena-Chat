@@ -338,10 +338,10 @@ public class Client
 				}
 				//Check entire buddylist and fill hashtable with user online statuses
 				for (int i=0; i < usernames.length; i++) { 
-					System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
+					System.out.println("Current Buddy To Check: " + usernames[i]);
 					checkUserStatus(usernames[i]); 
 					try {
-						buddyList(usernames[i]);
+						//buddyList(usernames[i]);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -350,7 +350,8 @@ public class Client
 				//Counter
 				int y=0;
 				//Loop through the HashTable of available users and place them in the JList
-				for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); y++ ) {
+				System.out.println("x=" + x);
+				for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
 					try { 
 						String currentE = e.nextElement().toString();
 						System.out.println("E: " + currentE);
