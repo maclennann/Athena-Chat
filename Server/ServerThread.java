@@ -193,13 +193,8 @@ public class ServerThread extends Thread
 			String newUser = din.readUTF();
 			String newPassword = din.readUTF();
 
-			//Ya'll like some hash?
-			String hashedPassword = byteArrayToHexString(ServerThread.computeHash(newPassword));
-			System.out.println("HASHEDMOFO: " + hashedPassword);
-
-
-			stmt = con.createStatement();
-			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ hashedPassword);
+						stmt = con.createStatement();
+			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ newPassword);
 
 			//See if the username already exists.
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser+"'");
@@ -212,7 +207,7 @@ public class ServerThread extends Thread
 			}
 			else { 
 				//Grab the users new password
-				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + hashedPassword + "')";
+				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 

@@ -108,9 +108,16 @@ public class ClientAddUser extends JPanel {
 		//ActionListener to make the connect menu item connect
 		confirmJButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
-				String password = new String(passwordJPasswordField.getPassword());
-				System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
-				sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password);
+				String password;
+				try {
+					password = ClientLogin.computeHash(new String(passwordJPasswordField.getPassword()));
+					System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
+					sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 				}
 		});
 		

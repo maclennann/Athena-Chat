@@ -110,29 +110,7 @@ public class Client
 		//Will take in more inputs as we add other functionality to Athena like Pubkey, group, etc
 		int exists=0;
 		try { 
-			//Let's get the number of lines in the file
-			InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
-			byte[] c = new byte[1024];
-			int count = 0;
-			int readChars = 0;
-			while ((readChars = is.read(c)) != -1) {
-				for (int i = 0; i < readChars; ++i) {
-					if (c[i] == '\n')
-						++count;
-				}
-			}
-
-			String[] usernames = new String[count];
-			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
-			int x=0;
-			String str; 
-			while ((str = in.readLine()) != null) 
-			{ 
-				String foo[] = str.split(","); 
-				//for(int z=0;z<foo.length;z++) usernames[z] = foo[z];
-				usernames[x] = foo[0];
-				x++;
-			}
+			String[] usernames = returnBuddyListArray();
 
 			for(int y=0;y<usernames.length;y++) {
 				if(usernames[y].equals(usernameToAdd)) {
@@ -144,10 +122,6 @@ public class Client
 				out.write(usernameToAdd + "," + "\n");
 				out.close();	
 			}
-			in.close(); 
-
-
-
 		} catch (IOException e) { } 
 	}
 
@@ -169,18 +143,31 @@ public class Client
 			}
 			//Remove user from Buddylist
 
-			if(fromUser.equals("ServerLogOff")) { 				
-				clientResource.buddySignOff(message);
+			if(fromUser.equals("ServerLogOff")) { 
+				String[] usernames = returnBuddyListArray();
+				for(int x=0;x<usernames.length;x++) {
+					if(usernames[x].equals(message)) { 
+						//We know that the buddy is in his/her buddy list! 
+						clientResource.buddySignOff(message);
+					}
+				}
 				return;
 			}
 
 			//Create buddy list entry for user sign on
 			if(fromUser.equals("ServerLogOn")) {
-				if(!(message.equals(username))) {
-					clientResource.newBuddyListItems(message);
+				if(!(message.equals(username))) 	{
+					String[] usernames = returnBuddyListArray();
+					for(int x=0;x<usernames.length;x++) {
+						if(usernames[x].equals(message)) { 
+							//We know that the buddy is in his/her buddy list! 
+							clientResource.newBuddyListItems(message);
+						}
+					}
 					return;
+
 				}
-			} 
+			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 
 				//If there isn't already a tab for the conversation, make one
@@ -203,7 +190,7 @@ public class Client
 	}
 
 	// Method to connect the user
-	public static void connect(String username, char[] password) { 
+	public static void connect(String username, String password) { 
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
@@ -225,9 +212,10 @@ public class Client
 
 			//Send username and password over the socket for authentication
 			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
-			String plainTextPassword = new String(password);
+			//String plainTextPassword = new String(password);
+			System.out.println(password);
 			dout.writeUTF(username); //Sending Username
-			dout.writeUTF(plainTextPassword); //Sending Password
+			dout.writeUTF(password); //Sending Password
 			connected=1;
 			clientResource = new ClientApplet();
 			//Thread created to listen for messages coming in from the server
@@ -307,72 +295,76 @@ public class Client
 
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
-	public static void instanciateBuddyList() { 		
-		try { 
-			//Let's get the number of lines in the file
-			InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
-			byte[] c = new byte[1024];
-			int count = 0;
-			int readChars = 0;
-			while ((readChars = is.read(c)) != -1) {
-				for (int i = 0; i < readChars; ++i) {
-					if (c[i] == '\n')
-						++count;
+	public static void instanciateBuddyList() throws IOException { 		
+		String[] usernames = returnBuddyListArray();
+
+		//Check entire buddylist and fill hashtable with user online statuses
+		for (int i=0; i < usernames.length; i++) { 
+			System.out.println("Current Buddy To Check: " + usernames[i]);
+			checkUserStatus(usernames[i]); 
+			try {
+				//buddyList(usernames[i]);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} // Let's try to make the buddylist.xml file
+		}
+		//Counter
+		int y=0;
+		//Loop through the HashTable of available users and place them in the JList
+		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
+			try { 
+				String currentE = e.nextElement().toString();
+				System.out.println("E: " + currentE);
+
+				String currentF = f.nextElement().toString();
+				System.out.println("F: " + currentF);
+
+				if (currentF.equals("1")) { 
+					System.out.println("Online user:" + currentE);
+					clientResource.newBuddyListItems(currentE);						
 				}
+			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
+				// TODO Auto-generated catch block
+				eix.printStackTrace();
+			} 
+		}
+
+		//Send Message to Aegis letting it know we're logged in
+		systemMessage("002");
+	}
+
+	public static String[] returnBuddyListArray() throws IOException { 
+		//Let's get the number of lines in the file
+		InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
+		byte[] c = new byte[1024];
+		int count = 0;
+		int readChars = 0;
+		while ((readChars = is.read(c)) != -1) {
+			for (int i = 0; i < readChars; ++i) {
+				if (c[i] == '\n')
+					++count;
 			}
-			System.out.println(count);
+		}
+		System.out.println(count);
+		String[] usernames = new String[count];
 
-			if (count == 0) { 
-				//We know that the user has no buddies!
+		if (count == 0) { 
+			//We know that the user has no buddies!
+			return usernames;
+		}
+		else { 
+
+			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
+			int x=0;
+			String str; 
+			while ((str = in.readLine()) != null) 
+			{ 
+				String foo[] = str.split(","); 
+				usernames[x] = foo[0];
+				x++;
 			}
-			else { 
-				String[] usernames = new String[count];
-				BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
-				int x=0;
-				String str; 
-				while ((str = in.readLine()) != null) 
-				{ 
-					String foo[] = str.split(","); 
-					usernames[x] = foo[0];
-					x++;
-				}
-				//Check entire buddylist and fill hashtable with user online statuses
-				for (int i=0; i < usernames.length; i++) { 
-					System.out.println("Current Buddy To Check: " + usernames[i]);
-					checkUserStatus(usernames[i]); 
-					try {
-						//buddyList(usernames[i]);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} // Let's try to make the buddylist.xml file
-				}
-				//Counter
-				int y=0;
-				//Loop through the HashTable of available users and place them in the JList
-				System.out.println("x=" + x);
-				for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
-					try { 
-						String currentE = e.nextElement().toString();
-						System.out.println("E: " + currentE);
-
-						String currentF = f.nextElement().toString();
-						System.out.println("F: " + currentF);
-
-						if (currentF.equals("1")) { 
-							System.out.println("Online user:" + currentE);
-							clientResource.newBuddyListItems(currentE);						
-						}
-					} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
-						// TODO Auto-generated catch block
-						eix.printStackTrace();
-					} 
-				}
-
-				//Send Message to Aegis letting it know we're logged in
-				systemMessage("002");
-			}
-		} catch (Exception e) { 
+			return usernames;
 		}
 	}
 

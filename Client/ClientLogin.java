@@ -28,6 +28,7 @@ import java.awt.TrayIcon;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.ImageIcon;
@@ -38,6 +39,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import sun.misc.BASE64Encoder;
 
 public class ClientLogin extends JFrame { 
 
@@ -53,7 +56,7 @@ public class ClientLogin extends JFrame {
 
 	ImageIcon logoicon = new ImageIcon("../images/logo.png");
 	JLabel logo = new JLabel(); 
-	
+
 
 	//Define an icon for the system tray icon
 	public TrayIcon trayIcon;
@@ -114,8 +117,9 @@ public class ClientLogin extends JFrame {
 				//Ya'll like some hash?
 				try {
 					Client.setUsername(username.getText());
-					
-					Client.connect(username.getText(),password.getPassword());
+					String passwordToHash = new String(password.getPassword());
+					String hashedPassword = computeHash(passwordToHash).toString();
+					Client.connect(username.getText(), hashedPassword);
 					login.setVisible(false);									
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -124,7 +128,7 @@ public class ClientLogin extends JFrame {
 
 			}
 		});
-		
+
 		//ActionListener to make the connect menu item connect
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
@@ -148,25 +152,28 @@ public class ClientLogin extends JFrame {
 	}
 
 	//This will return the hashed input string
-	public static byte[] computeHash(String toHash) throws Exception { 
-		MessageDigest d = null;
-		d = MessageDigest.getInstance("SHA-1");
-		d.reset();
-		d.update(toHash.getBytes());
-		return d.digest();	
-	}
-
-	//This will turn a byteArray to a String
-	public static String byteArrayToHexString(byte[] b) { 
-		StringBuffer sb = new StringBuffer(b.length * 2);
-		for (int i = 0; i < b.length; i++) { 
-			int v = b[i] & 0xff;
-			if (v < 16) { 
-				sb.append('0');
-			}
-			sb.append(Integer.toHexString(v));
+	public static String computeHash(String toHash) throws Exception { 
+		MessageDigest md = null;
+		try
+		{
+			md = MessageDigest.getInstance("SHA-1"); //step 2
 		}
-		return sb.toString().toUpperCase();
-	}
+		catch(NoSuchAlgorithmException e)
+		{
+			throw new Exception(e.getMessage());
+		}
+		try
+		{
+			md.update(toHash.getBytes("UTF-8")); //step 3
+		}
+		catch(UnsupportedEncodingException e)
+		{
+			throw new Exception(e.getMessage());
+		}
+
+		byte raw[] = md.digest(); //step 4
+		String hash = (new BASE64Encoder()).encode(raw); //step 5
+		return hash; //step 6
+}
 
 }
