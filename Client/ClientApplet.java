@@ -17,6 +17,8 @@
 import java.awt.Color;
 import java.applet.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -179,9 +181,41 @@ public class ClientApplet extends JFrame
 				}
 			}
 		};
-		
 		addBuddyPanel.addMouseListener(addBuddyMouseListener);
+		
+		//Mouseistener for the AddUser image
+		MouseListener removeBuddyMouseListener = new MouseAdapter() { 
+			public void mouseClicked(MouseEvent mouseEvent) {
+				String usernameToAdd = JOptionPane.showInputDialog("Input the username you'd like to add to your buddylist");
+				try {
+					JList theList = (JList) mouseEvent.getSource();
 
+					//If it was doubleclicked
+						//Find out what was double-clicked
+						int index = theList.locationToIndex(mouseEvent.getPoint());
+						if (index >= 0) {
+
+							//Get the buddy that was double-clicked
+							Object o = theList.getModel().getElementAt(index);
+							
+							String[] usernames = Client.returnBuddyListArray();
+							
+							ArrayList<String> list = new ArrayList<String>(Arrays.asList(usernames));
+							list.removeAll(Arrays.asList("a"));
+							usernames = list.toArray(usernames);
+							
+							//Print the array back to the file (will overwrite the previous file
+							BufferedWriter out = new BufferedWriter(new FileWriter("buddylist.csv")); 
+							for(int x=0; x<usernames.length;x++) out.write(usernames[x] + "," + "\n");
+							out.close();
+						}
+				}catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+		removeBuddyPanel.addMouseListener(removeBuddyMouseListener);
 		
 		//MouseListener for the BuddyList
 		//Opens a tab or focuses a tab when a username in the buddylist is double-clicked

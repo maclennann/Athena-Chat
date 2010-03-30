@@ -82,16 +82,13 @@ public class ServerThread extends Thread
 			} else { 
 			password = din.readUTF(); 
 			System.out.println("PASSWORD: " + password);
-			//Ya'll like some hash?
-			String hashedPassword = byteArrayToHexString(computeHash(password));
-			System.out.println("DHFAHFSHFFA " + hashedPassword);
 
 			//Debug statements
 			if (debug==1)System.out.println("Username: " + username);
 			if (debug==1)System.out.println("Password: " + password);
 
 			//Authenticate the user.
-			String loginOutcome = login(username, hashedPassword);
+			String loginOutcome = login(username, password);
 			if (debug==1)System.out.println(loginOutcome);
 
 			//Maps username to socket after user logs in
