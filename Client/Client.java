@@ -53,8 +53,6 @@ public class Client
 	private static DataOutputStream dout;
 	private static DataInputStream din;
 
-	public static Element rootElement; //ROOT ELEMENT
-
 	//Temporary object for the JPanel in a tab
 	static MapTextArea print;
 
