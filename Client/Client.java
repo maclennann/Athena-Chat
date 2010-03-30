@@ -55,7 +55,7 @@ import com.sun.xml.internal.ws.message.RootElementSniffer;
 public class Client
 {
 	//Print debug messages?
-	public static int debug=0;
+	public static int debug=1;
 
 	//Global username variable
 	private static String username="null";
@@ -102,7 +102,7 @@ public class Client
 		print = (MapTextArea)clientResource.tabPanels.get(toUser);
 
 		//See if the user is logged in. If yes, send it. If no, error.
-		//if (debug == 1) System.out.println("USERNAME: " + username);
+		if (debug == 1) System.out.println("USERNAME: " + username);
 		if(username.equals("null")){
 			print.writeToTextArea("Error: You are not connected!\n");
 			print.moveToEnd();
@@ -136,16 +136,16 @@ public class Client
 		int exists=0;
 		try { 
 			//Let's get the number of lines in the file
-		    InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
-		    byte[] c = new byte[1024];
-		    int count = 0;
-		    int readChars = 0;
-		    while ((readChars = is.read(c)) != -1) {
-		        for (int i = 0; i < readChars; ++i) {
-		            if (c[i] == '\n')
-		                ++count;
-		        }
-		    }
+			InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			while ((readChars = is.read(c)) != -1) {
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n')
+						++count;
+				}
+			}
 
 			String[] usernames = new String[count];
 			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
@@ -158,7 +158,7 @@ public class Client
 				usernames[x] = foo[0];
 				x++;
 			}
-			
+
 			for(int y=0;y<usernames.length;y++) {
 				if(usernames[y].equals(usernameToAdd)) {
 					exists=1;
@@ -171,7 +171,7 @@ public class Client
 			}
 			in.close(); 
 
-			
+
 
 		} catch (IOException e) { } 
 	}
@@ -266,7 +266,6 @@ public class Client
 						}});	
 			//Instanciate Buddy List
 			instanciateBuddyList();
-
 			//Start the thread
 			listeningProcedure.start();
 
@@ -336,62 +335,67 @@ public class Client
 	public static void instanciateBuddyList() { 		
 		try { 
 			//Let's get the number of lines in the file
-		    InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
-		    byte[] c = new byte[1024];
-		    int count = 0;
-		    int readChars = 0;
-		    while ((readChars = is.read(c)) != -1) {
-		        for (int i = 0; i < readChars; ++i) {
-		            if (c[i] == '\n')
-		                ++count;
-		        }
-		    }
-
-			String[] usernames = new String[count];
-			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
-			int x=0;
-			String str; 
-			while ((str = in.readLine()) != null) 
-			{ 
-				String foo[] = str.split(","); 
-				//for(int z=0;z<foo.length;z++) usernames[z] = foo[z];
-				usernames[x] = foo[0];
-				x++;
-			}
-		//Check entire buddylist and fill hashtable with user online statuses
-		for (int i=0; i < usernames.length; i++) { 
-			//System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
-			checkUserStatus(usernames[i]); 
-			try {
-				buddyList(usernames[i]);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} // Let's try to make the buddylist.xml file
-		}
-		//Counter
-		int y=0;
-		//Loop through the HashTable of available users and place them in the JList
-		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); y++ ) {
-			try { 
-				String currentE = e.nextElement().toString();
-				//System.out.println("E: " + currentE);
-
-				String currentF = f.nextElement().toString();
-				//System.out.println("F: " + currentF);
-
-				if (currentF.equals("1")) { 
-					//System.out.println("Online user:" + currentE);
-					clientResource.newBuddyListItems(currentE);						
+			InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			while ((readChars = is.read(c)) != -1) {
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n')
+						++count;
 				}
-			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
-				// TODO Auto-generated catch block
-				eix.printStackTrace();
-			} 
-		}
+			}
+			System.out.println(count);
 
-		//Send Message to Aegis letting it know we're logged in
-		systemMessage("002");
+			if (count == 0) { 
+				//We know that the user has no buddies!
+			}
+			else { 
+				String[] usernames = new String[count];
+				BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
+				int x=0;
+				String str; 
+				while ((str = in.readLine()) != null) 
+				{ 
+					String foo[] = str.split(","); 
+					usernames[x] = foo[0];
+					x++;
+				}
+				//Check entire buddylist and fill hashtable with user online statuses
+				for (int i=0; i < usernames.length; i++) { 
+					System.out.println("Current Buddy To Check: " + clientResource.otherUsers[i]);
+					checkUserStatus(usernames[i]); 
+					try {
+						buddyList(usernames[i]);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} // Let's try to make the buddylist.xml file
+				}
+				//Counter
+				int y=0;
+				//Loop through the HashTable of available users and place them in the JList
+				for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); x < clientResource.userStatus.size(); y++ ) {
+					try { 
+						String currentE = e.nextElement().toString();
+						System.out.println("E: " + currentE);
+
+						String currentF = f.nextElement().toString();
+						System.out.println("F: " + currentF);
+
+						if (currentF.equals("1")) { 
+							System.out.println("Online user:" + currentE);
+							clientResource.newBuddyListItems(currentE);						
+						}
+					} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
+						// TODO Auto-generated catch block
+						eix.printStackTrace();
+					} 
+				}
+
+				//Send Message to Aegis letting it know we're logged in
+				systemMessage("002");
+			}
 		} catch (Exception e) { 
 		}
 	}
@@ -407,15 +411,17 @@ public class Client
 			System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
 			dout.writeUTF(findUserName);
-			//System.out.println("Username sent - now listening for result...");
+			System.out.println("Username sent - now listening for result...");
 			//Grab result
 			result = Integer.parseInt(din.readUTF());
 			//Print result 
-			//System.out.println("Result for user " + findUserName + " is " + result + ".");
+			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
+
 		} catch (java.io.IOException e) { 
-		}	}	
+		}	
+	}	
 
 	//Use this method if Contact with Aegis is needed
 	public static void systemMessage( String message ) {	
