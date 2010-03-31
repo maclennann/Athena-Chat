@@ -219,6 +219,7 @@ public class Client
 			dout.writeUTF(username); //Sending Username
 			dout.writeUTF(password); //Sending Password
 			String result = din.readUTF();
+			System.out.println(result);
 			if(result.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
 				loginFailed.setVisible(true);

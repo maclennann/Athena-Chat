@@ -315,7 +315,7 @@ public class ServerThread extends Thread
 			return returnMessage;
 		}else { 
 			//Login fail handler
-			dout.writeUTF("Failed");
+			sendSystemMessage(clientName, "Failed");
 			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	
