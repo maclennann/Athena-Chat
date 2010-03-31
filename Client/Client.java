@@ -336,7 +336,15 @@ public class Client
 	
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
-	public static void instanciateBuddyList(String username) throws IOException { 		
+	public static void instanciateBuddyList(String username) throws IOException {
+		String[] usernames = returnBuddyListArray();
+		
+		for(int x=0; x<usernames.length;x++) { 
+			if(usernames[x].equals(username)) {
+				//Name exists! Exit!!
+				return;
+			}
+		}
 		//Counter
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
