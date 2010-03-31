@@ -15,15 +15,9 @@
  *
  ****************************************************/
 
-import java.applet.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import javax.swing.*;
 import java.lang.Thread;
 import java.lang.Runnable;
@@ -45,6 +39,7 @@ public class Client
 	public static ClientLogin loginGUI;
 
 	//TODO: Make otherUsers array read from buddylist.xml
+	//DONE 3/30/2010
 
 	// The socket connecting us to the server
 	public static Socket socket;
@@ -108,22 +103,28 @@ public class Client
 	public static void buddyList(String usernameToAdd) throws Exception {		
 		//Add the username to a new line in the file
 		//Will take in more inputs as we add other functionality to Athena like Pubkey, group, etc
+		
+		//Set exists to 0, this means that the usernameToAdd is not already in the buddylist file
 		int exists=0;
-		try { 
+		try {
+			//Call the returnBuddyListArray method, this reads in the buddylist file and puts the user names into an array for us to use
 			String[] usernames = returnBuddyListArray();
-
+			
+			//This for loop checks to see if the usernameToAdd is already in the buddylist file, if so, set exists to 1
 			for(int y=0;y<usernames.length;y++) {
 				if(usernames[y].equals(usernameToAdd)) {
 					exists=1;
 				}
 			}
-			if(exists == 0) { //Then the username is not in the buddylist, let's add it!
+			//If the usernameToAdd IS NOT in the buddylist file, add it
+			if(exists == 0) { 
+				//Append to the file the usernameToAdd
 				BufferedWriter out = new BufferedWriter(new FileWriter("buddylist.csv", true)); 
 				out.write(usernameToAdd + "," + "\n");
 				out.close();	
 			}
 		} catch (IOException e) { } 
-	}
+	} 
 
 
 	//When the client receives a message.
@@ -142,8 +143,8 @@ public class Client
 				return;
 			}
 			//Remove user from Buddylist
-
-			if(fromUser.equals("ServerLogOff")) { 
+			if(fromUser.equals("ServerLogOff")) {
+				//Check to see if the user is in your buddy list, if not, don't care
 				String[] usernames = returnBuddyListArray();
 				for(int x=0;x<usernames.length;x++) {
 					if(usernames[x].equals(message)) { 
@@ -157,6 +158,7 @@ public class Client
 			//Create buddy list entry for user sign on
 			if(fromUser.equals("ServerLogOn")) {
 				if(!(message.equals(username))) 	{
+					//Check to see if the user is in your buddylist, if not, don't care
 					String[] usernames = returnBuddyListArray();
 					for(int x=0;x<usernames.length;x++) {
 						if(usernames[x].equals(message)) { 
@@ -271,31 +273,11 @@ public class Client
 	}
 
 
-	//TODO: Make buddylist actually work
-	public static void addBuddy(){
-		try {
-
-			//Add user to your buddy list?
-			String answer = JOptionPane.showInputDialog("Do you want to add a user to your buddy list?");
-			if (answer.equals("yes")) {
-				String usernameToAdd = JOptionPane.showInputDialog("Enter the username");
-				buddyList(usernameToAdd);
-			} else if (answer.equals("no")) { 
-				JOptionPane.showMessageDialog(null, "Ok continuing..");
-			}
-			else {
-				JOptionPane.showMessageDialog(null, "Wrong answer - try again.");
-			}
-
-
-		} catch( IOException ie ) { System.out.println( ie ); } 
-		catch (Exception e) { System.out.println(e); }
-
-	}
-
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
-	public static void instanciateBuddyList() throws IOException { 		
+	//DONE 3/30/2010
+	public static void instanciateBuddyList() throws IOException { 	
+		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
 
 		//Check entire buddylist and fill hashtable with user online statuses
@@ -319,8 +301,9 @@ public class Client
 
 				String currentF = f.nextElement().toString();
 				System.out.println("F: " + currentF);
-
-				if (currentF.equals("1")) { 
+				
+				//If the user is online, add them to your buddylist
+				if (currentF.equals("1")) {
 					System.out.println("Online user:" + currentE);
 					clientResource.newBuddyListItems(currentE);						
 				}
@@ -333,12 +316,18 @@ public class Client
 		//Send Message to Aegis letting it know we're logged in
 		systemMessage("002");
 	}
-	
+
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
+	/*
+	 * @Overloaded
+	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
+	 */
 	public static void instanciateBuddyList(String username) throws IOException {
+		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
-		
+
+		//Check to see if the username is already in the buddylist, if so, exit
 		for(int x=0; x<usernames.length;x++) { 
 			if(usernames[x].equals(username)) {
 				//Name exists! Exit!!
@@ -356,6 +345,7 @@ public class Client
 				String currentF = f.nextElement().toString();
 				System.out.println("F: " + currentF);
 
+				//If the user is online, add them to your buddylist
 				if (currentE.equals(username) && currentF.equals("1")) { 
 					System.out.println("Online user:" + currentE);
 					clientResource.newBuddyListItems(currentE);						
@@ -373,8 +363,10 @@ public class Client
 		systemMessage("002");
 	}
 
-
+	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public static String[] returnBuddyListArray() throws IOException { 
+		
 		//Let's get the number of lines in the file
 		InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
 		byte[] c = new byte[1024];
@@ -385,19 +377,21 @@ public class Client
 				if (c[i] == '\n')
 					++count;
 			}
-		}
-		System.out.println(count);
+		} //End section
+		
+		//Make the string array the size of the number of lines in the file
 		String[] usernames = new String[count];
 
+		//If there are no lines in the file we know that the user has no buddies! :(
 		if (count == 0) { 
-			//We know that the user has no buddies!
 			return usernames;
 		}
 		else { 
 
 			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
 			int x=0;
-			String str; 
+			String str;
+			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
 			while ((str = in.readLine()) != null) 
 			{ 
 				String foo[] = str.split(","); 
