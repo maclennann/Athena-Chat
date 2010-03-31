@@ -43,9 +43,6 @@ public class ClientApplet extends JFrame
 	//Define the listmodel for the JList
 	DefaultListModel listModel = new DefaultListModel();
 	
-	//String array of buddies for choosing user to send message to
-	public static String[] otherUsers = {"Norm", "Steve", "Greg"};	
-	
 	// Components for the visual display of the chat windows
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
@@ -69,7 +66,6 @@ public class ClientApplet extends JFrame
 
 	ClientApplet () { 
 		
-		listModel.addElement("Aegis");
 
 		//Initialize chat window
 		//This is the main frame for the IMs
@@ -166,8 +162,8 @@ public class ClientApplet extends JFrame
 		DrawingPanel removeBuddyPanel = new DrawingPanel(removeUserIcon);
 		addBuddyPanel.setVisible(true);
 		removeBuddyPanel.setVisible(true);
-		addBuddyPanel.setBounds(595,558, 25, 50);
-		removeBuddyPanel.setBounds(650,558, 25, 50);
+		addBuddyPanel.setBounds(595,558, 41, 50);
+		removeBuddyPanel.setBounds(650,558, 41, 50);
 		
 		//Mouseistener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() { 
