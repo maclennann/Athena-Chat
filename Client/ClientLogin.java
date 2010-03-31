@@ -174,6 +174,8 @@ public class ClientLogin extends JFrame {
 		byte raw[] = md.digest(); //step 4
 		String hash = (new BASE64Encoder()).encode(raw); //step 5
 		return hash; //step 6
-}
+	}
 
 }
+
+

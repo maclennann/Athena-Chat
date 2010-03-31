@@ -192,7 +192,7 @@ public class Client
 	}
 
 	// Method to connect the user
-	public static void connect(String username, String password) { 
+	public static void connect(String username, String password) throws InterruptedException { 
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
@@ -218,6 +218,12 @@ public class Client
 			System.out.println(password);
 			dout.writeUTF(username); //Sending Username
 			dout.writeUTF(password); //Sending Password
+			String result = din.readUTF();
+			if(result.equals("Failed")) { 
+				ClientLoginFailed loginFailed = new ClientLoginFailed();
+				loginFailed.setVisible(true);
+			}
+			else { 
 			connected=1;
 			clientResource = new ClientApplet();
 			//Thread created to listen for messages coming in from the server
@@ -233,7 +239,7 @@ public class Client
 			instanciateBuddyList();
 			//Start the thread
 			listeningProcedure.start();
-
+			}
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 

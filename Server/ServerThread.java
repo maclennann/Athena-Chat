@@ -296,7 +296,7 @@ public class ServerThread extends Thread
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
-	public String login (String clientName, String clientPassword) { 
+	public String login (String clientName, String clientPassword) throws IOException { 
 
 		//Get the password from the hashtable
 		String hashedPassword = server.authentication.get(clientName).toString();
@@ -315,6 +315,7 @@ public class ServerThread extends Thread
 			return returnMessage;
 		}else { 
 			//Login fail handler
+			dout.writeUTF("Failed");
 			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	
