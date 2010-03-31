@@ -348,9 +348,12 @@ public class Client
 				String currentF = f.nextElement().toString();
 				System.out.println("F: " + currentF);
 
-				if (currentF.equals("1")) { 
+				if (currentE.equals(username) && currentF.equals("1")) { 
 					System.out.println("Online user:" + currentE);
 					clientResource.newBuddyListItems(currentE);						
+				}
+				else {
+					//offline user
 				}
 			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
 				// TODO Auto-generated catch block
