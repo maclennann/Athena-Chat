@@ -1,5 +1,9 @@
+import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -14,7 +18,6 @@ public class ClientLoginFailed extends JFrame {
 	
 	ClientLoginFailed() {
 		loginFailed = new JFrame("Athena Chat Application");
-		loginFailed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		loginFailed.setSize(400,250);
 		loginFailed.setResizable(false);
 		contentPane.setLayout(null);
@@ -29,8 +32,17 @@ public class ClientLoginFailed extends JFrame {
 		contentPane.add(failedLoginDrawingPanel);
 		loginFailed.add(contentPane);
 		
-		loginFailed.setVisible(true);		
+		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(WindowEvent winEvt) {
+		        try {
+					ClientLogin loginGUI = new ClientLogin();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		});		
+		loginFailed.setVisible(true);	
 	}
-
-
+		
 }

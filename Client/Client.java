@@ -192,7 +192,7 @@ public class Client
 	}
 
 	// Method to connect the user
-	public static void connect(String username, String password) throws InterruptedException { 
+	public static void connect(String username, String password) throws InterruptedException, AWTException { 
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
@@ -222,7 +222,6 @@ public class Client
 			System.out.println(result);
 			if(result.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
-				loginGUI.setVisible(false);
 			}
 			else { 
 			connected=1;
