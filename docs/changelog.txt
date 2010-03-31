@@ -1,4 +1,14 @@
 ChangeLog: 
+03/03/2010:  WE'RE BACK
+	## CREATED NEW METHODS:
+		@@ instanciateBuddyList() @Overloaded
+		@@ return BuddyListArray()
+			//Returns a String array of usernames from the buddylist file
+	## BuddyList now gets it's information from the buddylist.csv file
+	## Adding and removing users now works
+	## The buddylist dynamically updates itself when you add and remove buddies and when they sign and sign off.
+	## Buddylist will not let you add the same user twice, and it will not register and global activity from users who are not on your buddylist
+	
 03/03/2010:
 	## CREATED NEW CLASS: ClientAddUser
 		@@Ads a new user to the database
