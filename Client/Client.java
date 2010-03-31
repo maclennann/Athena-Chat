@@ -222,7 +222,7 @@ public class Client
 			System.out.println(result);
 			if(result.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
-				loginFailed.setVisible(true);
+				loginGUI.setVisible(false);
 			}
 			else { 
 			connected=1;
