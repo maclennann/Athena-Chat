@@ -166,8 +166,8 @@ public class ClientApplet extends JFrame
 		DrawingPanel removeBuddyPanel = new DrawingPanel(removeUserIcon);
 		addBuddyPanel.setVisible(true);
 		removeBuddyPanel.setVisible(true);
-		addBuddyPanel.setBounds(595,558, 41, 50);
-		removeBuddyPanel.setBounds(650,558, 41, 50);
+		addBuddyPanel.setBounds(595,558, 25, 50);
+		removeBuddyPanel.setBounds(650,558, 25, 50);
 		
 		//Mouseistener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() { 
@@ -175,6 +175,8 @@ public class ClientApplet extends JFrame
 				String usernameToAdd = JOptionPane.showInputDialog("Input the username you'd like to add to your buddylist");
 				try {
 					Client.buddyList(usernameToAdd);
+					Thread.sleep(10);
+					Client.instanciateBuddyList(usernameToAdd);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -183,14 +185,12 @@ public class ClientApplet extends JFrame
 		};
 		addBuddyPanel.addMouseListener(addBuddyMouseListener);
 		
-		//Mouseistener for the AddUser image
+		//Mouseistener for the removeUser image
 		MouseListener removeBuddyMouseListener = new MouseAdapter() { 
 			public void mouseClicked(MouseEvent mouseEvent) {
-				String usernameToAdd = JOptionPane.showInputDialog("Input the username you'd like to add to your buddylist");
+				JList theList = (JList) userBox;
 				try {
-					JList theList = (JList) mouseEvent.getSource();
 
-					//If it was doubleclicked
 						//Find out what was double-clicked
 						int index = theList.locationToIndex(mouseEvent.getPoint());
 						if (index >= 0) {
@@ -201,13 +201,17 @@ public class ClientApplet extends JFrame
 							String[] usernames = Client.returnBuddyListArray();
 							
 							ArrayList<String> list = new ArrayList<String>(Arrays.asList(usernames));
-							list.removeAll(Arrays.asList("a"));
-							usernames = list.toArray(usernames);
+							list.removeAll(Arrays.asList(o));
+							usernames = list.toArray(new String[0]);
+							buddySignOff(o.toString());
+
 							
 							//Print the array back to the file (will overwrite the previous file
 							BufferedWriter out = new BufferedWriter(new FileWriter("buddylist.csv")); 
 							for(int x=0; x<usernames.length;x++) out.write(usernames[x] + "," + "\n");
 							out.close();
+							
+							
 						}
 				}catch (Exception e) {
 					// TODO Auto-generated catch block

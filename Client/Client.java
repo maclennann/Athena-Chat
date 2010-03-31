@@ -333,6 +333,35 @@ public class Client
 		//Send Message to Aegis letting it know we're logged in
 		systemMessage("002");
 	}
+	
+	// Startup method to initiate the buddy list
+	//TODO Make sure the user's status gets changed when they sign on/off
+	public static void instanciateBuddyList(String username) throws IOException { 		
+		//Counter
+		int y=0;
+		//Loop through the HashTable of available users and place them in the JList
+		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
+			try { 
+				String currentE = e.nextElement().toString();
+				System.out.println("E: " + currentE);
+
+				String currentF = f.nextElement().toString();
+				System.out.println("F: " + currentF);
+
+				if (currentF.equals("1")) { 
+					System.out.println("Online user:" + currentE);
+					clientResource.newBuddyListItems(currentE);						
+				}
+			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
+				// TODO Auto-generated catch block
+				eix.printStackTrace();
+			} 
+		}
+
+		//Send Message to Aegis letting it know we're logged in
+		systemMessage("002");
+	}
+
 
 	public static String[] returnBuddyListArray() throws IOException { 
 		//Let's get the number of lines in the file
