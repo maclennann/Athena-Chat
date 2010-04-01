@@ -79,6 +79,7 @@ public class ServerThread extends Thread
 
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); 
+			System.out.println("USERNAME RECEIVED. \nUSERNAME: " + username);
 			if(username.equals("Interupt")) { 
 				
 			} else { 
