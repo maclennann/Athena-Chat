@@ -77,6 +77,7 @@ public class ServerThread extends Thread
 			//Create a datainputstream on the current socket to accept data from the client
 			din = new ObjectInputStream( socket.getInputStream() );
 
+
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); 
 			System.out.println("USERNAME RECEIVED. \nUSERNAME: " + username);
@@ -323,6 +324,7 @@ public class ServerThread extends Thread
 		}else { 
 			//Login fail handler
 			dout.writeUTF("Failed");
+			dout.flush();
 			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	
