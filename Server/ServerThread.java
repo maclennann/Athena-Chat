@@ -23,6 +23,7 @@
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.sql.*;
 import java.util.Enumeration;
 import java.io.*;
@@ -40,7 +41,7 @@ public class ServerThread extends Thread
 	private int debug = 1;
 
 	//Create the DataInputStream on the current socket 
-	public DataInputStream din = null;
+	public ObjectInputStream din = null;
 	public DataOutputStream dout = null;
 
 	// The Server that created this thread
@@ -49,6 +50,7 @@ public class ServerThread extends Thread
 	//Define Global Variable Username / Password
 	private String username;
 	private String password;
+	private PublicKey usersPublicKey;
 
 	//Our current socket
 	public Socket socket;
@@ -73,14 +75,15 @@ public class ServerThread extends Thread
 	public void run() {
 		try {
 			//Create a datainputstream on the current socket to accept data from the client
-			din = new DataInputStream( socket.getInputStream() );
+			din = new ObjectInputStream( socket.getInputStream() );
 
 			//Getting the Username and Password over the stream for authentication
 			username = din.readUTF(); 
 			if(username.equals("Interupt")) { 
 				
 			} else { 
-			password = din.readUTF(); 
+			password = din.readUTF();
+		
 			System.out.println("PASSWORD: " + password);
 
 			//Debug statements
@@ -118,7 +121,7 @@ public class ServerThread extends Thread
 
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
-	public void routeMessage(DataInputStream din){
+	public void routeMessage(ObjectInputStream din){
 		try {
 			String toUser=din.readUTF();
 			String message=din.readUTF();
@@ -189,6 +192,8 @@ public class ServerThread extends Thread
 			String emailAddress = din.readUTF();
 			String newUser = din.readUTF();
 			String newPassword = din.readUTF();
+			//Read in the user's public key, 
+			usersPublicKey = (PublicKey)din.readObject();
 
 						stmt = con.createStatement();
 			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ newPassword);

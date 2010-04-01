@@ -122,6 +122,8 @@ public class Server
 				} else { 
 					authentication.put(username, hashedPassword);
 				}
+				
+				//Now let's fill up the hashtable of 
 			}
 		
 		}catch(SQLException ex) {
@@ -129,6 +131,7 @@ public class Server
 		}
 		
 	}
+
 
 	//Adds a user (and the socket he is on) to the hashtable for later reference
 	//Called after user authenticates
