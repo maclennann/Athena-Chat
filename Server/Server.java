@@ -40,11 +40,14 @@ public class Server
 	//See: updateHashTable()
 	public static Hashtable authentication = new Hashtable();
 	
+	public static Hashtable usersToPublicKeys = new Hashtable();
+	
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
 	
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
+
 
 	//Will control listener thread when we do that
 	private int isListening = 1;
