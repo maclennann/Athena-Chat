@@ -167,7 +167,7 @@ public class Server
 			System.out.println( "Connection Established:\n "+s+"\n\n" );
 
 			//DataOuputStream to send data from the client's socket
-			DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
+			ObjectOutputStream dout = new ObjectOutputStream( s.getOutputStream() );
 			
 			//Map the outputstream to the socket for later reference
 			outputStreams.put( s, dout );
@@ -190,7 +190,7 @@ public class Server
 			
 			//Get the outputStream for each socket and send message
 			for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
-				DataOutputStream dout = (DataOutputStream)e.nextElement();
+				ObjectOutputStream dout = (ObjectOutputStream)e.nextElement();
 				try{
 					dout.writeUTF(eventCode);
 					dout.writeUTF( message );

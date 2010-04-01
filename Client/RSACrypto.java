@@ -77,8 +77,8 @@ public class RSACrypto {
 			RSAPrivateKeySpec priv = fact.getKeySpec(kp.getPrivate(),
 					RSAPrivateKeySpec.class);
 			//Save the keys to their respective files
-			saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
-			saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
+			saveToFile("\\keys\\public.key", pub.getModulus(), pub.getPublicExponent());
+			saveToFile("\\keys\\private.key", priv.getModulus(), priv.getPrivateExponent());
 		}catch(Exception e){
 			System.out.println("An error has occured in 'generateRSAKeyPair'");
 		}
@@ -125,7 +125,7 @@ public class RSACrypto {
 	static PublicKey readPubKeyFromFile(String keyFileName) throws IOException {
 		//Define the name of the file
 		//MAKE sure it's the same as the one we're looking for!
-		ObjectInputStream oin = new ObjectInputStream(new FileInputStream("public.key"));
+		ObjectInputStream oin = new ObjectInputStream(new FileInputStream(keyFileName));
 		try {
 			BigInteger m = (BigInteger) oin.readObject();
 			BigInteger e = (BigInteger) oin.readObject();

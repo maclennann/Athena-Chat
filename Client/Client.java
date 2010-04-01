@@ -45,8 +45,8 @@ public class Client
 	public static Socket socket;
 
 	// The datastreams we use to move data through the socket
-	private static DataOutputStream dout;
-	private static DataInputStream din;
+	private static ObjectOutputStream dout;
+	private static ObjectInputStream din;
 
 	//Temporary object for the JPanel in a tab
 	static MapTextArea print;
@@ -128,7 +128,7 @@ public class Client
 
 
 	//When the client receives a message.
-	public static void recvMesg(DataInputStream din){
+	public static void recvMesg(ObjectInputStream din){
 		try{
 			// Who is the message from? 
 			String fromUser = din.readUTF();
@@ -209,8 +209,8 @@ public class Client
 			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
-			din = new DataInputStream( socket.getInputStream() );
-			dout = new DataOutputStream( socket.getOutputStream() );
+			din = new ObjectInputStream( socket.getInputStream() );
+			dout = new ObjectOutputStream( socket.getOutputStream() );
 
 			//Send username and password over the socket for authentication
 			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
@@ -261,8 +261,8 @@ public class Client
 			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
-			din = new DataInputStream( socket.getInputStream() );
-			dout = new DataOutputStream( socket.getOutputStream() );
+			din = new ObjectInputStream( socket.getInputStream() );
+			dout = new ObjectOutputStream( socket.getOutputStream() );
 
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
@@ -445,7 +445,7 @@ public class Client
 		username = usernameToSet;
 	}
 	//This method returns a DOUT for other classes to use
-	public static DataOutputStream returnDOUT() { 
+	public static ObjectOutputStream returnDOUT() { 
 		return dout;
 	}
 	// Create the GUI for the client.
