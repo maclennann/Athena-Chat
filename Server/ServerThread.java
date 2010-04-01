@@ -79,12 +79,12 @@ public class ServerThread extends Thread
 
 
 			//Getting the Username and Password over the stream for authentication
-			username = din.readUTF(); 
+			username = (String)din.readObject(); 
 			System.out.println("USERNAME RECEIVED. \nUSERNAME: " + username);
 			if(username.equals("Interupt")) { 
 				
 			} else { 
-			password = din.readUTF();
+			password = (String)din.readObject();
 		
 			System.out.println("PASSWORD: " + password);
 
@@ -123,10 +123,10 @@ public class ServerThread extends Thread
 
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
-	public void routeMessage(ObjectInputStream din){
+	public void routeMessage(ObjectInputStream din) throws ClassNotFoundException{
 		try {
-			String toUser=din.readUTF();
-			String message=din.readUTF();
+			String toUser=(String)din.readObject();
+			String message=(String)din.readObject();
 
 			//Is the message an eventcode meant for the server?
 			if (toUser.equals("Aegis")) { 
@@ -142,7 +142,7 @@ public class ServerThread extends Thread
 	}
 
 	//Method that handles client to server messages
-	public void systemMessageListener(int eventCode) {
+	public void systemMessageListener(int eventCode) throws ClassNotFoundException {
 
 		switch(eventCode) { 
 		case 000: createUsername();
@@ -156,12 +156,12 @@ public class ServerThread extends Thread
 		}
 	}
 
-	public void negotiateClientStatus() {
+	public void negotiateClientStatus() throws ClassNotFoundException {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendSystemMessage(username, "Access granted. Send me the username.");
 			//Listen for the username
-			String findUser = din.readUTF();
+			String findUser = (String)din.readObject();
 			//Print out the received username
 			System.out.println("Username received: " + findUser);
 			//Check to see if the username is in the current Hashtable, return result
@@ -189,11 +189,11 @@ public class ServerThread extends Thread
 			ResultSet rs = null; 
 
 			//Disregard two messages, the two others are the username and password
-			String firstName = din.readUTF();
-			String lastName = din.readUTF();
-			String emailAddress = din.readUTF();
-			String newUser = din.readUTF();
-			String newPassword = din.readUTF();
+			String firstName = (String)din.readObject();
+			String lastName = (String)din.readObject();
+			String emailAddress = (String)din.readObject();
+			String newUser = (String)din.readObject();
+			String newPassword = (String)din.readObject();
 			//Read in the user's public key, 
 			usersPublicKey = (PublicKey)din.readObject();
 

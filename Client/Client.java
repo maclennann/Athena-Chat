@@ -192,7 +192,7 @@ public class Client
 	}
 
 	// Method to connect the user
-	public static void connect(String username, String password) throws InterruptedException, AWTException { 
+	public static void connect(String username, String password) throws InterruptedException, AWTException, ClassNotFoundException { 
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
@@ -222,7 +222,7 @@ public class Client
 			dout.writeUTF(password); //Sending Password
 			dout.flush();
 			System.out.println("Password sent: "+ password);
-			String result = din.readUTF();
+			String result = (String)din.readObject();
 			System.out.println("Retrieved result.");
 			System.out.println(result);
 			if(result.equals("Failed")) { 
@@ -287,7 +287,7 @@ public class Client
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
 	//DONE 3/30/2010
-	public static void instanciateBuddyList() throws IOException { 	
+	public static void instanciateBuddyList() throws IOException, ClassNotFoundException { 	
 		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
 
@@ -413,7 +413,7 @@ public class Client
 		}
 	}
 
-	public static void checkUserStatus(String findUserName) {
+	public static void checkUserStatus(String findUserName) throws ClassNotFoundException {
 		try { 
 			//Initalize Result
 			int result = -1;
@@ -426,7 +426,7 @@ public class Client
 			dout.writeUTF(findUserName);
 			System.out.println("Username sent - now listening for result...");
 			//Grab result
-			result = Integer.parseInt(din.readUTF());
+			result = (Integer)(din.readObject());
 			//Print result 
 			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
@@ -441,8 +441,8 @@ public class Client
 		//Send the message
 		try{
 			//Send recipient's name and message to server
-			dout.writeUTF("Aegis");
-			dout.writeUTF(message);
+			dout.writeObject("Aegis");
+			dout.writeObject(message);
 		} catch( IOException ie ) {
 		}
 	}

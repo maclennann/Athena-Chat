@@ -192,8 +192,8 @@ public class Server
 			for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
 				ObjectOutputStream dout = (ObjectOutputStream)e.nextElement();
 				try{
-					dout.writeUTF(eventCode);
-					dout.writeUTF( message );
+					dout.writeObject(eventCode);
+					dout.writeObject( message );
 				} catch( IOException ie ) { System.out.println( ie ); }
 			}
 		}
