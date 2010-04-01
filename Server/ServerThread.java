@@ -25,15 +25,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.sql.*;
-import java.util.Enumeration;
 import java.io.*;
 import java.net.*;
-
-//TODO: Do we need JOptionPane for server?! It's not used anywhere else.
-import javax.swing.JOptionPane;
-
-//TODO: Do we really need this? It does nothing ATM.
-import com.sun.org.apache.xpath.internal.FoundIndex;
 
 public class ServerThread extends Thread
 {
@@ -77,7 +70,7 @@ public class ServerThread extends Thread
 			//Create a datainputstream on the current socket to accept data from the client
 			din = new ObjectInputStream( socket.getInputStream() );
 
-
+			System.out.println("Listening for username.");
 			//Getting the Username and Password over the stream for authentication
 			username = (String)din.readObject(); 
 			System.out.println("USERNAME RECEIVED. \nUSERNAME: " + username);

@@ -216,10 +216,10 @@ public class Client
 			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
 			//String plainTextPassword = new String(password);
 			System.out.println(password);
-			dout.writeUTF(username); //Sending Username
+			dout.writeObject(username); //Sending Username
 			//dout.flush();
 			System.out.println("Username sent: "+username);
-			dout.writeUTF(password); //Sending Password
+			dout.writeObject(password); //Sending Password
 			dout.flush();
 			System.out.println("Password sent: "+ password);
 			String result = (String)din.readObject();
