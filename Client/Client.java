@@ -217,8 +217,13 @@ public class Client
 			//String plainTextPassword = new String(password);
 			System.out.println(password);
 			dout.writeUTF(username); //Sending Username
+			//dout.flush();
+			System.out.println("Username sent: "+username);
 			dout.writeUTF(password); //Sending Password
+			dout.flush();
+			System.out.println("Password sent: "+ password);
 			String result = din.readUTF();
+			System.out.println("Retrieved result.");
 			System.out.println(result);
 			if(result.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
