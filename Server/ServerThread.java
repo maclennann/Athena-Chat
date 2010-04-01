@@ -42,7 +42,7 @@ public class ServerThread extends Thread
 
 	//Create the DataInputStream on the current socket 
 	public ObjectInputStream din = null;
-	public DataOutputStream dout = null;
+	public ObjectOutputStream dout = null;
 
 	// The Server that created this thread
 	private static Server server;
@@ -259,7 +259,7 @@ public class ServerThread extends Thread
 		//If we cannot find the outputstream, send back an error
 		//This should not fail
 		if (server.outputStreams.containsKey(foundSocket)) { 
-			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
+			dout = (ObjectOutputStream) server.outputStreams.get(foundSocket);
 		} else { sendMessage(fromUser, "MissingSocket", toUser); return; }
 
 		//Send the message, and the user it is from
@@ -290,7 +290,7 @@ public class ServerThread extends Thread
 		//If we cannot find the outputstream, send back an error
 		//This should not fail
 		if (server.outputStreams.containsKey(foundSocket)) { 
-			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
+			dout = (ObjectOutputStream) server.outputStreams.get(foundSocket);
 		} 
 
 		//Send the message, and the user it is from
@@ -302,7 +302,7 @@ public class ServerThread extends Thread
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) throws IOException { 
-		 dout = new DataOutputStream(socket.getOutputStream());
+		 dout = new ObjectOutputStream(socket.getOutputStream());
 		 
 		//Get the password from the hashtable
 		String hashedPassword = server.authentication.get(clientName).toString();
