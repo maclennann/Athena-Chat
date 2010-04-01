@@ -1,4 +1,6 @@
 CLIENT:
+	## Login Hangs - Unknown reason 
+
 	## Program will not spawn new tab for incoming message that would open the tab.
 		!! RESOLVED: Wrote a makeTab(String) to run when there isn't a tab for a user.
 		!! Created ClientApplet.makeTab(String) which will make a tab and associated MapTextArea object.
