@@ -1,5 +1,21 @@
 CLIENT:
 	## Login Hangs - Unknown reason 
+		!! Found a helpful hint in the server output: 
+User Disconnected: null
+
+
+Exception in thread "Thread-4" java.lang.NullPointerException
+        at java.util.Hashtable.remove(Hashtable.java:436)
+        at Server.removeConnection(Server.java:233)
+        at ServerThread.run(ServerThread.java:118)
+User Disconnected: null
+
+
+Exception in thread "Thread-2" java.lang.NullPointerException
+        at java.util.Hashtable.remove(Hashtable.java:436)
+        at Server.removeConnection(Server.java:233)
+        at ServerThread.run(ServerThread.java:118)
+
 
 	## Program will not spawn new tab for incoming message that would open the tab.
 		!! RESOLVED: Wrote a makeTab(String) to run when there isn't a tab for a user.
