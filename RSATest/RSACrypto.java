@@ -57,7 +57,7 @@ public class RSACrypto {
 	 */
 
 	//This method will generate the users RSA key files, one public and one private
-	public static void generateRSAKeyPair { 
+	public static void generateRSAKeyPair() { 
 		try{
 			//Define type of encryption - of course we want RSA!
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -112,9 +112,9 @@ public class RSACrypto {
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, privKey);
 			//DECRYPT!
-			byte[] cipherData = cipher.doFinal(data);
+			byte[] plaintext = cipher.doFinal(data);
 			//Return the decrypted data
-			return cipherData;
+			return plaintext;
 		}catch(Exception e){
 			System.out.println("An error has occured in 'rsaDecrypt'");e.printStackTrace();
 		}
