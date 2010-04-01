@@ -268,6 +268,7 @@ public class ServerThread extends Thread
 		try {
 			dout.writeUTF(fromUser);
 			dout.writeUTF(message);
+			dout.flush();
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 
@@ -299,6 +300,7 @@ public class ServerThread extends Thread
 		try {
 			//dout.writeUTF(toUser);
 			dout.writeUTF(message);
+			dout.flush();
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
