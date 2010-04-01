@@ -40,6 +40,7 @@ public class Server
 	//See: updateHashTable()
 	public static Hashtable authentication = new Hashtable();
 	
+	//This hashtable will map users to their corresponding publickeys
 	public static Hashtable usersToPublicKeys = new Hashtable();
 	
 	//Creates a SQL connection object. See dbConnect()
