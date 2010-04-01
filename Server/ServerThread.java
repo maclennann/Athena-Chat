@@ -316,6 +316,7 @@ public class ServerThread extends Thread
 			//TODO: We need to broadcast a message letting everyone know a user logged in?
 			String returnMessage = "You're logged in!!!!"; //Depreciated - See next line
 			dout.writeChars("Success!"); //Send the Client a sucess message!
+			dout.flush();
 			return returnMessage;
 		}else { 
 			//Login fail handler
