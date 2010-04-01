@@ -153,7 +153,7 @@ public class ClientAddUser extends JPanel {
 	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password) { 
 
 		//Get a connection
-		Client.connect();
+		//Client.connect();
 		
 		//Give me back my Fillet of DataOutputStream.
 		ObjectOutputStream dout = Client.returnDOUT();
