@@ -217,7 +217,7 @@ public class Client
 			//String plainTextPassword = new String(password);
 			System.out.println(password);
 			dout.writeObject(username); //Sending Username
-			//dout.flush();
+			dout.flush();
 			System.out.println("Username sent: "+username);
 			dout.writeObject(password); //Sending Password
 			dout.flush();

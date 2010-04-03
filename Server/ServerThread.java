@@ -68,7 +68,8 @@ public class ServerThread extends Thread
 	public void run() {
 		try {
 			//Create a datainputstream on the current socket to accept data from the client
-			din = new ObjectInputStream( socket.getInputStream() );
+			din = new ObjectInputStream( socket.getInputStream());
+			dout = new ObjectOutputStream( socket.getOutputStream());
 
 			System.out.println("Listening for username.");
 			//Getting the Username and Password over the stream for authentication
@@ -301,7 +302,7 @@ public class ServerThread extends Thread
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) throws IOException { 
-		 dout = new ObjectOutputStream(socket.getOutputStream());
+		//dout = new ObjectOutputStream(socket.getOutputStream());
 		 
 		//Get the password from the hashtable
 		String hashedPassword = server.authentication.get(clientName).toString();
