@@ -23,7 +23,7 @@ import java.lang.Thread;
 import java.lang.Runnable;
 import java.util.Enumeration;
 
-public class Client
+public class Client implements Serializable 
 {
 	//Print debug messages?
 	public static int debug=1;
