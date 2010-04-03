@@ -40,15 +40,11 @@ public class Server
 	//See: updateHashTable()
 	public static Hashtable authentication = new Hashtable();
 	
-	//This hashtable will map users to their corresponding publickeys
-	public static Hashtable usersToPublicKeys = new Hashtable();
-	
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
 	
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
-
 
 	//Will control listener thread when we do that
 	private int isListening = 1;
@@ -122,8 +118,6 @@ public class Server
 				} else { 
 					authentication.put(username, hashedPassword);
 				}
-				
-				//Now let's fill up the hashtable of 
 			}
 		
 		}catch(SQLException ex) {
@@ -131,7 +125,6 @@ public class Server
 		}
 		
 	}
-
 
 	//Adds a user (and the socket he is on) to the hashtable for later reference
 	//Called after user authenticates
@@ -167,7 +160,7 @@ public class Server
 			System.out.println( "Connection Established:\n "+s+"\n\n" );
 
 			//DataOuputStream to send data from the client's socket
-			ObjectOutputStream dout = new ObjectOutputStream( s.getOutputStream() );
+			DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
 			
 			//Map the outputstream to the socket for later reference
 			outputStreams.put( s, dout );
@@ -190,10 +183,10 @@ public class Server
 			
 			//Get the outputStream for each socket and send message
 			for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
-				ObjectOutputStream dout = (ObjectOutputStream)e.nextElement();
+				DataOutputStream dout = (DataOutputStream)e.nextElement();
 				try{
-					dout.writeObject(eventCode);
-					dout.writeObject( message );
+					dout.writeUTF(eventCode);
+					dout.writeUTF( message );
 				} catch( IOException ie ) { System.out.println( ie ); }
 			}
 		}

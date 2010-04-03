@@ -1,11 +1,5 @@
 ChangeLog: 
-03/31/2010:
-	## Started to add encryption
-	## CREATED NEW CLASS: RSACrypto
-		@@ Does all of Athena's encryption/decryption/key generation 
-	## Changed DataInputStream to ObjectInputStream
-
-03/30/2010:  WE'RE BACK
+03/03/2010:  WE'RE BACK
 	## CREATED NEW METHODS:
 		@@ instanciateBuddyList() @Overloaded
 		@@ return BuddyListArray()

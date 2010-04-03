@@ -23,19 +23,25 @@
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.sql.*;
+import java.util.Enumeration;
 import java.io.*;
 import java.net.*;
 
-public class ServerThread extends Thread implements Serializable
+//TODO: Do we need JOptionPane for server?! It's not used anywhere else.
+import javax.swing.JOptionPane;
+
+//TODO: Do we really need this? It does nothing ATM.
+import com.sun.org.apache.xpath.internal.FoundIndex;
+
+public class ServerThread extends Thread
 {
 	//Change to 1 for debug output
 	private int debug = 1;
 
 	//Create the DataInputStream on the current socket 
-	public ObjectInputStream din = null;
-	public ObjectOutputStream dout = null;
+	public DataInputStream din = null;
+	public DataOutputStream dout = null;
 
 	// The Server that created this thread
 	private static Server server;
@@ -43,7 +49,6 @@ public class ServerThread extends Thread implements Serializable
 	//Define Global Variable Username / Password
 	private String username;
 	private String password;
-	private PublicKey usersPublicKey;
 
 	//Our current socket
 	public Socket socket;
@@ -68,18 +73,14 @@ public class ServerThread extends Thread implements Serializable
 	public void run() {
 		try {
 			//Create a datainputstream on the current socket to accept data from the client
-			din = new ObjectInputStream( socket.getInputStream());
-			dout = new ObjectOutputStream( socket.getOutputStream());
+			din = new DataInputStream( socket.getInputStream() );
 
-			System.out.println("Listening for username.");
 			//Getting the Username and Password over the stream for authentication
-			username = (String)din.readObject(); 
-			System.out.println("USERNAME RECEIVED. \nUSERNAME: " + username);
+			username = din.readUTF(); 
 			if(username.equals("Interupt")) { 
 				
 			} else { 
-			password = (String)din.readObject();
-		
+			password = din.readUTF(); 
 			System.out.println("PASSWORD: " + password);
 
 			//Debug statements
@@ -94,8 +95,6 @@ public class ServerThread extends Thread implements Serializable
 			server.mapUserSocket(username, socket);	
 			}
 			if(username.equals("Interupt")) {
-				dout.close();
-				din.close();				
 				routeMessage(din);
 				server.removeConnection(socket);				
 			} else { 
@@ -119,10 +118,10 @@ public class ServerThread extends Thread implements Serializable
 
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
-	public void routeMessage(ObjectInputStream din) throws ClassNotFoundException{
+	public void routeMessage(DataInputStream din){
 		try {
-			String toUser=(String)din.readObject();
-			String message=(String)din.readObject();
+			String toUser=din.readUTF();
+			String message=din.readUTF();
 
 			//Is the message an eventcode meant for the server?
 			if (toUser.equals("Aegis")) { 
@@ -138,7 +137,7 @@ public class ServerThread extends Thread implements Serializable
 	}
 
 	//Method that handles client to server messages
-	public void systemMessageListener(int eventCode) throws ClassNotFoundException {
+	public void systemMessageListener(int eventCode) {
 
 		switch(eventCode) { 
 		case 000: createUsername();
@@ -152,12 +151,12 @@ public class ServerThread extends Thread implements Serializable
 		}
 	}
 
-	public void negotiateClientStatus() throws ClassNotFoundException {
+	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendSystemMessage(username, "Access granted. Send me the username.");
 			//Listen for the username
-			String findUser = (String)din.readObject();
+			String findUser = din.readUTF();
 			//Print out the received username
 			System.out.println("Username received: " + findUser);
 			//Check to see if the username is in the current Hashtable, return result
@@ -185,13 +184,11 @@ public class ServerThread extends Thread implements Serializable
 			ResultSet rs = null; 
 
 			//Disregard two messages, the two others are the username and password
-			String firstName = (String)din.readObject();
-			String lastName = (String)din.readObject();
-			String emailAddress = (String)din.readObject();
-			String newUser = (String)din.readObject();
-			String newPassword = (String)din.readObject();
-			//Read in the user's public key, 
-			usersPublicKey = (PublicKey)din.readObject();
+			String firstName = din.readUTF();
+			String lastName = din.readUTF();
+			String emailAddress = din.readUTF();
+			String newUser = din.readUTF();
+			String newPassword = din.readUTF();
 
 						stmt = con.createStatement();
 			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ newPassword);
@@ -257,14 +254,13 @@ public class ServerThread extends Thread implements Serializable
 		//If we cannot find the outputstream, send back an error
 		//This should not fail
 		if (server.outputStreams.containsKey(foundSocket)) { 
-			dout = (ObjectOutputStream) server.outputStreams.get(foundSocket);
+			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
 		} else { sendMessage(fromUser, "MissingSocket", toUser); return; }
 
 		//Send the message, and the user it is from
 		try {
 			dout.writeUTF(fromUser);
 			dout.writeUTF(message);
-			dout.flush();
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 
@@ -289,20 +285,19 @@ public class ServerThread extends Thread implements Serializable
 		//If we cannot find the outputstream, send back an error
 		//This should not fail
 		if (server.outputStreams.containsKey(foundSocket)) { 
-			dout = (ObjectOutputStream) server.outputStreams.get(foundSocket);
+			dout = (DataOutputStream) server.outputStreams.get(foundSocket);
 		} 
 
 		//Send the message, and the user it is from
 		try {
 			//dout.writeUTF(toUser);
 			dout.writeUTF(message);
-			dout.flush();
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login (String clientName, String clientPassword) throws IOException { 
-		//dout = new ObjectOutputStream(socket.getOutputStream());
+		 dout = new DataOutputStream(socket.getOutputStream());
 		 
 		//Get the password from the hashtable
 		String hashedPassword = server.authentication.get(clientName).toString();
@@ -317,14 +312,11 @@ public class ServerThread extends Thread implements Serializable
 		if (clientPassword.equals(hashedPassword)) { 
 			//Run some command that lets user log in!
 			//TODO: We need to broadcast a message letting everyone know a user logged in?
-			dout.writeObject("Success!"); //Send the Client a sucess message!
-			System.out.println("I have sent the success message!!");
-			dout.flush();
-			return "You're logged in!!!";
+			String returnMessage = "You're logged in!!!!"; //Depreciated - See next line
+			return returnMessage;
 		}else { 
 			//Login fail handler
 			dout.writeUTF("Failed");
-			dout.flush();
 			server.removeConnection(socket, clientName);
 			return "Login Failed";  
 		}	

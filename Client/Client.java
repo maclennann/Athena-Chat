@@ -23,7 +23,7 @@ import java.lang.Thread;
 import java.lang.Runnable;
 import java.util.Enumeration;
 
-public class Client implements Serializable
+public class Client
 {
 	//Print debug messages?
 	public static int debug=1;
@@ -45,8 +45,8 @@ public class Client implements Serializable
 	public static Socket socket;
 
 	// The datastreams we use to move data through the socket
-	private static ObjectOutputStream dout;
-	private static ObjectInputStream din;
+	private static DataOutputStream dout;
+	private static DataInputStream din;
 
 	//Temporary object for the JPanel in a tab
 	static MapTextArea print;
@@ -128,7 +128,7 @@ public class Client implements Serializable
 
 
 	//When the client receives a message.
-	public static void recvMesg(ObjectInputStream din){
+	public static void recvMesg(DataInputStream din){
 		try{
 			// Who is the message from? 
 			String fromUser = din.readUTF();
@@ -192,7 +192,7 @@ public class Client implements Serializable
 	}
 
 	// Method to connect the user
-	public static void connect(String username, String password) throws InterruptedException, AWTException, ClassNotFoundException { 
+	public static void connect(String username, String password) throws InterruptedException, AWTException { 
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
@@ -209,25 +209,19 @@ public class Client implements Serializable
 			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
-			din = new ObjectInputStream( socket.getInputStream() );
-			dout = new ObjectOutputStream( socket.getOutputStream() );
+			din = new DataInputStream( socket.getInputStream() );
+			dout = new DataOutputStream( socket.getOutputStream() );
 
 			//Send username and password over the socket for authentication
 			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
 			//String plainTextPassword = new String(password);
 			System.out.println(password);
-			dout.writeObject(username); //Sending Username
-			dout.flush();
-			System.out.println("Username sent: "+username);
-			dout.writeObject(password); //Sending Password
-			dout.flush();
-			System.out.println("Password sent: "+ password);
-			String result = (String)din.readObject();
-			System.out.println("Retrieved result.");
+			dout.writeUTF(username); //Sending Username
+			dout.writeUTF(password); //Sending Password
+			String result = din.readUTF();
 			System.out.println(result);
 			if(result.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
-				dout.close();
 			}
 			else { 
 			connected=1;
@@ -267,8 +261,8 @@ public class Client implements Serializable
 			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
-			din = new ObjectInputStream( socket.getInputStream() );
-			dout = new ObjectOutputStream( socket.getOutputStream() );
+			din = new DataInputStream( socket.getInputStream() );
+			dout = new DataOutputStream( socket.getOutputStream() );
 
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
@@ -276,9 +270,9 @@ public class Client implements Serializable
 	// Disconnect from the server
 	public static void disconnect() { 
 		try{
+			socket.close();
 			dout.close();
 			din.close();
-			socket.close();
 			connected=0;
 			clientResource.setVisible(false);
 		}catch(Exception e){}
@@ -288,7 +282,7 @@ public class Client implements Serializable
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
 	//DONE 3/30/2010
-	public static void instanciateBuddyList() throws IOException, ClassNotFoundException { 	
+	public static void instanciateBuddyList() throws IOException { 	
 		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
 
@@ -414,7 +408,7 @@ public class Client implements Serializable
 		}
 	}
 
-	public static void checkUserStatus(String findUserName) throws ClassNotFoundException {
+	public static void checkUserStatus(String findUserName) {
 		try { 
 			//Initalize Result
 			int result = -1;
@@ -427,7 +421,7 @@ public class Client implements Serializable
 			dout.writeUTF(findUserName);
 			System.out.println("Username sent - now listening for result...");
 			//Grab result
-			result = (Integer)(din.readObject());
+			result = Integer.parseInt(din.readUTF());
 			//Print result 
 			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
@@ -442,8 +436,8 @@ public class Client implements Serializable
 		//Send the message
 		try{
 			//Send recipient's name and message to server
-			dout.writeObject("Aegis");
-			dout.writeObject(message);
+			dout.writeUTF("Aegis");
+			dout.writeUTF(message);
 		} catch( IOException ie ) {
 		}
 	}
@@ -451,7 +445,7 @@ public class Client implements Serializable
 		username = usernameToSet;
 	}
 	//This method returns a DOUT for other classes to use
-	public static ObjectOutputStream returnDOUT() { 
+	public static DataOutputStream returnDOUT() { 
 		return dout;
 	}
 	// Create the GUI for the client.
