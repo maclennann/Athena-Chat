@@ -227,6 +227,7 @@ public class Client
 			System.out.println(result);
 			if(result.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
+				dout.close();
 			}
 			else { 
 			connected=1;
@@ -275,9 +276,9 @@ public class Client
 	// Disconnect from the server
 	public static void disconnect() { 
 		try{
-			socket.close();
 			dout.close();
 			din.close();
+			socket.close();
 			connected=0;
 			clientResource.setVisible(false);
 		}catch(Exception e){}

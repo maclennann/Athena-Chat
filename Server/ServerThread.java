@@ -93,6 +93,8 @@ public class ServerThread extends Thread
 			server.mapUserSocket(username, socket);	
 			}
 			if(username.equals("Interupt")) {
+				dout.close();
+				din.close();				
 				routeMessage(din);
 				server.removeConnection(socket);				
 			} else { 
@@ -314,11 +316,10 @@ public class ServerThread extends Thread
 		if (clientPassword.equals(hashedPassword)) { 
 			//Run some command that lets user log in!
 			//TODO: We need to broadcast a message letting everyone know a user logged in?
-			String returnMessage = "You're logged in!!!!"; //Depreciated - See next line
 			dout.writeObject("Success!"); //Send the Client a sucess message!
-			System.out.println("I have sent the sucess message!!");
+			System.out.println("I have sent the success message!!");
 			dout.flush();
-			return returnMessage;
+			return "You're logged in!!!";
 		}else { 
 			//Login fail handler
 			dout.writeUTF("Failed");
