@@ -28,7 +28,7 @@ import java.sql.*;
 import java.io.*;
 import java.net.*;
 
-public class ServerThread extends Thread implements Serializable 
+public class ServerThread extends Thread implements Serializable
 {
 	//Change to 1 for debug output
 	private int debug = 1;
