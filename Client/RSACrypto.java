@@ -93,8 +93,8 @@ public class RSACrypto {
 
 	}
 
-	//This method is where we encrypt the data! 
-	//This is where the magic happens
+	//Encrypts the given data with the public key in ./public.key
+	//Perhaps this should change back to taking in a filename?
 	public static byte[] rsaEncrypt(byte[] data) {
 		try{
 			//Grab the key from this file 
@@ -112,6 +112,7 @@ public class RSACrypto {
 		}return null;
 	}
 	
+	//RSA encrypts plainText using a public key created from mod and exp
 	public static byte[] rsaEncryptPublic(String plainText, BigInteger mod, BigInteger exp) {
 		try{
 			//Grab the key from this file 
@@ -125,10 +126,11 @@ public class RSACrypto {
 			return cipherData;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaEncrypt'");
+			System.out.println("An error has occured in 'rsaEncryptPublic'");
 		}return null;
 	}
 	
+	//RSA encrypts plainText using a private key created from mod and exp
 	public static byte[] rsaEncryptPrivate(String plainText, BigInteger mod, BigInteger exp) {
 		try{
 			//Grab the key from this file 
@@ -142,12 +144,11 @@ public class RSACrypto {
 			return cipherData;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaEncrypt'");
+			System.out.println("An error has occured in 'rsaEncryptPrivate'");
 		}return null;
 	}
 	
-	
-	
+	//RSA decrypts cipherText using a public key created from mod and exp
 	public static String rsaDecryptPublic(byte[] cipherText, BigInteger mod, BigInteger exp) {
 		try{
 			//Grab the key from this file 
@@ -162,10 +163,11 @@ public class RSACrypto {
 			return plainText;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaDecrypt'");
+			System.out.println("An error has occured in 'rsaDecryptPublic'");
 		}return null;
 	}
 	
+	//RSA decrypts cipherText using a private key create from mod and exp
 	public static String rsaDecryptPrivate(byte[] cipherText, BigInteger mod, BigInteger exp) {
 		try{
 			//Grab the key from this file 
@@ -184,14 +186,7 @@ public class RSACrypto {
 		}return null;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	//Creates a public key based on mod and exp
 	public static PublicKey makePublicKey(BigInteger mod, BigInteger exp){
 		RSAPublicKeySpec keySpec = new RSAPublicKeySpec(mod,exp);
 		KeyFactory fact=null;
@@ -205,6 +200,7 @@ public class RSACrypto {
 		return pubKey;
 	}
 	
+	//Creates a private key based on mod and exp
 	public static PrivateKey makePrivateKey(BigInteger mod, BigInteger exp){
 		RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(mod,exp);
 		KeyFactory fact=null;
@@ -218,6 +214,7 @@ public class RSACrypto {
 		return privKey;
 	}
 
+	//Generic RSA decryption of data using private key private.key
 	public static byte[] rsaDecrypt(byte[] data) {
 		try{
 			//Grab the private key from the file
@@ -295,12 +292,5 @@ public class RSACrypto {
 		} finally {
 			oout.close();
 		}
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-	
-	
+	}	
 }
