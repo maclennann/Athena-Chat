@@ -1,4 +1,8 @@
 ChangeLog: 
+04/0302010:
+	## RSACrypto is almost fully integrated
+	## There is a single encryption test in the code
+	
 03/03/2010:  WE'RE BACK
 	## CREATED NEW METHODS:
 		@@ instanciateBuddyList() @Overloaded

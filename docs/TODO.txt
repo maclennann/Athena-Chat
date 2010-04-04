@@ -1,5 +1,6 @@
 BOTH:
 	## Encryption!!!
+		@@ Generate a key pair for the server that we can integrate into the client
 		@@ Research KDC protocols
 		@@ Use D-H for session keys? Is there a better option?
 		@@ Revamp database to deal with hashed keys and things
@@ -8,7 +9,7 @@ BOTH:
 	## SECURE the code. We have EVERYTHING as public.
 
 CLIENT:
-	## Hash password before sending it to the server.
+	## Hash password before sending it to the server. --COMPLETE AT SOME POINT
 	## Notifications of messages
 	## Swing window for putting in username and password --COMPLETE 2/25/2010
 		@@ Can they save their password?
@@ -16,7 +17,7 @@ CLIENT:
 		@@ What preferences (aside from theme)? 
 			!! Timestamp option?
 	## BUDDYLIST
-		@@ Working XML writer and parser
+		@@ CSV storage for alias along with username
 		@@ Do we encrypt buddylist? With what? What information is stored in it?
 	## Buddylist should update dynamically on buddy login. --COMPLETE 2/25/2010
 		@@ Already does for signoff. Copy that code. 
@@ -24,4 +25,3 @@ CLIENT:
 SERVER:
 	## Create a thread to route messages, free up the console for an admin interface
 	## Create more eventcodes to/from the Server for special functions
-	## Hash passwords in DB
