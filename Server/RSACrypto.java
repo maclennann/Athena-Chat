@@ -55,7 +55,16 @@ public class RSACrypto {
 	/**
 	 * @param args
 	 */
-
+	static RSAPublicKeySpec pub;
+	static RSAPrivateKeySpec priv;
+	
+	public static RSAPublicKeySpec getPublicKey(){
+		return pub;
+	}
+	public static RSAPrivateKeySpec getPrivateKey(){
+		return priv;
+	}
+	
 	//This method will generate the users RSA key files, one public and one private
 	public static void generateRSAKeyPair() { 
 		try{
@@ -67,14 +76,13 @@ public class RSACrypto {
 			KeyPair kp = kpg.genKeyPair();
 			Key publicKey = kp.getPublic();
 			Key privateKey = kp.getPrivate();
-
-
+			
 			KeyFactory fact = KeyFactory.getInstance("RSA");
 			//Define public key
-			RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(),
+			pub = fact.getKeySpec(kp.getPublic(),
 					RSAPublicKeySpec.class);
 			//Define private key
-			RSAPrivateKeySpec priv = fact.getKeySpec(kp.getPrivate(),
+			priv = fact.getKeySpec(kp.getPrivate(),
 					RSAPrivateKeySpec.class);
 			//Save the keys to their respective files
 			saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
@@ -103,6 +111,112 @@ public class RSACrypto {
 			System.out.println("An error has occured in 'rsaEncrypt'");
 		}return null;
 	}
+	
+	public static byte[] rsaEncryptPublic(String plainText, BigInteger mod, BigInteger exp) {
+		try{
+			//Grab the key from this file 
+			PublicKey pubKey = makePublicKey(mod,exp);
+			//Define the cipher style
+			//RSA OF COURSE
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+			//That's right, cipherData, you wish you knew what the message was.
+			byte[] cipherData = cipher.doFinal(plainText.getBytes());
+			return cipherData;
+		}
+		catch(Exception e){
+			System.out.println("An error has occured in 'rsaEncrypt'");
+		}return null;
+	}
+	
+	public static byte[] rsaEncryptPrivate(String plainText, BigInteger mod, BigInteger exp) {
+		try{
+			//Grab the key from this file 
+			PrivateKey privKey = makePrivateKey(mod,exp);
+			//Define the cipher style
+			//RSA OF COURSE
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.ENCRYPT_MODE, privKey);
+			//That's right, cipherData, you wish you knew what the message was.
+			byte[] cipherData = cipher.doFinal(plainText.getBytes());
+			return cipherData;
+		}
+		catch(Exception e){
+			System.out.println("An error has occured in 'rsaEncrypt'");
+		}return null;
+	}
+	
+	
+	
+	public static String rsaDecryptPublic(byte[] cipherText, BigInteger mod, BigInteger exp) {
+		try{
+			//Grab the key from this file 
+			PublicKey pubKey = makePublicKey(mod,exp);
+			//Define the cipher style
+			//RSA OF COURSE
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.DECRYPT_MODE, pubKey);
+			//That's right, cipherData, you wish you knew what the message was.
+			byte[] cipherData = cipher.doFinal(cipherText);
+			String plainText = new String(cipherData);
+			return plainText;
+		}
+		catch(Exception e){
+			System.out.println("An error has occured in 'rsaDecrypt'");
+		}return null;
+	}
+	
+	public static String rsaDecryptPrivate(byte[] cipherText, BigInteger mod, BigInteger exp) {
+		try{
+			//Grab the key from this file 
+			PrivateKey privKey = makePrivateKey(mod,exp);
+			//Define the cipher style
+			//RSA OF COURSE
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.DECRYPT_MODE, privKey);
+			//That's right, cipherData, you wish you knew what the message was.
+			byte[] cipherData = cipher.doFinal(cipherText);
+			String plainText = new String(cipherData);
+			return plainText;
+		}
+		catch(Exception e){
+			System.out.println("An error has occured in 'rsaEncrypt'");
+		}return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static PublicKey makePublicKey(BigInteger mod, BigInteger exp){
+		RSAPublicKeySpec keySpec = new RSAPublicKeySpec(mod,exp);
+		KeyFactory fact=null;
+		PublicKey pubKey=null;
+		try{
+			fact = KeyFactory.getInstance("RSA");
+		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
+		try{
+			pubKey = fact.generatePublic(keySpec);
+		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
+		return pubKey;
+	}
+	
+	public static PrivateKey makePrivateKey(BigInteger mod, BigInteger exp){
+		RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(mod,exp);
+		KeyFactory fact=null;
+		PrivateKey privKey=null;
+		try{
+			fact = KeyFactory.getInstance("RSA");
+		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
+		try{
+			privKey = fact.generatePrivate(keySpec);
+		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
+		return privKey;
+	}
 
 	public static byte[] rsaDecrypt(byte[] data) {
 		try{
@@ -125,7 +239,7 @@ public class RSACrypto {
 	static PublicKey readPubKeyFromFile(String keyFileName) throws IOException {
 		//Define the name of the file
 		//MAKE sure it's the same as the one we're looking for!
-		ObjectInputStream oin = new ObjectInputStream(new FileInputStream("public.key"));
+		ObjectInputStream oin = new ObjectInputStream(new FileInputStream(keyFileName));
 		try {
 			BigInteger m = (BigInteger) oin.readObject();
 			BigInteger e = (BigInteger) oin.readObject();
@@ -183,4 +297,10 @@ public class RSACrypto {
 		}
 	}
 
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	
 }

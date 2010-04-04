@@ -15,6 +15,23 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.math.BigInteger;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+
+
 /**
  * 
  */
@@ -48,6 +65,10 @@ public class ClientAddUser extends JPanel {
 	
 	public Border blackline;
 	public TitledBorder generalTitledBorder;
+	public RSAPublicKeySpec pub;
+	public RSAPrivateKeySpec priv;
+	public BigInteger publicMod;
+	public BigInteger publicExp;
 	
 	ClientAddUser() {
 		//Create the Main Frame
@@ -110,7 +131,15 @@ public class ClientAddUser extends JPanel {
 			public void actionPerformed(ActionEvent event){
 				String password;
 				try {
+					//Hash the password
 					password = ClientLogin.computeHash(new String(passwordJPasswordField.getPassword()));
+					//Generate the public and private keypair
+					RSACrypto.generateRSAKeyPair();
+					pub = RSACrypto.getPublicKey();
+					priv = RSACrypto.getPrivateKey();
+					publicMod = pub.getModulus();
+					publicExp = pub.getPublicExponent();
+					
 					System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
 					sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password);
 				} catch (Exception e) {
@@ -171,11 +200,30 @@ public class ClientAddUser extends JPanel {
 		
 		//Send Aegis the goods
 		try {
-			dout.writeUTF(firstName);
+			byte[] firstNameCipher = RSACrypto.rsaEncryptPrivate(firstName,priv.getModulus(),priv.getPrivateExponent());
+			System.out.println("FIRST NAME BYTES: "+firstNameCipher.toString());
+			dout.writeUTF(publicMod.toString());
+			dout.writeUTF(publicExp.toString());
+			//dout.writeUTF(firstName);
+			//dout.writeUTF(new String(firstNameCipher));
+			BigInteger firstNameNumber = new BigInteger(firstNameCipher);
+			System.out.println("FIRST NAME NUMBER: "+firstNameNumber.toString());
+			dout.writeUTF(firstNameNumber.toString());
 			dout.writeUTF(lastName);
 			dout.writeUTF(emailAddress);
 			dout.writeUTF(userName);
 			dout.writeUTF(password);
+			String firstNamePlain = RSACrypto.rsaDecryptPublic(firstNameCipher,pub.getModulus(),pub.getPublicExponent());
+			System.out.println("Information Sent to Aegis:\n");
+			System.out.println("First Name: "+firstNamePlain);
+			System.out.println("Last Name: "+lastName);
+			System.out.println("Email Address: "+ emailAddress);
+			System.out.println("Username: "+userName);
+			System.out.println("Password Hash: "+password);
+			System.out.println("Public Key Modulus: "+publicMod.toString());
+			System.out.println("Public Key Exponent: "+publicExp.toString());
+		
+			
 			dout.close();
 			Client.disconnect();
 		} catch (IOException e) {

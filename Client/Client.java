@@ -22,6 +22,21 @@ import javax.swing.*;
 import java.lang.Thread;
 import java.lang.Runnable;
 import java.util.Enumeration;
+import java.math.BigInteger;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 
 public class Client
 {
@@ -197,7 +212,7 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "aegis.athenachat.org", 7777 );
+				socket = new Socket( "127.0.0.1", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);

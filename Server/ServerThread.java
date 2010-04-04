@@ -25,8 +25,22 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Enumeration;
-import java.io.*;
 import java.net.*;
+import java.math.BigInteger;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 
 //TODO: Do we need JOptionPane for server?! It's not used anywhere else.
 import javax.swing.JOptionPane;
@@ -184,13 +198,28 @@ public class ServerThread extends Thread
 			ResultSet rs = null; 
 
 			//Disregard two messages, the two others are the username and password
-			String firstName = din.readUTF();
+			String publicModString = din.readUTF();
+			String publicExpString = din.readUTF();
+			String firstNameCipher = din.readUTF();
+			System.out.println("FIRST NAME INTEGER STRING: "+firstNameCipher);
+			BigInteger publicMod = new BigInteger(publicModString);
+			BigInteger publicExp = new BigInteger(publicExpString);
+			BigInteger firstNameNumber = new BigInteger(firstNameCipher);
+			System.out.println("FIRST NAME INTEGER: "+firstNameNumber.toString());
+			byte[] firstNameBytes = firstNameNumber.toByteArray();
+			System.out.println("FIRST NAME BYTES: "+firstNameBytes.toString());
+			//System.out.println("Encrypted first name: "+firstNameCrypt.toString());
+			String firstName = RSACrypto.rsaDecryptPublic(firstNameBytes,publicMod,publicExp);
 			String lastName = din.readUTF();
 			String emailAddress = din.readUTF();
 			String newUser = din.readUTF();
 			String newPassword = din.readUTF();
+			System.out.println("Information Received From Client:");
+			//System.out.println("Public Key Modulus: " + publicMod);
+			//System.out.println("Public Key Exponent: " + publicExp);
+			System.out.println("First Name: "+firstName);
 
-						stmt = con.createStatement();
+			stmt = con.createStatement();
 			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ newPassword);
 
 			//See if the username already exists.
