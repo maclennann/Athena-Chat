@@ -197,27 +197,44 @@ public class ServerThread extends Thread
 			Statement insertSTMT;
 			ResultSet rs = null; 
 
-			//Disregard two messages, the two others are the username and password
+			//Read the new user's public key components
+			//TODO in this test we use this key for decryption, but we need to generate server keys for this
 			String publicModString = din.readUTF();
 			String publicExpString = din.readUTF();
+			
+			//Read all encrypted data in
 			String firstNameCipher = din.readUTF();
-			System.out.println("FIRST NAME INTEGER STRING: "+firstNameCipher);
+			String lastNameCipher = din.readUTF();
+			String emailAddressCipher = din.readUTF();
+			String userNameCipher = din.readUTF();
+			String passwordCipher = din.readUTF();
+			
+			//Turn the public key components into BigIntegers for use
 			BigInteger publicMod = new BigInteger(publicModString);
 			BigInteger publicExp = new BigInteger(publicExpString);
-			BigInteger firstNameNumber = new BigInteger(firstNameCipher);
-			System.out.println("FIRST NAME INTEGER: "+firstNameNumber.toString());
-			byte[] firstNameBytes = firstNameNumber.toByteArray();
-			System.out.println("FIRST NAME BYTES: "+firstNameBytes.toString());
-			//System.out.println("Encrypted first name: "+firstNameCrypt.toString());
+			
+			//Turn encrypted data into BigIntegers, then byte[]s
+			byte[] firstNameBytes = (new BigInteger(firstNameCipher)).toByteArray(); //does this work?
+			byte[] lastNameBytes = (new BigInteger(lastNameCipher)).toByteArray();
+			byte[] emailAddressBytes = (new BigInteger(emailAddressCipher)).toByteArray();
+			byte[] userNameBytes = (new BigInteger(userNameCipher)).toByteArray();
+			byte[] passwordBytes = (new BigInteger(passwordCipher)).toByteArray();
+			//BigInteger firstNameNumber = new BigInteger(firstNameCipher);
+			//byte[] firstNameBytes = firstNameNumber.toByteArray();
+			
+			//Finally, decrypt the ciphertext
 			String firstName = RSACrypto.rsaDecryptPublic(firstNameBytes,publicMod,publicExp);
-			String lastName = din.readUTF();
-			String emailAddress = din.readUTF();
-			String newUser = din.readUTF();
-			String newPassword = din.readUTF();
-			System.out.println("Information Received From Client:");
-			//System.out.println("Public Key Modulus: " + publicMod);
-			//System.out.println("Public Key Exponent: " + publicExp);
+			String lastName = RSACrypto.rsaDecryptPublic(lastNameBytes,publicMod,publicExp);
+			String emailAddress = RSACrypto.rsaDecryptPublic(emailAddressBytes,publicMod,publicExp);
+			String newUser = RSACrypto.rsaDecryptPublic(userNameBytes,publicMod,publicExp);
+			String newPassword = RSACrypto.rsaDecryptPublic(passwordBytes,publicMod,publicExp);
+			
+			System.out.println("New User Decrypted Information:");
 			System.out.println("First Name: "+firstName);
+			System.out.println("Last Name: "+lastName);
+			System.out.println("Email Address: "+emailAddress);
+			System.out.println("User Name: "+newUser);
+			System.out.println("Password Hash: "+newPassword);
 
 			stmt = con.createStatement();
 			if(debug==1)System.out.println("Statement created\nCreating username: "+newUser+"\nPassword: "+ newPassword);
