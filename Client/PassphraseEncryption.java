@@ -18,7 +18,7 @@
  **  Sample program output:
  **    Plain Text: Hello, World!
  **    --Encrypting--
- **    Cipher Text: Jç¦d;A49?-t£¦D˜6
+ **    Cipher Text: úVk-P?"F»#e8ç+8;
  **    --Decrypting--
  **    Clear Text: Hello, World!
  **
