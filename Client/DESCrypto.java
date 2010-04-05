@@ -1,4 +1,4 @@
-/**  PassphraseEncryption.java
+/**  DESCrypto.java
  **  Author: Norm MacLennan/OlympuSoft
  **  Adapted from code found online at:
  **    http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html
@@ -13,7 +13,7 @@
  **  calculate the salt.
  **
  **  Sample program input:
- **    java PassphraseEncryption "Hello, World!" "Call me Ishmael." "7 chars"
+ **    java DESCrypto "Hello, World!" "Call me Ishmael." "7 chars"
  **
  **  Sample program output:
  **    Plain Text: Hello, World!
