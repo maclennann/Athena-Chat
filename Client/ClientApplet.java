@@ -31,7 +31,15 @@ import java.awt.image.ImageObserver;
 import java.io.*;
 import java.net.*;
 import javax.imageio.ImageIO;
+import javax.print.attribute.AttributeSet;
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLEditorKit;
+
+import org.w3c.dom.stylesheets.StyleSheet;
+
+import com.sun.java.util.jar.pack.Attribute.Layout.Element;
+
 import java.util.Hashtable;
 
 //Client swing window.
@@ -292,7 +300,7 @@ class MapTextArea {
 
 	//All of the JComponents in the tab
 	public JPanel myJPanel;
-	public JTextArea myTA;
+	public JEditorPane myTA;
 	public JTextField myTF;
 
 	//The username associated with the tab
@@ -308,10 +316,11 @@ class MapTextArea {
 		myJPanel.setLayout(null);
 		
 		//Create the textarea and the scrollpane around it
-		myTA = new JTextArea();
+		myTA = new JEditorPane();
 		myTA.setEditable(false);
-		myTA.setLineWrap(true);
-		myTA.setWrapStyleWord(true);
+		//myTA.setLineWrap(true);
+		//myTA.setWrapStyleWord(true);
+		myTA.setEditorKit(new HTMLEditorKit());
 		JScrollPane mySP = new JScrollPane(myTA);
 		mySP.setBounds(10,10,559,450);
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -383,4 +392,5 @@ class MapTextArea {
 		myTF.setText("");
 	}
 }
+
 

@@ -221,7 +221,6 @@ public class Client
 
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
-			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
@@ -273,7 +272,6 @@ public class Client
 
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
-			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
