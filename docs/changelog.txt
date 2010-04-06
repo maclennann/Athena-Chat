@@ -1,5 +1,5 @@
 ChangeLog: 
-04/0302010:
+04/03/2010:
 	## RSACrypto is almost fully integrated
 	## There is a single encryption test in the code
 	
@@ -109,8 +109,10 @@ ChangeLog:
 
 04/05/2010:
 	##FINALLY fixed label issue in Preference interface - no more glitch
-		@@ Nicer borders, icons will be replaced with nicer images 		soon
+		@@ Nicer borders, icons will be replaced with nicer images soon
 	##Implemented system tray setting under general options
 	##Established code flow for remaining settings
-		@@ Using flag variables and binary setting values to keep 		track of individual setting changes
+		@@ Using flag variables and binary setting values to keep track of individual setting changes
+	##Added encryption to buddylist.csv
+		@@ Uses the custom DESCrypto library to encrypt and decryptbuddy's names
 	## Will document code in more detail tomorrow (4/6/10)
