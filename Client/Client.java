@@ -160,7 +160,27 @@ public class Client
 		catch (IOException e) { } 
 	} 
 
-
+	static void writeBuddyListToFile(String[] buddyList){
+		String encryptedUsername;
+		File newFile = new File("users/" + username + "/buddylist.csv");
+		try{
+		if(!(newFile.exists())) { 
+			boolean success = new File("users/" + username).mkdirs();
+			if(success) { 
+				newFile.createNewFile();
+			}
+			else { 
+				newFile.createNewFile();
+			}
+		}
+		out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
+		
+		for(int i = 0; i < buddyList.length;i++){
+			encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(",")));
+			out.write(encryptedUsername + "\n");
+		}
+		out.close();
+		}catch(Exception e){System.out.println("ERROR WRITING BUDDYLIST");}
 	//When the client receives a message.
 	public static void recvMesg(DataInputStream din){
 		try{
