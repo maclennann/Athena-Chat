@@ -147,22 +147,22 @@ public class ClientAddUser extends JPanel {
 					publicExp = pub.getPublicExponent();
 					privateMod = priv.getModulus();
 					privateExp = priv.getPrivateExponent();
-					File pubKeyFile = new File("user/"+newUsername+"/key/"+newUsername+".pub");
-					File privKeyFile = new File("user/"+newUsername+"/key/"+newUsername+".priv");
+					File pubKeyFile = new File("users/"+newUsername+"/keys/"+newUsername+".pub");
+					File privKeyFile = new File("users/"+newUsername+"/keys/"+newUsername+".priv");
 					if(!(pubKeyFile.exists())){
-						boolean success = new File("users/"+newUsername+"/key").mkdirs();
+						boolean success = new File("users/"+newUsername+"/keys").mkdirs();
 							System.out.println("Created Directory");
 							pubKeyFile.createNewFile();
 							System.out.println("Created File");
 					}
 					if(!(privKeyFile.exists())){
-						boolean success = new File("users/"+newUsername+"/key").mkdirs();
+						boolean success = new File("users/"+newUsername+"/keys").mkdirs();
 							privKeyFile.createNewFile();
 					}
 					
 					//Write the keys to the file
-					RSACrypto.saveToFile("users\\"+userNameJTextField.getText()+"\\keys\\"+userNameJTextField.getText()+".pub",publicMod,publicExp);
-					RSACrypto.saveToFile("users\\"+userNameJTextField.getText()+"\\keys\\h"+userNameJTextField.getText()+".priv",privateMod,privateExp);
+					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".pub",publicMod,publicExp);
+					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".priv",privateMod,privateExp);
 					
 					//System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
 					//Send the information to Aegis
