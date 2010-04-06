@@ -235,17 +235,7 @@ public class Client
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-			//Ugly JOptionPane JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
-
->>>>>>> 2a46e9cf9ac7cb370249ef07cac6b9b1d58bd0e2
-=======
-			//Ugly JOptionPane JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
-
->>>>>>> 2a46e9cf9ac7cb370249ef07cac6b9b1d58bd0e2
-
+			
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
@@ -297,18 +287,6 @@ public class Client
 
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
-			//UGLY JOptionPane JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
-
->>>>>>> 2a46e9cf9ac7cb370249ef07cac6b9b1d58bd0e2
-=======
-
-			//UGLY JOptionPane JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
-
->>>>>>> 2a46e9cf9ac7cb370249ef07cac6b9b1d58bd0e2
 
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
