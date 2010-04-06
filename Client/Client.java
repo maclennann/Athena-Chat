@@ -121,30 +121,43 @@ public class Client
 	public static void buddyList(String usernameToAdd) throws Exception {		
 		//Add the username to a new line in the file
 		//Will take in more inputs as we add other functionality to Athena like Pubkey, group, etc
-		
+
 		//Set exists to 0, this means that the usernameToAdd is not already in the buddylist file
 		int exists=0;
+		BufferedWriter out;
 		try {
 			//Call the returnBuddyListArray method, this reads in the buddylist file and puts the user names into an array for us to use
 			String[] usernames = returnBuddyListArray();
-			
+
 			//This for loop checks to see if the usernameToAdd is already in the buddylist file, if so, set exists to 1
 			for(int y=0;y<usernames.length;y++) {
 				if(usernames[y].equals(usernameToAdd)) {
 					exists=1;
 				}
 			}
-			
+
 			//If the usernameToAdd IS NOT in the buddylist file, add it
 			if(exists == 0) { 
 				BigInteger encryptedUsername;
 				//Append to the file the usernameToAdd
-				BufferedWriter out = new BufferedWriter(new FileWriter("buddylist.csv", true));
-				encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
-				out.write(encryptedUsername + "\n");
-				out.close();	
-			}
-		} catch (IOException e) { } 
+				File newFile = new File("users/" + username + "/buddylist.csv");
+				if(!(newFile.exists())) { 
+					boolean success = new File("users/" + username).mkdirs();
+					if(success) { 
+						newFile.createNewFile();
+						out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
+					}
+					else { 
+						newFile.createNewFile();
+					}
+				}
+						out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv", true));
+						encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
+						out.write(encryptedUsername + "\n");
+						out.close();	
+					}
+		}
+		catch (IOException e) { } 
 	} 
 
 
@@ -231,11 +244,11 @@ public class Client
 				saltUser = username.substring(0,8);
 			}else saltUser = username;
 			descrypto = new DESCrypto(password,saltUser);
-			
+
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
 
-			
+
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
@@ -252,28 +265,28 @@ public class Client
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
 			}
 			else { 
-			connected=1;
-			clientResource = new ClientApplet();
-			//Thread created to listen for messages coming in from the server
-			listeningProcedure = new Thread(
-					new Runnable() {
-						public void run() {
-							//While we are connected to the server, receive messages
-							while(connected ==1) {
-								Client.recvMesg(din);
-							}
-						}});	
-			//Instanciate Buddy List
-			instanciateBuddyList();
-			//Start the thread
-			listeningProcedure.start();
+				connected=1;
+				clientResource = new ClientApplet();
+				//Thread created to listen for messages coming in from the server
+				listeningProcedure = new Thread(
+						new Runnable() {
+							public void run() {
+								//While we are connected to the server, receive messages
+								while(connected ==1) {
+									Client.recvMesg(din);
+								}
+							}});	
+				//Instanciate Buddy List
+				instanciateBuddyList();
+				//Start the thread
+				listeningProcedure.start();
 			}
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 
 	// Method to connect the user
 	public static void connect() { 
-		
+
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
@@ -335,7 +348,7 @@ public class Client
 
 				String currentF = f.nextElement().toString();
 				System.out.println("F: " + currentF);
-				
+
 				//If the user is online, add them to your buddylist
 				if (currentF.equals("1")) {
 					System.out.println("Online user:" + currentE);
@@ -399,20 +412,35 @@ public class Client
 
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 	//TODO Make this return a multi-dementional array of all the fields in the CSV File
-	public static String[] returnBuddyListArray() throws IOException { 
-		
+	public static String[] returnBuddyListArray() throws IOException {
+		int count;
+		int readChars;
+		InputStream is;
+
 		//Let's get the number of lines in the file
-		InputStream is = new BufferedInputStream(new FileInputStream("buddylist.csv"));
-		byte[] c = new byte[1024];
-		int count = 0;
-		int readChars = 0;
-		while ((readChars = is.read(c)) != -1) {
-			for (int i = 0; i < readChars; ++i) {
-				if (c[i] == '\n')
-					++count;
+		File newFile = new File("users/" + username + "/buddylist.csv");
+		if(!(newFile.exists())) { 
+			boolean success = new File("users/" + username).mkdirs();
+			if(success) { 
+				newFile.createNewFile();
+				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
 			}
-		} //End section
+			else { 
+				newFile.createNewFile();
+			}
+		}
 		
+			is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+			byte[] c = new byte[1024];
+			count = 0;
+			readChars = 0;
+			while ((readChars = is.read(c)) != -1) {
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n')
+						++count;
+				}
+			} //End section
+
 		//Make the string array the size of the number of lines in the file
 		String[] usernames = new String[count];
 
@@ -421,12 +449,15 @@ public class Client
 			return usernames;
 		}
 		else { 
-
-			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
+			File newFile2 = new File("users/" + username + "/buddylist.csv");
+			if(!(newFile2.exists())) { 
+				newFile2.createNewFile();
+			}
+			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
 			int x=0;
 			String raw, str;
 			BigInteger strNum;
-			
+
 			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
 			while ((raw = in.readLine()) != null) 
 			{ 
@@ -434,13 +465,14 @@ public class Client
 				// Turn the BigInteger to a byteArray, and decrypt it.
 				strNum = new BigInteger(raw);
 				str = descrypto.decryptData(strNum.toByteArray());
-				
+
 				String foo[] = str.split(","); 
 				usernames[x] = foo[0];
 				x++;
 			}
 			return usernames;
 		}
+
 	}
 
 	public static void checkUserStatus(String findUserName) {
