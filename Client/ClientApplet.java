@@ -216,7 +216,7 @@ public class ClientApplet extends JFrame {
 
 						// Print the array back to the file (will overwrite the
 						// previous file
-						//Client.writeBuddyListToFile(usernames);
+						Client.writeBuddyListToFile(usernames);
 					}
 					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
 					else {
@@ -257,7 +257,7 @@ public class ClientApplet extends JFrame {
 
 									// Print the array back to the file (will overwrite the
 									// previous file
-									//Client.writeBuddyListToFile(usernames);
+									Client.writeBuddyListToFile(usernames);
 																	
 								} catch (Exception e) {
 									// TODO Auto-generated catch block

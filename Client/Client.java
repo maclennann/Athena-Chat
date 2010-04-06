@@ -151,36 +151,41 @@ public class Client
 						newFile.createNewFile();
 					}
 				}
-						out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv", true));
-						encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
-						out.write(encryptedUsername + "\n");
-						out.close();	
-					}
+				out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv", true));
+				encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
+				out.write(encryptedUsername + "\n");
+				out.close();	
+			}
 		}
 		catch (IOException e) { } 
 	} 
 
 	static void writeBuddyListToFile(String[] buddyList){
-		String encryptedUsername;
+		BigInteger encryptedUsername;
+		BufferedWriter out;
 		File newFile = new File("users/" + username + "/buddylist.csv");
 		try{
-		if(!(newFile.exists())) { 
-			boolean success = new File("users/" + username).mkdirs();
-			if(success) { 
-				newFile.createNewFile();
+			if(!(newFile.exists())) { 
+				boolean success = new File("users/" + username).mkdirs();
+				if(success) { 
+					newFile.createNewFile();
+				}
+				else { 
+					newFile.createNewFile();
+				}
 			}
-			else { 
-				newFile.createNewFile();
+			out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
+
+			for(int i = 0; i < buddyList.length;i++){
+				encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(",")));
+				out.write(encryptedUsername + "\n");
 			}
+			out.close();
+		}catch(Exception e)
+		{System.out.println("ERROR WRITING BUDDYLIST");
 		}
-		out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
-		
-		for(int i = 0; i < buddyList.length;i++){
-			encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(",")));
-			out.write(encryptedUsername + "\n");
-		}
-		out.close();
-		}catch(Exception e){System.out.println("ERROR WRITING BUDDYLIST");}
+	}
+
 	//When the client receives a message.
 	public static void recvMesg(DataInputStream din){
 		try{
@@ -449,17 +454,17 @@ public class Client
 				newFile.createNewFile();
 			}
 		}
-		
-			is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
-			byte[] c = new byte[1024];
-			count = 0;
-			readChars = 0;
-			while ((readChars = is.read(c)) != -1) {
-				for (int i = 0; i < readChars; ++i) {
-					if (c[i] == '\n')
-						++count;
-				}
-			} //End section
+
+		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+		byte[] c = new byte[1024];
+		count = 0;
+		readChars = 0;
+		while ((readChars = is.read(c)) != -1) {
+			for (int i = 0; i < readChars; ++i) {
+				if (c[i] == '\n')
+					++count;
+			}
+		} //End section
 
 		//Make the string array the size of the number of lines in the file
 		String[] usernames = new String[count];
