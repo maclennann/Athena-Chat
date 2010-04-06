@@ -26,6 +26,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -173,7 +175,7 @@ public class ClientApplet extends JFrame {
 		addBuddyPanel.setBounds(595, 558, 41, 50);
 		removeBuddyPanel.setBounds(650, 558, 41, 50);
 
-		// Mouseistener for the AddUser image
+		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				String usernameToAdd = JOptionPane
@@ -190,7 +192,7 @@ public class ClientApplet extends JFrame {
 		};
 		addBuddyPanel.addMouseListener(addBuddyMouseListener);
 
-		// Mouseistener for the removeUser image
+		// MouseListener for the removeUser image
 		MouseListener removeBuddyMouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				JList theList = (JList) userBox;
@@ -294,6 +296,34 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.addTab(user, null, tempPanel, "Something");
 		// Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+	}
+	
+	public void closeTabWithESC(boolean activated)
+	{
+		if(activated)
+		{
+			imTabbedPane.addKeyListener(new KeyListener() {
+				public void keyPressed(KeyEvent e) {
+				}
+				public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+					Component tabToKill = imTabbedPane.getSelectedComponent();
+					imTabbedPane.remove(tabToKill);
+					}
+				}
+				public void keyTyped(KeyEvent e) {
+				}
+			});
+		}
+		else
+		{
+			KeyListener[] tabListeners = imTabbedPane.getKeyListeners();
+			if(tabListeners[0] != null)
+			{
+				for(int x = 0; x < tabListeners.length; x++)
+					imTabbedPane.removeKeyListener(tabListeners[x]);
+			}
+		}
 	}
 
 	// Makes a new hashtable with user's online status

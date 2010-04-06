@@ -27,6 +27,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
@@ -56,7 +57,7 @@ public class ClientPreferences extends JPanel {
 	public JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
 	public JPanel prefLabelPane = new JPanel();
 	public JButton apply = new JButton("Apply");
-	public JButton cancel = new JButton("Cancel");
+	public JButton cancel = new JButton("Close");
 	public Border blackline;
 	public TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
 
@@ -64,10 +65,11 @@ public class ClientPreferences extends JPanel {
 	//Define components for the General Menu Panel
 	public JLabel generalLabel = new JLabel();
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", true);
-	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab");
-	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check");
+	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab", true);
+	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check", true);
 	public int systemTrayVal = -1;
 	public int allowESCVal = -1;
+	public int enableSCVal = -1;
 	public boolean systemTrayFlag = false;
 	public boolean allowESCFlag = false;
 	public boolean enableSpellCheckFlag = false;
@@ -138,7 +140,7 @@ public class ClientPreferences extends JPanel {
 			public void actionPerformed(ActionEvent event){
 				//Apply all changes
 				try {
-					setGeneralSettings(systemTrayVal, systemTrayFlag, allowESCFlag, enableSpellCheckFlag);
+					setGeneralSettings(systemTrayVal, systemTrayFlag, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
 					setNotificationSettings(enableNotificationsFlag, enableSoundsFlag);
 					setFormattingSettings(selectFontFlag, toggleBoldFlag, toggleItalicsFlag, toggleUnderlineFlag);
 				} catch (Exception e) {
@@ -410,43 +412,52 @@ public class ClientPreferences extends JPanel {
 
 	}	
 	
-	private void setGeneralSettings (int systemTrayVal, boolean systemTrayFlag, boolean allowESCFlag, boolean enableSpellCheckFlag) throws AWTException
+	private void setGeneralSettings (int systemTrayVal, boolean systemTrayFlag, boolean allowESCFlag,
+			                         int allowESCVal, boolean enableSpellCheckFlag, int enableSCVal) throws AWTException
 	{
-			SystemTray tray = SystemTray.getSystemTray();
-			TrayIcon[] trayArray = tray.getTrayIcons();
-			int tlength = trayArray.length;
+		SystemTray tray = SystemTray.getSystemTray();
+		TrayIcon[] trayArray = tray.getTrayIcons();
+		int tlength = trayArray.length;
 			
-			if(systemTrayVal == 0)
+		if(systemTrayVal == 0)
+		{
+			for(int x = 0; x < tlength; x++)
+				tray.remove(trayArray[x]);
+		}
+		if(systemTrayVal == 1)
+		{
+			if(tlength == 0)
 			{
-				for(int x = 0; x < tlength; x++)
-					tray.remove(trayArray[x]);
-			}
-			if(systemTrayVal == 1)
-			{
-				if(tlength == 0)
-				{
-					Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
-					ActionListener exitListener = new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							System.out.println("Exiting...");
-							System.exit(0);
-						}
-					};
+				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+				ActionListener exitListener = new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						System.out.println("Exiting...");
+						System.exit(0);
+					}
+				};
 
-					PopupMenu popup = new PopupMenu();
-					MenuItem defaultItem = new MenuItem("Exit");
-					defaultItem.addActionListener(exitListener);
-					popup.add(defaultItem);
+				PopupMenu popup = new PopupMenu();
+				MenuItem defaultItem = new MenuItem("Exit");
+				defaultItem.addActionListener(exitListener);
+				popup.add(defaultItem);
 
-					TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
-					trayIcon.setImageAutoSize(true);
-					tray.add(trayIcon);
-				}
+				TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
+				trayIcon.setImageAutoSize(true);
+				tray.add(trayIcon);
 			}
+		}
 	
 		if (allowESCFlag)
 		{
 			//Adjust setting
+			if(allowESCVal == 0)
+			{
+				Client.clientResource.closeTabWithESC(false);
+			}
+			if(allowESCVal == 1)
+			{
+				Client.clientResource.closeTabWithESC(true);
+			}
 		}
 		if (enableSpellCheckFlag)
 		{
