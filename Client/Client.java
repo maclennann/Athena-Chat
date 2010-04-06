@@ -396,8 +396,8 @@ public class Client
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
 	 */
 	public static void instanciateBuddyList(String username) throws IOException {
-		
-			checkUserStatus(username); 
+		System.out.println("HAIII");
+		checkUserStatus(username); 
 		
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
@@ -491,6 +491,7 @@ public class Client
 
 	public static void checkUserStatus(String findUserName) {
 		try { 
+			System.out.println("HAIII");
 			//Initalize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
@@ -507,6 +508,7 @@ public class Client
 			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
+			System.out.println("HAIII");
 
 		} catch (java.io.IOException e) { 
 		}	

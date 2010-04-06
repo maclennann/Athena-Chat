@@ -178,11 +178,9 @@ public class ClientApplet extends JFrame {
 		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				String usernameToAdd = JOptionPane
-				.showInputDialog("Input the username you'd like to add to your buddylist");
+				String usernameToAdd = JOptionPane.showInputDialog("Input the username you'd like to add to your buddylist");
 				try {
 					Client.buddyList(usernameToAdd);
-					Thread.sleep(10);
 					Client.instanciateBuddyList(usernameToAdd);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
