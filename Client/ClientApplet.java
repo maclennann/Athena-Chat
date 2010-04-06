@@ -325,7 +325,7 @@ class MapTextArea extends JFrame {
 		
 		 try {
 			//Register the dictionaries for the spellchecker
-			 SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "de" );
+			 SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "en" );
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
