@@ -40,6 +40,9 @@ import java.security.spec.RSAPublicKeySpec;
 
 public class Client
 {
+	//DESCrypto object for cryptography of local files
+	static DESCrypto descrypto;
+
 	//Print debug messages?
 	public static int debug=1;
 
@@ -131,11 +134,14 @@ public class Client
 					exists=1;
 				}
 			}
+			
 			//If the usernameToAdd IS NOT in the buddylist file, add it
 			if(exists == 0) { 
+				BigInteger encryptedUsername;
 				//Append to the file the usernameToAdd
-				BufferedWriter out = new BufferedWriter(new FileWriter("buddylist.csv", true)); 
-				out.write(usernameToAdd + "," + "\n");
+				BufferedWriter out = new BufferedWriter(new FileWriter("buddylist.csv", true));
+				encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
+				out.write(encryptedUsername + "\n");
 				out.close();	
 			}
 		} catch (IOException e) { } 
@@ -212,16 +218,23 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "192.168.1.117", 7777 );
+				socket = new Socket( "71.234.132.9", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
+			//Create the DESCrypto object for buddylist and preferences cryptography
+			String saltUser;
+			if(username.length()>=8){
+				saltUser = username.substring(0,8);
+			}else saltUser = username;
+			descrypto = new DESCrypto(password,saltUser);
+			
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
-			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
+			//Ugly JOptionPane JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
@@ -260,11 +273,12 @@ public class Client
 
 	// Method to connect the user
 	public static void connect() { 
+		
 		//Try to connect with and authenticate to the socket
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "192.168.1.117", 7777 );
+				socket = new Socket( "71.234.132.9", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -273,7 +287,7 @@ public class Client
 
 			//Connection established debug code.
 			if(debug==1)System.out.println( "Connected to "+socket );
-			JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
+			//UGLY JOptionPane JOptionPane.showMessageDialog(null,"Connection Established!","Success!",JOptionPane.INFORMATION_MESSAGE);
 
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
@@ -411,10 +425,17 @@ public class Client
 
 			BufferedReader in = new BufferedReader(new FileReader("buddylist.csv")); 
 			int x=0;
-			String str;
+			String raw, str;
+			BigInteger strNum;
+			
 			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
-			while ((str = in.readLine()) != null) 
+			while ((raw = in.readLine()) != null) 
 			{ 
+				// Read in the BigInteger in String form. Turn it to a BigInteger
+				// Turn the BigInteger to a byteArray, and decrypt it.
+				strNum = new BigInteger(raw);
+				str = descrypto.decryptData(strNum.toByteArray());
+				
 				String foo[] = str.split(","); 
 				usernames[x] = foo[0];
 				x++;
