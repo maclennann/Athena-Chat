@@ -51,6 +51,7 @@ public class ClientLogin extends JFrame {
 	public JPasswordField password = new JPasswordField();
 	public JLabel usernameLabel = new JLabel("Username");
 	public JLabel passwordLabel = new JLabel("Password");
+	public LinkText registerJLabel = new LinkText("Register!");
 	public JButton connect = new JButton("Connect");
 	public JButton cancel = new JButton("Cancel");
 
@@ -100,17 +101,29 @@ public class ClientLogin extends JFrame {
 		cancel.setFont(new Font("Dialog", 1, 10));
 		usernameLabel.setFont(new Font("Dialog", 1, 10));
 		passwordLabel.setFont(new Font("Dialog", 1, 10));
+		registerJLabel.setFont(new Font("Dialog", 1, 11));
 
 		//Size the components
-		usernameLabel.setBounds(50,115,100,25);
-		username.setBounds(50,140,100,25);
-		passwordLabel.setBounds(50,165,100,25);
-		password.setBounds(50,190,100,25);
+		usernameLabel.setBounds(50,105,100,25);
+		username.setBounds(50,130,100,25);
+		passwordLabel.setBounds(50,155,100,25);
+		password.setBounds(50,180,100,25);
+		registerJLabel.setBounds(55,210,90,25);
 		cancel.setBounds(10,235,75,30);
 		connect.setBounds(105,235,75,30);
 		logo.setBounds(60,10,100,100);
+		
+		
 		//Let the "Action Begin"
-
+		//ActionListener to make the register JLabel bring up the register window
+		//ActionListener to make the connect menu item connect
+		registerJLabel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				ClientAddUser testOfWindow = new ClientAddUser();
+				testOfWindow.setVisible(true);
+			}
+		});
+		
 		//ActionListener to make the connect menu item connect
 		connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
@@ -143,6 +156,7 @@ public class ClientLogin extends JFrame {
 		contentPane.add(username);
 		contentPane.add(passwordLabel);
 		contentPane.add(password);
+		contentPane.add(registerJLabel);
 		contentPane.add(connect);
 		contentPane.add(cancel);
 		contentPane.add(logo); 
