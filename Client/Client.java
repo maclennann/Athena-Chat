@@ -396,17 +396,6 @@ public class Client
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
 	 */
 	public static void instanciateBuddyList(String username) throws IOException {
-		//Grab string array of the buddylist.csv file 
-		String[] usernames = returnBuddyListArray();
-
-		//Check to see if the username is already in the buddylist, if so, exit
-		for(int x=0; x<usernames.length;x++) { 
-			if(usernames[x].equals(username)) {
-				//Name exists! Exit!!
-				return;
-			}
-		}
-		//Counter
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
 		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
