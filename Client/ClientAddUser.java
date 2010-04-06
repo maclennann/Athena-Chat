@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -139,11 +140,29 @@ public class ClientAddUser extends JPanel {
 					pub = RSACrypto.getPublicKey();
 					priv = RSACrypto.getPrivateKey();
 					
+					String newUsername = userNameJTextField.getText();
+					
 					//Pull out the key components
 					publicMod = pub.getModulus();
 					publicExp = pub.getPublicExponent();
 					privateMod = priv.getModulus();
 					privateExp = priv.getPrivateExponent();
+					File pubKeyFile = new File("user/"+newUsername+"/key/"+newUsername+".pub");
+					File privKeyFile = new File("user/"+newUsername+"/key/"+newUsername+".priv");
+					if(!(pubKeyFile.exists())){
+						boolean success = new File("users/"+newUsername+"/key").mkdirs();
+							System.out.println("Created Directory");
+							pubKeyFile.createNewFile();
+							System.out.println("Created File");
+					}
+					if(!(privKeyFile.exists())){
+						boolean success = new File("users/"+newUsername+"/key").mkdirs();
+							privKeyFile.createNewFile();
+					}
+					
+					//Write the keys to the file
+					RSACrypto.saveToFile("users\\"+userNameJTextField.getText()+"\\keys\\"+userNameJTextField.getText()+".pub",publicMod,publicExp);
+					RSACrypto.saveToFile("users\\"+userNameJTextField.getText()+"\\keys\\h"+userNameJTextField.getText()+".priv",privateMod,privateExp);
 					
 					//System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
 					//Send the information to Aegis

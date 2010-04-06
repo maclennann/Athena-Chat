@@ -94,8 +94,8 @@ public class RSACrypto {
 			
 			// Save the keys to their respective files.
 			// TODO Should we do this automatically, or wait until it is called?
-			saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
-			saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
+			//saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
+			//saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
 			
 		}catch(Exception e){
 			System.out.println("An error has occured in 'generateRSAKeyPair'");
