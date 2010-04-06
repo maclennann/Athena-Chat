@@ -391,7 +391,7 @@ class MapTextArea extends JFrame {
 
 	// Write a string to the text area
 	public void writeToTextArea(String message) {
-		// txt.insertString(message);
+		myTA.append(message);
 	}
 
 	// Move the cursor to the end of the ScrollPane
