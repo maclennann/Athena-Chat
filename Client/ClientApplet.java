@@ -14,6 +14,7 @@
  * Creates the window for the client and sets connection variables.
  *
  ****************************************************/
+import java.awt.AWTException;
 import java.awt.Color;
 import java.applet.*;
 import java.awt.*;
@@ -37,6 +38,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLEditorKit;
+import com.inet.jortho.FileUserDictionary;
+import com.inet.jortho.SpellChecker;
 
 import org.w3c.dom.stylesheets.StyleSheet;
 
@@ -56,7 +59,7 @@ public class ClientApplet extends JFrame {
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
-	public JMenuItem connect, disconnect, exit, preferences;
+	public JMenuItem disconnect, exit, preferences;
 	public JPanel panel; // still need this?
 	public JFrame imContentFrame, buddyListFrame;
 	public JTabbedPane imTabbedPane = new JTabbedPane();
@@ -85,11 +88,6 @@ public class ClientApplet extends JFrame {
 		// Create the file menu.
 		file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_A);
-
-		// Create button File -> Connect
-		connect = new JMenuItem("Connect");
-		connect.setMnemonic(KeyEvent.VK_H);
-		file.add(connect);
 
 		// Create button File -> Disconnect
 		disconnect = new JMenuItem("Disconnect");
@@ -123,19 +121,20 @@ public class ClientApplet extends JFrame {
 
 		// TODO Add items to the encryption menu
 
-		// ActionListener to make the connect menu item connect
-		connect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				// Client.connect();
-			}
-		});
-
 		// ActionListener to make the disconnect menu item disconnect
 		disconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				// Clear the Buddy list when disconnected
 				listModel.clear();
 				Client.disconnect();
+				//Get rid of this window and open a new Login Window
+				imContentFrame.dispose();
+				try {
+					ClientLogin newLogin = new ClientLogin();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -316,13 +315,22 @@ class MapTextArea extends JFrame {
 	// All of the JComponents in the tab
 	public JPanel myJPanel;
 	public JTextArea myTA;
-	public JTextField myTF;
+	public JTextField myTF;	
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
-
+		
 	// Constructor
 	MapTextArea(String user) { 
+		
+		 try {
+			//Register the dictionaries for the spellchecker
+			SpellChecker.registerDictionaries( new URL("file", null, ""),"dictionary_en.ortho" );
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 
 		//Create the JPanel and put all of the components in it
 		myJPanel = new JPanel();
@@ -333,11 +341,13 @@ class MapTextArea extends JFrame {
 		myTA.setEditable(false);
 		myTA.setLineWrap(true);
 		myTA.setWrapStyleWord(true);
+        // enable the spell checking on the text component with all features
+
 
 		JScrollPane mySP = new JScrollPane(myTA);
 		mySP.setBounds(10,10,559,450);
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		mySP.setOpaque(true);
+		mySP.setOpaque(true);    
 		myJPanel.add(mySP);
 
 		//Create the textfield
@@ -345,6 +355,9 @@ class MapTextArea extends JFrame {
 		myTF.setBounds(10,469,560,30);
 		myJPanel.add(myTF);
 
+		//Register the spell checker in the 
+		SpellChecker.register(myTF, true, true, true);
+		
 		username = user;
 
 		//Add an actionlistener to the textfield to send messages
@@ -405,3 +418,4 @@ class MapTextArea extends JFrame {
 		myTF.setText("");
 	}
 }
+
