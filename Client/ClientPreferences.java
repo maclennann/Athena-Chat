@@ -1,11 +1,20 @@
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.awt.TrayIcon;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -53,14 +62,21 @@ public class ClientPreferences extends JPanel {
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
 	public DrawingPanel generalDrawingPanel;		
-	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray");
+	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", true);
 	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab");
 	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check");
+	public int systemTrayVal = -1;
+	public int allowESCVal = -1;
+	public boolean systemTrayFlag = false;
+	public boolean allowESCFlag = false;
+	public boolean enableSpellCheckFlag = false;
 	
 	//Define components for the Notifications Menu Panel
 	public DrawingPanel notificationDrawingPanel;
 	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications");
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable sounds");
+	public boolean enableNotificationsFlag = false;
+	public boolean enableSoundsFlag = false;
 
 	//Define components for the Encryption Menu Panel
 	public DrawingPanel encryptionDrawingPanel;
@@ -73,6 +89,10 @@ public class ClientPreferences extends JPanel {
 	public JButton toggleBoldJButton = new JButton("Bold");
 	public JButton toggleItalicsJButton = new JButton("Italics");
 	public JButton toggleUnderlineJButton = new JButton("Underlined");
+	public boolean selectFontFlag = false;
+	public boolean toggleBoldFlag = false;
+	public boolean toggleItalicsFlag = false;
+	public boolean toggleUnderlineFlag = false;
 	
 	//Define components for the Theme Menu Panel
 	public DrawingPanel themeDrawingPanel;
@@ -84,7 +104,6 @@ public class ClientPreferences extends JPanel {
 	//Constructor
 	ClientPreferences() { 
 		
-
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
 		preferences.setSize(800,600);
@@ -109,6 +128,28 @@ public class ClientPreferences extends JPanel {
 		apply.setBounds(700,525,75,30);
 		cancel.setBounds(615,525,75,30);
 		
+		//Initialize default button action listeners
+		apply.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				//Apply all changes
+				try {
+					setGeneralSettings(systemTrayVal, systemTrayFlag, allowESCFlag, enableSpellCheckFlag);
+					setNotificationSettings(enableNotificationsFlag, enableSoundsFlag);
+					setFormattingSettings(selectFontFlag, toggleBoldFlag, toggleItalicsFlag, toggleUnderlineFlag);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+		
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				preferences.dispose();
+			}
+		});
+
 		//Initialize the JPanels for each of the options
 		//General Menu Section
 		/*************************************************/		
@@ -130,6 +171,30 @@ public class ClientPreferences extends JPanel {
 		generalPanel.add(systemTrayCheckBox);
 		generalPanel.add(allowESCCheckBox);
 		generalPanel.add(enableSpellCheckCheckBox);
+		
+		systemTrayCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					systemTrayVal = 1;
+				else
+					systemTrayVal = 0;
+				systemTrayFlag = true;
+			}
+		});
+		allowESCCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					allowESCVal = 1;
+				else
+					allowESCVal = 0;
+				allowESCFlag = true;
+			}
+		});
+		enableSpellCheckCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				enableSpellCheckFlag = true;
+			}
+		});
 		/*************************************************/
 		
 		//Notification Menu Section
@@ -330,4 +395,79 @@ public class ClientPreferences extends JPanel {
 
 	}	
 	
+	private void setGeneralSettings (int systemTrayVal, boolean systemTrayFlag, boolean allowESCFlag, boolean enableSpellCheckFlag) throws AWTException
+	{
+			SystemTray tray = SystemTray.getSystemTray();
+			TrayIcon[] trayArray = tray.getTrayIcons();
+			int tlength = trayArray.length;
+			
+			if(systemTrayVal == 0)
+			{
+				for(int x = 0; x < tlength; x++)
+					tray.remove(trayArray[x]);
+			}
+			if(systemTrayVal == 1)
+			{
+				if(tlength == 0)
+				{
+					Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+					ActionListener exitListener = new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							System.out.println("Exiting...");
+							System.exit(0);
+						}
+					};
+
+					PopupMenu popup = new PopupMenu();
+					MenuItem defaultItem = new MenuItem("Exit");
+					defaultItem.addActionListener(exitListener);
+					popup.add(defaultItem);
+
+					TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
+					trayIcon.setImageAutoSize(true);
+					tray.add(trayIcon);
+				}
+			}
+	
+		if (allowESCFlag)
+		{
+			//Adjust setting
+		}
+		if (enableSpellCheckFlag)
+		{
+			//Adjust setting
+		}
+	}
+	
+	private void setNotificationSettings (boolean enableNotificationsFlag, boolean enableSoundsFlag)
+	{
+		if (enableNotificationsFlag)
+		{
+			//Adjust setting
+		}
+		if (enableSoundsFlag)
+		{
+			//Adjust setting
+		}
+	}
+	
+	private void setFormattingSettings(boolean setFontFlag, boolean toggleBoldFlag, boolean toggleItalicsFlag, boolean toggleUnderlineFlag)
+	{
+		if (setFontFlag)
+		{
+			//Adjust setting
+		}
+		if (toggleBoldFlag)
+		{
+			//Adjust setting
+		}
+		if (toggleItalicsFlag)
+		{
+			//Adjust setting
+		}
+		if (toggleUnderlineFlag)
+		{
+			//Adjust setting
+		}
+	}
 }
