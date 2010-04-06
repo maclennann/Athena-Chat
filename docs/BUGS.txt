@@ -18,6 +18,7 @@ CLIENT:
 		@@ Screenshot URL to follow: http://i.imgur.com/QKRx7.png
 	## In the Preferences window - some of the images don't show up all the time
 		@@ Also - if you open the preferences window more than once - the images don't show up
+		!! RESOLVED: Preference window icon glitch - changed to JLabel instead of DrawingPanel and made nicer borders
 		!! Windows 7 
 SERVER:
 	## When a user disconnects, something does close cleanly causing a lot of exceptions to be printed

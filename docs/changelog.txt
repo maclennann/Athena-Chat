@@ -106,3 +106,11 @@ ChangeLog:
 		@@ Takes in the username and userSocket and places those values into a HashTable called userToSocket
 		
 	!!Depreciated sendToAll Method
+
+04/05/2010:
+	##FINALLY fixed label issue in Preference interface - no more glitch
+		@@ Nicer borders, icons will be replaced with nicer images 		soon
+	##Implemented system tray setting under general options
+	##Established code flow for remaining settings
+		@@ Using flag variables and binary setting values to keep 		track of individual setting changes
+	## Will document code in more detail tomorrow (4/6/10)
