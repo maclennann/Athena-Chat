@@ -101,14 +101,14 @@ public class ClientLogin extends JFrame {
 		cancel.setFont(new Font("Dialog", 1, 10));
 		usernameLabel.setFont(new Font("Dialog", 1, 10));
 		passwordLabel.setFont(new Font("Dialog", 1, 10));
-		registerJLabel.setFont(new Font("Dialog", 1, 10));
+		registerJLabel.setFont(new Font("Dialog", 1, 11));
 
 		//Size the components
-		usernameLabel.setBounds(50,115,100,25);
-		username.setBounds(50,140,100,25);
-		passwordLabel.setBounds(50,165,100,25);
-		password.setBounds(50,190,100,25);
-		registerJLabel.setBounds(55,210,100,25);
+		usernameLabel.setBounds(50,105,100,25);
+		username.setBounds(50,130,100,25);
+		passwordLabel.setBounds(50,155,100,25);
+		password.setBounds(50,180,100,25);
+		registerJLabel.setBounds(55,210,90,25);
 		cancel.setBounds(10,235,75,30);
 		connect.setBounds(105,235,75,30);
 		logo.setBounds(60,10,100,100);
