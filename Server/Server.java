@@ -117,6 +117,7 @@ public class Server
 					//DO nothing
 				} else { 
 					authentication.put(username, hashedPassword);
+					System.out.println("Inputting username and password into the hashtable\n" + username +  "\n" + hashedPassword);
 				}
 			}
 		
