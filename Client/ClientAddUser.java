@@ -150,13 +150,15 @@ public class ClientAddUser extends JPanel {
 					File pubKeyFile = new File("user/"+newUsername+"/key/"+newUsername+".pub");
 					File privKeyFile = new File("user/"+newUsername+"/key/"+newUsername+".priv");
 					if(!(pubKeyFile.exists())){
-						boolean success = new File("users/"+newUsername+"/key").mkdirs();
+						boolean success = new File("user/"+newUsername+"/key").mkdirs();
+							if(success) { 
 							System.out.println("Created Directory");
 							pubKeyFile.createNewFile();
 							System.out.println("Created File");
+							}
 					}
 					if(!(privKeyFile.exists())){
-						boolean success = new File("users/"+newUsername+"/key").mkdirs();
+						boolean success = new File("user/"+newUsername+"/key").mkdirs();
 							privKeyFile.createNewFile();
 					}
 					

@@ -195,17 +195,18 @@ public class ClientApplet extends JFrame {
 		// MouseListener for the removeUser image
 		MouseListener removeBuddyMouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				JList theList = (JList) userBox;
-				try {
-
+				
+				try {				
+					JList theList = (JList) userBox;
+					String[] usernames = Client.returnBuddyListArray();
+					
 					// Find out what was double-clicked
 					int index = theList.locationToIndex(mouseEvent.getPoint());
-					if (index >= 0) {
+					System.out.println(index);
+					if (index > 0) {
 
 						// Get the buddy that was double-clicked
-						Object o = theList.getModel().getElementAt(index);
-
-						String[] usernames = Client.returnBuddyListArray();
+						Object o = theList.getModel().getElementAt(index);						
 
 						ArrayList<String> list = new ArrayList<String>(Arrays
 								.asList(usernames));
@@ -215,12 +216,64 @@ public class ClientApplet extends JFrame {
 
 						// Print the array back to the file (will overwrite the
 						// previous file
-						BufferedWriter out = new BufferedWriter(new FileWriter(
-						"buddylist.csv"));
-						for (int x = 0; x < usernames.length; x++)
-							out.write(usernames[x] + "," + "\n");
-						out.close();
+						//Client.writeBuddyListToFile(usernames);
+					}
+					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
+					else {
+						
+						final JFrame removeWindow = new JFrame("Remove user");
+						final JPanel contentPane = new JPanel();
+						final JComboBox listOfUsersJComboBox = new JComboBox();
+						final JButton removeJButton, cancelJButton;
+						removeJButton = new JButton("Remove");
+						cancelJButton = new JButton("Cancel");
+						
+						contentPane.setLayout(null);
+						
+						removeWindow.setSize(200,200);	
+						listOfUsersJComboBox.setBounds(45,40,100,25);
+						removeJButton.setBounds(45,75,100,25);
+						cancelJButton.setBounds(45,115,100,25);
+					
+						for(int x=0; x<usernames.length;x++) listOfUsersJComboBox.addItem(usernames[x]);
+						
+						contentPane.add(listOfUsersJComboBox);
+						contentPane.add(removeJButton);
+						contentPane.add(cancelJButton);
+						removeWindow.add(contentPane);
+						removeWindow.setVisible(true);
+						
+						removeJButton.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent event){
+								try {
+									String[] usernames = Client.returnBuddyListArray();
+									
+									Object o = listOfUsersJComboBox.getSelectedItem();
+									ArrayList<String> list = new ArrayList<String>(Arrays
+											.asList(usernames));
+									list.removeAll(Arrays.asList(o));
+									usernames = list.toArray(new String[0]);
+									buddySignOff(o.toString());
 
+									// Print the array back to the file (will overwrite the
+									// previous file
+									//Client.writeBuddyListToFile(usernames);
+																	
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+
+							}
+						});
+						
+						cancelJButton.addActionListener(new ActionListener() { 
+							public void actionPerformed(ActionEvent event) {
+								removeWindow.dispose();
+							}
+						});
+						
+						
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
