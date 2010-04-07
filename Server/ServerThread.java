@@ -200,9 +200,9 @@ public class ServerThread extends Thread
 			System.out.println("Username received: " + findUser);
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToSocket.containsKey(findUser))) { 
-				sendSystemMessage(username,"1");
+				sendMessage(username, "CheckUserStatusResult", "1");
 				System.out.println("(Online)\n");
-			} else { sendSystemMessage(username,"0");
+			} else { sendMessage(username, "CheckUserStatusResult", "0");
 			System.out.println("(Offline)\n");
 			} 
 		} catch ( Exception e ) { 
@@ -332,8 +332,9 @@ public class ServerThread extends Thread
 			dout.writeUTF(fromUser);
 			dout.writeUTF(message);
 		} catch( IOException ie ) { System.out.println( ie ); }
+		System.out.println("message sent, i think");
 	}
-
+	
 	//Send system Messages to selected user
 	void sendSystemMessage(String toUser, String message) { 
 		Socket foundSocket = null;

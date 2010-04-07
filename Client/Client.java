@@ -73,7 +73,9 @@ public class Client
 	static Thread listeningProcedure;
 
 	//If the client is connect to the server
-	static int connected = 0;	
+	static int connected = 0;
+	
+	public static String userNameToCheck = null;
 
 	//Exit the program
 	public static void exit(){
@@ -216,6 +218,12 @@ public class Client
 			if(fromUser.equals("CheckUserStatus"))
 			{
 				System.out.println(message);
+				dout.writeUTF(userNameToCheck);
+			}
+			if(fromUser.equals("CheckUserStatusResult"))
+			{
+				int result = Integer.parseInt(message);
+				clientResource.mapUserStatus(userNameToCheck, result);
 			}
 
 			//Create buddy list entry for user sign on
@@ -513,24 +521,15 @@ public class Client
 	}
 	public static void checkUserStatus(String findUserName, String checkStatusFlag) {
 		try {
-			DataInputStream din2 = new DataInputStream(socket.getInputStream());
+			userNameToCheck = findUserName;
+			//DataInputStream din = new DataInputStream(socket.getInputStream());
 			System.out.println("Checking availability for user: "+findUserName);
 			//Initialize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			//First contact with Aegis!
 			systemMessage("003");
-			//Listen for the incoming Acknowledge message
-			System.out.println("Message received from server: " + din2.readUTF().toString());
-			//Go ahead and send Aegis the user name we want to find 
-			dout.writeUTF(findUserName);
-			System.out.println("Username sent - now listening for result...");
-			//Grab result
-			result = Integer.parseInt(din2.readUTF());
-			//Print result 
-			System.out.println("Result for user " + findUserName + " is " + result + ".");
-			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
-			clientResource.mapUserStatus(findUserName, result);
+			
 			System.out.println("HAIII");
 			//listeningProcedure.start();
 
