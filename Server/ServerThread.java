@@ -183,7 +183,7 @@ public class ServerThread extends Thread
 			System.out.println("(Offline)\n");
 			} 
 		} catch ( Exception e ) { 
-			System.out.println(e);
+			e.printStackTrace();
 		} 
 	}
 
