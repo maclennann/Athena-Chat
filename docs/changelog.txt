@@ -6,7 +6,12 @@ ChangeLog:
 	## Implemented Splash screen
 	## Implemented SignOn and SignOff sounds
 	## NEW CLASS: ClientSplash (implements the splashscreen)
-
+	## ADDED: Drop down menu for removing contacts from contact list
+	## PREFERENCE INTERFACE - Completed implementation of general settings 	(system tray, esc to close tab, spell check)
+	## FIXED: Tab focus now set to text field any time a new tab is 	created or current tab is selected
+	## FIXED: Scroll position set to bottom of text area without selecting 	all text every time
+	## Added close button to all conversation tabs
+	## Added labels to add and remove contact buttons
 
 04/05/2010:
 	##FINALLY fixed label issue in Preference interface - no more glitch
