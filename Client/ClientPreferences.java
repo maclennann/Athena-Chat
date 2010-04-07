@@ -65,7 +65,7 @@ public class ClientPreferences extends JPanel {
 	//Define components for the General Menu Panel
 	public JLabel generalLabel = new JLabel();
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", true);
-	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab", true);
+	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab");
 	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check", true);
 	public int systemTrayVal = -1;
 	public int allowESCVal = -1;
@@ -113,7 +113,7 @@ public class ClientPreferences extends JPanel {
 		preferences.setResizable(true);
 		contentPane.setLayout(null);
 		
-		//Initalize borders
+		//Initialize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
 		Border labelBorder = BorderFactory.createRaisedBevelBorder();
 		Border extraBorder = BorderFactory.createLoweredBevelBorder();

@@ -36,6 +36,7 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import javax.print.attribute.AttributeSet;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
@@ -54,7 +55,7 @@ import java.util.Hashtable;
 public class ClientApplet extends JFrame {
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();;
 
-	// Define the listmodel for the JList
+	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
 
 	// Components for the visual display of the chat windows
@@ -84,7 +85,7 @@ public class ClientApplet extends JFrame {
 		// This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application");
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		imContentFrame.setSize(800, 683);
+		imContentFrame.setSize(830, 683);
 		imContentFrame.setResizable(true);
 
 		// Create the file menu.
@@ -101,7 +102,7 @@ public class ClientApplet extends JFrame {
 		exit.setMnemonic(KeyEvent.VK_H);
 		file.add(exit);
 
-		// Add the file menu to the menubar
+		// Add the file menu to the menu bar
 		menuBar.add(file);
 
 		// Create the edit menu.
@@ -132,7 +133,7 @@ public class ClientApplet extends JFrame {
 				//Get rid of this window and open a new Login Window
 				imContentFrame.dispose();
 				try {
-					ClientLogin newLogin = new ClientLogin();
+					new ClientLogin();
 				} catch (AWTException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -150,35 +151,43 @@ public class ClientApplet extends JFrame {
 		// ActionListener to make the exit menu item exit
 		preferences.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				ClientPreferences pref = new ClientPreferences();
+				new ClientPreferences();
 			}
 		});
 
 		// Why is this commented out?
 		// frame.setJMenuBar(menuBar);
 
-		// Adds the buddylist to a scroll pane
-		JScrollPane buddylist = new JScrollPane(userBox);
-		buddylist.setBounds(595, 10, 195, 538);
+		// Adds the contact list to a scroll pane
+		JScrollPane contactList = new JScrollPane(userBox);
+		contactList.setBounds(600, 10, 195, 538);
 
 		// Adds the Icons to Pane
 		// TODO Add ActionListeners to the images to bring up the add/remove
 		// user windows
-		Image addUserIcon = Toolkit.getDefaultToolkit().getImage(
-		"../images/addUser.png");
-		Image removeUserIcon = Toolkit.getDefaultToolkit().getImage(
-		"../images/removeUser.png");
-		DrawingPanel addBuddyPanel = new DrawingPanel(addUserIcon);
-		DrawingPanel removeBuddyPanel = new DrawingPanel(removeUserIcon);
-		addBuddyPanel.setVisible(true);
-		removeBuddyPanel.setVisible(true);
-		addBuddyPanel.setBounds(595, 558, 41, 50);
-		removeBuddyPanel.setBounds(650, 558, 41, 50);
+		ImageIcon addUserIcon = new ImageIcon("../images/addUser.png");
+		ImageIcon removeUserIcon = new ImageIcon("../images/removeUser.png");
+		JLabel addContactLabel = new JLabel();
+		JLabel removeContactLabel = new JLabel();;
+		addContactLabel.setIcon(addUserIcon);
+		addContactLabel.setText("Add Contact");
+		addContactLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		addContactLabel.setHorizontalTextPosition(JLabel.CENTER);
+		
+		removeContactLabel.setIcon(removeUserIcon);
+		removeContactLabel.setText("Remove Contact");
+		removeContactLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		removeContactLabel.setHorizontalTextPosition(JLabel.CENTER);
+		
+		addContactLabel.setVisible(true);
+		removeContactLabel.setVisible(true);
+		addContactLabel.setBounds(600, 550, 100, 50);
+		removeContactLabel.setBounds(700, 550, 100, 50);
 
 		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				String usernameToAdd = JOptionPane.showInputDialog("Input the username you'd like to add to your buddylist");
+				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
 				try {
 					Client.buddyList(usernameToAdd);
 					Client.instanciateBuddyList(usernameToAdd);
@@ -188,7 +197,7 @@ public class ClientApplet extends JFrame {
 				}
 			}
 		};
-		addBuddyPanel.addMouseListener(addBuddyMouseListener);
+		addContactLabel.addMouseListener(addBuddyMouseListener);
 
 		// MouseListener for the removeUser image
 		MouseListener removeBuddyMouseListener = new MouseAdapter() {
@@ -279,16 +288,16 @@ public class ClientApplet extends JFrame {
 				}
 			}
 		};
-		removeBuddyPanel.addMouseListener(removeBuddyMouseListener);
+		removeContactLabel.addMouseListener(removeBuddyMouseListener);
 
 		// MouseListener for the BuddyList
-		// Opens a tab or focuses a tab when a username in the buddylist is
+		// Opens a tab or focuses a tab when a user name in the contact list is
 		// double-clicked
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				JList theList = (JList) mouseEvent.getSource();
 
-				// If it was doubleclicked
+				// If it was double-clicked
 				if (mouseEvent.getClickCount() == 2) {
 
 					// Find out what was double-clicked
@@ -301,18 +310,26 @@ public class ClientApplet extends JFrame {
 						// Create a tab for the conversation if it doesn't exist
 						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
 							makeTab(o.toString());
+							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+							Component[] currentTabComponents = currentTab.getComponents();
+							Component textFieldToFocus = currentTabComponents[1];
+							textFieldToFocus.requestFocusInWindow();
 						} else {
-							// Focus the tab for this username if it already
+							// Focus the tab for this user name if it already
 							// exists
 							imTabbedPane.setSelectedIndex(imTabbedPane
 									.indexOfTab(o.toString()));
+							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+							Component[] currentTabComponents = currentTab.getComponents();
+							Component textFieldToFocus = currentTabComponents[1];
+							textFieldToFocus.requestFocusInWindow();
 						}
 					}
 				}
 			}
 		};
 
-		// Add the mouselistener to the buddylist
+		// Add the mouseListener to the contact list
 		userBox.addMouseListener(mouseListener);
 		userBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -322,11 +339,10 @@ public class ClientApplet extends JFrame {
 		// Generate panel by adding appropriate components
 		panel = new JPanel();
 		panel.setLayout(null);
-		panel.add(buddylist);
-		panel.add(addBuddyPanel);
-		panel.add(removeBuddyPanel);
+		panel.add(contactList);
+		panel.add(addContactLabel);
+		panel.add(removeContactLabel);
 		panel.add(imTabbedPane);
-		// panel.add(g);
 
 		// Initialize window frame
 		imContentFrame.setJMenuBar(menuBar);
@@ -336,15 +352,18 @@ public class ClientApplet extends JFrame {
 	}
 
 	// Make a tab for a conversation
+	@SuppressWarnings("unchecked")
 	public void makeTab(String user) {
-		// Create a hashtable mapping a username to the jpanel in a tab
+		// Create a hash table mapping a user name to the JPanel in a tab
 		tabPanels.put(user, new MapTextArea(user));
-		// Make a temporary object for that jpanel
+		// Make a temporary object for that JPanel
 		MapTextArea temp = (MapTextArea) tabPanels.get(user);
-		// Actually pull the jpanel out
+		// Actually pull the JPanel out
 		JPanel tempPanel = temp.getJPanel();
-		// Create a tab with that jpanel on it
+		// Create a tab with that JPanel on it
 		imTabbedPane.addTab(user, null, tempPanel, "Something");
+		// Add close button to tab
+		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(user));
 		// Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
 	}
@@ -377,7 +396,7 @@ public class ClientApplet extends JFrame {
 		}
 	}
 
-	// Makes a new hashtable with user's online status
+	// Makes a new hash table with user's online status
 	public void mapUserStatus(String username, int status) {
 		System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
@@ -390,7 +409,7 @@ public class ClientApplet extends JFrame {
 // conversation's tab
 class MapTextArea extends JFrame {
 
-	// The username associated with the tab
+	// The user name associated with the tab
 	String username = null;
 
 	// All of the JComponents in the tab
@@ -405,7 +424,7 @@ class MapTextArea extends JFrame {
 	MapTextArea(String user) { 
 		
 		 try {
-			//Register the dictionaries for the spellchecker
+			//Register the dictionaries for the spell checker
 			 SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "en" );
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -417,7 +436,7 @@ class MapTextArea extends JFrame {
 		myJPanel = new JPanel();
 		myJPanel.setLayout(null);
 
-		//Create the textarea and the scrollpane around it
+		//Create the text area and the scroll pane around it
 		myTA = new JTextArea();
 		myTA.setEditable(false);
 		myTA.setLineWrap(true);
@@ -431,7 +450,7 @@ class MapTextArea extends JFrame {
 		mySP.setOpaque(true);    
 		myJPanel.add(mySP);
 
-		//Create the textfield
+		//Create the text field
 		myTF = new JTextField();
 		myTF.setBounds(10,469,560,30);
 		myJPanel.add(myTF);
@@ -441,7 +460,7 @@ class MapTextArea extends JFrame {
 		
 		username = user;
 
-		//Add an actionlistener to the textfield to send messages
+		//Add an actionListener to the text field to send messages
 		myTF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				Client.processMessage(myTF.getText());
@@ -453,12 +472,12 @@ class MapTextArea extends JFrame {
 		myTA.setFont(font);
 	}
 
-	// Set the username associated with the tab
+	// Set the user name associated with the tab
 	public void setUserName(String user) {
 		username = user;
 	}
 
-	// Get the username associated with the tab
+	// Get the user name associated with the tab
 	public String getUserName() {
 		return username;
 	}
@@ -494,9 +513,34 @@ class MapTextArea extends JFrame {
 		myTA.selectAll();
 	}
 
-	// Clear the text out of the textfield
+	// Clear the text out of the text field
 	public void clearTextField() {
 		myTF.setText("");
 	}
 }
+
+class CloseTabButton extends JPanel implements ActionListener {
+	  private JTabbedPane pane;
+	  public CloseTabButton(JTabbedPane pane, int index) {
+	    this.pane = pane;
+	    setOpaque(false);
+	    add(new JLabel(
+	        pane.getTitleAt(index),
+	        pane.getIconAt(index),
+	        JLabel.LEFT));
+	    Icon closeIcon = new ImageIcon("../images/close_button.png");
+	    JButton btClose = new JButton(closeIcon);
+	    btClose.setPreferredSize(new Dimension(
+	        closeIcon.getIconWidth(), closeIcon.getIconHeight()));
+	    add(btClose);
+	    btClose.addActionListener(this);
+	    pane.setTabComponentAt(index, this);
+	  }
+	  public void actionPerformed(ActionEvent e) {
+	    int i = pane.indexOfTabComponent(this);
+	    if (i != -1) {
+	      pane.remove(i);
+	    }
+	  }
+	}
 
