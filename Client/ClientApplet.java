@@ -184,7 +184,7 @@ public class ClientApplet extends JFrame {
 		
 		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
-			public void mouseClicked(MouseEvent mouseEvent) {
+			public void mousePressed(MouseEvent mouseEvent) {
 				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
 				try {
 					Client.buddyList(usernameToAdd);
@@ -548,7 +548,7 @@ class MapTextArea extends JFrame {
 	// Move the cursor to the end of the ScrollPane
 	// TODO: Sometimes it shows highlighted text
 	public void moveToEnd() {
-		myTA.selectAll();
+		myTA.setCaretPosition(myTA.getText().length());
 	}
 
 	// Clear the text out of the text field
