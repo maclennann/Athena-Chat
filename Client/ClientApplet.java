@@ -194,9 +194,9 @@ public class ClientApplet extends JFrame {
 					String[] usernames = Client.returnBuddyListArray();
 					
 					// Find out what was double-clicked
-					int index = theList.locationToIndex(mouseEvent.getPoint());
+					int index = theList.getSelectedIndex();
 					System.out.println(index);
-					if (index > 0) {
+					if (index >= 0) {
 
 						// Get the buddy that was double-clicked
 						Object o = theList.getModel().getElementAt(index);						
