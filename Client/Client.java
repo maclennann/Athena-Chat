@@ -256,7 +256,7 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "71.234.132.9", 7777 );
+				socket = new Socket( "192.168.1.117", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -316,7 +316,7 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "71.234.132.9", 7777 );
+				socket = new Socket( "192.168.1.117", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -396,9 +396,21 @@ public class Client
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
 	 */
 	public static void instanciateBuddyList(String username) throws IOException {
-		System.out.println("HAIII");
-		checkUserStatus(username); 
-		
+		//Grab string array of the buddylist.csv file 
+		String[] usernames = returnBuddyListArray();
+
+		//Check entire buddylist and fill hashtable with user online statuses
+		for (int i=0; i < usernames.length; i++) { 
+			System.out.println("Current Buddy To Check: " + usernames[i]);
+			checkUserStatus(usernames[i]); 
+			try {
+				//buddyList(usernames[i]);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} // Let's try to make the buddylist.xml file
+		}
+		//Counter
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
 		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
@@ -410,12 +422,9 @@ public class Client
 				System.out.println("F: " + currentF);
 
 				//If the user is online, add them to your buddylist
-				if (currentE.equals(username) && currentF.equals("1")) { 
+				if (currentF.equals("1")) {
 					System.out.println("Online user:" + currentE);
 					clientResource.newBuddyListItems(currentE);						
-				}
-				else {
-					//offline user
 				}
 			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
 				// TODO Auto-generated catch block
