@@ -219,7 +219,7 @@ public class Client
 						clientResource.buddySignOff(message);
 						//** add this into your application code as appropriate
 						// Open an input stream  to the audio file.
-						InputStream in = new FileInputStream("signOff.wav");
+						InputStream in = new FileInputStream("sounds/signOff.wav");
 						// Create an AudioStream object from the input stream.
 						AudioStream as = new AudioStream(in);         
 						// Use the static class member "player" from class AudioPlayer to play
@@ -258,7 +258,7 @@ public class Client
 							clientResource.newBuddyListItems(message);
 							//** add this into your application code as appropriate
 							// Open an input stream  to the audio file.
-							InputStream in = new FileInputStream("signOn.wav");
+							InputStream in = new FileInputStream("sounds/signOn.wav");
 							// Create an AudioStream object from the input stream.
 							AudioStream as = new AudioStream(in);         
 							// Use the static class member "player" from class AudioPlayer to play
