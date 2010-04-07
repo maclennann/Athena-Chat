@@ -132,7 +132,7 @@ public class ServerThread extends Thread
 
 	//Takes in a recipient and message from this thread's user
 	//and routes the message to the recipient.
-	public void routeMessage(DataInputStream din){
+	public void routeMessage(DataInputStream din) throws NumberFormatException, InterruptedException{
 		try {
 			String toUser=din.readUTF();
 			String message=din.readUTF();
@@ -151,7 +151,7 @@ public class ServerThread extends Thread
 	}
 
 	//Method that handles client to server messages
-	public void systemMessageListener(int eventCode) {
+	public void systemMessageListener(int eventCode) throws InterruptedException {
 
 		switch(eventCode) { 
 		case 000: createUsername();
@@ -165,11 +165,12 @@ public class ServerThread extends Thread
 		}
 	}
 
-	public void negotiateClientStatus() {
+	public void negotiateClientStatus() throws InterruptedException {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
-		//	sendSystemMessage(username, "Access granted. Send me the username.");
+			//sendSystemMessage(username, "Access granted. Send me the username.");
 			dout.writeUTF("Access granted. Send me the username.");
+			Thread.sleep(100);
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username
