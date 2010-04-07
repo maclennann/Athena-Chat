@@ -169,7 +169,19 @@ public class ClientApplet extends JFrame {
 		removeContactLabel.setVisible(true);
 		addContactLabel.setBounds(600, 550, 100, 50);
 		removeContactLabel.setBounds(700, 550, 100, 50);
-
+		
+		imTabbedPane.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				//JList theList = (JList) mouseEvent.getSource();
+				//if (mouseEvent.getClickCount() == 1) {
+					JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+					Component[] currentTabComponents = currentTab.getComponents();
+					Component textFieldToFocus = currentTabComponents[1];
+					textFieldToFocus.requestFocusInWindow();
+				//}
+			}		
+		});
+		
 		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
@@ -396,7 +408,8 @@ public class ClientApplet extends JFrame {
 			// Register all current text fields for spell check
 			for(int x = 0; x < tabCount; x++)
 			{
-				currentTab = (JPanel) imTabbedPane.getTabComponentAt(x);
+				imTabbedPane.setSelectedIndex(x);
+				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				currentTabComponents = currentTab.getComponents();
 				currentTextField = (JTextComponent) currentTabComponents[1];
 				SpellChecker.register(currentTextField, true, true, true);
@@ -409,7 +422,8 @@ public class ClientApplet extends JFrame {
 			// Unregister all current text fields with spell check
 			for(int x = 0; x < tabCount; x++)
 			{
-				currentTab = (JPanel) imTabbedPane.getTabComponentAt(x);
+				imTabbedPane.setSelectedIndex(x);
+				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				currentTabComponents = currentTab.getComponents();
 				currentTextField = (JTextComponent) currentTabComponents[1];
 				SpellChecker.unregister(currentTextField);
@@ -490,7 +504,7 @@ class MapTextArea extends JFrame {
 				Client.processMessage(myTF.getText());
 			}
 		});
-
+		
 		//Set font to Arial
 		Font font = new Font("Arial",Font.PLAIN,17);
 		myTA.setFont(font);
