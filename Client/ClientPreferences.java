@@ -1,6 +1,5 @@
 import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -11,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.TrayIcon;
@@ -23,11 +21,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
@@ -66,7 +60,7 @@ public class ClientPreferences extends JPanel {
 	public JLabel generalLabel = new JLabel();
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", true);
 	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab");
-	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check", true);
+	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check");
 	public int systemTrayVal = -1;
 	public int allowESCVal = -1;
 	public int enableSCVal = -1;
@@ -462,6 +456,14 @@ public class ClientPreferences extends JPanel {
 		if (enableSpellCheckFlag)
 		{
 			//Adjust setting
+			if(enableSCVal == 0)
+			{
+				//Client.clientResource.closeTabWithESC(false);
+			}
+			if(enableSCVal == 1)
+			{
+				//Client.clientResource.closeTabWithESC(true);
+			}
 		}
 	}
 	

@@ -14,39 +14,24 @@
  * Creates the window for the client and sets connection variables.
  *
  ****************************************************/
-import java.awt.AWTException;
-import java.awt.Color;
-import java.applet.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.*;
 import java.net.*;
-import javax.imageio.ImageIO;
-import javax.print.attribute.AttributeSet;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.JTextComponent;
+
 import com.inet.jortho.FileUserDictionary;
 import com.inet.jortho.SpellChecker;
-
-import org.w3c.dom.stylesheets.StyleSheet;
-
-//import com.sun.java.util.jar.pack.Attribute.Layout.Element;
 
 import java.util.Hashtable;
 
@@ -59,6 +44,7 @@ public class ClientApplet extends JFrame {
 	DefaultListModel listModel = new DefaultListModel();
 
 	// Components for the visual display of the chat windows
+	public boolean spellCheckFlag = false;
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption;
@@ -190,7 +176,7 @@ public class ClientApplet extends JFrame {
 				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
 				try {
 					Client.buddyList(usernameToAdd);
-					Client.instanciateBuddyList(usernameToAdd);
+					Client.instanciateBuddyList();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -355,7 +341,7 @@ public class ClientApplet extends JFrame {
 	@SuppressWarnings("unchecked")
 	public void makeTab(String user) {
 		// Create a hash table mapping a user name to the JPanel in a tab
-		tabPanels.put(user, new MapTextArea(user));
+		tabPanels.put(user, new MapTextArea(user, spellCheckFlag));
 		// Make a temporary object for that JPanel
 		MapTextArea temp = (MapTextArea) tabPanels.get(user);
 		// Actually pull the JPanel out
@@ -395,6 +381,42 @@ public class ClientApplet extends JFrame {
 			}
 		}
 	}
+	
+	// Adjust spell check setting in current and future text fields
+	public void setSpellCheck(boolean activated)
+	{
+		// Retrieve necessary tab and component data
+		int tabCount = imTabbedPane.getTabCount();
+		JPanel currentTab;
+		Component[] currentTabComponents;
+		JTextComponent currentTextField;
+		if(activated)
+		{
+			// Register all current text fields for spell check
+			for(int x = 0; x < tabCount; x++)
+			{
+				currentTab = (JPanel) imTabbedPane.getTabComponentAt(x);
+				currentTabComponents = currentTab.getComponents();
+				currentTextField = (JTextComponent) currentTabComponents[1];
+				SpellChecker.register(currentTextField, true, true, true);
+			}
+			// Enable future spell check registration
+			spellCheckFlag = true;
+		}
+		else
+		{
+			// Unregister all current text fields with spell check
+			for(int x = 0; x < tabCount; x++)
+			{
+				currentTab = (JPanel) imTabbedPane.getTabComponentAt(x);
+				currentTabComponents = currentTab.getComponents();
+				currentTextField = (JTextComponent) currentTabComponents[1];
+				SpellChecker.unregister(currentTextField);
+			}
+			// Disable future spell check registration
+			spellCheckFlag = false;
+		}
+	}
 
 	// Makes a new hash table with user's online status
 	public void mapUserStatus(String username, int status) {
@@ -421,7 +443,7 @@ class MapTextArea extends JFrame {
 	int tabIndex = -1;
 		
 	// Constructor
-	MapTextArea(String user) { 
+	MapTextArea(String user, boolean spellCheckFlag) { 
 		
 		 try {
 			//Register the dictionaries for the spell checker
@@ -455,8 +477,9 @@ class MapTextArea extends JFrame {
 		myTF.setBounds(10,469,560,30);
 		myJPanel.add(myTF);
 
-		//Register the spell checker in the 
-		SpellChecker.register(myTF, true, true, true);
+		//Register the spell checker in the text field
+		if (spellCheckFlag)
+			SpellChecker.register(myTF, true, true, true);
 		
 		username = user;
 
