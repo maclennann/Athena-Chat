@@ -355,13 +355,7 @@ public class Client
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < usernames.length; i++) { 
 			System.out.println("Current Buddy To Check: " + usernames[i]);
-			checkUserStatus(usernames[i]); 
-			try {
-				//buddyList(usernames[i]);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} // Let's try to make the buddylist.xml file
+			checkUserStatus(usernames[i]);
 		}
 		//Counter
 		int y=0;
@@ -396,20 +390,9 @@ public class Client
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
 	 */
 	public static void instanciateBuddyList(String username) throws IOException {
-		//Grab string array of the buddylist.csv file 
-		String[] usernames = returnBuddyListArray();
 
-		//Check entire buddylist and fill hashtable with user online statuses
-		for (int i=0; i < usernames.length; i++) { 
-			System.out.println("Current Buddy To Check: " + usernames[i]);
-			checkUserStatus(usernames[i]); 
-			try {
-				//buddyList(usernames[i]);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} // Let's try to make the buddylist.xml file
-		}
+			System.out.println("Current Buddy To Check: " + username);
+			checkUserStatus(username);
 		//Counter
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
@@ -423,8 +406,8 @@ public class Client
 
 				//If the user is online, add them to your buddylist
 				if (currentF.equals("1")) {
-					System.out.println("Online user:" + currentE);
-					clientResource.newBuddyListItems(currentE);						
+					//System.out.println("Online user:" + currentE);
+					clientResource.newBuddyListItems(username);						
 				}
 			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
 				// TODO Auto-generated catch block

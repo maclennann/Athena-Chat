@@ -157,7 +157,7 @@ public class ServerThread extends Thread
 		case 000: createUsername();
 		break;
 		case 001: 
-		System.out.println("Event code received. negotiateClientStatus() run."):
+		System.out.println("Event code received. negotiateClientStatus() run.");
 		negotiateClientStatus();
 		System.out.println("Event code received. negotiateClientStatus() run.");
 		break;
