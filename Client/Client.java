@@ -47,6 +47,9 @@ public class Client
 {
 	//DESCrypto object for cryptography of local files
 	static DESCrypto descrypto;
+	
+	//Splash Screen
+	static ClientSplash screen;
 
 	//Print debug messages?
 	public static int debug=1;
@@ -563,10 +566,49 @@ public class Client
 	public static DataOutputStream returnDOUT() { 
 		return dout;
 	}
+	
+	public void SplashScreenMain() {		
+	    // do something here to simulate the program doing something that
+	    // is time consuming
+	    for (int i = 0; i <= 100; i++)
+	    {
+	      for (long j=0; j<50000; ++j)
+	      {
+	        String poop = " " + (j + i);
+	      }
+	      // run either of these two -- not both
+
+	      //screen.setProgress(i);           // progress bar with no message
+	    }
+	    splashScreenDestruct();
+	    System.exit(0);
+	  }
+
+	  private static void splashScreenDestruct() {
+	    screen.setScreenVisible(false);
+	  }
+
+	  private static void splashScreenInit() {
+	    ImageIcon myImage = new ImageIcon(("splash.jpg"));
+	    screen = new ClientSplash(myImage);
+	    screen.setLocationRelativeTo(null);
+	    screen.setProgressMax(100);
+	    screen.setScreenVisible(true);
+	  }
 	// Create the GUI for the client.
 	public static void main(String[] args) throws AWTException {
-
+		splashScreenInit();
+		 for (int i = 0; i <= 100; i++)
+		    {
+		      for (long j=0; j<50000; ++j)
+		      {
+		        String poop = " " + (j + i);
+		      }
+		      screen.setProgress("Loading:" + i, i);  // progress bar with a message
+		    }      
+		    splashScreenDestruct();
 		//clientResource = new ClientApplet();
 		loginGUI = new ClientLogin();
+		
 	}
 }
