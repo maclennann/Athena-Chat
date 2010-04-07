@@ -251,6 +251,7 @@ public class ClientApplet extends JFrame {
 									// Print the array back to the file (will overwrite the
 									// previous file
 									Client.writeBuddyListToFile(usernames);
+									listOfUsersJComboBox.removeItemAt(listOfUsersJComboBox.getSelectedIndex());
 																	
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
