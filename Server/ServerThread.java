@@ -190,7 +190,8 @@ public class ServerThread extends Thread
 	}
 	
 	public void negotiateClientStatus(String checkUserFlag) {
-		try { 
+		try {
+			System.out.println(username);
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendMessage(username, "CheckUserStatus", "Access granted. Send me the username.");
 			//Listen for the username
