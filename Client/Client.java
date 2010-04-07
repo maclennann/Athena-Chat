@@ -219,11 +219,17 @@ public class Client
 			{
 				System.out.println(message);
 				dout.writeUTF(userNameToCheck);
+				return;
 			}
 			if(fromUser.equals("CheckUserStatusResult"))
 			{
 				int result = Integer.parseInt(message);
 				clientResource.mapUserStatus(userNameToCheck, result);
+				if (result == 1)
+				{
+					clientResource.newBuddyListItems(userNameToCheck);						
+				}
+				return;
 			}
 
 			//Create buddy list entry for user sign on
@@ -315,7 +321,7 @@ public class Client
 								}
 							}});
 				//Instanciate Buddy List
-				instanciateBuddyList();	
+				instantiateBuddyList();	
 				//Start the thread
 				listeningProcedure.start();
 			}
@@ -361,7 +367,7 @@ public class Client
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
 	//DONE 3/30/2010
-	public static void instanciateBuddyList() throws IOException { 	
+	public static void instantiateBuddyList() throws IOException { 	
 		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
 
@@ -402,31 +408,10 @@ public class Client
 	 * @Overloaded
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
 	 */
-	public static void instanciateBuddyList(String usernameToCheck) throws IOException {
+	public static void instantiateBuddyList(String usernameToCheck) throws IOException {
 
 			System.out.println("Current Buddy To Check: " + usernameToCheck);
 			checkUserStatus(usernameToCheck, "PauseThread!");
-		//Counter
-		int y=0;
-		//Loop through the HashTable of available users and place them in the JList
-		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
-			try { 
-				String currentE = e.nextElement().toString();
-				System.out.println("E: " + currentE);
-
-				String currentF = f.nextElement().toString();
-				System.out.println("F: " + currentF);
-
-				//If the user is online, add them to your buddylist
-				if (currentF.equals("1")) {
-					//System.out.println("Online user:" + currentE);
-					clientResource.newBuddyListItems(usernameToCheck);						
-				}
-			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
-				// TODO Auto-generated catch block
-				eix.printStackTrace();
-			} 
-		}
 	}
 
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
