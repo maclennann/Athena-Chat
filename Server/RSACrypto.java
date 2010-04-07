@@ -290,7 +290,7 @@ public class RSACrypto {
 		ObjectInputStream oin = null;
 		try{
 			//Make sure this selects the correct file!
-			oin = new ObjectInputStream(new FileInputStream("keyFileName"));
+			oin = new ObjectInputStream(new FileInputStream(keyFileName));
 			//Grab the m and e values for the RSA key file process
 			BigInteger m = (BigInteger) oin.readObject();
 			BigInteger e = (BigInteger) oin.readObject();
