@@ -213,6 +213,10 @@ public class Client
 				}
 				return;
 			}
+			if(fromUser.equals("CheckUserStatus"))
+			{
+				System.out.println(message);
+			}
 
 			//Create buddy list entry for user sign on
 			if(fromUser.equals("ServerLogOn")) {
@@ -251,8 +255,9 @@ public class Client
 	}
 
 	// Method to connect the user
-	public static void connect(String username, String password) throws InterruptedException, AWTException { 
+	public static void connect(String user_name, String password) throws InterruptedException, AWTException { 
 		//Try to connect with and authenticate to the socket
+		username = user_name;
 		try {
 			try{
 				//Connect to auth server at defined port over socket
@@ -300,9 +305,9 @@ public class Client
 								while(connected ==1) {
 									Client.recvMesg(din);
 								}
-							}});	
+							}});
 				//Instanciate Buddy List
-				instanciateBuddyList();
+				instanciateBuddyList();	
 				//Start the thread
 				listeningProcedure.start();
 			}
@@ -392,7 +397,7 @@ public class Client
 	public static void instanciateBuddyList(String usernameToCheck) throws IOException {
 
 			System.out.println("Current Buddy To Check: " + usernameToCheck);
-			checkUserStatus(usernameToCheck);
+			checkUserStatus(usernameToCheck, "PauseThread!");
 		//Counter
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
@@ -501,6 +506,33 @@ public class Client
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
 			System.out.println("HAIII");
+
+		} catch (Exception e) { 
+			System.out.println(e);
+		}	
+	}
+	public static void checkUserStatus(String findUserName, String checkStatusFlag) {
+		try {
+			DataInputStream din2 = new DataInputStream(socket.getInputStream());
+			System.out.println("Checking availability for user: "+findUserName);
+			//Initialize Result
+			int result = -1;
+			//Run the systemMessage Method to let Aegis know what we're about to do
+			//First contact with Aegis!
+			systemMessage("003");
+			//Listen for the incoming Acknowledge message
+			System.out.println("Message received from server: " + din2.readUTF().toString());
+			//Go ahead and send Aegis the user name we want to find 
+			dout.writeUTF(findUserName);
+			System.out.println("Username sent - now listening for result...");
+			//Grab result
+			result = Integer.parseInt(din2.readUTF());
+			//Print result 
+			System.out.println("Result for user " + findUserName + " is " + result + ".");
+			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
+			clientResource.mapUserStatus(findUserName, result);
+			System.out.println("HAIII");
+			//listeningProcedure.start();
 
 		} catch (Exception e) { 
 			System.out.println(e);

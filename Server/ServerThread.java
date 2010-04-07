@@ -163,6 +163,8 @@ public class ServerThread extends Thread
 		break;
 		case 002: server.sendToAll("ServerLogOn", username);
 		break;
+		case 003: negotiateClientStatus("CheckUserStatus");
+		break;
 		default: return;
 		}
 	}
@@ -171,6 +173,26 @@ public class ServerThread extends Thread
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendSystemMessage(username, "Access granted. Send me the username.");
+			//Listen for the username
+			String findUser = din.readUTF();
+			//Print out the received username
+			System.out.println("Username received: " + findUser);
+			//Check to see if the username is in the current Hashtable, return result
+			if ((server.userToSocket.containsKey(findUser))) { 
+				sendSystemMessage(username,"1");
+				System.out.println("(Online)\n");
+			} else { sendSystemMessage(username,"0");
+			System.out.println("(Offline)\n");
+			} 
+		} catch ( Exception e ) { 
+			e.printStackTrace();
+		} 
+	}
+	
+	public void negotiateClientStatus(String checkUserFlag) {
+		try { 
+			//Acknowledge connection. Make sure we are doing the right thing
+			sendMessage(username, "CheckUserStatus", "Access granted. Send me the username.");
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username

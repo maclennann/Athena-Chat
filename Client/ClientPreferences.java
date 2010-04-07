@@ -129,6 +129,9 @@ public class ClientPreferences extends JPanel {
 		apply.setBounds(700,525,75,30);
 		cancel.setBounds(615,525,75,30);
 		
+		// Set apply button default to disabled until changes are made
+		apply.setEnabled(false);
+		
 		//Initialize default button action listeners
 		apply.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
