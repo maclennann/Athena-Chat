@@ -256,7 +256,7 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "192.168.1.117", 7777 );
+				socket = new Socket( "71.234.132.9", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -316,7 +316,7 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "192.168.1.117", 7777 );
+				socket = new Socket( "71.234.132.9", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -500,7 +500,7 @@ public class Client
 
 	public static void checkUserStatus(String findUserName) {
 		try { 
-			System.out.println("HAIII");
+			System.out.println("Checking availability for user: "+findUserName);
 			//Initalize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do

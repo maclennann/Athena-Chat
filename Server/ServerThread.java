@@ -156,7 +156,9 @@ public class ServerThread extends Thread
 		switch(eventCode) { 
 		case 000: createUsername();
 		break;
-		case 001: negotiateClientStatus();
+		case 001: 
+		System.out.println("Event code received. negotiateClientStatus() run."):
+		negotiateClientStatus();
 		System.out.println("Event code received. negotiateClientStatus() run.");
 		break;
 		case 002: server.sendToAll("ServerLogOn", username);
