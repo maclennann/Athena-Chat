@@ -389,10 +389,10 @@ public class Client
 	 * @Overloaded
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
 	 */
-	public static void instanciateBuddyList(String username) throws IOException {
+	public static void instanciateBuddyList(String usernameToCheck) throws IOException {
 
-			System.out.println("Current Buddy To Check: " + username);
-			checkUserStatus(username);
+			System.out.println("Current Buddy To Check: " + usernameToCheck);
+			checkUserStatus(usernameToCheck);
 		//Counter
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
@@ -407,7 +407,7 @@ public class Client
 				//If the user is online, add them to your buddylist
 				if (currentF.equals("1")) {
 					//System.out.println("Online user:" + currentE);
-					clientResource.newBuddyListItems(username);						
+					clientResource.newBuddyListItems(usernameToCheck);						
 				}
 			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
 				// TODO Auto-generated catch block
@@ -502,7 +502,8 @@ public class Client
 			clientResource.mapUserStatus(findUserName, result);
 			System.out.println("HAIII");
 
-		} catch (java.io.IOException e) { 
+		} catch (Exception e) { 
+			System.out.println(e);
 		}	
 	}	
 
