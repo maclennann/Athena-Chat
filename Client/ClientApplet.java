@@ -181,7 +181,7 @@ public class ClientApplet extends JFrame {
 				String usernameToAdd = JOptionPane.showInputDialog("Input the username you'd like to add to your buddylist");
 				try {
 					Client.buddyList(usernameToAdd);
-					Client.instanciateBuddyList();
+					Client.instanciateBuddyList(usernameToAdd);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
