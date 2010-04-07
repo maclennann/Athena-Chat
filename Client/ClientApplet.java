@@ -185,13 +185,20 @@ public class ClientApplet extends JFrame {
 		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
 			public void mousePressed(MouseEvent mouseEvent) {
-				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
+				String usernameToAdd = "";
+				usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
+				
 				try {
-					Client.buddyList(usernameToAdd);
-					Client.instantiateBuddyList(usernameToAdd);
+					System.out.println("USERNAMEOADD: "+usernameToAdd+" ddddd");
+					if(!usernameToAdd.equals("")){
+						System.out.println("Username isn't null.");
+						Client.buddyList(usernameToAdd);
+						Client.instantiateBuddyList(usernameToAdd);
+					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println("They didn't choose a user to add. NBD.");
+					//e.printStackTrace();
 				}
 			}
 		};
