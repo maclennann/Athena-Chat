@@ -37,6 +37,11 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.applet.*;
+import  sun.audio.*;    //import the sun.audio package
+import  java.io.*;
+
+
 
 public class Client
 {
@@ -203,6 +208,7 @@ public class Client
 				print.writeToTextArea(message+"\n");
 				return;
 			}
+			
 			//Remove user from Buddylist
 			if(fromUser.equals("ServerLogOff")) {
 				//Check to see if the user is in your buddy list, if not, don't care
@@ -213,6 +219,14 @@ public class Client
 						clientResource.buddySignOff(message);
 					}
 				}
+				//** add this into your application code as appropriate
+				// Open an input stream  to the audio file.
+				InputStream in = new FileInputStream("signOff.mp3");
+				// Create an AudioStream object from the input stream.
+				AudioStream as = new AudioStream(in);         
+				// Use the static class member "player" from class AudioPlayer to play
+				// clip.
+				AudioPlayer.player.start(as);            
 				return;
 			}
 			if(fromUser.equals("CheckUserStatus"))
@@ -243,6 +257,14 @@ public class Client
 							clientResource.newBuddyListItems(message);
 						}
 					}
+					//** add this into your application code as appropriate
+					// Open an input stream  to the audio file.
+					InputStream in = new FileInputStream("signOn.wav");
+					// Create an AudioStream object from the input stream.
+					AudioStream as = new AudioStream(in);         
+					// Use the static class member "player" from class AudioPlayer to play
+					// clip.
+					AudioPlayer.player.start(as);     
 					return;
 
 				}
