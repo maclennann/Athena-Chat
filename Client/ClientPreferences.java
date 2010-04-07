@@ -144,7 +144,7 @@ public class ClientPreferences extends JPanel {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				apply.setEnabled(false);
 			}
 		});
 		
@@ -181,6 +181,7 @@ public class ClientPreferences extends JPanel {
 		
 		systemTrayCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
 				if (e.getStateChange() == ItemEvent.SELECTED)
 					systemTrayVal = 1;
 				else
@@ -190,6 +191,7 @@ public class ClientPreferences extends JPanel {
 		});
 		allowESCCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
 				if (e.getStateChange() == ItemEvent.SELECTED)
 					allowESCVal = 1;
 				else
@@ -199,6 +201,7 @@ public class ClientPreferences extends JPanel {
 		});
 		enableSpellCheckCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
 				if (e.getStateChange() == ItemEvent.SELECTED)
 					enableSCVal = 1;
 				else

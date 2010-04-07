@@ -221,7 +221,7 @@ public class Client
 				}
 				//** add this into your application code as appropriate
 				// Open an input stream  to the audio file.
-				InputStream in = new FileInputStream("signOff.mp3");
+				InputStream in = new FileInputStream("signOff.wav");
 				// Create an AudioStream object from the input stream.
 				AudioStream as = new AudioStream(in);         
 				// Use the static class member "player" from class AudioPlayer to play
