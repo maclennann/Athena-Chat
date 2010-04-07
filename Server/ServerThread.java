@@ -139,7 +139,7 @@ public class ServerThread extends Thread
 
 			//Is the message an eventcode meant for the server?
 			if (toUser.equals("Aegis")) { 
-				if(debug==1)System.out.println("Server eventcode detected!");
+				//if(debug==1)System.out.println("Server eventcode detected!");
 				systemMessageListener(Integer.parseInt(message));
 				return;
 			}else { 
@@ -159,7 +159,7 @@ public class ServerThread extends Thread
 		case 001: 
 		System.out.println("Event code received. negotiateClientStatus() run.");
 		negotiateClientStatus();
-		System.out.println("Event code received. negotiateClientStatus() run.");
+		//System.out.println("Event code received. negotiateClientStatus() run.");
 		break;
 		case 002: server.sendToAll("ServerLogOn", username);
 		break;
