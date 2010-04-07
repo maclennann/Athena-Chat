@@ -217,16 +217,17 @@ public class Client
 					if(usernames[x].equals(message)) { 
 						//We know that the buddy is in his/her buddy list! 
 						clientResource.buddySignOff(message);
+						//** add this into your application code as appropriate
+						// Open an input stream  to the audio file.
+						InputStream in = new FileInputStream("signOff.wav");
+						// Create an AudioStream object from the input stream.
+						AudioStream as = new AudioStream(in);         
+						// Use the static class member "player" from class AudioPlayer to play
+						// clip.
+						AudioPlayer.player.start(as);   
 					}
 				}
-				//** add this into your application code as appropriate
-				// Open an input stream  to the audio file.
-				InputStream in = new FileInputStream("signOff.wav");
-				// Create an AudioStream object from the input stream.
-				AudioStream as = new AudioStream(in);         
-				// Use the static class member "player" from class AudioPlayer to play
-				// clip.
-				AudioPlayer.player.start(as);            
+         
 				return;
 			}
 			if(fromUser.equals("CheckUserStatus"))
@@ -255,17 +256,17 @@ public class Client
 						if(usernames[x].equals(message)) { 
 							//We know that the buddy is in his/her buddy list! 
 							clientResource.newBuddyListItems(message);
+							//** add this into your application code as appropriate
+							// Open an input stream  to the audio file.
+							InputStream in = new FileInputStream("signOn.wav");
+							// Create an AudioStream object from the input stream.
+							AudioStream as = new AudioStream(in);         
+							// Use the static class member "player" from class AudioPlayer to play
+							// clip.
+							AudioPlayer.player.start(as);   
 						}
 					}
-					//** add this into your application code as appropriate
-					// Open an input stream  to the audio file.
-					InputStream in = new FileInputStream("signOn.wav");
-					// Create an AudioStream object from the input stream.
-					AudioStream as = new AudioStream(in);         
-					// Use the static class member "player" from class AudioPlayer to play
-					// clip.
-					AudioPlayer.player.start(as);     
-					return;
+  					return;
 
 				}
 			}
