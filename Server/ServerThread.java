@@ -168,9 +168,7 @@ public class ServerThread extends Thread
 	public void negotiateClientStatus() throws InterruptedException {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
-			//sendSystemMessage(username, "Access granted. Send me the username.");
-			dout.writeUTF("Access granted. Send me the username.");
-			Thread.sleep(100);
+			sendSystemMessage(username, "Access granted. Send me the username.");
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username
