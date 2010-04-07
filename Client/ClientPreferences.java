@@ -196,6 +196,10 @@ public class ClientPreferences extends JPanel {
 		});
 		enableSpellCheckCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e){
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					enableSCVal = 1;
+				else
+					enableSCVal = 0;
 				enableSpellCheckFlag = true;
 			}
 		});
@@ -458,11 +462,11 @@ public class ClientPreferences extends JPanel {
 			//Adjust setting
 			if(enableSCVal == 0)
 			{
-				//Client.clientResource.closeTabWithESC(false);
+				Client.clientResource.setSpellCheck(false);
 			}
 			if(enableSCVal == 1)
 			{
-				//Client.clientResource.closeTabWithESC(true);
+				Client.clientResource.setSpellCheck(true);
 			}
 		}
 	}
