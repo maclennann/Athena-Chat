@@ -167,7 +167,7 @@ public class ServerThread extends Thread
 		}
 	}
 
-	public void negotiateClientStatus() throws InterruptedException {
+	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendSystemMessage(username, "Access granted. Send me the username.");
@@ -182,7 +182,9 @@ public class ServerThread extends Thread
 			} else { sendSystemMessage(username,"0");
 			System.out.println("(Offline)\n");
 			} 
-		} catch ( java.io.IOException e ) { } 
+		} catch ( Exception e ) { 
+			System.out.println(e);
+		} 
 	}
 
 	//TODO Make this work better.
