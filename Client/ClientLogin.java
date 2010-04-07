@@ -59,6 +59,7 @@ public class ClientLogin extends JFrame {
 	JLabel logo = new JLabel(); 
 
 
+	
 	//Define an icon for the system tray icon
 	public TrayIcon trayIcon;
 
@@ -129,11 +130,13 @@ public class ClientLogin extends JFrame {
 			public void actionPerformed(ActionEvent event){
 				//Ya'll like some hash?
 				try {
+
 					Client.setUsername(username.getText());
 					String passwordToHash = new String(password.getPassword());
 					String hashedPassword = computeHash(passwordToHash).toString();
 					Client.connect(username.getText(), hashedPassword);
-					login.setVisible(false);									
+					login.setVisible(false);
+
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -163,6 +166,7 @@ public class ClientLogin extends JFrame {
 		login.setContentPane(contentPane);
 		login.setVisible(true);
 	}
+
 
 	//This will return the hashed input string
 	public static String computeHash(String toHash) throws Exception { 
