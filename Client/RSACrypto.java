@@ -110,7 +110,7 @@ public class RSACrypto {
 // using public and private keys stored on the hard drive
 	// Encrypts the given data with the public key in ./public.key
 	// TODO Perhaps this should change back to taking in a filename?
-	public static byte[] rsaEncrypt(byte[] data) {
+	/*public static byte[] rsaEncrypt(byte[] data) {
 		try{
 			// Grab the key from this file 
 			PublicKey pubKey = readPubKeyFromFile("/public.key");
@@ -143,7 +143,7 @@ public class RSACrypto {
 			System.out.println("An error has occured in 'rsaDecrypt'");e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 	
 	
@@ -266,7 +266,7 @@ public class RSACrypto {
 //----------------------------------
 // The following two methods read public and private keys from files of the hard disk.
 	//This method returns the public key from the users pubkey file
-	static PublicKey readPubKeyFromFile(String keyFileName) throws IOException {
+	static RSAPublicKeySpec readPubKeyFromFile(String keyFileName) throws IOException {
 		//Define the name of the file
 		//MAKE sure it's the same as the one we're looking for!
 		ObjectInputStream oin = new ObjectInputStream(new FileInputStream(keyFileName));
@@ -274,11 +274,8 @@ public class RSACrypto {
 			BigInteger m = (BigInteger) oin.readObject();
 			BigInteger e = (BigInteger) oin.readObject();
 			RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
-			//Create new key for the key read from the file to be stored in
-			//MAKE sure it's RSA!
-			KeyFactory fact = KeyFactory.getInstance("RSA");
-			PublicKey pubKey = fact.generatePublic(keySpec);
-			return pubKey;
+
+			return keySpec;
 		} catch (Exception e) {
 			throw new RuntimeException("An error has occured in 'readKeyFromFile'", e);
 		} finally {
@@ -288,22 +285,21 @@ public class RSACrypto {
 	}
 	//This method grabs the private key from the file
 	//TODO Make this more secure! 3/31/2010
-	static PrivateKey readPrivKeyFromFile(String keyFileName) throws IOException {
+	static RSAPrivateKeySpec readPrivKeyFromFile(String keyFileName) throws IOException {
 		//This is how we'll get the file
 		ObjectInputStream oin = null;
 		try{
 			//Make sure this selects the correct file!
-			oin = new ObjectInputStream(new FileInputStream("private.key"));
+			oin = new ObjectInputStream(new FileInputStream(keyFileName));
 			//Grab the m and e values for the RSA key file process
 			BigInteger m = (BigInteger) oin.readObject();
 			BigInteger e = (BigInteger) oin.readObject();
 
 			//Run RSA Private Key input 
 			RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
-			KeyFactory fact = KeyFactory.getInstance("RSA");
-			PrivateKey privKey = fact.generatePrivate(keySpec);
+
 			//Return the private key
-			return privKey;
+			return keySpec;
 		} catch (Exception e) {
 			System.out.println("An error has occured in readPrivKeyFromFile");
 		} finally {

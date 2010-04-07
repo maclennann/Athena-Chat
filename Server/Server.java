@@ -23,6 +23,15 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.sql.*;
+import java.math.BigInteger;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 
 //Do we need JOptionPane?
 import javax.swing.JOptionPane;
@@ -51,7 +60,11 @@ public class Server
 	
 	//A hashtable that keeps track of the outputStreams linked to each socket
 	public Hashtable outputStreams = new Hashtable();
-
+	
+	//The server's public and private RSA keys
+	public RSAPrivateKeySpec serverPriv;
+	public RSAPublicKeySpec serverPub;
+	
 	//A hashtable mapping each user to a socket
 	//used to find which stream to use to send data to clients
 	public Hashtable userToSocket = new Hashtable();
@@ -138,6 +151,10 @@ public class Server
 		// Create the ServerSocket
 		ss = new ServerSocket( port );
 
+		//Fetch public and private keys so the threads can deal with encryption
+		serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
+		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+		
 		// Tell the world we're ready to go
 		//System.out.println( "Listening on "+ss );
 		System.out.println("*******************************************");

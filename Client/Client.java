@@ -87,7 +87,10 @@ public class Client
 	static int connected = 0;
 	
 	public static String userNameToCheck = null;
-
+	
+	//Aegis' public key
+	static RSAPublicKeySpec serverPublic;
+	
 	//Exit the program
 	public static void exit(){
 		System.exit(0);
@@ -339,6 +342,10 @@ public class Client
 			}
 			else { 
 				connected=1;
+				
+				//Read in the server's public key for encryption of headers
+				serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
+				
 				clientResource = new ClientApplet();
 				//Thread created to listen for messages coming in from the server
 				listeningProcedure = new Thread(
@@ -377,6 +384,9 @@ public class Client
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
+			
+			//Read in server's public key for encryption of headers
+			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
 
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}

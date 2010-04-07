@@ -247,11 +247,11 @@ public class ServerThread extends Thread
 			//byte[] firstNameBytes = firstNameNumber.toByteArray();
 			
 			//Finally, decrypt the ciphertext
-			String firstName = RSACrypto.rsaDecryptPublic(firstNameBytes,publicMod,publicExp);
-			String lastName = RSACrypto.rsaDecryptPublic(lastNameBytes,publicMod,publicExp);
-			String emailAddress = RSACrypto.rsaDecryptPublic(emailAddressBytes,publicMod,publicExp);
-			String newUser = RSACrypto.rsaDecryptPublic(userNameBytes,publicMod,publicExp);
-			String newPassword = RSACrypto.rsaDecryptPublic(passwordBytes,publicMod,publicExp);
+			String firstName = RSACrypto.rsaDecryptPrivate(firstNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String lastName = RSACrypto.rsaDecryptPublic(lastNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String emailAddress = RSACrypto.rsaDecryptPublic(emailAddressBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String newUser = RSACrypto.rsaDecryptPublic(userNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String newPassword = RSACrypto.rsaDecryptPublic(passwordBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			
 			System.out.println("New User Decrypted Information:");
 			System.out.println("First Name: "+firstName);
@@ -273,6 +273,16 @@ public class ServerThread extends Thread
 				return false;
 			}
 			else { 
+				//Store the new user's public key on to the filesystem
+				File newFile = new File("keys/" + newUser+ ".pub");
+				if(!(newFile.exists())) { 
+					newFile.createNewFile();
+				}
+				else { 
+					return false;
+				}
+				RSACrypto.saveToFile("keys/"+newUser+".pub",publicMod,publicExp);
+			
 				//Grab the users new password
 				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "')";
 				insertSTMT = con.createStatement();
