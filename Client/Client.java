@@ -258,10 +258,13 @@ public class Client
 				{
 					clientResource.newBuddyListItems(userNameToCheck);						
 				}
+				getUsersPublicKeyFromAegis(userNameToCheck);
 				return;
 			}
 			
 			if(fromUser.equals("ReturnPublicKey")) {
+				System.out.println(message);
+				System.out.println(publicKeyToFind);
 				dout.writeUTF(publicKeyToFind);
 			}
 			if(fromUser.equals("ReturnPublicKeyMod")) { 
@@ -477,6 +480,7 @@ public class Client
 	}
 	
 	public static void getUsersPublicKeyFromAegis(String usernameToFind) {
+		System.out.println("Getting " + usernameToFind + "'s public key!");
 		publicKeyToFind = usernameToFind;
 		//Send Aegis event code 004 to let it know what we're doing
 		systemMessage("004");
