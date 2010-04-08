@@ -206,10 +206,11 @@ public class Client
 	public static void recvMesg(DataInputStream din){
 		try{
 			// Who is the message from? 
-			String fromUser = din.readUTF();
+			String fromUserCipher = din.readUTF();
 			// What is the message?
 			String message = din.readUTF();
-
+			BigInteger fromUserBytes = new BigInteger(fromUserCipher);
+			String fromUser = new String(RSACrypto.rsaDecryptPublic(fromUserBytes.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 			//If the message is an unavailabe user response		
 			if(fromUser.equals("UnavailableUser")){
 				print = (MapTextArea)clientResource.tabPanels.get(message);
@@ -328,13 +329,20 @@ public class Client
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
-
+			
+			//Read in the server's public key for encryption of headers
+			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
+			
+			//Encrypt username and password hash with server's public key
+			BigInteger usernameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			
 			//Send username and password over the socket for authentication
 			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
 			//String plainTextPassword = new String(password);
 			System.out.println(password);
-			dout.writeUTF(username); //Sending Username
-			dout.writeUTF(password); //Sending Password
+			dout.writeUTF(usernameCipher.toString()); //Sending Username
+			dout.writeUTF(passwordCipher.toString()); //Sending Password
 			String result = din.readUTF();
 			System.out.println(result);
 			if(result.equals("Failed")) { 
@@ -343,8 +351,6 @@ public class Client
 			else { 
 				connected=1;
 				
-				//Read in the server's public key for encryption of headers
-				serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
 				
 				clientResource = new ClientApplet();
 				//Thread created to listen for messages coming in from the server

@@ -227,11 +227,11 @@ public class ClientAddUser extends JPanel {
 		try {
 			//Encrypt information to send to Aegis. Turn them into BigIntegers so we can move them
 			//TODO These should be encrypted with Aegis' public key
-			BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(firstName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger lastNameCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(lastName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(emailAddress,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger userNameCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(userName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(firstName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger lastNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(lastName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPublic(emailAddress,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger userNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(userName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			
 			//Send the server the pieces of our public key to be assembled at the other end
 			//TODO These should be encrypted along with everything else

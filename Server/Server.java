@@ -198,12 +198,13 @@ public class Server
 	void sendToAll(String eventCode, String message ) {
 		//make sure the outputStreams hashtable is up-to-date
 		synchronized( outputStreams ) {
+			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
 			
 			//Get the outputStream for each socket and send message
 			for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
 				DataOutputStream dout = (DataOutputStream)e.nextElement();
 				try{
-					dout.writeUTF(eventCode);
+					dout.writeUTF(eventCodeCipher.toString());
 					dout.writeUTF( message );
 				} catch( IOException ie ) { System.out.println( ie ); }
 			}

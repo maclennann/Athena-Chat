@@ -90,11 +90,13 @@ public class ServerThread extends Thread
 			din = new DataInputStream( socket.getInputStream() );
 
 			//Getting the Username and Password over the stream for authentication
-			username = din.readUTF(); 
+			String usernameCipher = din.readUTF(); 
+			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			if(username.equals("Interupt")) { 
 				
 			} else { 
-			password = din.readUTF(); 
+			String passwordCipher = din.readUTF(); 
+			password = RSACrypto.rsaDecryptPrivate(new BigInteger(passwordCipher).toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			System.out.println("PASSWORD: " + password);
 
 			//Debug statements
@@ -248,10 +250,10 @@ public class ServerThread extends Thread
 			
 			//Finally, decrypt the ciphertext
 			String firstName = RSACrypto.rsaDecryptPrivate(firstNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String lastName = RSACrypto.rsaDecryptPublic(lastNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String emailAddress = RSACrypto.rsaDecryptPublic(emailAddressBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String newUser = RSACrypto.rsaDecryptPublic(userNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String newPassword = RSACrypto.rsaDecryptPublic(passwordBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String lastName = RSACrypto.rsaDecryptPrivate(lastNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String emailAddress = RSACrypto.rsaDecryptPrivate(emailAddressBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String newUser = RSACrypto.rsaDecryptPrivate(userNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			String newPassword = RSACrypto.rsaDecryptPrivate(passwordBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			
 			System.out.println("New User Decrypted Information:");
 			System.out.println("First Name: "+firstName);
@@ -339,7 +341,9 @@ public class ServerThread extends Thread
 
 		//Send the message, and the user it is from
 		try {
-			dout.writeUTF(fromUser);
+			BigInteger fromUserCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(fromUser,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			//BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPublicExponent()));
+			dout.writeUTF(fromUserCipher.toString());
 			dout.writeUTF(message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 		System.out.println("message sent, i think");
@@ -371,6 +375,7 @@ public class ServerThread extends Thread
 
 		//Send the message, and the user it is from
 		try {
+			//BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPublicExponent()));
 			//dout.writeUTF(toUser);
 			dout.writeUTF(message);
 			System.out.println("Message sent:\n " + message);
