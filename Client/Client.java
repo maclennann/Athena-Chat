@@ -492,8 +492,6 @@ public class Client
 	
 	public static void writeBuddysPubKeyToFile(String buddysUsername, BigInteger mod, BigInteger exp) throws IOException { 
 		BufferedInputStream is;
-		BufferedWriter out = new BufferedWriter(new FileWriter("users/" + username + "/keys/" + buddysUsername + ".pub"));
-
 		//Let's get the number of lines in the file
 		File newFile = new File("users/" + username + "/keys/" + buddysUsername + ".pub");
 		if(!(newFile.exists())) { 
@@ -501,15 +499,11 @@ public class Client
 			if(success) { 
 				newFile.createNewFile();
 				is = new BufferedInputStream(new FileInputStream("users/" + username + "/keys/" + buddysUsername + ".pub"));
-				out.write(mod.toString());
-				out.write(exp.toString());
-				out.close();
+				RSACrypto.saveToFile("users/" + username + "/keys/" + buddysUsername + ".pub", mod, exp);
 			}
 			else { 
 				newFile.createNewFile();
-				out.write(mod.toString());
-				out.write(exp.toString());
-				out.close();				
+				RSACrypto.saveToFile("users/" + username + "/keys/" + buddysUsername + ".pub", mod, exp);			
 			}
 		}
 		
