@@ -168,6 +168,8 @@ public class ServerThread extends Thread
 		break;
 		case 003: negotiateClientStatus("CheckUserStatus");
 		break;
+		case 004: publicKeyRequest();
+		break;
 		default: return;
 		}
 	}
@@ -429,6 +431,32 @@ public class ServerThread extends Thread
 			sb.append(Integer.toHexString(v));
 		}
 		return sb.toString().toUpperCase();
+	}
+	
+	public void publicKeyRequest(){
+		
+		System.out.println(username);
+			//Acknowledge connection. Make sure we are doing the right thing
+			sendMessage(username, "ReturnPublicKey", "Access granted. Send me the username.");
+			try{
+			//Listen for the username
+			String findUser = din.readUTF();
+			//Print out the received username
+			System.out.println("Username received: " + findUser);
+			
+			
+			File newFile = new File("keys/" + findUser + ".pub");
+			if(!(newFile.exists())) {
+				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/"+findUser+".pub");
+				//Check to see if the user has a key file on the server
+				sendMessage(username, "ReturnPublicKeyMod", keyToReturn.getModulus().toString());
+				System.out.println("Modulus Returned\n");
+				sendMessage(username, "ReturnPublicKeyExp", keyToReturn.getPublicExponent().toString());
+				System.out.println("Exponent Returned\n");
+
+			} else { sendMessage(username, "ReturnPublicKeyMod", "-1");
+			System.out.println("User does not have a keyfile with us");
+			} }catch(Exception e){e.printStackTrace();}
 	}
 }
 
