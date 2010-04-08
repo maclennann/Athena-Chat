@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import java.io.*;
 
 /****************************************************
  * Athena: Encrypted Messaging Application v.0.0.2
@@ -45,6 +46,12 @@ import javax.swing.border.TitledBorder;
 //Let's make the preferences window
 public class ClientPreferences extends JPanel {
 	
+	//Load preference variables from file into array
+	Object[] settingsArray = Client.clientResource.getCurrentSettingsArray();
+	boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
+	boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
+	boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
+	
 	//Define components
 	public JFrame preferences;
 	public JPanel contentPane = new JPanel();
@@ -58,12 +65,12 @@ public class ClientPreferences extends JPanel {
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
 	public JLabel generalLabel = new JLabel();
-	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", true);
-	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab");
-	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check");
-	public int systemTrayVal = -1;
-	public int allowESCVal = -1;
-	public int enableSCVal = -1;
+	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", allowSystemTray);
+	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab", allowESCTab);
+	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check", enableSpellCheck);
+	public boolean systemTrayVal;
+	public boolean allowESCVal;
+	public boolean enableSCVal;
 	public boolean systemTrayFlag = false;
 	public boolean allowESCFlag = false;
 	public boolean enableSpellCheckFlag = false;
@@ -98,8 +105,11 @@ public class ClientPreferences extends JPanel {
 	public JButton installNewThemeJButton = new JButton("Install!");
 	public JLabel installNewThemeJLabel = new JLabel("Install new theme");
 	
+	//Initialize array to hold current file settings and accept all new setting changes
+	public Object[] settingsToWrite = settingsArray;
+	
 	//Constructor
-	ClientPreferences() { 
+	ClientPreferences() {	
 		
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
@@ -140,6 +150,7 @@ public class ClientPreferences extends JPanel {
 					setGeneralSettings(systemTrayVal, systemTrayFlag, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
 					setNotificationSettings(enableNotificationsFlag, enableSoundsFlag);
 					setFormattingSettings(selectFontFlag, toggleBoldFlag, toggleItalicsFlag, toggleUnderlineFlag);
+					writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -183,9 +194,10 @@ public class ClientPreferences extends JPanel {
 			public void itemStateChanged(ItemEvent e){
 				apply.setEnabled(true);
 				if (e.getStateChange() == ItemEvent.SELECTED)
-					systemTrayVal = 1;
+					systemTrayVal = true;
 				else
-					systemTrayVal = 0;
+					systemTrayVal = false;
+				settingsToWrite[0] = systemTrayVal;
 				systemTrayFlag = true;
 			}
 		});
@@ -193,9 +205,10 @@ public class ClientPreferences extends JPanel {
 			public void itemStateChanged(ItemEvent e){
 				apply.setEnabled(true);
 				if (e.getStateChange() == ItemEvent.SELECTED)
-					allowESCVal = 1;
+					allowESCVal = true;
 				else
-					allowESCVal = 0;
+					allowESCVal = false;
+				settingsToWrite[1] = allowESCVal;
 				allowESCFlag = true;
 			}
 		});
@@ -203,9 +216,10 @@ public class ClientPreferences extends JPanel {
 			public void itemStateChanged(ItemEvent e){
 				apply.setEnabled(true);
 				if (e.getStateChange() == ItemEvent.SELECTED)
-					enableSCVal = 1;
+					enableSCVal = true;
 				else
-					enableSCVal = 0;
+					enableSCVal = false;
+				settingsToWrite[2] = enableSCVal;
 				enableSpellCheckFlag = true;
 			}
 		});
@@ -235,6 +249,10 @@ public class ClientPreferences extends JPanel {
 		
 		notificationsPanel.add(enableNotificationsCheckBox);
 		notificationsPanel.add(enableSoundsCheckBox);
+		
+		//This settings array update will go in check box action listeners when implemented as seen above in general settings
+		//settingsToWrite[3] = "false";
+		//settingsToWrite[4] = "false";
 		/*************************************************/		
 		
 		//Encrpytion Menu Selection
@@ -263,6 +281,10 @@ public class ClientPreferences extends JPanel {
 
 		encryptionPanel.add(generateNewKeyPairJButton);
 		encryptionPanel.add(generateNewKeyPairJLabel);
+		
+		//This settings array update will go in check box action listeners when implemented as seen above in general settings
+		//settingsToWrite[5] = "0";
+		/*************************************************/	
 		
 		//Formatting Menu Selection
 		/*************************************************/	
@@ -294,6 +316,12 @@ public class ClientPreferences extends JPanel {
 		formattingPanel.add(toggleBoldJButton);
 		formattingPanel.add(toggleItalicsJButton);
 		formattingPanel.add(toggleUnderlineJButton);
+		
+		//This settings array update will go in check box action listeners when implemented as seen above in general settings
+		//settingsToWrite[6] = "false";
+		//settingsToWrite[7] = "false";
+		//settingsToWrite[8] = "false";
+		//settingsToWrite[9] = "false";
 		/*************************************************/	
 		
 		//Theme Menu Selection
@@ -327,6 +355,9 @@ public class ClientPreferences extends JPanel {
 		themePanel.add(selectThemeJLabel);
 		themePanel.add(installNewThemeJButton);
 		themePanel.add(installNewThemeJLabel);
+		
+		//This settings array update will go in check box action listeners when implemented as seen above in general settings
+		//settingsToWrite[10] = "0";
 		/*************************************************/	
 	
 		
@@ -416,49 +447,51 @@ public class ClientPreferences extends JPanel {
 
 	}	
 	
-	private void setGeneralSettings (int systemTrayVal, boolean systemTrayFlag, boolean allowESCFlag,
-			                         int allowESCVal, boolean enableSpellCheckFlag, int enableSCVal) throws AWTException
+	private void setGeneralSettings (boolean systemTrayVal, boolean systemTrayFlag, boolean allowESCFlag,
+			boolean allowESCVal, boolean enableSpellCheckFlag, boolean enableSCVal) throws AWTException
 	{
-		SystemTray tray = SystemTray.getSystemTray();
-		TrayIcon[] trayArray = tray.getTrayIcons();
-		int tlength = trayArray.length;
+		if(systemTrayFlag)
+		{
+			SystemTray tray = SystemTray.getSystemTray();
+			TrayIcon[] trayArray = tray.getTrayIcons();
+			int tlength = trayArray.length;
 			
-		if(systemTrayVal == 0)
-		{
-			for(int x = 0; x < tlength; x++)
-				tray.remove(trayArray[x]);
-		}
-		if(systemTrayVal == 1)
-		{
-			if(tlength == 0)
+			if(!(systemTrayVal))
 			{
-				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
-				ActionListener exitListener = new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						System.out.println("Exiting...");
-						System.exit(0);
-					}
-				};
+				for(int x = 0; x < tlength; x++)
+					tray.remove(trayArray[x]);
+			}
+			if(systemTrayVal)
+			{
+				if(tlength == 0)
+				{
+					Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+					ActionListener exitListener = new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							System.out.println("Exiting...");
+							System.exit(0);
+						}
+					};
 
-				PopupMenu popup = new PopupMenu();
-				MenuItem defaultItem = new MenuItem("Exit");
-				defaultItem.addActionListener(exitListener);
-				popup.add(defaultItem);
+					PopupMenu popup = new PopupMenu();
+					MenuItem defaultItem = new MenuItem("Exit");
+					defaultItem.addActionListener(exitListener);
+					popup.add(defaultItem);
 
-				TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
-				trayIcon.setImageAutoSize(true);
-				tray.add(trayIcon);
+					TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
+					trayIcon.setImageAutoSize(true);
+					tray.add(trayIcon);
+				}
 			}
 		}
-	
 		if (allowESCFlag)
 		{
 			//Adjust setting
-			if(allowESCVal == 0)
+			if(!(allowESCVal))
 			{
 				Client.clientResource.closeTabWithESC(false);
 			}
-			if(allowESCVal == 1)
+			if(allowESCVal)
 			{
 				Client.clientResource.closeTabWithESC(true);
 			}
@@ -466,11 +499,11 @@ public class ClientPreferences extends JPanel {
 		if (enableSpellCheckFlag)
 		{
 			//Adjust setting
-			if(enableSCVal == 0)
+			if(!(enableSCVal))
 			{
 				Client.clientResource.setSpellCheck(false);
 			}
-			if(enableSCVal == 1)
+			if(enableSCVal)
 			{
 				Client.clientResource.setSpellCheck(true);
 			}
@@ -506,6 +539,75 @@ public class ClientPreferences extends JPanel {
 		if (toggleUnderlineFlag)
 		{
 			//Adjust setting
+		}
+	}
+	
+	private void writeSavedPreferences(Object[] settingsToWrite)
+	{
+		try {
+			BufferedWriter outPref = new BufferedWriter(new FileWriter("./users/" + "Sparta" + "/athena.conf"));
+			
+			//Write general settings
+			outPref.write("[GENERAL]");
+			outPref.newLine();
+			outPref.write("allowSystemTray=" + settingsToWrite[0]);
+			outPref.newLine();
+			outPref.write("allowESCTab=" + settingsToWrite[1]);
+			outPref.newLine();
+			outPref.write("enableSpellCheck=" + settingsToWrite[2]);
+			outPref.newLine();
+			outPref.newLine();
+			outPref.newLine();
+
+			//Write notification settings
+			outPref.write("[NOTIFICATIONS]");
+			outPref.newLine();
+			outPref.write("enableNotifications=" + settingsToWrite[3]);
+			outPref.newLine();
+			outPref.write("enableNotifications=" + settingsToWrite[4]);
+			outPref.newLine();
+			outPref.newLine();
+			outPref.newLine();
+			
+			//Write encryption settings
+			outPref.write("[ENCRYPTION]");
+			outPref.newLine();
+			outPref.write(";");
+			outPref.newLine();
+			outPref.write(";");
+			outPref.newLine();
+			outPref.write("encryptionType=" + settingsToWrite[5]);
+			outPref.newLine();
+			outPref.newLine();
+			outPref.newLine();
+			
+			//Write formatting settings
+			outPref.write("[FORMATTING]");
+			outPref.newLine();
+			outPref.write("fontFace=" + settingsToWrite[6]);
+			outPref.newLine();
+			outPref.write("fontBold=" + settingsToWrite[7]);
+			outPref.newLine();
+			outPref.write("fontItalic=" + settingsToWrite[8]);
+			outPref.newLine();
+			outPref.write("fontUnderline=" + settingsToWrite[9]);
+			outPref.newLine();
+			outPref.newLine();
+			outPref.newLine();
+			
+			//Write theme settings
+			outPref.write("[THEME]");
+			outPref.newLine();
+			outPref.write("activeTheme=" + settingsToWrite[10]);
+			
+			outPref.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

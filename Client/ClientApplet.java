@@ -65,9 +65,34 @@ public class ClientApplet extends JFrame {
 		listModel.removeElement(offlineUser);
 	}
 
+	public static Object[] currentSettings = new Object[11];
+	
 	ClientApplet() {
 
 		// Initialize chat window
+		
+		//Load preference settings
+		Object[] settingsArray = loadSavedPreferences();
+		setCurrentSettingsArray(settingsArray);
+		boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
+		try {
+			setSystemTrayIcon(allowSystemTray);
+		} catch (AWTException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
+		closeTabWithESC(allowESCTab);
+		boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
+		setSpellCheck(enableSpellCheck);
+		boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
+		boolean enableSounds = Boolean.parseBoolean(settingsArray[4].toString());
+		int encryptionType = Integer.parseInt(settingsArray[5].toString());
+		String fontFace = settingsArray[6].toString();
+		boolean fontBold = Boolean.parseBoolean(settingsArray[7].toString());
+		boolean fontItalic = Boolean.parseBoolean(settingsArray[8].toString());
+		boolean fontUnderline = Boolean.parseBoolean(settingsArray[9].toString());
+		int activeTheme = Integer.parseInt(settingsArray[10].toString());
 		// This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application");
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -173,12 +198,13 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				//JList theList = (JList) mouseEvent.getSource();
-				//if (mouseEvent.getClickCount() == 1) {
+				if (imTabbedPane.getTabCount() > 0)
+				{
 					JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 					Component[] currentTabComponents = currentTab.getComponents();
 					Component textFieldToFocus = currentTabComponents[1];
 					textFieldToFocus.requestFocusInWindow();
-				//}
+				}
 			}		
 		});
 		
@@ -352,6 +378,16 @@ public class ClientApplet extends JFrame {
 
 	}
 
+	public Object[] getCurrentSettingsArray()
+	{
+		return currentSettings;
+	}
+	
+	public void setCurrentSettingsArray(Object[] settingsArray)
+	{
+		currentSettings = settingsArray;
+	}
+
 	// Make a tab for a conversation
 	@SuppressWarnings("unchecked")
 	public void makeTab(String user) {
@@ -367,6 +403,40 @@ public class ClientApplet extends JFrame {
 		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(user));
 		// Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+	}
+	
+	public void setSystemTrayIcon(boolean activated) throws AWTException
+	{
+		SystemTray tray = SystemTray.getSystemTray();
+		TrayIcon[] trayArray = tray.getTrayIcons();
+		int tlength = trayArray.length;
+		if(activated)
+		{
+			if(tlength == 0)
+			{
+				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+				ActionListener exitListener = new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						System.out.println("Exiting...");
+						System.exit(0);
+					}
+				};
+
+				PopupMenu popup = new PopupMenu();
+				MenuItem defaultItem = new MenuItem("Exit");
+				defaultItem.addActionListener(exitListener);
+				popup.add(defaultItem);
+
+				TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
+				trayIcon.setImageAutoSize(true);
+				tray.add(trayIcon);
+			}
+		}
+		else
+		{
+			for(int x = 0; x < tlength; x++)
+				tray.remove(trayArray[x]);
+		}
 	}
 	
 	public void closeTabWithESC(boolean activated)
@@ -389,7 +459,7 @@ public class ClientApplet extends JFrame {
 		else
 		{
 			KeyListener[] tabListeners = imTabbedPane.getKeyListeners();
-			if(tabListeners[0] != null)
+			if(tabListeners != null)
 			{
 				for(int x = 0; x < tabListeners.length; x++)
 					imTabbedPane.removeKeyListener(tabListeners[x]);
@@ -439,6 +509,94 @@ public class ClientApplet extends JFrame {
 	public void mapUserStatus(String username, int status) {
 		System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
+	}
+	
+	private Object[] loadSavedPreferences()
+	{
+		Object[] settingsArray = new Object[11];
+		int arrayCount = 0;
+		String line = null;
+		String temp = null;
+		try {
+			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + "Sparta" + "/athena.conf"));
+			while((line = inPref.readLine()) != null)
+			{
+				if(line.equals("[GENERAL]"))
+				{
+					//Get general settings
+					//Get allowSystemTray (boolean)
+					temp = inPref.readLine().substring(16);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+					//Get allowESCTab (boolean)
+					temp = inPref.readLine().substring(12);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+					//Get enableSpellCheck (boolean)
+					temp = inPref.readLine().substring(17);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+				}
+				if(line.equals("[NOTIFICATIONS]"))
+				{
+					//Get notification settings
+					//Get enableNotifications (boolean)
+					temp = inPref.readLine().substring(20);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+					//Get enableSounds (boolean)
+					temp = inPref.readLine().substring(13);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+				}
+				if(line.equals("[ENCRYPTION]"))
+				{
+					//Get encryption settings
+					//Get encryptionType (integer)
+					inPref.readLine();
+					inPref.readLine();
+					temp = inPref.readLine().substring(15);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+				}
+				if(line.equals("[FORMATTING]"))
+				{
+					//Get formatting settings
+					//Get fontFace (string)
+					temp = inPref.readLine().substring(9);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+					//Get fontBold (boolean)
+					temp = inPref.readLine().substring(9);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+					//Get fontItalic (boolean)
+					temp = inPref.readLine().substring(11);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+					//Get fontUnderline (boolean)
+					temp = inPref.readLine().substring(14);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+				}
+				if(line.equals("[THEME]"))
+				{
+					//Get theme settings
+					//Get activeTheme (integer)
+					temp = inPref.readLine().substring(12);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
+				}
+			//inPref.close();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	return settingsArray;
 	}
 
 	// End of class ClientApplet
