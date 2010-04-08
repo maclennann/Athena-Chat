@@ -367,7 +367,7 @@ public class Client
 				//Start the thread
 				listeningProcedure.start();
 			}
-		} catch( IOException ie ) { System.out.println( ie ); }
+		} catch( IOException ie ) { ie.printStackTrace(); }
 	}
 
 	// Method to connect the user
