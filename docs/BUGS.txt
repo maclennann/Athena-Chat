@@ -20,6 +20,8 @@ CLIENT:
 		@@ Also - if you open the preferences window more than once - the images don't show up
 		!! RESOLVED: Preference window icon glitch - changed to JLabel instead of DrawingPanel and made nicer borders
 		!! Windows 7 
+	## Firefox-level memory usage, but seems to be capped at about 160,000kb
+	
 SERVER:
 	## When a user disconnects, something does close cleanly causing a lot of exceptions to be printed
 		!! RESOLVED: Thread runs respective to int isAlive. If routeMessage() can no longer run, isAlive is switched to 0 and the thread exits.

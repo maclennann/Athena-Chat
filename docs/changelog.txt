@@ -1,4 +1,22 @@
 ChangeLog: 
+
+04/08/2010:
+	## FIXED: NPE caused when hitting cancel on addbuddy dialog
+	## All  user logins are encrypted
+		!! Encrypted with server public key so only server can read it
+		@@ Should we add a signature to prove they have the private key?
+	## Implemented key ditribution protocol
+		@@ When a new user is created, their key is saved on the server
+		@@ Any user can request the public key of any other user
+		@@ Users save public keys of their buddies on hard drive
+	## All user signups are encrypted
+		@@ Everything except for the user's public key is encrypted before sending
+	## FIXED: Can no longer spam blank messages
+	## Messages headers are now encrypted
+		@@ When a user sends a message, the header is encrypted with Aegis public key
+		@@ Aegis decrypts the header, creates a new header and encrypts it with
+		   the destination public key
+
 04/07/2010:
 	## FIXED: When adding a new user - it will automatically check to see if they are online
 		!! Had to rearrange the way we communicate with the server when the Client listen Thread is running. 
