@@ -503,7 +503,9 @@ class MapTextArea extends JFrame {
 		//Add an actionListener to the text field to send messages
 		myTF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				if(!(myTF.getText().equals(""))) { 
 				Client.processMessage(myTF.getText());
+				}
 			}
 		});
 		
