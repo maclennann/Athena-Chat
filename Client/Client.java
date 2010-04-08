@@ -334,7 +334,7 @@ public class Client
 			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
 			
 			//Encrypt username and password hash with server's public key
-			BigInteger usernameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger usernameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(username,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			
 			//Send username and password over the socket for authentication
