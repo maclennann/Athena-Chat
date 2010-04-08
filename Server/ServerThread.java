@@ -443,7 +443,7 @@ public class ServerThread extends Thread
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username
-			System.out.println("Username received: " + findUser);
+			System.out.println("Username received PUBLIC FUCKING KEY REQUEST: " + findUser);
 			
 			
 			File newFile = new File("keys/" + findUser + ".pub");
