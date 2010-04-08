@@ -55,7 +55,7 @@ public class Client
 	public static int debug=1;
 
 	//Global username variable
-	private static String username="null";
+	public static String username="null";
 	
 	//Splash Screen
 	static ClientSplash screen;

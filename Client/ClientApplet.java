@@ -518,7 +518,7 @@ public class ClientApplet extends JFrame {
 		String line = null;
 		String temp = null;
 		try {
-			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + "Sparta" + "/athena.conf"));
+			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + Client.username + "/athena.conf"));
 			while((line = inPref.readLine()) != null)
 			{
 				if(line.equals("[GENERAL]"))
