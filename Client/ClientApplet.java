@@ -510,7 +510,7 @@ public class ClientApplet extends JFrame {
 		System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
 	}
-	
+	//TODO: Fix user folder that preference file writes to!
 	private Object[] loadSavedPreferences()
 	{
 		Object[] settingsArray = new Object[11];

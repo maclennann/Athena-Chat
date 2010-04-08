@@ -14,8 +14,10 @@ ChangeLog:
 	## FIXED: Can no longer spam blank messages
 	## Messages headers are now encrypted
 		@@ When a user sends a message, the header is encrypted with Aegis public key
-		@@ Aegis decrypts the header, creates a new header and encrypts it with
-		   the destination public key
+		@@ Aegis decrypts the header, creates a new header and 		encrypts it with the destination public key
+	## Implemented read/write/update of preference settings
+		@@ Currently only writes to Sparta folder, will change this in 		near future to write to <username> folder
+	## FIXED: Issue with crash on clicking on tabbedPane with no tabs open
 
 04/07/2010:
 	## FIXED: When adding a new user - it will automatically check to see if they are online
