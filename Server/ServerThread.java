@@ -439,7 +439,7 @@ public class ServerThread extends Thread
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendMessage(username, "ReturnPublicKey", "Access granted. Send me the username to find the key for.");
 			try{
-			System.out.println("Discarding value: "+din.readUTF());
+			//System.out.println("Discarding value: "+din.readUTF());
 			//Listen for the username
 			String findUser = din.readUTF();
 			//Print out the received username
