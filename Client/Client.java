@@ -87,6 +87,9 @@ public class Client
 	static int connected = 0;
 	
 	public static String userNameToCheck = null;
+	public static String publicKeyToFind = null;
+	public static BigInteger modOfBuddy;
+	public static BigInteger expOfBuddy;
 	
 	//Aegis' public key
 	static RSAPublicKeySpec serverPublic;
@@ -240,6 +243,7 @@ public class Client
          
 				return;
 			}
+			
 			if(fromUser.equals("CheckUserStatus"))
 			{
 				System.out.println(message);
@@ -255,6 +259,19 @@ public class Client
 					clientResource.newBuddyListItems(userNameToCheck);						
 				}
 				return;
+			}
+			
+			if(fromUser.equals("ReturnPublicKey")) {
+				dout.writeUTF(publicKeyToFind);
+			}
+			if(fromUser.equals("ReturnPublicKeyMod")) { 
+				String str = din.readUTF();
+				modOfBuddy = new BigInteger(str);
+			}
+			if(fromUser.equals("ReturnPublicKeyExp")) { 
+				String str = din.readUTF();
+				expOfBuddy = new BigInteger(str);
+				writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
 			}
 
 			//Create buddy list entry for user sign on
@@ -457,6 +474,39 @@ public class Client
 
 			System.out.println("Current Buddy To Check: " + usernameToCheck);
 			checkUserStatus(usernameToCheck, "PauseThread!");
+	}
+	
+	public static void getUsersPublicKeyFromAegis(String usernameToFind) {
+		publicKeyToFind = usernameToFind;
+		//Send Aegis event code 004 to let it know what we're doing
+		systemMessage("004");
+		
+	}
+	
+	public static void writeBuddysPubKeyToFile(String buddysUsername, BigInteger mod, BigInteger exp) throws IOException { 
+		BufferedInputStream is;
+		BufferedWriter out = new BufferedWriter(new FileWriter("users/" + username + "/keys/" + buddysUsername + ".pub"));
+
+		//Let's get the number of lines in the file
+		File newFile = new File("users/" + username + "/keys/" + buddysUsername + ".pub");
+		if(!(newFile.exists())) { 
+			boolean success = new File("users/" + username + "/keys/").mkdirs();
+			if(success) { 
+				newFile.createNewFile();
+				is = new BufferedInputStream(new FileInputStream("users/" + username + "/keys/" + buddysUsername + ".pub"));
+				out.write(mod.toString());
+				out.write(exp.toString());
+				out.close();
+			}
+			else { 
+				newFile.createNewFile();
+				out.write(mod.toString());
+				out.write(exp.toString());
+				out.close();				
+			}
+		}
+		
+		
 	}
 
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
