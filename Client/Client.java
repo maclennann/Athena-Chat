@@ -88,8 +88,8 @@ public class Client
 	
 	public static String userNameToCheck = null;
 	public static String publicKeyToFind = null;
-	public static BigInteger modOfBuddy;
-	public static BigInteger expOfBuddy;
+	public static BigInteger modOfBuddy = null;
+	public static BigInteger expOfBuddy = null;
 	
 	//Aegis' public key
 	static RSAPublicKeySpec serverPublic;
@@ -266,15 +266,18 @@ public class Client
 				System.out.println(message);
 				System.out.println(publicKeyToFind);
 				dout.writeUTF(publicKeyToFind);
+				return;
 			}
 			if(fromUser.equals("ReturnPublicKeyMod")) { 
-				String str = din.readUTF();
+				String str = message;
 				modOfBuddy = new BigInteger(str);
+				return;
 			}
 			if(fromUser.equals("ReturnPublicKeyExp")) { 
-				String str = din.readUTF();
+				String str = message;
 				expOfBuddy = new BigInteger(str);
 				writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
+				return;
 			}
 
 			//Create buddy list entry for user sign on
