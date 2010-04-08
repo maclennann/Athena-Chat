@@ -446,7 +446,7 @@ public class ServerThread extends Thread
 			
 			
 			File newFile = new File("keys/" + findUser + ".pub");
-			if(!(newFile.exists())) {
+			if((newFile.exists())) {
 				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/"+findUser+".pub");
 				//Check to see if the user has a key file on the server
 				sendMessage(username, "ReturnPublicKeyMod", keyToReturn.getModulus().toString());
