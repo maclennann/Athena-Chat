@@ -321,7 +321,8 @@ public class Client
 				AudioStream as = new AudioStream(in);         
 				// Use the static class member "player" from class AudioPlayer to play
 				// clip.
-				AudioPlayer.player.start(as);  
+				AudioPlayer.player.start(as);
+				AudioPlayer.player.stop(as);
 			}
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
