@@ -47,10 +47,10 @@ import java.io.*;
 public class ClientPreferences extends JPanel {
 	
 	//Load preference variables from file into array
-	Object[] settingsArray = Client.clientResource.getCurrentSettingsArray();
-	boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
-	boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
-	boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
+	//Object[] settingsArray = Client.clientResource.getCurrentSettingsArray();
+	//boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
+	//boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
+	//boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 	
 	//Define components
 	public JFrame preferences;
@@ -65,9 +65,9 @@ public class ClientPreferences extends JPanel {
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
 	public JLabel generalLabel = new JLabel();
-	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", allowSystemTray);
-	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab", allowESCTab);
-	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check", enableSpellCheck);
+	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray"); //add allowSystemTray
+	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab"); // add allowESCTab
+	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check"); //enableSpellCheck
 	public boolean systemTrayVal;
 	public boolean allowESCVal;
 	public boolean enableSCVal;
@@ -106,7 +106,7 @@ public class ClientPreferences extends JPanel {
 	public JLabel installNewThemeJLabel = new JLabel("Install new theme");
 	
 	//Initialize array to hold current file settings and accept all new setting changes
-	public Object[] settingsToWrite = settingsArray;
+	//public Object[] settingsToWrite = settingsArray;
 	
 	//Constructor
 	ClientPreferences() {	
@@ -150,7 +150,7 @@ public class ClientPreferences extends JPanel {
 					setGeneralSettings(systemTrayVal, systemTrayFlag, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
 					setNotificationSettings(enableNotificationsFlag, enableSoundsFlag);
 					setFormattingSettings(selectFontFlag, toggleBoldFlag, toggleItalicsFlag, toggleUnderlineFlag);
-					writeSavedPreferences(settingsToWrite);
+					//writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -197,7 +197,7 @@ public class ClientPreferences extends JPanel {
 					systemTrayVal = true;
 				else
 					systemTrayVal = false;
-				settingsToWrite[0] = systemTrayVal;
+				//settingsToWrite[0] = systemTrayVal;
 				systemTrayFlag = true;
 			}
 		});
@@ -208,7 +208,7 @@ public class ClientPreferences extends JPanel {
 					allowESCVal = true;
 				else
 					allowESCVal = false;
-				settingsToWrite[1] = allowESCVal;
+				//settingsToWrite[1] = allowESCVal;
 				allowESCFlag = true;
 			}
 		});
@@ -219,7 +219,7 @@ public class ClientPreferences extends JPanel {
 					enableSCVal = true;
 				else
 					enableSCVal = false;
-				settingsToWrite[2] = enableSCVal;
+				//settingsToWrite[2] = enableSCVal;
 				enableSpellCheckFlag = true;
 			}
 		});

@@ -72,7 +72,7 @@ public class ClientApplet extends JFrame {
 		// Initialize chat window
 		
 		//Load preference settings
-		Object[] settingsArray = loadSavedPreferences();
+		/*Object[] settingsArray = loadSavedPreferences();
 		setCurrentSettingsArray(settingsArray);
 		boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
 		try {
@@ -93,7 +93,7 @@ public class ClientApplet extends JFrame {
 		boolean fontItalic = Boolean.parseBoolean(settingsArray[8].toString());
 		boolean fontUnderline = Boolean.parseBoolean(settingsArray[9].toString());
 		int activeTheme = Integer.parseInt(settingsArray[10].toString());
-		// This is the main frame for the IMs
+		*/ //This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application");
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		imContentFrame.setSize(830, 683);
