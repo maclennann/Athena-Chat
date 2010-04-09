@@ -310,10 +310,18 @@ public class Client
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUser);
 				print.setTextColor(Color.blue);
-				print.writeToTextArea(fromUser+": ");
+				print.writeToTextArea(fromUser+": "); 
 				print.setTextColor(Color.black);
 				print.writeToTextArea(message+"\n");
 				print.moveToEnd();
+				
+				// Open an input stream  to the audio file.
+				InputStream in = new FileInputStream("sounds/recvMesg.wav");
+				// Create an AudioStream object from the input stream.
+				AudioStream as = new AudioStream(in);         
+				// Use the static class member "player" from class AudioPlayer to play
+				// clip.
+				AudioPlayer.player.start(as);  
 			}
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
