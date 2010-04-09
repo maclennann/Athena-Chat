@@ -30,7 +30,7 @@ import java.io.*;
  * Athena: Encrypted Messaging Application v.0.0.2
  * By: 	
  * 			Gregory LeBlanc
- * 			Norm Maclennan 
+ * 			Norman Maclennan
  * 			Stephen Failla
  * 
  * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
