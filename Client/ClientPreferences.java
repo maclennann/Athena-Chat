@@ -5,17 +5,21 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.TrayIcon;
-import javax.swing.ImageIcon;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -24,7 +28,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import java.io.*;
 
 /****************************************************
  * Athena: Encrypted Messaging Application v.0.0.2
@@ -46,6 +49,10 @@ import java.io.*;
 //Let's make the preferences window
 public class ClientPreferences extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5472264414606126641L;
 	//Load preference variables from file into array
 	Object[] settingsArray = Client.clientResource.getCurrentSettingsArray();
 	boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());

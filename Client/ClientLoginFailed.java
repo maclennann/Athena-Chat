@@ -1,8 +1,6 @@
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
@@ -10,6 +8,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class ClientLoginFailed extends JFrame { 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5209122311648063644L;
 	//Components for the visual display of the login window
 	public JFrame loginFailed;
 	public JPanel contentPane = new JPanel();

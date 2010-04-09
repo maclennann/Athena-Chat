@@ -20,33 +20,19 @@
  *
  ****************************************************/
 
-import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.*;
-import java.util.Enumeration;
-import java.net.*;
-import java.math.BigInteger;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.RSAPrivateKeySpec;
+import java.math.BigInteger;
+import java.net.Socket;
+import java.security.MessageDigest;
 import java.security.spec.RSAPublicKeySpec;
-
-//TODO: Do we need JOptionPane for server?! It's not used anywhere else.
-import javax.swing.JOptionPane;
-
-//TODO: Do we really need this? It does nothing ATM.
-import com.sun.org.apache.xpath.internal.FoundIndex;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class ServerThread extends Thread
 {

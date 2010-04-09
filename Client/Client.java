@@ -15,32 +15,29 @@
  *
  ****************************************************/
 
-import java.awt.*;
-import java.io.*;
-import java.net.*;
-import javax.swing.*;
-
-import java.lang.Thread;
-import java.lang.Runnable;
-import java.util.Enumeration;
-import java.math.BigInteger;
-import java.io.BufferedOutputStream;
+import java.awt.AWTException;
+import java.awt.Color;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.RSAPrivateKeySpec;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.net.Socket;
 import java.security.spec.RSAPublicKeySpec;
-import java.applet.*;
-import  sun.audio.*;    //import the sun.audio package
-import  java.io.*;
+import java.util.Enumeration;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 
 
@@ -447,7 +444,7 @@ public class Client
 		//Counter
 		int y=0;
 		//Loop through the HashTable of available users and place them in the JList
-		for (Enumeration e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
+		for (Enumeration<?> e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
 			try { 
 				String currentE = e.nextElement().toString();
 				System.out.println("E: " + currentE);

@@ -19,27 +19,26 @@
  * As new users connect, their username is mapped to a socket, which is mapped to a datastream so we can communicate with the user.
  *
  ****************************************************/
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.sql.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-
-//Do we need JOptionPane?
-import javax.swing.JOptionPane;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 public class Server
 {
 	//TODO Add debug mode
 	//Change to 1 for debug output
+	@SuppressWarnings("unused")
 	private int debug = 0;
 	
 	//This socket will accept new connection
@@ -47,7 +46,7 @@ public class Server
 	
 	//This will be a table holding the usernames and hashed passwords pulled from the database
 	//See: updateHashTable()
-	public static Hashtable authentication = new Hashtable();
+	public static Hashtable<String, String> authentication = new Hashtable<String, String>();
 	
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
@@ -56,10 +55,11 @@ public class Server
 	private static int listenPort = 7777;
 
 	//Will control listener thread when we do that
+	@SuppressWarnings("unused")
 	private int isListening = 1;
 	
 	//A hashtable that keeps track of the outputStreams linked to each socket
-	public Hashtable outputStreams = new Hashtable();
+	public Hashtable<Socket, DataOutputStream> outputStreams = new Hashtable<Socket, DataOutputStream>();
 	
 	//The server's public and private RSA keys
 	public RSAPrivateKeySpec serverPriv;
@@ -67,7 +67,7 @@ public class Server
 	
 	//A hashtable mapping each user to a socket
 	//used to find which stream to use to send data to clients
-	public Hashtable userToSocket = new Hashtable();
+	public Hashtable<String, Socket> userToSocket = new Hashtable<String, Socket>();
 	
 	//Constructor. Starts listening on the defined port.
 	public Server( int port ) throws IOException {
@@ -190,7 +190,7 @@ public class Server
 	
 	
 	// Get an enumeration of all the OutputStreams.
-	Enumeration getOutputStreams() {
+	Enumeration<DataOutputStream> getOutputStreams() {
 		return outputStreams.elements();
 	}
 	
@@ -201,7 +201,7 @@ public class Server
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
 			
 			//Get the outputStream for each socket and send message
-			for (Enumeration e = getOutputStreams(); e.hasMoreElements(); ) {
+			for (Enumeration<?> e = getOutputStreams(); e.hasMoreElements(); ) {
 				DataOutputStream dout = (DataOutputStream)e.nextElement();
 				try{
 					dout.writeUTF(eventCodeCipher.toString());

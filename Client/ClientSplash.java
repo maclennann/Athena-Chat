@@ -1,8 +1,20 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 
 public class ClientSplash extends JWindow {
-  BorderLayout borderLayout1 = new BorderLayout();
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4379032222552649636L;
+BorderLayout borderLayout1 = new BorderLayout();
   JLabel imageLabel = new JLabel();
   JPanel southPanel = new JPanel();
   FlowLayout southPanelFlowLayout = new FlowLayout();

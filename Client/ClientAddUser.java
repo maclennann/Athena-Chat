@@ -2,9 +2,12 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.*;
-import java.net.Socket;
+import java.math.BigInteger;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,21 +17,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.math.BigInteger;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 
 
 /**
@@ -42,6 +30,10 @@ import java.security.spec.RSAPublicKeySpec;
 public class ClientAddUser extends JPanel {
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4233506965211815944L;
 	//Define components
 	public JFrame addUserJFrame;
 	public JPanel contentPane, generalInformationJPanel, loginInformationJPanel;

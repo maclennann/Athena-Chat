@@ -14,30 +14,70 @@
  * Creates the window for the client and sets connection variables.
  *
  ****************************************************/
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.channels.*;
-import java.net.*;
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import com.inet.jortho.FileUserDictionary;
-import com.inet.jortho.SpellChecker;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
+
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.text.JTextComponent;
+
+import com.inet.jortho.SpellChecker;
 
 //Client swing window.
 //TODO: Rename it to something else. It's not an applet
 public class ClientApplet extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7742402292330782311L;
+
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();;
 
 	// Define the listModel for the JList
@@ -52,7 +92,7 @@ public class ClientApplet extends JFrame {
 	public JPanel panel; // still need this?
 	public JFrame imContentFrame, buddyListFrame;
 	public JTabbedPane imTabbedPane = new JTabbedPane();
-	public Hashtable tabPanels = new Hashtable();
+	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
 
 	// Method to add users to the JList when they sign on
@@ -94,7 +134,7 @@ public class ClientApplet extends JFrame {
 		boolean fontUnderline = Boolean.parseBoolean(settingsArray[9].toString());
 		int activeTheme = Integer.parseInt(settingsArray[10].toString());
 		//This is the main frame for the IMs
-		imContentFrame = new JFrame("Athena Chat Application");
+		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		imContentFrame.setSize(830, 683);
 		imContentFrame.setResizable(true);
@@ -389,7 +429,6 @@ public class ClientApplet extends JFrame {
 	}
 
 	// Make a tab for a conversation
-	@SuppressWarnings("unchecked")
 	public void makeTab(String user) {
 		// Create a hash table mapping a user name to the JPanel in a tab
 		tabPanels.put(user, new MapTextArea(user, spellCheckFlag));
@@ -519,7 +558,6 @@ public class ClientApplet extends JFrame {
 		String temp = null;
 		try {
 			
-			File oldPrefFile = new File("users/Aegis/athena.conf");
 			File newPrefFile = new File("users/" + Client.username + "/athena.conf");
 			if(!(newPrefFile.exists())) { 
 				System.out.println("File Not Found! Copying...");
@@ -624,6 +662,11 @@ public class ClientApplet extends JFrame {
 // This class holds all of the JComponents and acts as an interface to each
 // conversation's tab
 class MapTextArea extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2557115166519071868L;
 
 	// The user name associated with the tab
 	String username = null;
@@ -739,7 +782,11 @@ class MapTextArea extends JFrame {
 }
 
 class CloseTabButton extends JPanel implements ActionListener {
-	  private JTabbedPane pane;
+	  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6032110177913133517L;
+	private JTabbedPane pane;
 	  public CloseTabButton(JTabbedPane pane, int index) {
 	    this.pane = pane;
 	    setOpaque(false);

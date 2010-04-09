@@ -63,7 +63,12 @@ import javax.swing.text.View;
  */
 public class LinkText extends JButton {
 
-  public LinkText() {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3031053824730381392L;
+
+public LinkText() {
     super();
   }
 

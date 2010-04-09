@@ -1,7 +1,5 @@
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
@@ -23,6 +21,10 @@ import javax.swing.JPanel;
  ****************************************************/
 //This class instanciates a DrawingPanel which is used to paint icons onto the main Panel
 public class DrawingPanel extends JPanel { 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7750278403335957719L;
 	Image img;
 	int x, y;
 	
@@ -30,9 +32,7 @@ public class DrawingPanel extends JPanel {
 		this.img = img;
 	}
 	
-	public void paintComponent (Graphics g) { 		
-		   int dy = getSize ().height;
-		   int dx = getSize ().width;		   
+	public void paintComponent (Graphics g) { 			   
 		   super.paintComponent(g);
 		
 		//Draw image 
