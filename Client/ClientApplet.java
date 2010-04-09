@@ -26,10 +26,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.channels.*;
 import java.net.*;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
-
 import com.inet.jortho.FileUserDictionary;
 import com.inet.jortho.SpellChecker;
 
@@ -512,12 +512,31 @@ public class ClientApplet extends JFrame {
 	}
 	//TODO: Fix user folder that preference file writes to!
 	private Object[] loadSavedPreferences()
-	{
+	{	System.out.println("Importing preferences");
 		Object[] settingsArray = new Object[11];
 		int arrayCount = 0;
 		String line = null;
 		String temp = null;
 		try {
+			
+			File oldPrefFile = new File("users/Aegis/athena.conf");
+			File newPrefFile = new File("users/" + Client.username + "/athena.conf");
+			if(!(newPrefFile.exists())) { 
+				System.out.println("File Not Found! Copying...");
+				File oldFile = new File("users/Aegis/athena.conf");
+				FileChannel inChannel = new FileInputStream(oldFile).getChannel();
+				FileChannel outChannel = new FileOutputStream(newPrefFile).getChannel();
+				try {
+					inChannel.transferTo(0, inChannel.size(), outChannel);
+				} 
+				catch (IOException e) {
+					throw e;
+				}
+				finally {
+					if (inChannel != null) inChannel.close();
+					if (outChannel != null) outChannel.close();
+				}
+			}
 			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + Client.username + "/athena.conf"));
 			while((line = inPref.readLine()) != null)
 			{

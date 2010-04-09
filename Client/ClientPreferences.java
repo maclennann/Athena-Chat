@@ -545,7 +545,7 @@ public class ClientPreferences extends JPanel {
 	private void writeSavedPreferences(Object[] settingsToWrite)
 	{
 		try {
-			BufferedWriter outPref = new BufferedWriter(new FileWriter("./users/" + "Sparta" + "/athena.conf"));
+			BufferedWriter outPref = new BufferedWriter(new FileWriter("./users/" + Client.username + "/athena.conf"));
 			
 			//Write general settings
 			outPref.write("[GENERAL]");
