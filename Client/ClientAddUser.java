@@ -205,7 +205,9 @@ public class ClientAddUser extends JPanel {
 		
 		try {
 			//Tell the server we're not going to log in
-			dout.writeUTF("Interupt");
+			//Maybe we should try encrypting this first!
+			//dout.writeUTF("Interupt");
+			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic((new String("Interupt")),Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent())).toString());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
