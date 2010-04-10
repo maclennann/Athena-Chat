@@ -134,10 +134,10 @@ public class ServerThread extends Thread
 			String messageEncrypted=din.readUTF(); 
 			//Read in the Digital Signature
 			String digitalSignatureEncrypted = din.readUTF();
-			
+			System.out.println("FSFSAS:" +  toUserEncrypted);
 			//Decrypt the to user
 			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()).toString();
-			System.out.println("FSFSAS:" +  toUserEncrypted);	
+	
 			System.out.println("FSFSAS:" +  toUserDecrypted);
 			
 			//Is the message an eventcode meant for the server?
