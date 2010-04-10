@@ -144,11 +144,11 @@ public class ServerThread extends Thread
 			if (toUserDecrypted.equals("Aegis")) { 
 				//if(debug==1)System.out.println("Server eventcode detected!");
 
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(messageEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
+				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
 				return;
 			}
 			if (toUserDecrypted.equals("Interupt")) {
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(messageEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
+				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
 				return;
 			}	
 			else { 
