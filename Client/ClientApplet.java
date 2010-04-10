@@ -347,7 +347,7 @@ public class ClientApplet extends JFrame {
 							}
 						});
 						
-						
+						System.gc();
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -806,6 +806,7 @@ class CloseTabButton extends JPanel implements ActionListener {
 	    int i = pane.indexOfTabComponent(this);
 	    if (i != -1) {
 	      pane.remove(i);
+		  System.gc();
 	    }
 	  }
 	}

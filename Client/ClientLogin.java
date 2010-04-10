@@ -140,7 +140,7 @@ public class ClientLogin extends JFrame {
 					String hashedPassword = computeHash(passwordToHash).toString();
 					Client.connect(username.getText(), hashedPassword);
 					login.setVisible(false);
-
+					System.gc();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

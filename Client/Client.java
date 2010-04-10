@@ -130,7 +130,7 @@ public class Client
 				print.moveToEnd();
 				print.clearTextField();
 			}
-		}
+		}System.gc();
 	}
 
 	//This method will be used to add to the buddy list
@@ -324,6 +324,7 @@ public class Client
 				AudioPlayer.player.start(as);
 				//AudioPlayer.player.stop(as);
 			}
+			System.gc();
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
 			connected=0; 
@@ -393,6 +394,7 @@ public class Client
 							}});
 				//Instanciate Buddy List
 				instantiateBuddyList();	
+				System.gc();
 				//Start the thread
 				listeningProcedure.start();
 			}
@@ -422,7 +424,7 @@ public class Client
 			
 			//Read in server's public key for encryption of headers
 			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
-
+			System.gc();
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
 
