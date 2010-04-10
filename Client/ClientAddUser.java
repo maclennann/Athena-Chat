@@ -200,7 +200,7 @@ public class ClientAddUser extends JPanel {
 		//Get a connection
 		Client.connect();
 		
-		//Give me back my Fillet of DataOutputStream.
+		//Give me back my filet of DataOutputStream.
 		DataOutputStream dout = Client.returnDOUT();
 		
 		try {

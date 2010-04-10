@@ -99,7 +99,7 @@ public class ServerThread extends Thread
 			}
 			if(username.equals("Interupt")) {
 				routeMessage(din);
-				server.removeConnection(socket);				
+				//server.removeConnection(socket);				
 			} else { 
 			//Route around messages coming in from the client while they are connected
 			while (isAlive==1) {
