@@ -136,23 +136,23 @@ public class ServerThread extends Thread
 			String digitalSignatureEncrypted = din.readUTF();
 			
 			//Decrypt the to user
-			String toUserDecrpyted = RSACrypto.rsaDecryptPrivate(toUserEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent());
-			System.out.println("FSFSAS: toUserDecrypted");
+			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent());
+			System.out.println("FSFSAS:" +  toUserDecrypted);
 			
 			//Is the message an eventcode meant for the server?
-			if (toUserDecrpyted.equals("Aegis")) { 
+			if (toUserDecrypted.equals("Aegis")) { 
 				//if(debug==1)System.out.println("Server eventcode detected!");
 
 				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(messageEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
 				return;
 			}
-			if (toUserDecrpyted.equals("Interupt")) {
+			if (toUserDecrypted.equals("Interupt")) {
 				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(messageEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
 				return;
 			}	
 			else { 
 				if(debug==1)System.out.println("Routing normal message");
-				sendMessage(toUserDecrpyted, username, messageEncrypted);
+				sendMessage(toUserDecrypted, username, messageEncrypted);
 			}
 
 		} catch (IOException e) {isAlive=0;}
