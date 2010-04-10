@@ -671,6 +671,7 @@ public class Client
 			//Send recipient's name and message to server
 			dout.writeUTF(RSACrypto.rsaEncryptPublic("Aegis", serverPublic.getModulus(), serverPublic.getPublicExponent()).toString());
 			dout.writeUTF(RSACrypto.rsaEncryptPublic(message, serverPublic.getModulus(), serverPublic.getPublicExponent()).toString());
+			dout.writeUTF("TEST");
 		} catch( IOException ie ) {
 		}
 	}
