@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.MessageDigest;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -58,6 +59,7 @@ public class ServerThread extends Thread
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive=1;
 
+	private RSAPrivateKeySpec serverPrivate;
 	// Constructor. Instantiate this thread on the current socket
 	public ServerThread( Server server, Socket socket ) {
 
@@ -124,22 +126,31 @@ public class ServerThread extends Thread
 	//and routes the message to the recipient.
 	public void routeMessage(DataInputStream din) throws NumberFormatException, InterruptedException{
 		try {
-			String toUser=din.readUTF();
-			String message=din.readUTF();
-
+			//Grab the server's private key - SHHH!!
+			serverPrivate = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+			//Read in the Encrypted toUser
+			String toUserEncrypted=din.readUTF();
+			//Read in the Encrypted message
+			String messageEncrypted=din.readUTF(); 
+			//Read in the Digital Signature
+			String digitalSignatureEncrypted = din.readUTF();
+			
+			//Decrypt the to user
+			String toUserDecrpyted = RSACrypto.rsaDecryptPrivate(toUserEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent());
+			
 			//Is the message an eventcode meant for the server?
-			if (toUser.equals("Aegis")) { 
+			if (toUserDecrpyted.equals("Aegis")) { 
 				//if(debug==1)System.out.println("Server eventcode detected!");
-				systemMessageListener(Integer.parseInt(message));
+				//systemMessageListener(Integer.parseInt(message));
 				return;
 			}
-			if (toUser.equals("Interupt")) {
-				systemMessageListener(Integer.parseInt(message));
+			if (toUserDecrpyted.equals("Interupt")) {
+				//systemMessageListener(Integer.parseInt(message));
 				return;
 			}	
 			else { 
 				if(debug==1)System.out.println("Routing normal message");
-				sendMessage(toUser, username, message);
+				sendMessage(toUserDecrpyted, username, messageEncrypted);
 			}
 
 		} catch (IOException e) {isAlive=0;}
@@ -336,9 +347,9 @@ public class ServerThread extends Thread
 
 		//Send the message, and the user it is from
 		try {
-			BigInteger fromUserCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(fromUser,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-			//BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPublicExponent()));
-			dout.writeUTF(fromUserCipher.toString());
+			//Encrypt the fromUser with the public key of userB (we want everything to be anonymous, so we can't encrypt the fromUser with the private key of the server, anyone can decrypt that)
+			String fromUserEncrypted = RSACrypto.rsaEncryptPublic(username, (RSACrypto.readPubKeyFromFile("keys/" + username + ".pub").getModulus()), (RSACrypto.readPubKeyFromFile("keys/" + username + ".pub").getPublicExponent())).toString();
+			dout.writeUTF(fromUserEncrypted.toString());
 			dout.writeUTF(message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 		System.out.println("message sent, i think");

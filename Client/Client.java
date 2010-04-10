@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Enumeration;
 
@@ -118,17 +119,31 @@ public class Client
 
 			//Send the message
 			try{
-				//Send recipient's name and message to server
-				dout.writeUTF(toUser);
-				dout.writeUTF(message);
+				//Grab the other user's public key from file
+				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + toUser + "/keys/Aegis.pub");
+				//Encrypt the toUser with the Server's public key and send it to the server
+				dout.writeUTF(RSACrypto.rsaEncryptPublic(toUser, serverPublic.getModulus(), serverPublic.getPublicExponent()).toString());;
+				//Encrypt the message with the toUser's public key and send it to the server
+				dout.writeUTF(RSACrypto.rsaEncryptPublic(message, toUserPublic.getModulus(), toUserPublic.getPublicExponent()).toString());
+				
+				//Hash the Message for the digital signature
+				String hashedMessage = ClientLogin.computeHash(message);
+				//Send the server the digital signature (Hash of the message encrypted with UserA's private key
+				dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+		
 				// Append own message to IM window
 				print.moveToEnd();
 				// Clear out text input field
 				print.clearTextField();
+				
+				//TADA
 			} catch( IOException ie ) { 
 				print.writeToTextArea("Error: You are not connfected!\n");
 				print.moveToEnd();
 				print.clearTextField();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}System.gc();
 	}
@@ -208,25 +223,40 @@ public class Client
 			// Who is the message from? 
 			String fromUserCipher = din.readUTF();
 			// What is the message?
-			String message = din.readUTF();
-			BigInteger fromUserBytes = new BigInteger(fromUserCipher);
-			String fromUser = new String(RSACrypto.rsaDecryptPublic(fromUserBytes.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+			String encryptedMessage = din.readUTF();
+			// Grab the digital signature 
+			String digitalSignatureCipher = din.readUTF();
+			
+			//Don't have to do the below, waste of memory, simple do String.getBytes()
+			//BigInteger fromUserBytes = new BigInteger(fromUserCipher);
+			
+			//Grab the user's private key - SHHH!!
+			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv");
+			//Decrypt the fromUser to see what user this message came from!
+			String fromUserDecrypted = new String(RSACrypto.rsaDecryptPrivate(fromUserCipher.getBytes(),usersPrivate.getModulus(),usersPrivate.getPrivateExponent()));
+			
+			//Decrypt the message!
+			String decryptedMessage = new String(RSACrypto.rsaDecryptPrivate(encryptedMessage.getBytes(),usersPrivate.getModulus(),usersPrivate.getPrivateExponent()));
+
+			//Compare the digital signature to the hashed message to verify integrity of the message!
+			if((new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),(RSACrypto.readPubKeyFromFile("users/" + fromUserDecrypted + "/keys/" + fromUserDecrypted + ".pub").getModulus()),(RSACrypto.readPubKeyFromFile("users/" + fromUserDecrypted + "/keys/" + fromUserDecrypted + ".pub").getPublicExponent())))).equals(ClientLogin.computeHash(decryptedMessage))) {
+				
 			//If the message is an unavailabe user response		
-			if(fromUser.equals("UnavailableUser")){
-				print = (MapTextArea)clientResource.tabPanels.get(message);
-				print.writeToTextArea(fromUser+": ");
-				print.writeToTextArea(message+"\n");
+			if(fromUserDecrypted.equals("UnavailableUser")){
+				print = (MapTextArea)clientResource.tabPanels.get(decryptedMessage);
+				print.writeToTextArea(fromUserDecrypted+": ");
+				print.writeToTextArea(decryptedMessage+"\n");
 				return;
 			}
 			
 			//Remove user from Buddylist
-			if(fromUser.equals("ServerLogOff")) {
+			if(fromUserDecrypted.equals("ServerLogOff")) {
 				//Check to see if the user is in your buddy list, if not, don't care
 				String[] usernames = returnBuddyListArray();
 				for(int x=0;x<usernames.length;x++) {
-					if(usernames[x].equals(message)) { 
+					if(usernames[x].equals(decryptedMessage)) { 
 						//We know that the buddy is in his/her buddy list! 
-						clientResource.buddySignOff(message);
+						clientResource.buddySignOff(decryptedMessage);
 						//** add this into your application code as appropriate
 						// Open an input stream  to the audio file.
 						InputStream in = new FileInputStream("sounds/signOff.wav");
@@ -241,15 +271,15 @@ public class Client
 				return;
 			}
 			
-			if(fromUser.equals("CheckUserStatus"))
+			if(fromUserDecrypted.equals("CheckUserStatus"))
 			{
-				System.out.println(message);
+				System.out.println(decryptedMessage);
 				dout.writeUTF(userNameToCheck);
 				return;
 			}
-			if(fromUser.equals("CheckUserStatusResult"))
+			if(fromUserDecrypted.equals("CheckUserStatusResult"))
 			{
-				int result = Integer.parseInt(message);
+				int result = Integer.parseInt(decryptedMessage);
 				clientResource.mapUserStatus(userNameToCheck, result);
 				if (result == 1)
 				{
@@ -259,33 +289,33 @@ public class Client
 				return;
 			}
 			
-			if(fromUser.equals("ReturnPublicKey")) {
-				System.out.println(message);
+			if(fromUserDecrypted.equals("ReturnPublicKey")) {
+				System.out.println(decryptedMessage);
 				System.out.println(publicKeyToFind);
 				dout.writeUTF(publicKeyToFind);
 				return;
 			}
-			if(fromUser.equals("ReturnPublicKeyMod")) { 
-				String str = message;
+			if(fromUserDecrypted.equals("ReturnPublicKeyMod")) { 
+				String str = decryptedMessage;
 				modOfBuddy = new BigInteger(str);
 				return;
 			}
-			if(fromUser.equals("ReturnPublicKeyExp")) { 
-				String str = message;
+			if(fromUserDecrypted.equals("ReturnPublicKeyExp")) { 
+				String str = decryptedMessage;
 				expOfBuddy = new BigInteger(str);
 				writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
 				return;
 			}
 
 			//Create buddy list entry for user sign on
-			if(fromUser.equals("ServerLogOn")) {
-				if(!(message.equals(username))) 	{
+			if(fromUserDecrypted.equals("ServerLogOn")) {
+				if(!(decryptedMessage.equals(username))) 	{
 					//Check to see if the user is in your buddylist, if not, don't care
 					String[] usernames = returnBuddyListArray();
 					for(int x=0;x<usernames.length;x++) {
-						if(usernames[x].equals(message)) { 
+						if(usernames[x].equals(decryptedMessage)) { 
 							//We know that the buddy is in his/her buddy list! 
-							clientResource.newBuddyListItems(message);
+							clientResource.newBuddyListItems(decryptedMessage);
 							//** add this into your application code as appropriate
 							// Open an input stream  to the audio file.
 							InputStream in = new FileInputStream("sounds/signOn.wav");
@@ -303,16 +333,16 @@ public class Client
 			else { // Need this else in order to hide the system messages coming from Aegis
 
 				//If there isn't already a tab for the conversation, make one
-				if(!clientResource.tabPanels.containsKey(fromUser)){
-					clientResource.makeTab(fromUser);
+				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
+					clientResource.makeTab(fromUserDecrypted);
 				}
 
 				//Write message to the correct tab
-				print = (MapTextArea)clientResource.tabPanels.get(fromUser);
+				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
 				print.setTextColor(Color.blue);
-				print.writeToTextArea(fromUser+": "); 
+				print.writeToTextArea(fromUserDecrypted+": "); 
 				print.setTextColor(Color.black);
-				print.writeToTextArea(message+"\n");
+				print.writeToTextArea(decryptedMessage+"\n");
 				print.moveToEnd();
 				
 				// Open an input stream  to the audio file.
@@ -325,9 +355,16 @@ public class Client
 				//AudioPlayer.player.stop(as);
 			}
 			System.gc();
+			} else { 
+				//TODO Make some type of alert to the user.
+				System.out.println("MESSAGE COMPROMISED. RUN");
+			}
 		}catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
 			connected=0; 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
