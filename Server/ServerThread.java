@@ -136,7 +136,7 @@ public class ServerThread extends Thread
 			String digitalSignatureEncrypted = din.readUTF();
 			System.out.println("FSFSAS:" +  toUserEncrypted);
 			//Decrypt the to user
-			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()).toString();
+			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent());
 	
 			System.out.println("FSFSAS:" +  toUserDecrypted);
 			
