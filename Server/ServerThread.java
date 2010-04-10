@@ -131,7 +131,12 @@ public class ServerThread extends Thread
 				//if(debug==1)System.out.println("Server eventcode detected!");
 				systemMessageListener(Integer.parseInt(message));
 				return;
-			}else { 
+			}
+			if (toUser.equals("Interupt")) {
+				systemMessageListener(Integer.parseInt(message));
+				return;
+			}	
+			else { 
 				if(debug==1)System.out.println("Routing normal message");
 				sendMessage(toUser, username, message);
 			}
