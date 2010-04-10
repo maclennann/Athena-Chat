@@ -76,7 +76,8 @@ public class ServerThread extends Thread
 			din = new DataInputStream( socket.getInputStream() );
 
 			//Getting the Username and Password over the stream for authentication
-			String usernameCipher = din.readUTF(); 
+			String usernameCipher = din.readUTF();
+			System.out.println("EncryptedUsername: " + usernameCipher);
 			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			System.out.println("USER TRYING TO LOG IN DECRYPTED:::: "+username);
 			if(username.equals("Interupt")) { 
