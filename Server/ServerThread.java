@@ -137,6 +137,7 @@ public class ServerThread extends Thread
 			
 			//Decrypt the to user
 			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserEncrypted.getBytes(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent());
+			System.out.println("FSFSAS:" +  toUserEncrypted);	
 			System.out.println("FSFSAS:" +  toUserDecrypted);
 			
 			//Is the message an eventcode meant for the server?
