@@ -81,6 +81,7 @@ public class ServerThread extends Thread
 			String usernameCipher = din.readUTF();
 			System.out.println("EncryptedUsername: " + usernameCipher);
 			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			
 			System.out.println("USER TRYING TO LOG IN DECRYPTED:::: "+username);
 			if(username.equals("Interupt")) { 
 				
@@ -133,7 +134,7 @@ public class ServerThread extends Thread
 			//Read in the Encrypted message
 			String messageEncrypted=din.readUTF(); 
 			//Read in the Digital Signature
-			String digitalSignatureEncrypted = din.readUTF();
+			//String digitalSignatureEncrypted = din.readUTF();
 			System.out.println("FSFSAS:" +  toUserEncrypted);
 			//Decrypt the to user
 			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(new BigInteger(toUserEncrypted).toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
