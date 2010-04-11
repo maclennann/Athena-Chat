@@ -135,11 +135,15 @@ public class ServerThread extends Thread
 			String messageEncrypted=din.readUTF(); 
 			//Read in the Digital Signature
 			String digitalSignatureEncrypted = din.readUTF();
-			System.out.println("FSFSAS:" +  toUserEncrypted);
+			System.out.println("Encrypted:" +  toUserEncrypted);
 			//Decrypt the to user
-			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(new BigInteger(toUserEncrypted).toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			BigInteger BigIntegertoUser = new BigInteger(toUserEncrypted);
+			System.out.println("BigInt: " + BigIntegertoUser);
+			byte[] toUserByteArray = BigIntegertoUser.toByteArray();
+			System.out.println("ByteArray: " + toUserByteArray);
+			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserByteArray,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 	
-			System.out.println("FSFSAS:" +  toUserDecrypted);
+			System.out.println("Decrypted:" +  toUserDecrypted);
 			
 			//Is the message an eventcode meant for the server?
 			if (toUserDecrypted.equals("Aegis")) { 
