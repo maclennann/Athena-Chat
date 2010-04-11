@@ -236,9 +236,7 @@ public class Client
 			String fromUserDecrypted = new String(RSACrypto.rsaDecryptPublic(fromUserCipher.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 			
 			//Decrypt the message!
-			String decryptedMessage;
-
-			
+			String decryptedMessage;		
 				
 			//If the message is an unavailabe user response		
 			if(fromUserDecrypted.equals("UnavailableUser")){
