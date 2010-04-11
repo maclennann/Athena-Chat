@@ -636,7 +636,7 @@ public class Client
 			System.out.println("Username sent - now listening for result...");
 			//Grab result
 			String resultCipher = din.readUTF();
-			result = (Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(resultCipher).toByteArray(), serverPublic.getModulus(), serverPublic.getPublicExponent())));
+			result = (Integer.parseInt(RSACrypto.rsaDecryptPublic(new BigInteger(resultCipher).toByteArray(), serverPublic.getModulus(), serverPublic.getPublicExponent())));
 			//Print result 
 			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
