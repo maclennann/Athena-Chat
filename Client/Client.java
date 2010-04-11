@@ -659,7 +659,7 @@ public class Client
 		try {
 			userNameToCheck = findUserName;
 			//DataInputStream din = new DataInputStream(socket.getInputStream());
-			System.out.println("Checking availability for user: "+findUserName);
+			System.out.println("Checking availability for user: "+userNameToCheck);
 			//Initialize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
