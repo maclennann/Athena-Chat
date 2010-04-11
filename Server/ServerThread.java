@@ -352,7 +352,7 @@ public class ServerThread extends Thread
 		//Send the message, and the user it is from
 		try {
 			//Encrypt the fromUser with the public key of userB (we want everything to be anonymous, so we can't encrypt the fromUser with the private key of the server, anyone can decrypt that)
-			String fromUserEncrypted = RSACrypto.rsaEncryptPublic(username, (RSACrypto.readPubKeyFromFile("keys/" + username + ".pub").getModulus()), (RSACrypto.readPubKeyFromFile("keys/" + username + ".pub").getPublicExponent())).toString();
+			String fromUserEncrypted = RSACrypto.rsaEncryptPublic(username, (RSACrypto.readPubKeyFromFile("keys/" + toUser + ".pub").getModulus()), (RSACrypto.readPubKeyFromFile("keys/" + toUser + ".pub").getPublicExponent())).toString();
 			dout.writeUTF(fromUserEncrypted.toString());
 			dout.writeUTF(message);
 		} catch( IOException ie ) { System.out.println( ie ); }
