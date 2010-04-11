@@ -669,8 +669,10 @@ public class Client
 		//Send the message
 		try{
 			//Send recipient's name and message to server
-			dout.writeUTF(RSACrypto.rsaEncryptPublic("Aegis", serverPublic.getModulus(), serverPublic.getPublicExponent()).toString());
-			dout.writeUTF(RSACrypto.rsaEncryptPublic(message, serverPublic.getModulus(), serverPublic.getPublicExponent()).toString());
+			BigInteger usernameCipher = new BigInteger(RSACrypto.rsaEncryptPublic("Aegis", serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			dout.writeUTF(usernameCipher.toString());
+			dout.writeUTF(messageCipher.toString());
 			dout.writeUTF("TEST");
 		} catch( IOException ie ) {
 		}

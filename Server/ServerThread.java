@@ -389,9 +389,10 @@ public class ServerThread extends Thread
 
 		//Send the message, and the user it is from
 		try {
-			//BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPublicExponent()));
-			//dout.writeUTF(toUser);
-			dout.writeUTF(message);
+			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			BigInteger toUserCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(toUser, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			dout.writeUTF(toUserCipher.toString());
+			dout.writeUTF(messageCipher.toString());
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
