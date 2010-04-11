@@ -190,11 +190,12 @@ public class ServerThread extends Thread
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendSystemMessage(username, "Access granted. Send me the username.");
 			//Listen for the username
-			String findUser = din.readUTF();
+			String findUserCipher = din.readUTF();
+			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserCipher.getBytes(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			//Print out the received username
-			System.out.println("Username received: " + findUser);
+			System.out.println("Username received: " + findUserDecrypted);
 			//Check to see if the username is in the current Hashtable, return result
-			if ((server.userToSocket.containsKey(findUser))) { 
+			if ((server.userToSocket.containsKey(findUserDecrypted))) { 
 				sendSystemMessage(username,"1");
 				System.out.println("(Online)\n");
 			} else { sendSystemMessage(username,"0");
@@ -211,11 +212,12 @@ public class ServerThread extends Thread
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendMessage(username, "CheckUserStatus", "Access granted. Send me the username.");
 			//Listen for the username
-			String findUser = din.readUTF();
+			String findUserCipher = din.readUTF();
+			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserCipher.getBytes(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			//Print out the received username
-			System.out.println("Username received: " + findUser);
+			System.out.println("Username received: " + findUserDecrypted);
 			//Check to see if the username is in the current Hashtable, return result
-			if ((server.userToSocket.containsKey(findUser))) { 
+			if ((server.userToSocket.containsKey(findUserDecrypted))) { 
 				sendMessage(username, "CheckUserStatusResult", "1");
 				System.out.println("(Online)\n");
 			} else { sendMessage(username, "CheckUserStatusResult", "0");
