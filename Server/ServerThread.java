@@ -415,14 +415,15 @@ public class ServerThread extends Thread
 		if (clientPassword.equals(hashedPassword)) { 
 			//Run some command that lets user log in!
 			//TODO: We need to broadcast a message letting everyone know a user logged in?
-			String returnMessage = "You're logged in!!!!"; //Depreciated - See next line
-			dout.writeUTF("Success!");
-			return returnMessage;
+			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Success", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			dout.writeUTF(returnCipher.toString());
+			return returnCipher.toString();
 		}else { 
 			//Login fail handler
-			dout.writeUTF("Failed");
+			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			server.removeConnection(socket, clientName);
-			return "Login Failed";  
+			dout.writeUTF(returnCipher.toString());
+			return returnCipher.toString();  
 		}	
 	}
 	//This will return the hashed input string

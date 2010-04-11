@@ -199,13 +199,13 @@ public class Server
 		//make sure the outputStreams hashtable is up-to-date
 		synchronized( outputStreams ) {
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
-			
+			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
 			//Get the outputStream for each socket and send message
 			for (Enumeration<?> e = getOutputStreams(); e.hasMoreElements(); ) {
 				DataOutputStream dout = (DataOutputStream)e.nextElement();
 				try{
 					dout.writeUTF(eventCodeCipher.toString());
-					dout.writeUTF( message );
+					dout.writeUTF( messageCipher.toString() );
 				} catch( IOException ie ) { System.out.println( ie ); }
 			}
 		}
