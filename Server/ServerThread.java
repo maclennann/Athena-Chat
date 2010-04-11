@@ -393,7 +393,7 @@ public class ServerThread extends Thread
 		try {
 			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			BigInteger toUserCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(toUser, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
-			dout.writeUTF(toUserCipher.toString());
+			//dout.writeUTF(toUserCipher.toString());
 			dout.writeUTF(messageCipher.toString());
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
