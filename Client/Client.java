@@ -233,7 +233,7 @@ public class Client
 			//Grab the user's private key - SHHH!!
 			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv");
 			//Decrypt the fromUser to see what user this message came from!
-			String fromUserDecrypted = new String(RSACrypto.rsaDecryptPrivate(fromUserCipher.getBytes(),usersPrivate.getModulus(),usersPrivate.getPrivateExponent()));
+			String fromUserDecrypted = new String(RSACrypto.rsaDecryptPrivate(fromUserCipher.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 			
 			//Decrypt the message!
 			String decryptedMessage = new String(RSACrypto.rsaDecryptPrivate(encryptedMessage.getBytes(),usersPrivate.getModulus(),usersPrivate.getPrivateExponent()));
