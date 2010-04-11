@@ -631,10 +631,12 @@ public class Client
 			//Listen for the incoming Acknowledge message
 			System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
-			dout.writeUTF(findUserName);
+			BigInteger findUserNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(findUserName, serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			dout.writeUTF(findUserNameCipher.toString());
 			System.out.println("Username sent - now listening for result...");
 			//Grab result
-			result = Integer.parseInt(din.readUTF());
+			String resultCipher = din.readUTF();
+			result = (Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(resultCipher).toByteArray(), serverPublic.getModulus(), serverPublic.getPublicExponent())));
 			//Print result 
 			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
