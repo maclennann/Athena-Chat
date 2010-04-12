@@ -214,7 +214,8 @@ public class ServerThread extends Thread
 			sendMessage(username, "CheckUserStatus", "Access granted. Send me the username.");
 			//Listen for the username
 			String findUserCipher = din.readUTF();
-			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserCipher.getBytes(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			BigInteger findUserBigInt = new BigInteger(findUserCipher);
+			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBigInt.toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			//Print out the received username
 			System.out.println("Username received: " + findUserDecrypted);
 			//Check to see if the username is in the current Hashtable, return result

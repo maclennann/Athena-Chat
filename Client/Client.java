@@ -138,6 +138,7 @@ public class Client
 				
 				//TADA
 			} catch( IOException ie ) { 
+				System.out.println(ie);
 				print.writeToTextArea("Error: You are not connfected!\n");
 				print.moveToEnd();
 				print.clearTextField();
