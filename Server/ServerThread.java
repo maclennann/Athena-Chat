@@ -35,6 +35,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import sun.security.util.BigInt;
+
 public class ServerThread extends Thread
 {
 	//Change to 1 for debug output
@@ -220,10 +222,17 @@ public class ServerThread extends Thread
 			System.out.println("Username received: " + findUserDecrypted);
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToSocket.containsKey(findUserDecrypted))) { 
-				sendMessage(username, "CheckUserStatusResult", "1");
+				String message = "1";
+				BigInteger messageBigInt = new BigInteger(message);
+				String messageCipher = RSACrypto.rsaEncryptPrivate(messageBigInt.toString(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()).toString();
+				sendMessage(username, "CheckUserStatusResult", messageCipher);
 				System.out.println("(Online)\n");
-			} else { sendMessage(username, "CheckUserStatusResult", "0");
-			System.out.println("(Offline)\n");
+			} else {
+				String message = "0";
+				BigInteger messageBigInt = new BigInteger(message);
+				String messageCipher = RSACrypto.rsaEncryptPrivate(messageBigInt.toString(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()).toString();
+				sendMessage(username, "CheckUserStatusResult", messageCipher);	
+				System.out.println("(Offline)\n");
 			} 
 		} catch ( Exception e ) { 
 			e.printStackTrace();
