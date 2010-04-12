@@ -1,0 +1,17 @@
+General Guidelines:
+ - Pay attention to new code, but not exclusively. As our codebase gets larger, it's easy to just read
+   over what we've done this week. Again, pay special attention to new code, but do not ignore old code.
+
+ - Make sure code is commented clearly. Professionalism is not a big concern, but I do need to know what
+   a line or method does, especially as our code gets more complex. Be sure to add references to other
+   pieces of the program it makes use of so I don't have to go searching. Line numbers never hurt anyone.
+
+ - Make sure code is clean and readable. Sometimes I try to jam into 1 line, what would better be served
+   in 5 lines. Try not to do this. If the benefit (speed/memory) is big enough to warrant it (IYO) just
+   be sure it is commented to hell and back so everyone can read it. Check indentation so we can easily
+   match up code blocks. We have to work on our variable and method names, too. They have to be unique,
+   informative, and not generic (we have too many blahUserblahSocketPanelblahblah).
+
+ - If you find anything that needs to be done, add a TODO inline in the code. Do NOT make any significant
+   changes to the code during the code review. Wait until after the review. If you need to break down or
+   clarify some confusing code, that's okay, but don't add any new code.
