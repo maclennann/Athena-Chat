@@ -233,14 +233,16 @@ public class Client
 			//Grab the user's private key - SHHH!!
 			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv");
 			//Decrypt the fromUser to see what user this message came from!
-			String fromUserDecrypted = new String(RSACrypto.rsaDecryptPublic(fromUserCipher.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+			BigInteger fromUserBigInt = new BigInteger(fromUserCipher);
+			String fromUserDecrypted = new String(RSACrypto.rsaDecryptPublic(fromUserBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 			
 			//Decrypt the message!
-			String decryptedMessage;		
+			String decryptedMessage;
+			BigInteger decryptedMessageBigInt = new BigInteger(encryptedMessage);
 				
 			//If the message is an unavailabe user response		
 			if(fromUserDecrypted.equals("UnavailableUser")){
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				print = (MapTextArea)clientResource.tabPanels.get(decryptedMessage);
 				print.writeToTextArea(fromUserDecrypted+": ");
 				print.writeToTextArea(decryptedMessage+"\n");
@@ -249,7 +251,7 @@ public class Client
 			
 			//Remove user from Buddylist
 			if(fromUserDecrypted.equals("ServerLogOff")) {
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				//Check to see if the user is in your buddy list, if not, don't care
 				String[] usernames = returnBuddyListArray();
 				for(int x=0;x<usernames.length;x++) {
@@ -272,14 +274,14 @@ public class Client
 			
 			if(fromUserDecrypted.equals("CheckUserStatus"))
 			{
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				System.out.println(decryptedMessage);
 				dout.writeUTF(userNameToCheck);
 				return;
 			}
 			if(fromUserDecrypted.equals("CheckUserStatusResult"))
 			{
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				int result = Integer.parseInt(decryptedMessage);
 				clientResource.mapUserStatus(userNameToCheck, result);
 				if (result == 1)
@@ -291,20 +293,20 @@ public class Client
 			}
 			
 			if(fromUserDecrypted.equals("ReturnPublicKey")) {
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				System.out.println(decryptedMessage);
 				System.out.println(publicKeyToFind);
 				dout.writeUTF(publicKeyToFind);
 				return;
 			}
 			if(fromUserDecrypted.equals("ReturnPublicKeyMod")) { 
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				String str = decryptedMessage;
 				modOfBuddy = new BigInteger(str);
 				return;
 			}
 			if(fromUserDecrypted.equals("ReturnPublicKeyExp")) { 
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				String str = decryptedMessage;
 				expOfBuddy = new BigInteger(str);
 				writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
@@ -313,7 +315,7 @@ public class Client
 
 			//Create buddy list entry for user sign on
 			if(fromUserDecrypted.equals("ServerLogOn")) {
-				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				if(!(decryptedMessage.equals(username))) 	{
 					//Check to see if the user is in your buddylist, if not, don't care
 					String[] usernames = returnBuddyListArray();
@@ -337,8 +339,8 @@ public class Client
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//Compare the digital signature to the hashed message to verify integrity of the message!
-				decryptedMessage = new String(RSACrypto.rsaDecryptPrivate(encryptedMessage.getBytes(),usersPrivate.getModulus(),usersPrivate.getPrivateExponent()));
-				if((new String(RSACrypto.rsaDecryptPublic(encryptedMessage.getBytes(),(RSACrypto.readPubKeyFromFile("users/" + fromUserDecrypted + "/keys/" + fromUserDecrypted + ".pub").getModulus()),(RSACrypto.readPubKeyFromFile("users/" + fromUserDecrypted + "/keys/" + fromUserDecrypted + ".pub").getPublicExponent())))).equals(ClientLogin.computeHash(decryptedMessage))) {
+				decryptedMessage = new String(RSACrypto.rsaDecryptPrivate(decryptedMessageBigInt.toByteArray(),usersPrivate.getModulus(),usersPrivate.getPrivateExponent()));
+				if(decryptedMessage.equals(ClientLogin.computeHash(decryptedMessage))) {
 				
 				//If there isn't already a tab for the conversation, make one
 				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
@@ -439,7 +441,7 @@ public class Client
 							}});
 				//Instanciate Buddy List
 				instantiateBuddyList();	
-				System.gc();
+				//System.gc();
 				//Start the thread
 				listeningProcedure.start();
 			}
@@ -639,12 +641,15 @@ public class Client
 			//Listen for the incoming Acknowledge message
 			System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
-			BigInteger findUserNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(findUserName, serverPublic.getModulus(), serverPublic.getPublicExponent()));
-			dout.writeUTF(findUserNameCipher.toString());
+			BigInteger findUserBigInt = new BigInteger(findUserName.getBytes());
+			String findUserNameCipher = new String(RSACrypto.rsaEncryptPublic(findUserBigInt.toString(), serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			dout.writeUTF(findUserNameCipher);
 			System.out.println("Username sent - now listening for result...");
 			//Grab result
 			String resultCipher = din.readUTF();
-			result = (Integer.parseInt(RSACrypto.rsaDecryptPublic(new BigInteger(resultCipher).toByteArray(), serverPublic.getModulus(), serverPublic.getPublicExponent())));
+			BigInteger resultBigInt = new BigInteger(resultCipher.getBytes());
+			String resultString = RSACrypto.rsaDecryptPublic(resultBigInt.toByteArray(), serverPublic.getModulus(), serverPublic.getPublicExponent());
+			result = Integer.parseInt(resultString);
 			//Print result 
 			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
