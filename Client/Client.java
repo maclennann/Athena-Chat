@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
+import sun.security.util.BigInt;
 
 
 
@@ -278,7 +279,9 @@ public class Client
 			{
 				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				System.out.println(decryptedMessage);
-				dout.writeUTF(userNameToCheck);
+				BigInteger userNameToCheckBigInt = new BigInteger(userNameToCheck);
+				String userNameToCheckCipher = RSACrypto.rsaEncryptPublic(userNameToCheckBigInt.toString(), serverPublic.getModulus(), serverPublic.getPublicExponent()).toString();
+				dout.writeUTF(userNameToCheckCipher);
 				return;
 			}
 			if(fromUserDecrypted.equals("CheckUserStatusResult"))
@@ -298,7 +301,9 @@ public class Client
 				decryptedMessage = new String(RSACrypto.rsaDecryptPublic(decryptedMessageBigInt.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
 				System.out.println(decryptedMessage);
 				System.out.println(publicKeyToFind);
-				dout.writeUTF(publicKeyToFind);
+				BigInteger publicKeyToFindBigInteger = new BigInteger(publicKeyToFind);
+				String publicKeyToFindCipher = RSACrypto.rsaEncryptPublic(publicKeyToFindBigInteger.toString(), serverPublic.getModulus(), serverPublic.getPublicExponent()).toString();
+				dout.writeUTF(publicKeyToFindCipher);
 				return;
 			}
 			if(fromUserDecrypted.equals("ReturnPublicKeyMod")) { 
