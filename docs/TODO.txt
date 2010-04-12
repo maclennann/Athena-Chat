@@ -1,0 +1,34 @@
+BOTH:
+	## Encryption!!!
+		@@ Generate a key pair for the server that we can integrate into the client
+			!! Done 04/08/2010 - NM
+		@@ Research KDC protocols
+			!! Done 04/08/2010 - NM
+		@@ Use D-H for session keys? Is there a better option?
+		@@ Revamp database to deal with hashed keys and things
+			!! Done 04/08/2010 - NM
+	## Make the code many many times more efficient
+	## CREATE JAVADOC Comments
+	## SECURE the code. We have EVERYTHING as public.
+
+CLIENT:
+	## Hash password before sending it to the server. --COMPLETE AT SOME POINT
+	## Notifications of messages
+	## Swing window for putting in username and password 
+		!! Done 02/25/2010 - Anon
+		@@ Can they save their password?
+	## Swing window for various preferences -- IN PROCESS 3/1/2010
+		@@ What preferences (aside from theme)? 
+			!! Timestamp option?
+	## BUDDYLIST
+		@@ CSV storage for alias along with username
+			!! Done 04/08/2010 - NM
+		@@ Do we encrypt buddylist? With what? What information is stored in it?
+			!! Done 04/08/2010 - NM
+	## Buddylist should update dynamically on buddy login. 
+			!! Done 02/25/2010 - Anon
+		@@ Already does for signoff. Copy that code. 
+
+SERVER:
+	## Create a thread to route messages, free up the console for an admin interface
+	## Create more eventcodes to/from the Server for special functions
