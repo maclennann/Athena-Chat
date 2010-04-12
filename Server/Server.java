@@ -52,7 +52,7 @@ public class Server
 	private static Connection con = null;
 	
 	//Defines which port on which we listen for client
-	private static int listenPort = 7777;
+	private static int listenPort = 7778;
 
 	//Will control listener thread when we do that
 	@SuppressWarnings("unused")
@@ -164,7 +164,7 @@ public class Server
 		System.out.println("**     v0.0.2a                           **");
 		System.out.println("**                                       **");
 		System.out.println("**     Server accepting connections:     **");
-		System.out.println("**     Port 7777                         **");
+		System.out.println("**     Port 7778                         **");
 		System.out.println("**                                       **");
 		System.out.println("*******************************************");
 
