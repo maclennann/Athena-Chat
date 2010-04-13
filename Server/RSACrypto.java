@@ -225,7 +225,7 @@ public class RSACrypto {
 			return plainText;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaEncrypt'");
+			System.out.println("An error has occured in 'rsaDecryptPrivate'");
 		}return null;
 	}
 	
