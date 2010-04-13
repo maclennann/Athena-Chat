@@ -131,7 +131,7 @@ public class Client
 				//Hash the Message for the digital signature
 				String hashedMessage = ClientLogin.computeHash(message);
 				//Send the server the digital signature (Hash of the message encrypted with UserA's private key
-				dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+				//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
 
 				// Append own message to IM window
 				print.moveToEnd();
