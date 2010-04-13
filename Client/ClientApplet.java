@@ -379,8 +379,51 @@ public class ClientApplet extends JFrame {
 							makeTab(o.toString());
 							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 							Component[] currentTabComponents = currentTab.getComponents();
-							Component textFieldToFocus = currentTabComponents[1];
+							JTextComponent textFieldToFocus = (JTextComponent) currentTabComponents[1];
+							
+							textFieldToFocus.addKeyListener(new KeyListener() {
+								public void keyPressed(KeyEvent e) {
+								}
+								public void keyReleased(KeyEvent e) {
+									if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+										JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+										int tempIndex = imTabbedPane.getSelectedIndex();
+										imTabbedPane.remove(currentTab);
+										
+										if(tempIndex > 0)
+										{
+											imTabbedPane.setSelectedIndex(tempIndex - 1);
+											currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+											Component[] currentTabComponents = currentTab.getComponents();
+											JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+											currentTextField.requestFocusInWindow();
+										}
+										else
+										{
+											if(imTabbedPane.getTabCount() > 1)
+											{
+												imTabbedPane.setSelectedIndex(tempIndex);
+												currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
+												Component[] currentTabComponents = currentTab.getComponents();
+												JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+												currentTextField.requestFocusInWindow();											
+											}
+											else if(imTabbedPane.getTabCount() > 0)
+											{
+												imTabbedPane.setSelectedIndex(0);
+												currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+												Component[] currentTabComponents = currentTab.getComponents();
+												JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+												currentTextField.requestFocusInWindow();											
+											}
+										}
+										}
+									}
+								public void keyTyped(KeyEvent e) {
+								}
+								});
 							textFieldToFocus.requestFocusInWindow();
+							
 						} else {
 							// Focus the tab for this user name if it already
 							// exists
@@ -480,28 +523,75 @@ public class ClientApplet extends JFrame {
 	
 	public void closeTabWithESC(boolean activated)
 	{
+		int tabCount = imTabbedPane.getTabCount();
+		JPanel currentTab;
+		Component[] currentTabComponents;
+		JTextComponent currentTextField;
 		if(activated)
 		{
-			imTabbedPane.addKeyListener(new KeyListener() {
+			// Assign key listener to all existing text fields
+			for(int x = 0; x < tabCount; x++)
+			{
+				imTabbedPane.setSelectedIndex(x);
+				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				currentTabComponents = currentTab.getComponents();
+				currentTextField = (JTextComponent) currentTabComponents[1];
+				currentTextField.addKeyListener(new KeyListener() {
 				public void keyPressed(KeyEvent e) {
 				}
 				public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
-					Component tabToKill = imTabbedPane.getSelectedComponent();
-					imTabbedPane.remove(tabToKill);
+					if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+						int tempIndex = imTabbedPane.getSelectedIndex();
+						imTabbedPane.remove(currentTab);
+						
+						if(tempIndex > 0)
+						{
+							imTabbedPane.setSelectedIndex(tempIndex - 1);
+							currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+							Component[] currentTabComponents = currentTab.getComponents();
+							JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+							currentTextField.requestFocusInWindow();
+						}
+						else
+						{
+							if(imTabbedPane.getTabCount() > 1)
+							{
+								imTabbedPane.setSelectedIndex(tempIndex + 1);
+								currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
+								Component[] currentTabComponents = currentTab.getComponents();
+								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+								currentTextField.requestFocusInWindow();											
+							}
+							else if(imTabbedPane.getTabCount() > 0)
+							{
+								imTabbedPane.setSelectedIndex(0);
+								currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+								Component[] currentTabComponents = currentTab.getComponents();
+								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+								currentTextField.requestFocusInWindow();											
+							}
+						}
+						}
 					}
-				}
 				public void keyTyped(KeyEvent e) {
 				}
-			});
+				});
+			}
 		}
 		else
 		{
-			KeyListener[] tabListeners = imTabbedPane.getKeyListeners();
-			if(tabListeners != null)
+			for(int x = 0; x < tabCount; x++)
 			{
-				for(int x = 0; x < tabListeners.length; x++)
-					imTabbedPane.removeKeyListener(tabListeners[x]);
+				imTabbedPane.setSelectedIndex(x);
+				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				currentTabComponents = currentTab.getComponents();
+				currentTextField = (JTextComponent) currentTabComponents[1];
+				KeyListener[] fieldListeners =  currentTextField.getKeyListeners();
+				if (fieldListeners != null)
+				{
+					currentTextField.removeKeyListener(fieldListeners[0]);
+				}
 			}
 		}
 	}
