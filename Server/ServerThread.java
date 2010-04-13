@@ -484,6 +484,9 @@ public class ServerThread extends Thread
 			File newFile = new File("keys/" + findUserDecrypted + ".pub");
 			if((newFile.exists())) {
 				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/"+findUserDecrypted+".pub");
+				System.out.println("MOD: " + keyToReturn.getModulus().toString());
+				System.out.println("EXP: " + keyToReturn.getPublicExponent().toString());
+				
 				//Check to see if the user has a key file on the server
 				BigInteger keyToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getModulus().toString(),serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 				sendMessage(username, "ReturnPublicKeyMod", keyToReturnCipher.toString());
