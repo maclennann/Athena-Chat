@@ -228,7 +228,7 @@ public class Client
 			// What is the message?
 			String encryptedMessage = din.readUTF();
 			// Grab the digital signature 
-			String digitalSignatureCipher = din.readUTF();
+			//String digitalSignatureCipher = din.readUTF();
 
 			//Don't have to do the below, waste of memory, simple do String.getBytes()
 			//BigInteger fromUserBytes = new BigInteger(fromUserCipher);
