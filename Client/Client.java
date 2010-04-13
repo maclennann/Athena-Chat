@@ -700,7 +700,7 @@ public class Client
 			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, serverPublic.getModulus(), serverPublic.getPublicExponent()));
 			dout.writeUTF(usernameCipher.toString());
 			dout.writeUTF(messageCipher.toString());
-			dout.writeUTF("TEST");
+			//dout.writeUTF("TEST");
 		} catch( IOException ie ) {
 		}
 	}
