@@ -488,10 +488,10 @@ public class ServerThread extends Thread
 				System.out.println("EXP: " + keyToReturn.getPublicExponent().toString());
 				
 				//Check to see if the user has a key file on the server
-				BigInteger keyToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getModulus().toString(),serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				BigInteger keyToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getModulus().toString(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				sendMessage(username, "ReturnPublicKeyMod", keyToReturnCipher.toString());
 				System.out.println("Modulus Returned\n");
-				BigInteger exponentToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getPublicExponent().toString(),serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				BigInteger exponentToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getPublicExponent().toString(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				sendMessage(username, "ReturnPublicKeyExp", exponentToReturnCipher.toString());
 				System.out.println("Exponent Returned\n");
 
