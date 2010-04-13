@@ -193,6 +193,7 @@ public class ServerThread extends Thread
 			sendSystemMessage(username, "Access granted. Send me the username.");
 			//Listen for the username
 			String findUserCipher = din.readUTF();
+			System.out.println("FINDUSERCIPHER!@$!#@" +findUserCipher);
 			BigInteger findUserBigInt = new BigInteger(findUserCipher.getBytes());
 			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBigInt.toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			//Print out the received username
