@@ -191,9 +191,9 @@ public class ServerThread extends Thread
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			//Encrypt the String, turn it into a BigInteger
-			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 			
-			sendSystemMessage(username, accessGrantedCipher.toString());
+			sendSystemMessage(username, "Access Granted. Send me the username.");
 			//Listen for the username
 			String findUserCipher = din.readUTF();
 			System.out.println("FINDUSERCIPHER!@$!#@" +findUserCipher);
