@@ -474,20 +474,27 @@ public class ServerThread extends Thread
 			try{
 			//Listen for the username
 			String findUser = din.readUTF();
+			byte[] findUserBytes = (new BigInteger(findUser)).toByteArray();
+			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			
 			//Print out the received username
 			System.out.println("Username received PUBLIC FUCKING KEY REQUEST: " + findUser);
 			
 			
-			File newFile = new File("keys/" + findUser + ".pub");
+			File newFile = new File("keys/" + findUserDecrypted + ".pub");
 			if((newFile.exists())) {
-				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/"+findUser+".pub");
+				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/"+findUserDecrypted+".pub");
 				//Check to see if the user has a key file on the server
-				sendMessage(username, "ReturnPublicKeyMod", keyToReturn.getModulus().toString());
+				BigInteger keyToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getModulus().toString(),serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				sendMessage(username, "ReturnPublicKeyMod", keyToReturnCipher.toString());
 				System.out.println("Modulus Returned\n");
-				sendMessage(username, "ReturnPublicKeyExp", keyToReturn.getPublicExponent().toString());
+				BigInteger exponentToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getPublicExponent().toString(),serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				sendMessage(username, "ReturnPublicKeyExp", exponentToReturnCipher.toString());
 				System.out.println("Exponent Returned\n");
 
-			} else { sendMessage(username, "ReturnPublicKeyMod", "-1");
+			} else { 
+				BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				sendMessage(username, "ReturnPublicKeyMod",keyNotFoundCipher.toString() );
 			System.out.println("User does not have a keyfile with us");
 			} }catch(Exception e){e.printStackTrace();}
 	}
