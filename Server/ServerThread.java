@@ -139,11 +139,8 @@ public class ServerThread extends Thread
 			//String digitalSignatureEncrypted = din.readUTF();
 			System.out.println("Encrypted:" +  toUserEncrypted);
 			//Decrypt the to user
-			BigInteger BigIntegertoUser = new BigInteger(toUserEncrypted);
-			System.out.println("BigInt: " + BigIntegertoUser);
-			byte[] toUserByteArray = BigIntegertoUser.toByteArray();
-			System.out.println("ByteArray: " + toUserByteArray);
-			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserByteArray,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			byte[] toUserBytes = (new BigInteger(toUserEncrypted)).toByteArray();
+			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 	
 			System.out.println("Decrypted:" +  toUserDecrypted);
 			
