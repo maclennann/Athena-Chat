@@ -136,7 +136,7 @@ public class ServerThread extends Thread
 			//Read in the Encrypted message
 			String messageEncrypted=din.readUTF(); 
 			//Read in the Digital Signature
-			String digitalSignatureEncrypted = din.readUTF();
+			//String digitalSignatureEncrypted = din.readUTF();
 			System.out.println("Encrypted:" +  toUserEncrypted);
 			//Decrypt the to user
 			BigInteger BigIntegertoUser = new BigInteger(toUserEncrypted);
