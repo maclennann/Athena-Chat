@@ -308,15 +308,15 @@ public class Client
 				return;
 			}
 			if(fromUserDecrypted.equals("ReturnPublicKeyMod")) { 
-				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
-				String str = decryptedMessage;
-				modOfBuddy = new BigInteger(str);
+				//decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				//String str = decryptedMessage;
+				modOfBuddy = new BigInteger(encryptedMessage);
 				return;
 			}
 			if(fromUserDecrypted.equals("ReturnPublicKeyExp")) { 
-				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
-				String str = decryptedMessage;
-				expOfBuddy = new BigInteger(str);
+				//decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				//String str = decryptedMessage;
+				expOfBuddy = new BigInteger(encryptedMessage);
 				writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
 				return;
 			}
