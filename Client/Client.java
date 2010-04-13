@@ -227,6 +227,7 @@ public class Client
 			String fromUserCipher = din.readUTF();
 			// What is the message?
 			String encryptedMessage = din.readUTF();
+			System.out.println("DFSAFSFD: "  + encryptedMessage);
 			// Grab the digital signature 
 			//String digitalSignatureCipher = din.readUTF();
 

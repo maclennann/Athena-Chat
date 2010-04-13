@@ -191,9 +191,9 @@ public class ServerThread extends Thread
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			//Encrypt the String, turn it into a BigInteger
-			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPriv.getModulus(),serverPriv.getPrivateExponent()));
+			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 			
-			sendSystemMessage(username, accessGrantedCiphet.toString());
+			sendSystemMessage(username, accessGrantedCipher.toString());
 			//Listen for the username
 			String findUserCipher = din.readUTF();
 			System.out.println("FINDUSERCIPHER!@$!#@" +findUserCipher);
@@ -217,9 +217,8 @@ public class ServerThread extends Thread
 		try {
 			System.out.println(username);
 			//Encrypt the String, turn it into a BigInteger
-			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPriv.getModulus(),serverPriv.getPrivateExponent()));
-
-			//Acknowledge connection. Make sure we are doing the right thing
+			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+		//Acknowledge connection. Make sure we are doing the right thing
 			sendMessage(username, "CheckUserStatus", accessGrantedCipher.toString());
 			//Listen for the username
 			String findUserCipher = din.readUTF();
