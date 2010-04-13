@@ -348,7 +348,7 @@ public class Client
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//Compare the digital signature to the hashed message to verify integrity of the message!
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivate.getModulus(),usersPrivate.getPrivateExponent());
-				if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
+				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
 
 					//If there isn't already a tab for the conversation, make one
@@ -378,7 +378,7 @@ public class Client
 				System.out.println("MESSAGE COMPROMISED. RUN");
 			}*/
 				}
-			}
+			//}
 		}
 		catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
