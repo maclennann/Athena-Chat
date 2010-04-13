@@ -666,7 +666,7 @@ public class Client
 			System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
-			System.out.println("HAIII");
+			System.out.println("SENT SERVER FLAG 001");
 
 		} catch (Exception e) { 
 			System.out.println(e);
@@ -683,7 +683,7 @@ public class Client
 			//First contact with Aegis!
 			systemMessage("003");
 
-			System.out.println("HAIII");
+			System.out.println("SENT SERVER FLAG 003");
 			//listeningProcedure.start();
 
 		} catch (Exception e) { 
