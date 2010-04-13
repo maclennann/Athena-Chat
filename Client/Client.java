@@ -435,7 +435,7 @@ public class Client
 			BigInteger resultBigInt = new BigInteger(resultCipher);
 			String resultDecrypted = (RSACrypto.rsaDecryptPublic(resultBigInt.toByteArray(), serverPublic.getModulus(), serverPublic.getPublicExponent()));
 
-			System.out.println("RESSULTTTT DECRYPTEDDDD" + resultDecrypted);
+			System.out.println("RESSULTTTT DECRYPTEDDDD: " + resultDecrypted);
 			if(resultDecrypted.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
 			}
@@ -655,9 +655,8 @@ public class Client
 			//Listen for the incoming Acknowledge message
 			System.out.println("Message received from server: " + din.readUTF().toString());
 			//Go ahead and send Aegis the user name we want to find 
-			BigInteger findUserBigInt = new BigInteger(findUserName.getBytes());
-			String findUserNameCipher = new String(RSACrypto.rsaEncryptPublic(findUserBigInt.toString(), serverPublic.getModulus(), serverPublic.getPublicExponent()));
-			dout.writeUTF(findUserNameCipher);
+			BigInteger findUserNameBigInt = new BigInteger(RSACrypto.rsaEncryptPublic(findUserName, serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			dout.writeUTF(findUserNameBigInt.toString());
 			System.out.println("Username sent - now listening for result...");
 			//Grab result
 			String resultCipher = din.readUTF();
