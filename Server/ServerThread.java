@@ -194,8 +194,8 @@ public class ServerThread extends Thread
 			//Listen for the username
 			String findUserCipher = din.readUTF();
 			System.out.println("FINDUSERCIPHER!@$!#@" +findUserCipher);
-			BigInteger findUserBigInt = new BigInteger(findUserCipher.getBytes());
-			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBigInt.toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			byte[] findUserBytes = (new BigInteger(findUserCipher)).toByteArray();
+			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			//Print out the received username
 			System.out.println("Username received: " + findUserDecrypted);
 			//Check to see if the username is in the current Hashtable, return result
