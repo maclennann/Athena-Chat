@@ -190,7 +190,10 @@ public class ServerThread extends Thread
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
-			sendSystemMessage(username, "Access granted. Send me the username.");
+			//Encrypt the String, turn it into a BigInteger
+			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPublic("Access granted. Send me the username.",Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			
+			sendSystemMessage(username, accessGrantedCiphet.toString());
 			//Listen for the username
 			String findUserCipher = din.readUTF();
 			System.out.println("FINDUSERCIPHER!@$!#@" +findUserCipher);
@@ -213,8 +216,11 @@ public class ServerThread extends Thread
 	public void negotiateClientStatus(String checkUserFlag) {
 		try {
 			System.out.println(username);
+			//Encrypt the String, turn it into a BigInteger
+			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPublic("Access granted. Send me the username.",Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+
 			//Acknowledge connection. Make sure we are doing the right thing
-			sendMessage(username, "CheckUserStatus", "Access granted. Send me the username.");
+			sendMessage(username, "CheckUserStatus", accessGrantedCipher.toString());
 			//Listen for the username
 			String findUserCipher = din.readUTF();
 			
