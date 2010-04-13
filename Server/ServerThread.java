@@ -225,15 +225,13 @@ public class ServerThread extends Thread
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToSocket.containsKey(findUserDecrypted))) { 
 				String message = "1";
-				BigInteger messageBigInt = new BigInteger(message);
-				String messageCipher = RSACrypto.rsaEncryptPrivate(messageBigInt.toString(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()).toString();
-				sendMessage(username, "CheckUserStatusResult", messageCipher);
+				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
 				System.out.println("(Online)\n");
 			} else {
 				String message = "0";
-				BigInteger messageBigInt = new BigInteger(message);
-				String messageCipher = RSACrypto.rsaEncryptPrivate(messageBigInt.toString(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()).toString();
-				sendMessage(username, "CheckUserStatusResult", messageCipher);	
+				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
 				System.out.println("(Offline)\n");
 			} 
 		} catch ( Exception e ) { 
