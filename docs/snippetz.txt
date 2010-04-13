@@ -1,0 +1,13 @@
+HOW TO DECRYPT!
+//Read in the encrypted String
+String findUserCipher = din.readUTF();
+//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
+byte[] findUserBytes = (new BigInteger(findUserCipher)).toByteArray();
+//Decrypt the byte[], returns a String
+String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+
+HOW TO ENCRYPT:
+//Encrypt the String, turn it into a BigInteger
+BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(firstName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+//Write the BigInteger.toString()
+dout.writeUTF(firstNameCipher.toString());
