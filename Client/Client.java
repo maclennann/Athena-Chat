@@ -121,7 +121,7 @@ public class Client
 			//Send the message
 			try{
 				//Grab the other user's public key from file
-				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + toUser + "/keys/Aegis.pub");
+				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 				//Encrypt the toUser with the Server's public key and send it to the server
 				BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(toUser, serverPublic.getModulus(), serverPublic.getPublicExponent()));;
 				//Encrypt the message with the toUser's public key and send it to the server
