@@ -50,7 +50,7 @@ public class ClientAddUser extends JPanel {
 	public JLabel userNameJLabel = new JLabel("Username:");
 	public JLabel passwordJLabel = new JLabel("Password:");
 	public JLabel confirmPasswordJLabel = new JLabel("Confirm Password:");
-	public JLabel passwordMessageJLabel = new JLabel("You must enter a password longer than 5 characters.");
+	public JLabel passwordMessageJLabel = new JLabel("Password must be more than 5 characters.");
 	public JLabel passwordMatchesJLabel = new JLabel();
 	public JTextField firstNameJTextField;
 	public JTextField lastNameJTextField;
@@ -72,11 +72,11 @@ public class ClientAddUser extends JPanel {
 	public BigInteger publicExp;
 	public BigInteger privateMod;
 	public BigInteger privateExp;
-	
+	public Color goGreen = new Color(51,153,51);
 	ClientAddUser() {
 		//Create the Main Frame
 		addUserJFrame= new JFrame("User Registration");
-		addUserJFrame.setSize(350,420);
+		addUserJFrame.setSize(310,420);
 		addUserJFrame.setResizable(true);
 		
 		//Create the content Pane
@@ -92,22 +92,22 @@ public class ClientAddUser extends JPanel {
 		//First Name Input
 		firstNameJTextField = new JTextField();
 		firstNameJLabel.setBounds(15,25,100,25);
-		firstNameJTextField.setBounds(150,25,100,25);
+		firstNameJTextField.setBounds(130,25,120,25);
 		
 		//Last Name Input
 		lastNameJTextField = new JTextField();
 		lastNameJLabel.setBounds(15,65,100,25);
-		lastNameJTextField.setBounds(150,65,100,25);
+		lastNameJTextField.setBounds(130,65,120,25);
 		
 		//Email Addres Input
 		emailAddressJTextField = new JTextField();
 		emailAddressJLabel.setBounds(15,105,100,25);
-		emailAddressJTextField.setBounds(150,105,100,25);
+		emailAddressJTextField.setBounds(130,105,120,25);
 				
 		//Confirm Email Address Input
 		confirmEmailAddresJTextField = new JTextField();
 		confirmEmailAddressJLabel.setBounds(15,145,135,25);
-		confirmEmailAddresJTextField.setBounds(150,145,100,25);
+		confirmEmailAddresJTextField.setBounds(130,145,120,25);
 		emailMatchesJLabel.setBounds(260,145,25,25);
 		emailMatchesJLabel.setIcon(redX);
 		emailMessageJLabel.setBounds(15,290,300,25);
@@ -116,26 +116,26 @@ public class ClientAddUser extends JPanel {
 		//Username Input
 		userNameJTextField = new JTextField();
 		userNameJLabel.setBounds(15,185,100,25);
-		userNameJTextField.setBounds(150,185,100,25);
+		userNameJTextField.setBounds(130,185,120,25);
 		
 		//Password Input
 		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		passwordJPasswordField = new JPasswordField();
 		passwordJLabel.setBounds(15,225,100,25);
-		passwordJPasswordField.setBounds(150,225,100,25);
+		passwordJPasswordField.setBounds(130,225,120,25);
 		
 		//Confirm Password Input
 		confirmpasswordJPasswordField = new JPasswordField();
 		confirmPasswordJLabel.setBounds(15,265,135,25);
-		confirmpasswordJPasswordField.setBounds(150,265,100,25);
+		confirmpasswordJPasswordField.setBounds(130,265,120,25);
 		passwordMatchesJLabel.setBounds(260,265,25,25);
 		passwordMatchesJLabel.setIcon(redX);
 		passwordMessageJLabel.setBounds(15,310,400,25);
 		passwordMessageJLabel.setForeground(Color.RED);
 		
 		//Confirm and Cancel JButtons
-		confirmJButton.setBounds(25,340,100,25);
-		cancelJButton.setBounds(150,340,100,25);
+		confirmJButton.setBounds(35,345,100,25);
+		cancelJButton.setBounds(160,345,100,25);
 		confirmJButton.setEnabled(false);
 		
 		//ActionListener to make the connect menu item connect
@@ -208,7 +208,7 @@ public class ClientAddUser extends JPanel {
 				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
 					emailMatchesJLabel.setIcon(greenCheck);
 					emailMessageJLabel.setText("The email address is valid.");
-					emailMessageJLabel.setForeground(Color.GREEN);
+					emailMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 				} else { 
 					emailMatchesJLabel.setIcon(redX);
@@ -225,7 +225,7 @@ public class ClientAddUser extends JPanel {
 				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
 					emailMatchesJLabel.setIcon(greenCheck);
 					emailMessageJLabel.setText("The email address is valid.");
-					emailMessageJLabel.setForeground(Color.GREEN);
+					emailMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 				} else { 
 					emailMatchesJLabel.setIcon(redX);
@@ -247,7 +247,7 @@ public class ClientAddUser extends JPanel {
 				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
 					emailMatchesJLabel.setIcon(greenCheck);
 					emailMessageJLabel.setText("The email address is valid.");
-					emailMessageJLabel.setForeground(Color.GREEN);
+					emailMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 				} else { 
 					emailMatchesJLabel.setIcon(redX);
@@ -262,7 +262,7 @@ public class ClientAddUser extends JPanel {
 				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
 					emailMatchesJLabel.setIcon(greenCheck);
 					emailMessageJLabel.setText("The email address is valid.");
-					emailMessageJLabel.setForeground(Color.GREEN);
+					emailMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 				} else { 
 					emailMatchesJLabel.setIcon(redX);
@@ -286,13 +286,13 @@ public class ClientAddUser extends JPanel {
 				if(passwordOne.equals(passwordTwo) && passwordOne.length() >= 6) { 
 					passwordMatchesJLabel.setIcon(greenCheck);
 					confirmJButton.setEnabled(true);
-					passwordMessageJLabel.setText("Your password is valud.");
-					passwordMessageJLabel.setForeground(Color.GREEN);
+					passwordMessageJLabel.setText("Your Password is valid.");
+					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
-					passwordMessageJLabel.setText("Your password must be longer than 5 characters.");
+					passwordMessageJLabel.setText("Password must be more than 5 characters.");
 					passwordMessageJLabel.setForeground(Color.RED);
 					confirmJButton.setEnabled(false);
 				}	
@@ -307,12 +307,12 @@ public class ClientAddUser extends JPanel {
 				if(passwordOne.equals(passwordTwo) && passwordOne.length() >= 6) { 
 					passwordMatchesJLabel.setIcon(greenCheck);
 					confirmJButton.setEnabled(true);
-					passwordMessageJLabel.setText("Your password is valud.");
-					passwordMessageJLabel.setForeground(Color.GREEN);
+					passwordMessageJLabel.setText("Your Password is valid.");
+					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
-					passwordMessageJLabel.setText("Your password must be longer than 5 characters.");
+					passwordMessageJLabel.setText("Password must be more than 5 characters.");
 					passwordMessageJLabel.setForeground(Color.RED);
 					confirmJButton.setEnabled(false);
 				}
@@ -332,13 +332,13 @@ public class ClientAddUser extends JPanel {
 				if(passwordOne.equals(passwordTwo) && passwordOne.length() >= 6) { 
 					passwordMatchesJLabel.setIcon(greenCheck);
 					confirmJButton.setEnabled(true);
-					passwordMessageJLabel.setText("Your password is valud.");
-					passwordMessageJLabel.setForeground(Color.GREEN);
+					passwordMessageJLabel.setText("Your Password is valid.");
+					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
-					passwordMessageJLabel.setText("Your password must be longer than 5 characters.");
+					passwordMessageJLabel.setText("Password must be more than 5 characters.");
 					passwordMessageJLabel.setForeground(Color.RED);
 					confirmJButton.setEnabled(false);
 				}			
@@ -351,13 +351,13 @@ public class ClientAddUser extends JPanel {
 				if(passwordOne.equals(passwordTwo) && passwordOne.length() >= 6) { 
 					passwordMatchesJLabel.setIcon(greenCheck);
 					confirmJButton.setEnabled(true);
-					passwordMessageJLabel.setText("Your password is valud.");
-					passwordMessageJLabel.setForeground(Color.GREEN);
+					passwordMessageJLabel.setText("Your Password is valid.");
+					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
-					passwordMessageJLabel.setText("Your password must be longer than 5 characters.");
+					passwordMessageJLabel.setText("Password must be more than 5 characters.");
 					passwordMessageJLabel.setForeground(Color.RED);
 					confirmJButton.setEnabled(false);
 				}
