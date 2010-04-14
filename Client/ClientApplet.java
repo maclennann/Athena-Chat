@@ -97,6 +97,10 @@ public class ClientApplet extends JFrame {
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
+	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
+	static public JLabel lockIconLabel = new JLabel();
+	
+	
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
@@ -449,13 +453,16 @@ public class ClientApplet extends JFrame {
 
 		// Places the area for the tabs
 		imTabbedPane.setBounds(10, 10, 580, 537);
-
+		lockIconLabel.setIcon(lockIcon);
+		lockIconLabel.setVisible(true);
+		lockIconLabel.setBounds(148, 10, 580, 537);
 		// Generate panel by adding appropriate components
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.add(contactList);
 		panel.add(addContactLabel);
 		panel.add(removeContactLabel);
+		panel.add(lockIconLabel);
 		panel.add(imTabbedPane);
 
 		// Initialize window frame
@@ -477,6 +484,7 @@ public class ClientApplet extends JFrame {
 
 	// Make a tab for a conversation
 	public void makeTab(String user) {
+		lockIconLabel.setVisible(false);
 		// Create a hash table mapping a user name to the JPanel in a tab
 		tabPanels.put(user, new MapTextArea(user, spellCheckFlag));
 		// Make a temporary object for that JPanel
@@ -969,6 +977,7 @@ class CloseTabButton extends JPanel implements ActionListener {
 	    int i = pane.indexOfTabComponent(this);
 	    if (i != -1) {
 	      pane.remove(i);
+		  ClientApplet.lockIconLabel.setVisible(true);
 		  System.gc();
 	    }
 	  }
