@@ -49,6 +49,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -98,10 +101,10 @@ public class ClientApplet extends JFrame {
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
+	public Border blackline = BorderFactory.createLineBorder(Color.black);
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	static public JLabel lockIconLabel = new JLabel();
-	
-	
+	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
@@ -220,8 +223,8 @@ public class ClientApplet extends JFrame {
 
 		// Adds the contact list to a scroll pane
 		JScrollPane contactList = new JScrollPane(userBox);
-		contactList.setBounds(600, 10, 195, 485);
-
+		contactList.setBounds(600, 2, 195, 485);
+		contactList.setBorder(buddyBorder);
 		// Adds the Icons to Pane
 		// TODO Add ActionListeners to the images to bring up the add/remove
 		// user windows
