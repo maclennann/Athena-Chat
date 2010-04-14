@@ -450,7 +450,7 @@ public class ClientAddUser extends JPanel {
 			String result = din.readUTF();
 			byte[] resultBytes = (new BigInteger(result)).toByteArray();
 			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
-			if(resultDecrypted.equals("Username has been sucessfully created. You will received an email shortly with registration information. Feel free to login now.")) {
+			if(resultDecrypted.equals("Username has been sucessfully created.")) {
 				ClientLoginFailed successfulUserRegistration = new ClientLoginFailed(resultDecrypted,true);
 			}
 			else { 

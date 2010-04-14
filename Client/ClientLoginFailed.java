@@ -98,7 +98,7 @@ public class ClientLoginFailed extends JFrame {
 		
 		closeThis.setBounds(160,185,60,25);
 		contentPane.add(closeThis);
-		failedPasswordJLabel.setBounds(15,15,400,25);
+		failedPasswordJLabel.setBounds(15,15,400,75);
 		failedPasswordJLabel.setText(messageToDisplay);
 		contentPane.add(failedPasswordJLabel);
 
