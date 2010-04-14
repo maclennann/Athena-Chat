@@ -444,8 +444,8 @@ public class ServerThread extends Thread
 		}else { 
 			//Login fail handler
 			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-			server.removeConnection(socket, clientName);
 			dout.writeUTF(returnCipher.toString());
+			server.removeConnection(socket, clientName);
 			return returnCipher.toString();  
 		}	
 	}
