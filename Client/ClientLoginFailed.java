@@ -90,12 +90,17 @@ public class ClientLoginFailed extends JFrame {
 		//If status is true, that means it was a successful login so don't display the sad face.
 		//TODO Add a happy face
 		if(!(status)) {
+		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.png");
+		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
+		failedLoginDrawingPanel.setBounds(140,75,100,100);
+		contentPane.add(failedLoginDrawingPanel);
+		}
+		else{
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/happyface.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
 		failedLoginDrawingPanel.setBounds(140,75,100,100);
 		contentPane.add(failedLoginDrawingPanel);
 		}
-		
 		closeThis.setBounds(160,185,60,25);
 		contentPane.add(closeThis);
 		failedPasswordJLabel.setBounds(15,15,400,75);
