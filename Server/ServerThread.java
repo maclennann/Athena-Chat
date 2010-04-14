@@ -415,10 +415,19 @@ public class ServerThread extends Thread
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login(String clientName, String clientPassword) throws IOException { 
 		 dout = new DataOutputStream(socket.getOutputStream());
-		 
-		//Get the password from the hashtable
-		String hashedPassword = server.authentication.get(clientName).toString();
-
+		String hashedPassword;
+		try{
+			//Get the password from the hashtable
+			hashedPassword = server.authentication.get(clientName).toString();
+		}catch(Exception e){
+		//Login fail handler
+		System.out.println("FUCKING FAILED");
+			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			dout.writeUTF(returnCipher.toString());
+			server.removeConnection(socket, clientName);
+			return returnCipher.toString();  
+		}	
+		
 		//Debug messages.
 		//TODO: Come up with better debug messages
 		if (debug==1)System.out.println("User logging in...");
@@ -435,8 +444,8 @@ public class ServerThread extends Thread
 		}else { 
 			//Login fail handler
 			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-			server.removeConnection(socket, clientName);
 			dout.writeUTF(returnCipher.toString());
+			server.removeConnection(socket, clientName);
 			return returnCipher.toString();  
 		}	
 	}
