@@ -664,19 +664,13 @@ public class ClientApplet extends JFrame {
 				currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
 					public void insertUpdate(DocumentEvent e) {
 						System.out.println("TEXT ADDED!!");
-						Icon alertIcon = new ImageIcon("../images/alert.jpg");
+						Icon alertIcon = new ImageIcon("../images/alert.png");
 						int currentTabIndex = imTabbedPane.getSelectedIndex();
 						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-						Component c = imTabbedPane.getTabComponentAt(currentTabIndex);
-						System.out.println(c);
-						Component[] test = currentTab.getComponents();
-						System.out.println("Components: " + test.length);
-						for(int a = 0; a < test.length; a++)
-						{
-							System.out.println(test[a].toString());
-						}
-						//JButton currentButton = (JButton) currentTab.getComponent(2);
-						//currentButton.setIcon(alertIcon);
+						CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
+						JButton currentButton = (JButton) c.getComponent(1);
+						System.out.println("CUrrent button: " + currentButton.toString());
+						currentButton.setIcon(alertIcon);
 					}
 					public void changedUpdate(DocumentEvent e) {
 						// TODO Auto-generated method stub
@@ -969,10 +963,6 @@ class CloseTabButton extends JPanel implements ActionListener {
 	    pane.setTabComponentAt(index, this);
 	  }
 	  
-	  //public AlertTabButton(JTabbedPane pane, int index) {
-	//	  this.pane = pane;
-	//	  JButton currentButton = pane.getComponen
-	 // }
 	  public void actionPerformed(ActionEvent e) {
 	    int i = pane.indexOfTabComponent(this);
 	    if (i != -1) {
