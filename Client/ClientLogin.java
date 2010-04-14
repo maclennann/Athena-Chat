@@ -139,7 +139,7 @@ public class ClientLogin extends JFrame {
 					String passwordToHash = new String(password.getPassword());
 					String hashedPassword = computeHash(passwordToHash).toString();
 					Client.connect(username.getText(), hashedPassword);
-					login.setVisible(false);
+					login.dispose();
 					System.gc();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -211,6 +211,7 @@ public class ClientLogin extends JFrame {
 			}
 		});
 
+		
 
 		//Add the components to the Frame
 		contentPane.add(usernameLabel);

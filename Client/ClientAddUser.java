@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,9 +44,11 @@ public class ClientAddUser extends JPanel {
 	public JLabel lastNameJLabel = new JLabel("Last name:");
 	public JLabel emailAddressJLabel = new JLabel("Email address:");
 	public JLabel confirmEmailAddressJLabel = new JLabel("Confirm Email address:");
+	public JLabel emailMatchesJLabel = new JLabel();
 	public JLabel userNameJLabel = new JLabel("Username:");
 	public JLabel passwordJLabel = new JLabel("Password:");
 	public JLabel confirmPasswordJLabel = new JLabel("Confirm Password:");
+	public JLabel passwordMatchesJLabel = new JLabel();
 	public JTextField firstNameJTextField;
 	public JTextField lastNameJTextField;
 	public JTextField emailAddressJTextField;
@@ -53,6 +58,8 @@ public class ClientAddUser extends JPanel {
 	public JPasswordField confirmpasswordJPasswordField;
 	public JButton confirmJButton = new JButton("Confirm");
 	public JButton cancelJButton = new JButton("Cancel");
+	public ImageIcon redX = new ImageIcon("../images/redX.png");
+	public ImageIcon greenCheck = new ImageIcon("../images/greenCheck.png");
 	
 	public Border blackline;
 	public TitledBorder generalTitledBorder;
@@ -66,8 +73,8 @@ public class ClientAddUser extends JPanel {
 	ClientAddUser() {
 		//Create the Main Frame
 		addUserJFrame= new JFrame("User Registration");
-		addUserJFrame.setSize(300,375);
-		addUserJFrame.setResizable(false);
+		addUserJFrame.setSize(400,375);
+		addUserJFrame.setResizable(true);
 		
 		//Create the content Pane
 		contentPane = new JPanel();
@@ -93,12 +100,14 @@ public class ClientAddUser extends JPanel {
 		emailAddressJTextField = new JTextField();
 		emailAddressJLabel.setBounds(15,95,100,25);
 		emailAddressJTextField.setBounds(105,95,100,25);
-		
+				
 		//Confirm Email Address Input
 		confirmEmailAddresJTextField = new JTextField();
 		confirmEmailAddressJLabel.setBounds(15,135,135,25);
 		confirmEmailAddresJTextField.setBounds(155,135,100,25);
-		
+		emailMatchesJLabel.setBounds(260,135,25,25);
+		emailMatchesJLabel.setIcon(redX);
+	
 		//Username Input
 		userNameJTextField = new JTextField();
 		userNameJLabel.setBounds(15,175,100,25);
@@ -114,10 +123,13 @@ public class ClientAddUser extends JPanel {
 		confirmpasswordJPasswordField = new JPasswordField();
 		confirmPasswordJLabel.setBounds(15,255,135,25);
 		confirmpasswordJPasswordField.setBounds(135,255,100,25);
+		passwordMatchesJLabel.setBounds(245,255,25,25);
+		passwordMatchesJLabel.setIcon(redX);
 		
 		//Confirm and Cancel JButtons
 		confirmJButton.setBounds(25,290,100,25);
 		cancelJButton.setBounds(150,290,100,25);
+		confirmJButton.setEnabled(false);
 		
 		//ActionListener to make the connect menu item connect
 		confirmJButton.addActionListener(new ActionListener() {
@@ -167,6 +179,101 @@ public class ClientAddUser extends JPanel {
 				}
 		});
 		
+		confirmEmailAddresJTextField.addKeyListener(new KeyListener() {			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				// TODO Auto-generated method stub
+				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
+					emailMatchesJLabel.setIcon(greenCheck);
+				} else { 
+					emailMatchesJLabel.setIcon(redX);
+				}				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
+		emailAddressJTextField.addKeyListener(new KeyListener() {			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				// TODO Auto-generated method stub
+				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
+					emailMatchesJLabel.setIcon(greenCheck);
+				} else { 
+					emailMatchesJLabel.setIcon(redX);
+				}				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+			}
+		});
+		
+		passwordJPasswordField.addKeyListener(new KeyListener() {			
+			@Override
+			public void keyTyped(KeyEvent e) {
+		
+			}
+		
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String passwordOne = new String(passwordJPasswordField.getPassword());
+				String passwordTwo = new String(confirmpasswordJPasswordField.getPassword());
+				if(passwordOne.equals(passwordTwo) && passwordOne.length() >= 6) { 
+					passwordMatchesJLabel.setIcon(greenCheck);
+					confirmJButton.setEnabled(true);
+				} else { 
+					passwordMatchesJLabel.setIcon(redX);					
+				}	
+			
+			}
+			
+	
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
+		
+		confirmpasswordJPasswordField.addKeyListener(new KeyListener() {			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
+		
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String passwordOne = new String(passwordJPasswordField.getPassword());
+				String passwordTwo = new String(confirmpasswordJPasswordField.getPassword());
+				if(passwordOne.equals(passwordTwo) && passwordOne.length() >= 6) { 
+					passwordMatchesJLabel.setIcon(greenCheck);
+					confirmJButton.setEnabled(true);
+				} else { 
+					passwordMatchesJLabel.setIcon(redX);					
+				}	
+			
+			}
+			
+	
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
 		//Add all the components to the contentPane
 		contentPane.add(firstNameJLabel);
 		contentPane.add(firstNameJTextField);
@@ -176,10 +283,12 @@ public class ClientAddUser extends JPanel {
 		contentPane.add(emailAddressJTextField);
 		contentPane.add(confirmEmailAddressJLabel);
 		contentPane.add(confirmEmailAddresJTextField);
+		contentPane.add(emailMatchesJLabel);
 		contentPane.add(userNameJLabel);
 		contentPane.add(userNameJTextField);
 		contentPane.add(passwordJLabel);
 		contentPane.add(passwordJPasswordField);
+		contentPane.add(passwordMatchesJLabel);
 		contentPane.add(confirmPasswordJLabel);
 		contentPane.add(confirmpasswordJPasswordField);
 		contentPane.add(confirmJButton);
