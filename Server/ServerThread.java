@@ -252,7 +252,7 @@ public class ServerThread extends Thread
 			Connection con = server.dbConnect();
 			
 			//Get the DataOutputStream 
-			dout = (DataOutputStream) socket.getOutputStream();
+			dout = new DataOutputStream(socket.getOutputStream());
 
 			//Create a statement and resultset for the query
 			Statement stmt;
