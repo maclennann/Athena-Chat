@@ -711,6 +711,10 @@ public class Client
 	public static DataOutputStream returnDOUT() { 
 		return dout;
 	}
+	//This method returns a DIN for other classes to use
+	public static DataInputStream returnDIN() { 
+		return din;
+	}
 	private static void splashScreenDestruct() {
 		screen.setScreenVisible(false);
 	}

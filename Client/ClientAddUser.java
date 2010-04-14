@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -399,8 +400,10 @@ public class ClientAddUser extends JPanel {
 		//Get a connection
 		Client.connect();
 		
-		//Give me back my filet of DataOutputStream.
+		//Give me back my filet of DataOutputStream + DataInputStream
 		DataOutputStream dout = Client.returnDOUT();
+		DataInputStream din = Client.returnDIN();
+		
 		
 		try {
 			//Tell the server we're not going to log in
@@ -442,9 +445,17 @@ public class ClientAddUser extends JPanel {
 			dout.writeUTF(userNameCipher.toString());
 			dout.writeUTF(passwordCipher.toString());
 			
-			//Test decryption
-			//String firstNamePlain = RSACrypto.rsaDecryptPublic(firstNameCipher,pub.getModulus(),pub.getPublicExponent());
 			
+			//Grab the result
+			String result = din.readUTF();
+			byte[] resultBytes = (new BigInteger(result)).toByteArray();
+			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
+			if(resultDecrypted.equals("Username has been sucessfully created. You will received an email shortly with registration information. Feel free to login now.")) {
+				ClientLoginFailed successfulUserRegistration = new ClientLoginFailed(resultDecrypted,true);
+			}
+			else { 
+				ClientLoginFailed failureUserRegistration = new ClientLoginFailed(resultDecrypted,false);
+			}
 			//Close the connection
 			dout.close();
 			Client.disconnect();
