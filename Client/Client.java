@@ -535,6 +535,8 @@ public class Client
 
 		//Send Message to Aegis letting it know we're logged in
 		systemMessage("002");
+		//Garbage collect!
+		System.gc();
 	}
 
 	// Startup method to initiate the buddy list

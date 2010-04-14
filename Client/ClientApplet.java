@@ -501,6 +501,8 @@ public class ClientApplet extends JFrame {
 		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(user));
 		// Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+		//Garbage collect!
+		System.gc();
 	}
 	
 	public void setSystemTrayIcon(boolean activated) throws AWTException
@@ -610,6 +612,8 @@ public class ClientApplet extends JFrame {
 				}
 			}
 		}
+		//Garbage collect!
+		System.gc();
 	}
 	
 	// Adjust spell check setting in current and future text fields
@@ -809,6 +813,8 @@ public class ClientApplet extends JFrame {
 					arrayCount++;
 				}
 			//inPref.close();
+				//Garbage collect!
+				System.gc();
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

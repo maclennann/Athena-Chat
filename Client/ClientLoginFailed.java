@@ -135,14 +135,8 @@ public class ClientLoginFailed extends JFrame {
 				*/
 			closeThis.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event){
-					//ClientAddUser testOfWindow = new ClientAddUser();
-					try {
-					ClientLogin loginGUI = new ClientLogin();
+					//ClientLogin loginGUI = new ClientLogin();
 					loginFailed.dispose();
-				} catch (AWTException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		});
 		

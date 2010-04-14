@@ -452,9 +452,14 @@ public class ClientAddUser extends JPanel {
 			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
 			if(resultDecrypted.equals("Username has been sucessfully created.")) {
 				ClientLoginFailed successfulUserRegistration = new ClientLoginFailed(resultDecrypted,true);
+				addUserJFrame.dispose();
+				//Garbage collect!
+				System.gc();
 			}
 			else { 
 				ClientLoginFailed failureUserRegistration = new ClientLoginFailed(resultDecrypted,false);
+				//Garbage collect!
+				System.gc();
 			}
 			//Close the connection
 			dout.close();
