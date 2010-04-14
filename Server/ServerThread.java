@@ -250,12 +250,15 @@ public class ServerThread extends Thread
 		try { 
 			//Use dbConnect() to connect to the database
 			Connection con = server.dbConnect();
+			
+			//Get the DataOutputStream 
+			dout = (DataOutputStream) socket.getOutputStream();
 
 			//Create a statement and resultset for the query
 			Statement stmt;
 			Statement insertSTMT;
 			ResultSet rs = null; 
-
+			
 			//Read the new user's public key components
 			//TODO in this test we use this key for decryption, but we need to generate server keys for this
 			String publicModString = din.readUTF();
