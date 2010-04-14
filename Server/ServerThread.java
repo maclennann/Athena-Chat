@@ -331,24 +331,24 @@ public class ServerThread extends Thread
 				con.close();
 
 				//Inform of our success
-				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPublic("Username has been sucessfully created. You will received an email shortly with registration information. Feel free to login now.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has been sucessfully created. You will received an email shortly with registration information. Feel free to login now.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				dout.writeUTF(successfulRegistrationResultBigInt.toString());
 				server.updateHashTable();
 				return true;
 			}
 		}catch (SQLException se) { 
 			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPublic("Something went wrong, please inform the Athena Administrators.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			dout.writeUTF(exceptionRegistrationResultBigInt.toString());
 			return false;
 		}catch (IOException ie) { 
 			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPublic("Something went wrong, please inform the Athena Administrators.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			dout.writeUTF(exceptionRegistrationResultBigInt.toString());
 			return false;
 		} catch (Exception e) {
 			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPublic("Something went wrong, please inform the Athena Administrators.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			dout.writeUTF(exceptionRegistrationResultBigInt.toString());
 			return false;
 		}
