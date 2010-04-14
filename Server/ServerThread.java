@@ -308,7 +308,7 @@ public class ServerThread extends Thread
 			//Test to see if there are any results
 			if (rs.next()) { 
 				//Send status message that the username has already been taken.
-				BigInteger failedRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPublic("Username has already been taken, please try again.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				BigInteger failedRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has already been taken, please try again.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				dout.writeUTF(failedRegistrationResultBigInt.toString());
 				return false;
 			}

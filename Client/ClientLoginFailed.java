@@ -93,6 +93,7 @@ public class ClientLoginFailed extends JFrame {
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.jpg");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
 		failedLoginDrawingPanel.setBounds(140,75,100,100);
+		contentPane.add(failedLoginDrawingPanel);
 		}
 		
 		closeThis.setBounds(160,185,60,25);
@@ -100,7 +101,7 @@ public class ClientLoginFailed extends JFrame {
 		failedPasswordJLabel.setBounds(15,15,400,25);
 		failedPasswordJLabel.setText(messageToDisplay);
 		contentPane.add(failedPasswordJLabel);
-		contentPane.add(failedLoginDrawingPanel);
+
 		loginFailed.add(contentPane);
 		
 		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
