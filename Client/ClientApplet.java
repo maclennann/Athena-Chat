@@ -145,7 +145,7 @@ public class ClientApplet extends JFrame {
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		imContentFrame.setSize(830, 683);
+		imContentFrame.setSize(813, 610);
 		imContentFrame.setResizable(true);
 
 		// Create the file menu.
@@ -220,7 +220,7 @@ public class ClientApplet extends JFrame {
 
 		// Adds the contact list to a scroll pane
 		JScrollPane contactList = new JScrollPane(userBox);
-		contactList.setBounds(600, 10, 195, 538);
+		contactList.setBounds(600, 10, 195, 485);
 
 		// Adds the Icons to Pane
 		// TODO Add ActionListeners to the images to bring up the add/remove
@@ -241,8 +241,8 @@ public class ClientApplet extends JFrame {
 		
 		addContactLabel.setVisible(true);
 		removeContactLabel.setVisible(true);
-		addContactLabel.setBounds(600, 550, 100, 50);
-		removeContactLabel.setBounds(700, 550, 100, 50);
+		addContactLabel.setBounds(600, 495, 100, 50);
+		removeContactLabel.setBounds(700, 495, 100, 50);
 		
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
