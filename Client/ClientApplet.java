@@ -101,7 +101,7 @@ public class ClientApplet extends JFrame {
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
-	public Border blackline = BorderFactory.createLineBorder(Color.black);
+	public Border blackline = BorderFactory.createLineBorder(Color.gray);
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	static public JLabel lockIconLabel = new JLabel();
 	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
