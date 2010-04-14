@@ -39,7 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
+import javax.swing.JOptionPane;
 import sun.misc.BASE64Encoder;
 
 public class ClientLogin extends JFrame { 
@@ -148,6 +148,61 @@ public class ClientLogin extends JFrame {
 
 			}
 		});
+		
+		
+		//ActionListener to make the connect menu item connect
+		password.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				//Ya'll like some hash?
+				try {
+					
+					Client.setUsername(username.getText());
+					String uname = username.getText();
+					String passwordToHash = new String(password.getPassword());
+					if(!uname.equals("") || !passwordToHash.equals("")){
+						String hashedPassword = computeHash(passwordToHash).toString();
+						Client.connect(username.getText(), hashedPassword);
+						login.setVisible(false);
+						System.gc();}
+					else{
+						JOptionPane.showMessageDialog(null,"Please enter both a username and password!\n\n","Login Error",JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+		
+		
+				//ActionListener to make the connect menu item connect
+		username.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				//Ya'll like some hash?
+				try {
+					
+					Client.setUsername(username.getText());
+					String uname = username.getText();
+					String passwordToHash = new String(password.getPassword());
+					if(!uname.equals("") || !passwordToHash.equals("")){
+						String hashedPassword = computeHash(passwordToHash).toString();
+						Client.connect(username.getText(), hashedPassword);
+						login.setVisible(false);
+						System.gc();}
+					else{
+						JOptionPane.showMessageDialog(null,"Please enter both a username and password!\n\n","Login Error",JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+		
+		
+		
 
 		//ActionListener to make the connect menu item connect
 		cancel.addActionListener(new ActionListener() {
