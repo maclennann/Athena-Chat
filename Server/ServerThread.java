@@ -419,8 +419,9 @@ public class ServerThread extends Thread
 		try{
 			//Get the password from the hashtable
 			String hashedPassword = server.authentication.get(clientName).toString();
-		}catch(NullPointerException e){
+		}catch(Exception e){
 		//Login fail handler
+		System.out.println("FUCKING FAILED");
 			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			server.removeConnection(socket, clientName);
 			dout.writeUTF(returnCipher.toString());
