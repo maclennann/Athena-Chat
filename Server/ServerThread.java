@@ -330,7 +330,7 @@ public class ServerThread extends Thread
 				
 
 				//Inform of our success
-				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has been sucessfully created. You will received an email shortly with registration information. Feel free to login now.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has been sucessfully created.\n You will received an email shortly with registration information.\nFeel free to login now.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				dout.writeUTF(successfulRegistrationResultBigInt.toString());
 				server.updateHashTable();
 				
