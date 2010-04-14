@@ -327,16 +327,17 @@ public class ServerThread extends Thread
 				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
-
-				//Close Connections
-				stmt.close();
-				insertSTMT.close();
-				con.close();
+				
 
 				//Inform of our success
 				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has been sucessfully created. You will received an email shortly with registration information. Feel free to login now.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				dout.writeUTF(successfulRegistrationResultBigInt.toString());
 				server.updateHashTable();
+				
+				//Close Connections
+				stmt.close();
+				insertSTMT.close();
+				con.close();
 				return true;
 			}
 		}catch (SQLException se) { 
