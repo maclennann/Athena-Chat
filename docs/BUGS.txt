@@ -1,4 +1,8 @@
 CLIENT:
+	## Upon changing a theme, program does not automatically update with the new theme
+		!! Seems to be inconsistant
+	## When a user signs on and another user signs off at the same time, the user that signs on gets a strange message from the server outputted to his/her screen instead of into the program
+		!! Seems to have something to do with Server.sendToAll()	
 	## Program will not spawn new tab for incoming message that would open the tab.
 		!! RESOLVED: Wrote a makeTab(String) to run when there isn't a tab for a user.
 		!! Created ClientApplet.makeTab(String) which will make a tab and associated MapTextArea object.
@@ -21,6 +25,7 @@ CLIENT:
 		!! RESOLVED: Preference window icon glitch - changed to JLabel instead of DrawingPanel and made nicer borders
 		!! Windows 7 
 	## Firefox-level memory usage, but seems to be capped at about 160,000kb
+		@@ Keep working 
 	
 SERVER:
 	## When a user disconnects, something does close cleanly causing a lot of exceptions to be printed
