@@ -33,6 +33,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,6 +68,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import com.inet.jortho.SpellChecker;
@@ -126,6 +129,7 @@ public class ClientApplet extends JFrame {
 		boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 		setSpellCheck(enableSpellCheck);
 		boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
+		setEnableNotifications(enableNotifications);
 		boolean enableSounds = Boolean.parseBoolean(settingsArray[4].toString());
 		int encryptionType = Integer.parseInt(settingsArray[5].toString());
 		String fontFace = settingsArray[6].toString();
@@ -557,7 +561,7 @@ public class ClientApplet extends JFrame {
 						{
 							if(imTabbedPane.getTabCount() > 1)
 							{
-								imTabbedPane.setSelectedIndex(tempIndex + 1);
+								imTabbedPane.setSelectedIndex(tempIndex);
 								currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
 								Component[] currentTabComponents = currentTab.getComponents();
 								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
@@ -632,6 +636,70 @@ public class ClientApplet extends JFrame {
 			// Disable future spell check registration
 			spellCheckFlag = false;
 		}
+	}
+	
+	public void setEnableNotifications(boolean activated)
+	{
+		int tabCount = imTabbedPane.getTabCount();
+		
+		//Enable all tabs for notifications
+		if(activated)
+		{
+			for(int x = 0; x < tabCount; x++)
+			{
+				imTabbedPane.setSelectedIndex(x);
+				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				Component[] currentTabComponents = currentTab.getComponents();
+				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+				
+				currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
+					public void insertUpdate(DocumentEvent e) {
+						System.out.println("TEXT ADDED!!");
+						Icon alertIcon = new ImageIcon("../images/alert.jpg");
+						int currentTabIndex = imTabbedPane.getSelectedIndex();
+						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+						Component c = imTabbedPane.getTabComponentAt(currentTabIndex);
+						System.out.println(c);
+						Component[] test = currentTab.getComponents();
+						System.out.println("Components: " + test.length);
+						for(int a = 0; a < test.length; a++)
+						{
+							System.out.println(test[a].toString());
+						}
+						//JButton currentButton = (JButton) currentTab.getComponent(2);
+						//currentButton.setIcon(alertIcon);
+					}
+					public void changedUpdate(DocumentEvent e) {
+						// TODO Auto-generated method stub
+					}
+					public void removeUpdate(DocumentEvent e) {
+						// TODO Auto-generated method stub
+					}
+				});
+			}
+		}
+		else
+		{
+			for(int x = 0; x < tabCount; x++)
+			{
+				imTabbedPane.setSelectedIndex(x);
+				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				Component[] currentTabComponents = currentTab.getComponents();
+				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+				DocumentListener[] dls = (DocumentListener[]) (currentTab.getListeners(DocumentListener.class));
+				if(dls.length > 0)
+				{
+					currentTextArea.getDocument().removeDocumentListener(dls[0]);
+				}
+			}
+		}
+	}
+	
+	public void setEnableSounds(boolean activated)
+	{
+		
 	}
 
 	// Makes a new hash table with user's online status
@@ -875,7 +943,7 @@ class CloseTabButton extends JPanel implements ActionListener {
 	  /**
 	 * 
 	 */
-	private static final long serialVersionUID = -6032110177913133517L;
+	//private static final long serialVersionUID = -6032110177913133517L;
 	private JTabbedPane pane;
 	  public CloseTabButton(JTabbedPane pane, int index) {
 	    this.pane = pane;
@@ -892,6 +960,11 @@ class CloseTabButton extends JPanel implements ActionListener {
 	    btClose.addActionListener(this);
 	    pane.setTabComponentAt(index, this);
 	  }
+	  
+	  //public AlertTabButton(JTabbedPane pane, int index) {
+	//	  this.pane = pane;
+	//	  JButton currentButton = pane.getComponen
+	 // }
 	  public void actionPerformed(ActionEvent e) {
 	    int i = pane.indexOfTabComponent(this);
 	    if (i != -1) {

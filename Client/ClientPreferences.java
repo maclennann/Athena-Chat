@@ -58,6 +58,7 @@ public class ClientPreferences extends JPanel {
 	boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
 	boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
 	boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
+	boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
 	
 	//Define components
 	public JFrame preferences;
@@ -84,8 +85,10 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components for the Notifications Menu Panel
 	public JLabel notificationsLabel = new JLabel();
-	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications");
+	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications", enableNotifications);
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable sounds");
+	public boolean enableNotificationsVal;
+	public boolean enableSoundsVal;
 	public boolean enableNotificationsFlag = false;
 	public boolean enableSoundsFlag = false;
 
@@ -154,8 +157,8 @@ public class ClientPreferences extends JPanel {
 			public void actionPerformed(ActionEvent event){
 				//Apply all changes
 				try {
-					setGeneralSettings(systemTrayVal, systemTrayFlag, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
-					setNotificationSettings(enableNotificationsFlag, enableSoundsFlag);
+					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
+					setNotificationSettings(enableNotificationsFlag, enableNotificationsVal, enableSoundsFlag, enableSoundsVal);
 					setFormattingSettings(selectFontFlag, toggleBoldFlag, toggleItalicsFlag, toggleUnderlineFlag);
 					writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
@@ -257,9 +260,28 @@ public class ClientPreferences extends JPanel {
 		notificationsPanel.add(enableNotificationsCheckBox);
 		notificationsPanel.add(enableSoundsCheckBox);
 		
-		//This settings array update will go in check box action listeners when implemented as seen above in general settings
-		//settingsToWrite[3] = "false";
-		//settingsToWrite[4] = "false";
+		enableNotificationsCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					enableNotificationsVal = true;
+				else
+					enableNotificationsVal = false;
+				settingsToWrite[3] = enableNotificationsVal;
+				enableNotificationsFlag = true;
+			}
+		});
+		enableSoundsCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					enableSoundsVal = true;
+				else
+					enableSoundsVal = false;
+				settingsToWrite[4] = enableSoundsVal;
+				enableSoundsFlag = true;
+			}
+		});
 		/*************************************************/		
 		
 		//Encrpytion Menu Selection
@@ -454,41 +476,18 @@ public class ClientPreferences extends JPanel {
 
 	}	
 	
-	private void setGeneralSettings (boolean systemTrayVal, boolean systemTrayFlag, boolean allowESCFlag,
+	private void setGeneralSettings (boolean systemTrayFlag, boolean systemTrayVal, boolean allowESCFlag,
 			boolean allowESCVal, boolean enableSpellCheckFlag, boolean enableSCVal) throws AWTException
 	{
 		if(systemTrayFlag)
-		{
-			SystemTray tray = SystemTray.getSystemTray();
-			TrayIcon[] trayArray = tray.getTrayIcons();
-			int tlength = trayArray.length;
-			
+		{	
 			if(!(systemTrayVal))
 			{
-				for(int x = 0; x < tlength; x++)
-					tray.remove(trayArray[x]);
+				Client.clientResource.setSystemTrayIcon(false);
 			}
 			if(systemTrayVal)
 			{
-				if(tlength == 0)
-				{
-					Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
-					ActionListener exitListener = new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							System.out.println("Exiting...");
-							System.exit(0);
-						}
-					};
-
-					PopupMenu popup = new PopupMenu();
-					MenuItem defaultItem = new MenuItem("Exit");
-					defaultItem.addActionListener(exitListener);
-					popup.add(defaultItem);
-
-					TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
-					trayIcon.setImageAutoSize(true);
-					tray.add(trayIcon);
-				}
+				Client.clientResource.setSystemTrayIcon(true);
 			}
 		}
 		if (allowESCFlag)
@@ -517,11 +516,19 @@ public class ClientPreferences extends JPanel {
 		}
 	}
 	
-	private void setNotificationSettings (boolean enableNotificationsFlag, boolean enableSoundsFlag)
+	private void setNotificationSettings (boolean enableNotificationsFlag, boolean enableNotificationsVal,
+											boolean enableSoundsFlag, boolean enableSoundsVal)
 	{
 		if (enableNotificationsFlag)
 		{
-			//Adjust setting
+			if(!(enableNotificationsVal))
+			{
+				Client.clientResource.setEnableNotifications(false);
+			}
+			if(enableNotificationsVal)
+			{
+				Client.clientResource.setEnableNotifications(true);
+			}
 		}
 		if (enableSoundsFlag)
 		{
