@@ -415,10 +415,10 @@ public class ServerThread extends Thread
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login(String clientName, String clientPassword) throws IOException { 
 		 dout = new DataOutputStream(socket.getOutputStream());
-		
+		String hashedPassword;
 		try{
 			//Get the password from the hashtable
-			String hashedPassword = server.authentication.get(clientName).toString();
+			hashedPassword = server.authentication.get(clientName).toString();
 		}catch(Exception e){
 		//Login fail handler
 		System.out.println("FUCKING FAILED");
