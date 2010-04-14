@@ -80,6 +80,7 @@ public class ClientApplet extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -7742402292330782311L;
+	public static final int debug = 0;
 
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();;
 
@@ -283,7 +284,7 @@ public class ClientApplet extends JFrame {
 					
 					// Find out what was double-clicked
 					int index = theList.getSelectedIndex();
-					System.out.println(index);
+					if(debug==1)System.out.println(index);
 					if (index >= 0) {
 
 						// Get the buddy that was double-clicked
@@ -511,7 +512,7 @@ public class ClientApplet extends JFrame {
 				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
 				ActionListener exitListener = new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						System.out.println("Exiting...");
+						if(debug==1)System.out.println("Exiting...");
 						System.exit(0);
 					}
 				};
@@ -663,13 +664,13 @@ public class ClientApplet extends JFrame {
 				
 				currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
 					public void insertUpdate(DocumentEvent e) {
-						System.out.println("TEXT ADDED!!");
+						if(debug==1)System.out.println("TEXT ADDED!!");
 						Icon alertIcon = new ImageIcon("../images/alert.png");
 						int currentTabIndex = imTabbedPane.getSelectedIndex();
 						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 						CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
 						JButton currentButton = (JButton) c.getComponent(1);
-						System.out.println("CUrrent button: " + currentButton.toString());
+						if(debug==1)System.out.println("Current button: " + currentButton.toString());
 						currentButton.setIcon(alertIcon);
 					}
 					public void changedUpdate(DocumentEvent e) {
@@ -706,12 +707,12 @@ public class ClientApplet extends JFrame {
 
 	// Makes a new hash table with user's online status
 	public void mapUserStatus(String username, int status) {
-		System.out.println("Username: " + username + "\nStatus: " + status);
+		if(debug==1)System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
 	}
 	//TODO: Fix user folder that preference file writes to!
 	private Object[] loadSavedPreferences()
-	{	System.out.println("Importing preferences");
+	{	if(debug==1)System.out.println("Importing preferences");
 		Object[] settingsArray = new Object[11];
 		int arrayCount = 0;
 		String line = null;
@@ -720,7 +721,7 @@ public class ClientApplet extends JFrame {
 			
 			File newPrefFile = new File("users/" + Client.username + "/athena.conf");
 			if(!(newPrefFile.exists())) { 
-				System.out.println("File Not Found! Copying...");
+				if(debug==1)System.out.println("File Not Found! Copying...");
 				File oldFile = new File("users/Aegis/athena.conf");
 				FileChannel inChannel = new FileInputStream(oldFile).getChannel();
 				FileChannel outChannel = new FileOutputStream(newPrefFile).getChannel();

@@ -152,7 +152,7 @@ public class ClientPreferences extends JPanel {
 		prefLabelPane.setBorder(prefBorder);
 		apply.setBounds(700,525,75,30);
 		cancel.setBounds(615,525,75,30);
-		
+
 		// Set apply button default to disabled until changes are made
 		apply.setEnabled(false);
 		

@@ -48,10 +48,8 @@ public class Client
 	//DESCrypto object for cryptography of local files
 	static DESCrypto descrypto;
 
-
-
 	//Print debug messages?
-	public static int debug=1;
+	public static final int debug=0;
 
 	//Global username variable
 	public static String username="null";
@@ -140,7 +138,7 @@ public class Client
 
 				//TADA
 			} catch( IOException ie ) { 
-				System.out.println(ie);
+				if(debug==1)System.out.println(ie);
 				print.writeToTextArea("Error: You are not connfected!\n");
 				print.moveToEnd();
 				print.clearTextField();
@@ -216,7 +214,7 @@ public class Client
 			}
 			out.close();
 		}catch(Exception e)
-		{System.out.println("ERROR WRITING BUDDYLIST");
+		{if(debug==1)System.out.println("ERROR WRITING BUDDYLIST");
 		}
 	}
 
@@ -227,7 +225,7 @@ public class Client
 			String fromUserCipher = din.readUTF();
 			// What is the message?
 			String encryptedMessage = din.readUTF();
-			System.out.println("DFSAFSFD: "  + encryptedMessage);
+			if(debug==1)System.out.println("DFSAFSFD: "  + encryptedMessage);
 			// Grab the digital signature 
 			//String digitalSignatureCipher = din.readUTF();
 
@@ -245,7 +243,7 @@ public class Client
 			//Get the message ready for encryption
 			String decryptedMessage;		
 			byte[] messageBytes = (new BigInteger(encryptedMessage)).toByteArray();
-			System.out.println("FROMUSER: " + fromUserDecrypted);
+			if(debug==1)System.out.println("FROMUSER: " + fromUserDecrypted);
 			//If the message is an unavailabe user response		
 			if(fromUserDecrypted.equals("UnavailableUser")){
 				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
@@ -281,7 +279,7 @@ public class Client
 			if(fromUserDecrypted.equals("CheckUserStatus"))
 			{
 				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
-				System.out.println(decryptedMessage);
+				if(debug==1)System.out.println(decryptedMessage);
 				BigInteger usernameToCheckCipher = new BigInteger(RSACrypto.rsaEncryptPublic(userNameToCheck,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 				dout.writeUTF(usernameToCheckCipher.toString());
 				return;
@@ -301,8 +299,8 @@ public class Client
 
 			if(fromUserDecrypted.equals("ReturnPublicKey")) {
 				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
-				System.out.println(decryptedMessage);
-				System.out.println(publicKeyToFind);
+				if(debug==1)System.out.println(decryptedMessage);
+				if(debug==1)System.out.println(publicKeyToFind);
 				BigInteger publicKeyToFindCipher = new BigInteger(RSACrypto.rsaEncryptPublic(publicKeyToFind,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 				dout.writeUTF(publicKeyToFindCipher.toString());
 				return;
@@ -375,7 +373,7 @@ public class Client
 					System.gc();
 					/*} else { 
 				//TODO Make some type of alert to the user.
-				System.out.println("MESSAGE COMPROMISED. RUN");
+				if(debug==1)System.out.println("MESSAGE COMPROMISED. RUN");
 			}*/
 				}
 			//}
@@ -428,14 +426,14 @@ public class Client
 			//Send username and password over the socket for authentication
 			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
 			//String plainTextPassword = new String(password);
-			System.out.println(password);
+			if(debug==1)System.out.println(password);
 			dout.writeUTF(usernameCipher.toString()); //Sending Username
 			dout.writeUTF(passwordCipher.toString()); //Sending Password
 			String resultCipher = din.readUTF();
 			byte[] resultBytes = (new BigInteger(resultCipher)).toByteArray();
 			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes, serverPublic.getModulus(), serverPublic.getPublicExponent());
 
-			System.out.println("RESSULTTTT DECRYPTEDDDD: " + resultDecrypted);
+			if(debug==1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + resultDecrypted);
 			if(resultDecrypted.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
 			}
@@ -486,7 +484,7 @@ public class Client
 			//Read in server's public key for encryption of headers
 			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
 			System.gc();
-		} catch( IOException ie ) { System.out.println( ie ); }
+		} catch( IOException ie ) { if(debug==1)System.out.println( ie ); }
 	}
 
 	// Disconnect from the server
@@ -510,7 +508,7 @@ public class Client
 
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < usernames.length; i++) { 
-			System.out.println("Current Buddy To Check: " + usernames[i]);
+			if(debug==1)System.out.println("Current Buddy To Check: " + usernames[i]);
 			checkUserStatus(usernames[i]);
 		}
 		//Counter
@@ -519,14 +517,14 @@ public class Client
 		for (Enumeration<?> e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
 			try { 
 				String currentE = e.nextElement().toString();
-				System.out.println("E: " + currentE);
+				if(debug==1)System.out.println("E: " + currentE);
 
 				String currentF = f.nextElement().toString();
-				System.out.println("F: " + currentF);
+				if(debug==1)System.out.println("F: " + currentF);
 
 				//If the user is online, add them to your buddylist
 				if (currentF.equals("1")) {
-					System.out.println("Online user:" + currentE);
+					if(debug==1)System.out.println("Online user:" + currentE);
 					clientResource.newBuddyListItems(currentE);						
 				}
 			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
@@ -547,12 +545,12 @@ public class Client
 	 */
 	public static void instantiateBuddyList(String usernameToCheck) throws IOException {
 
-		System.out.println("Current Buddy To Check: " + usernameToCheck);
+		if(debug==1)System.out.println("Current Buddy To Check: " + usernameToCheck);
 		checkUserStatus(usernameToCheck, "PauseThread!");
 	}
 
 	public static void getUsersPublicKeyFromAegis(String usernameToFind) {
-		System.out.println("Getting " + usernameToFind + "'s public key!");
+		if(debug==1)System.out.println("Getting " + usernameToFind + "'s public key!");
 		publicKeyToFind = usernameToFind;
 		//Send Aegis event code 004 to let it know what we're doing
 		systemMessage("004");
@@ -646,49 +644,50 @@ public class Client
 
 	public static void checkUserStatus(String findUserName) {
 		try { 
-			System.out.println("Checking availability for user: "+findUserName);
+			if(debug==1)System.out.println("Checking availability for user: "+findUserName);
 			//Initalize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			//First contact with Aegis!
 			systemMessage("001");
 			//Listen for the incoming Acknowledge message
-			System.out.println("Message received from server: " + din.readUTF().toString());
+			din.readUTF(); 
+			if(debug==1)System.out.println("Acknowledge message received from server.");
 			//Go ahead and send Aegis the user name we want to find 
 			BigInteger findUserNameBigInt = new BigInteger(RSACrypto.rsaEncryptPublic(findUserName, serverPublic.getModulus(), serverPublic.getPublicExponent()));
 			dout.writeUTF(findUserNameBigInt.toString());
-			System.out.println("Username sent - now listening for result...");
+			if(debug==1)System.out.println("Username sent - now listening for result...");
 			//Grab result
 			String resultCipher = din.readUTF();
 			byte[] resultBytes = (new BigInteger(resultCipher)).toByteArray();
 			String resultString = RSACrypto.rsaDecryptPublic(resultBytes, serverPublic.getModulus(), serverPublic.getPublicExponent());
 			result = Integer.parseInt(resultString);
 			//Print result 
-			System.out.println("Result for user " + findUserName + " is " + result + ".");
+			if(debug==1)System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
-			System.out.println("SENT SERVER FLAG 001");
+			if(debug==1)System.out.println("SENT SERVER FLAG 001");
 
 		} catch (Exception e) { 
-			System.out.println(e);
+			if(debug==1)System.out.println(e);
 		}	
 	}
 	public static void checkUserStatus(String findUserName, String checkStatusFlag) {
 		try {
 			userNameToCheck = findUserName;
 			//DataInputStream din = new DataInputStream(socket.getInputStream());
-			System.out.println("Checking availability for user: "+userNameToCheck);
+			if(debug==1)System.out.println("Checking availability for user: "+userNameToCheck);
 			//Initialize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			//First contact with Aegis!
 			systemMessage("003");
 
-			System.out.println("SENT SERVER FLAG 003");
+			if(debug==1)System.out.println("SENT SERVER FLAG 003");
 			//listeningProcedure.start();
 
 		} catch (Exception e) { 
-			System.out.println(e);
+			if(debug==1)System.out.println(e);
 		}	
 	}	
 

@@ -48,6 +48,7 @@ public class ClientLogin extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -1646506272427417952L;
+	public static final int debug = 0;
 	//Components for the visual display of the login window
 	public JFrame login;
 	public JPanel contentPane = new JPanel();
@@ -73,7 +74,7 @@ public class ClientLogin extends JFrame {
 	ClientLogin() throws AWTException { 
 		logo.setIcon(logoicon);
 		//Initialize Login window
-		login = new JFrame("Athena Chat Application");
+		login = new JFrame("Athena");
 		login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		login.setSize(200,300);
 		login.setResizable(false);
@@ -86,7 +87,7 @@ public class ClientLogin extends JFrame {
 
 			ActionListener exitListener = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("Exiting...");
+					if(debug==1)System.out.println("Exiting...");
 					System.exit(0);
 				}
 			};
