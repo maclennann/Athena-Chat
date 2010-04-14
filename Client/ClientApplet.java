@@ -149,7 +149,7 @@ public class ClientApplet extends JFrame {
 		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		imContentFrame.setSize(813, 610);
-		imContentFrame.setResizable(true);
+		imContentFrame.setResizable(false);
 
 		// Create the file menu.
 		file = new JMenu("File");

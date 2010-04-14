@@ -77,7 +77,7 @@ public class ClientAddUser extends JPanel {
 		//Create the Main Frame
 		addUserJFrame= new JFrame("User Registration");
 		addUserJFrame.setSize(310,420);
-		addUserJFrame.setResizable(true);
+		addUserJFrame.setResizable(false);
 		
 		//Create the content Pane
 		contentPane = new JPanel();
