@@ -17,7 +17,8 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import javax.swing.UIManager;
+import javax.swing.LookAndFeel;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.SwingUtilities;
 
 /****************************************************
  * Athena: Encrypted Messaging Application v.0.0.2
@@ -61,6 +63,8 @@ public class ClientPreferences extends JPanel {
 	boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
 	
 	//Define components
+	public String[] themeList = {"javax.swing.plaf.metal.MetalLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel","com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.mac.MacLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
+	
 	public JFrame preferences;
 	public JPanel contentPane = new JPanel();
 	public JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
@@ -110,7 +114,7 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components for the Theme Menu Panel
 	public JLabel themeLabel = new JLabel();
-	public JComboBox selectThemeComboBox = new JComboBox();
+	public JComboBox selectThemeComboBox = new JComboBox(themeList);
 	public JLabel selectThemeJLabel = new JLabel("Select theme");
 	public JButton installNewThemeJButton = new JButton("Install!");
 	public JLabel installNewThemeJLabel = new JLabel("Install new theme");
@@ -389,6 +393,17 @@ public class ClientPreferences extends JPanel {
 		//settingsToWrite[10] = "0";
 		/*************************************************/	
 	
+		//ActionListener to make the connect menu item connect
+		selectThemeComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+			try{System.out.println("FUCK");
+				UIManager.setLookAndFeel(selectThemeComboBox.getSelectedItem().toString());}catch(Exception e){e.printStackTrace();
+				SwingUtilities.updateComponentTreeUI(preferences);
+				preferences.pack();
+				preferences.repaint();
+				}
+			}
+		});
 		
 		//Mouse Listener for the options
 		//MouseListener for the generalPreferences
