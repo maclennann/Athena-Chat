@@ -80,5 +80,69 @@ public class ClientLoginFailed extends JFrame {
 		loginFailed.setVisible(true);
 		closeThis.requestFocusInWindow();
 	}
+	
+	ClientLoginFailed(String messageToDisplay, boolean status) {
+		loginFailed = new JFrame("Athena Chat Application");
+		loginFailed.setSize(400,250);
+		loginFailed.setResizable(false);
+		contentPane.setLayout(null);
+		
+		//If status is true, that means it was a successful login so don't display the sad face.
+		//TODO Add a happy face
+		if(!(status)) {
+		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.jpg");
+		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
+		failedLoginDrawingPanel.setBounds(140,75,100,100);
+		}
+		
+		closeThis.setBounds(160,185,60,25);
+		contentPane.add(closeThis);
+		failedPasswordJLabel.setBounds(15,15,400,25);
+		failedPasswordJLabel.setText(messageToDisplay);
+		contentPane.add(failedPasswordJLabel);
+		contentPane.add(failedLoginDrawingPanel);
+		loginFailed.add(contentPane);
+		
+		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(WindowEvent winEvt) {
+		        try {
+					ClientLogin loginGUI = new ClientLogin();
+					loginFailed.dispose();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+			
+		    }
+		);		
+		/*failedPasswordJLabel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				try {
+					ClientLogin loginGUI = new ClientLogin();
+					loginFailed.dispose();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}}});
+				
+				*/
+			closeThis.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent event){
+					//ClientAddUser testOfWindow = new ClientAddUser();
+					try {
+					ClientLogin loginGUI = new ClientLogin();
+					loginFailed.dispose();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		
+		loginFailed.setVisible(true);
+		closeThis.requestFocusInWindow();
+	}
 		
 }
