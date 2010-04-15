@@ -225,7 +225,6 @@ public class ServerThread extends Thread
 	}
 	private void recieveBuddyListFromClient() throws IOException {
 		//TODO make this dynamic
-		int x=0;
 		String[] buddyListLines;
 		// TODO Auto-generated method stub
 		sendSystemMessage(username, "Access Granted. Send me the username.");
@@ -233,8 +232,8 @@ public class ServerThread extends Thread
 		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(din.readUTF())))];
 		System.out.println("Buddylist lines: "  + buddyListLines.length);
 		for(int y=0; y<buddyListLines.length;y++) { 
-				buddyListLines[x] = decryptServerPrivate(din.readUTF());
-				System.out.println("Encrypted buddylist lines " + buddyListLines[x]);
+				buddyListLines[y] = decryptServerPrivate(din.readUTF());
+				System.out.println("Encrypted buddylist lines " + buddyListLines[y]);
 			}
 		writeBuddyListToFile(buddyListLines, username);
 		System.out.println("Successfully wrote buddy list to file");
