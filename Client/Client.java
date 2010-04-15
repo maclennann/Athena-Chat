@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Enumeration;
 
@@ -38,6 +39,7 @@ import javax.swing.JOptionPane;
 
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
+import sun.security.util.BigInt;
 
 
 
@@ -45,15 +47,13 @@ public class Client
 {
 	//DESCrypto object for cryptography of local files
 	static DESCrypto descrypto;
-	
-
 
 	//Print debug messages?
-	public static int debug=1;
+	public static final int debug=0;
 
 	//Global username variable
 	public static String username="null";
-	
+
 	//Splash Screen
 	static ClientSplash screen;
 
@@ -82,15 +82,15 @@ public class Client
 
 	//If the client is connect to the server
 	static int connected = 0;
-	
+
 	public static String userNameToCheck = null;
 	public static String publicKeyToFind = null;
 	public static BigInteger modOfBuddy = null;
 	public static BigInteger expOfBuddy = null;
-	
+
 	//Aegis' public key
 	static RSAPublicKeySpec serverPublic;
-	
+
 	//Exit the program
 	public static void exit(){
 		System.exit(0);
@@ -118,17 +118,33 @@ public class Client
 
 			//Send the message
 			try{
-				//Send recipient's name and message to server
-				dout.writeUTF(toUser);
-				dout.writeUTF(message);
+				//Grab the other user's public key from file
+				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
+				//Encrypt the toUser with the Server's public key and send it to the server
+				BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(toUser, serverPublic.getModulus(), serverPublic.getPublicExponent()));;
+				//Encrypt the message with the toUser's public key and send it to the server
+				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+				dout.writeUTF(firstNameCipher.toString());
+				dout.writeUTF(messageCipher.toString());
+				//Hash the Message for the digital signature
+				String hashedMessage = ClientLogin.computeHash(message);
+				//Send the server the digital signature (Hash of the message encrypted with UserA's private key
+				//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+
 				// Append own message to IM window
 				print.moveToEnd();
 				// Clear out text input field
 				print.clearTextField();
+
+				//TADA
 			} catch( IOException ie ) { 
+				if(debug==1)System.out.println(ie);
 				print.writeToTextArea("Error: You are not connfected!\n");
 				print.moveToEnd();
 				print.clearTextField();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}System.gc();
 	}
@@ -198,7 +214,7 @@ public class Client
 			}
 			out.close();
 		}catch(Exception e)
-		{System.out.println("ERROR WRITING BUDDYLIST");
+		{if(debug==1)System.out.println("ERROR WRITING BUDDYLIST");
 		}
 	}
 
@@ -208,25 +224,44 @@ public class Client
 			// Who is the message from? 
 			String fromUserCipher = din.readUTF();
 			// What is the message?
-			String message = din.readUTF();
-			BigInteger fromUserBytes = new BigInteger(fromUserCipher);
-			String fromUser = new String(RSACrypto.rsaDecryptPublic(fromUserBytes.toByteArray(),serverPublic.getModulus(),serverPublic.getPublicExponent()));
+			String encryptedMessage = din.readUTF();
+			if(debug==1)System.out.println("DFSAFSFD: "  + encryptedMessage);
+			// Grab the digital signature 
+			//String digitalSignatureCipher = din.readUTF();
+
+			//Don't have to do the below, waste of memory, simple do String.getBytes()
+			//BigInteger fromUserBytes = new BigInteger(fromUserCipher);
+
+			//Grab the user's private key - SHHH!!
+			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv");
+
+			//Decrypt the fromUser to see what user this message came from!
+
+			byte[] fromUserBytes = (new BigInteger(fromUserCipher)).toByteArray();
+			String fromUserDecrypted = RSACrypto.rsaDecryptPublic(fromUserBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+
+			//Get the message ready for encryption
+			String decryptedMessage;		
+			byte[] messageBytes = (new BigInteger(encryptedMessage)).toByteArray();
+			if(debug==1)System.out.println("FROMUSER: " + fromUserDecrypted);
 			//If the message is an unavailabe user response		
-			if(fromUser.equals("UnavailableUser")){
-				print = (MapTextArea)clientResource.tabPanels.get(message);
-				print.writeToTextArea(fromUser+": ");
-				print.writeToTextArea(message+"\n");
+			if(fromUserDecrypted.equals("UnavailableUser")){
+				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				print = (MapTextArea)clientResource.tabPanels.get(decryptedMessage);
+				print.writeToTextArea(fromUserDecrypted+": ");
+				print.writeToTextArea(decryptedMessage+"\n");
 				return;
 			}
-			
+
 			//Remove user from Buddylist
-			if(fromUser.equals("ServerLogOff")) {
+			if(fromUserDecrypted.equals("ServerLogOff")) {
+				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
 				//Check to see if the user is in your buddy list, if not, don't care
 				String[] usernames = returnBuddyListArray();
 				for(int x=0;x<usernames.length;x++) {
-					if(usernames[x].equals(message)) { 
+					if(usernames[x].equals(decryptedMessage)) { 
 						//We know that the buddy is in his/her buddy list! 
-						clientResource.buddySignOff(message);
+						clientResource.buddySignOff(decryptedMessage);
 						//** add this into your application code as appropriate
 						// Open an input stream  to the audio file.
 						InputStream in = new FileInputStream("sounds/signOff.wav");
@@ -237,19 +272,22 @@ public class Client
 						AudioPlayer.player.start(as);   
 					}
 				}
-         
+
 				return;
 			}
-			
-			if(fromUser.equals("CheckUserStatus"))
+
+			if(fromUserDecrypted.equals("CheckUserStatus"))
 			{
-				System.out.println(message);
-				dout.writeUTF(userNameToCheck);
+				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				if(debug==1)System.out.println(decryptedMessage);
+				BigInteger usernameToCheckCipher = new BigInteger(RSACrypto.rsaEncryptPublic(userNameToCheck,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+				dout.writeUTF(usernameToCheckCipher.toString());
 				return;
 			}
-			if(fromUser.equals("CheckUserStatusResult"))
+			if(fromUserDecrypted.equals("CheckUserStatusResult"))
 			{
-				int result = Integer.parseInt(message);
+				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				int result = Integer.parseInt(decryptedMessage);
 				clientResource.mapUserStatus(userNameToCheck, result);
 				if (result == 1)
 				{
@@ -258,34 +296,39 @@ public class Client
 				getUsersPublicKeyFromAegis(userNameToCheck);
 				return;
 			}
-			
-			if(fromUser.equals("ReturnPublicKey")) {
-				System.out.println(message);
-				System.out.println(publicKeyToFind);
-				dout.writeUTF(publicKeyToFind);
+
+			if(fromUserDecrypted.equals("ReturnPublicKey")) {
+				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				if(debug==1)System.out.println(decryptedMessage);
+				if(debug==1)System.out.println(publicKeyToFind);
+				BigInteger publicKeyToFindCipher = new BigInteger(RSACrypto.rsaEncryptPublic(publicKeyToFind,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+				dout.writeUTF(publicKeyToFindCipher.toString());
 				return;
 			}
-			if(fromUser.equals("ReturnPublicKeyMod")) { 
-				String str = message;
-				modOfBuddy = new BigInteger(str);
+			if(fromUserDecrypted.equals("ReturnPublicKeyMod")) { 
+				//decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				//String str = decryptedMessage;
+				modOfBuddy = new BigInteger(encryptedMessage);
 				return;
 			}
-			if(fromUser.equals("ReturnPublicKeyExp")) { 
-				String str = message;
-				expOfBuddy = new BigInteger(str);
+			if(fromUserDecrypted.equals("ReturnPublicKeyExp")) { 
+				//decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				//String str = decryptedMessage;
+				expOfBuddy = new BigInteger(encryptedMessage);
 				writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
 				return;
 			}
 
 			//Create buddy list entry for user sign on
-			if(fromUser.equals("ServerLogOn")) {
-				if(!(message.equals(username))) 	{
+			if(fromUserDecrypted.equals("ServerLogOn")) {
+				decryptedMessage = RSACrypto.rsaDecryptPublic(messageBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+				if(!(decryptedMessage.equals(username))) 	{
 					//Check to see if the user is in your buddylist, if not, don't care
 					String[] usernames = returnBuddyListArray();
 					for(int x=0;x<usernames.length;x++) {
-						if(usernames[x].equals(message)) { 
+						if(usernames[x].equals(decryptedMessage)) { 
 							//We know that the buddy is in his/her buddy list! 
-							clientResource.newBuddyListItems(message);
+							clientResource.newBuddyListItems(decryptedMessage);
 							//** add this into your application code as appropriate
 							// Open an input stream  to the audio file.
 							InputStream in = new FileInputStream("sounds/signOn.wav");
@@ -296,38 +339,51 @@ public class Client
 							AudioPlayer.player.start(as);   
 						}
 					}
-  					return;
+					return;
 
 				}
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
+				//Compare the digital signature to the hashed message to verify integrity of the message!
+				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivate.getModulus(),usersPrivate.getPrivateExponent());
+				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
-				//If there isn't already a tab for the conversation, make one
-				if(!clientResource.tabPanels.containsKey(fromUser)){
-					clientResource.makeTab(fromUser);
+
+					//If there isn't already a tab for the conversation, make one
+					if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
+						clientResource.makeTab(fromUserDecrypted);
+					}
+
+					//Write message to the correct tab
+					print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
+					print.setTextColor(Color.blue);
+					print.writeToTextArea(fromUserDecrypted+": "); 
+					print.setTextColor(Color.black);
+					print.writeToTextArea(decryptedMessage+"\n");
+					print.moveToEnd();
+
+					// Open an input stream  to the audio file.
+					InputStream in = new FileInputStream("sounds/recvMesg.wav");
+					// Create an AudioStream object from the input stream.
+					AudioStream as = new AudioStream(in);         
+					// Use the static class member "player" from class AudioPlayer to play
+					// clip.
+					AudioPlayer.player.start(as);
+					//AudioPlayer.player.stop(as);
+					System.gc();
+					/*} else { 
+				//TODO Make some type of alert to the user.
+				if(debug==1)System.out.println("MESSAGE COMPROMISED. RUN");
+			}*/
 				}
-
-				//Write message to the correct tab
-				print = (MapTextArea)clientResource.tabPanels.get(fromUser);
-				print.setTextColor(Color.blue);
-				print.writeToTextArea(fromUser+": "); 
-				print.setTextColor(Color.black);
-				print.writeToTextArea(message+"\n");
-				print.moveToEnd();
-				
-				// Open an input stream  to the audio file.
-				InputStream in = new FileInputStream("sounds/recvMesg.wav");
-				// Create an AudioStream object from the input stream.
-				AudioStream as = new AudioStream(in);         
-				// Use the static class member "player" from class AudioPlayer to play
-				// clip.
-				AudioPlayer.player.start(as);
-				//AudioPlayer.player.stop(as);
-			}
-			System.gc();
-		}catch ( IOException ie ) {
+			//}
+		}
+		catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
 			connected=0; 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -338,7 +394,7 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "71.234.132.9", 7778 );
+				socket = new Socket( "71.234.132.9", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -359,29 +415,32 @@ public class Client
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
-			
+
 			//Read in the server's public key for encryption of headers
 			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
-			
+
 			//Encrypt username and password hash with server's public key
 			BigInteger usernameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(username,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			
+
 			//Send username and password over the socket for authentication
 			//FOR NOW MAKE A NEW STRING OUT OF THE CHAR[] BUT WE NEED TO HASH THIS!!!! 
 			//String plainTextPassword = new String(password);
-			System.out.println(password);
+			if(debug==1)System.out.println(password);
 			dout.writeUTF(usernameCipher.toString()); //Sending Username
 			dout.writeUTF(passwordCipher.toString()); //Sending Password
-			String result = din.readUTF();
-			System.out.println(result);
-			if(result.equals("Failed")) { 
+			String resultCipher = din.readUTF();
+			byte[] resultBytes = (new BigInteger(resultCipher)).toByteArray();
+			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes, serverPublic.getModulus(), serverPublic.getPublicExponent());
+
+			if(debug==1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + resultDecrypted);
+			if(resultDecrypted.equals("Failed")) { 
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
 			}
 			else { 
 				connected=1;
-				
-				
+
+
 				clientResource = new ClientApplet();
 				//Thread created to listen for messages coming in from the server
 				listeningProcedure = new Thread(
@@ -394,7 +453,7 @@ public class Client
 							}});
 				//Instanciate Buddy List
 				instantiateBuddyList();	
-				System.gc();
+				//System.gc();
 				//Start the thread
 				listeningProcedure.start();
 			}
@@ -408,7 +467,7 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				socket = new Socket( "71.234.132.9", 7778 );
+				socket = new Socket( "71.234.132.9", 7777 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -421,11 +480,11 @@ public class Client
 			//Bind the datastreams to the socket in order to send/receive
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
-			
+
 			//Read in server's public key for encryption of headers
 			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
 			System.gc();
-		} catch( IOException ie ) { System.out.println( ie ); }
+		} catch( IOException ie ) { if(debug==1)System.out.println( ie ); }
 	}
 
 	// Disconnect from the server
@@ -449,7 +508,7 @@ public class Client
 
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < usernames.length; i++) { 
-			System.out.println("Current Buddy To Check: " + usernames[i]);
+			if(debug==1)System.out.println("Current Buddy To Check: " + usernames[i]);
 			checkUserStatus(usernames[i]);
 		}
 		//Counter
@@ -458,14 +517,14 @@ public class Client
 		for (Enumeration<?> e = clientResource.userStatus.keys(), f = clientResource.userStatus.elements(); y < clientResource.userStatus.size(); y++ ) {
 			try { 
 				String currentE = e.nextElement().toString();
-				System.out.println("E: " + currentE);
+				if(debug==1)System.out.println("E: " + currentE);
 
 				String currentF = f.nextElement().toString();
-				System.out.println("F: " + currentF);
+				if(debug==1)System.out.println("F: " + currentF);
 
 				//If the user is online, add them to your buddylist
 				if (currentF.equals("1")) {
-					System.out.println("Online user:" + currentE);
+					if(debug==1)System.out.println("Online user:" + currentE);
 					clientResource.newBuddyListItems(currentE);						
 				}
 			} catch (java.util.NoSuchElementException ie) { } catch (Exception eix) {
@@ -476,6 +535,8 @@ public class Client
 
 		//Send Message to Aegis letting it know we're logged in
 		systemMessage("002");
+		//Garbage collect!
+		System.gc();
 	}
 
 	// Startup method to initiate the buddy list
@@ -486,18 +547,18 @@ public class Client
 	 */
 	public static void instantiateBuddyList(String usernameToCheck) throws IOException {
 
-			System.out.println("Current Buddy To Check: " + usernameToCheck);
-			checkUserStatus(usernameToCheck, "PauseThread!");
+		if(debug==1)System.out.println("Current Buddy To Check: " + usernameToCheck);
+		checkUserStatus(usernameToCheck, "PauseThread!");
 	}
-	
+
 	public static void getUsersPublicKeyFromAegis(String usernameToFind) {
-		System.out.println("Getting " + usernameToFind + "'s public key!");
+		if(debug==1)System.out.println("Getting " + usernameToFind + "'s public key!");
 		publicKeyToFind = usernameToFind;
 		//Send Aegis event code 004 to let it know what we're doing
 		systemMessage("004");
-		
+
 	}
-	
+
 	public static void writeBuddysPubKeyToFile(String buddysUsername, BigInteger mod, BigInteger exp) throws IOException { 
 		BufferedInputStream is;
 		//Let's get the number of lines in the file
@@ -514,8 +575,8 @@ public class Client
 				RSACrypto.saveToFile("users/" + username + "/keys/" + buddysUsername + ".pub", mod, exp);			
 			}
 		}
-		
-		
+
+
 	}
 
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
@@ -585,45 +646,50 @@ public class Client
 
 	public static void checkUserStatus(String findUserName) {
 		try { 
-			System.out.println("Checking availability for user: "+findUserName);
+			if(debug==1)System.out.println("Checking availability for user: "+findUserName);
 			//Initalize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			//First contact with Aegis!
 			systemMessage("001");
 			//Listen for the incoming Acknowledge message
-			System.out.println("Message received from server: " + din.readUTF().toString());
+			din.readUTF(); 
+			if(debug==1)System.out.println("Acknowledge message received from server.");
 			//Go ahead and send Aegis the user name we want to find 
-			dout.writeUTF(findUserName);
-			System.out.println("Username sent - now listening for result...");
+			BigInteger findUserNameBigInt = new BigInteger(RSACrypto.rsaEncryptPublic(findUserName, serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			dout.writeUTF(findUserNameBigInt.toString());
+			if(debug==1)System.out.println("Username sent - now listening for result...");
 			//Grab result
-			result = Integer.parseInt(din.readUTF());
+			String resultCipher = din.readUTF();
+			byte[] resultBytes = (new BigInteger(resultCipher)).toByteArray();
+			String resultString = RSACrypto.rsaDecryptPublic(resultBytes, serverPublic.getModulus(), serverPublic.getPublicExponent());
+			result = Integer.parseInt(resultString);
 			//Print result 
-			System.out.println("Result for user " + findUserName + " is " + result + ".");
+			if(debug==1)System.out.println("Result for user " + findUserName + " is " + result + ".");
 			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
 			clientResource.mapUserStatus(findUserName, result);
-			System.out.println("HAIII");
+			if(debug==1)System.out.println("SENT SERVER FLAG 001");
 
 		} catch (Exception e) { 
-			System.out.println(e);
+			if(debug==1)System.out.println(e);
 		}	
 	}
 	public static void checkUserStatus(String findUserName, String checkStatusFlag) {
 		try {
 			userNameToCheck = findUserName;
 			//DataInputStream din = new DataInputStream(socket.getInputStream());
-			System.out.println("Checking availability for user: "+findUserName);
+			if(debug==1)System.out.println("Checking availability for user: "+userNameToCheck);
 			//Initialize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			//First contact with Aegis!
 			systemMessage("003");
-			
-			System.out.println("HAIII");
+
+			if(debug==1)System.out.println("SENT SERVER FLAG 003");
 			//listeningProcedure.start();
 
 		} catch (Exception e) { 
-			System.out.println(e);
+			if(debug==1)System.out.println(e);
 		}	
 	}	
 
@@ -632,8 +698,11 @@ public class Client
 		//Send the message
 		try{
 			//Send recipient's name and message to server
-			dout.writeUTF("Aegis");
-			dout.writeUTF(message);
+			BigInteger usernameCipher = new BigInteger(RSACrypto.rsaEncryptPublic("Aegis", serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, serverPublic.getModulus(), serverPublic.getPublicExponent()));
+			dout.writeUTF(usernameCipher.toString());
+			dout.writeUTF(messageCipher.toString());
+			//dout.writeUTF("TEST");
 		} catch( IOException ie ) {
 		}
 	}
@@ -644,33 +713,37 @@ public class Client
 	public static DataOutputStream returnDOUT() { 
 		return dout;
 	}
-	  private static void splashScreenDestruct() {
-		    screen.setScreenVisible(false);
-		  }
+	//This method returns a DIN for other classes to use
+	public static DataInputStream returnDIN() { 
+		return din;
+	}
+	private static void splashScreenDestruct() {
+		screen.setScreenVisible(false);
+	}
 
-		  private static void splashScreenInit() {
-		    ImageIcon myImage = new ImageIcon(("splash.jpg"));
-		    screen = new ClientSplash(myImage);
-		    screen.setLocationRelativeTo(null);
-		    screen.setProgressMax(100);
-		    screen.setScreenVisible(true);
-		  }
-	
+	private static void splashScreenInit() {
+		ImageIcon myImage = new ImageIcon(("splash.jpg"));
+		screen = new ClientSplash(myImage);
+		screen.setLocationRelativeTo(null);
+		screen.setProgressMax(100);
+		screen.setScreenVisible(true);
+	}
+
 	// Create the GUI for the client.
 	public static void main(String[] args) throws AWTException {
 		splashScreenInit();
 
-		 for (int i = 0; i <= 100; i++)
-		    {
-		      for (long j=0; j<50000; ++j)
-		      {
-		        String takeMoreTime = " " + (j + i);
-		      }
-		      screen.setProgress("Loading:" + i, i);  // progress bar with a message
-		    }   
-			splashScreenDestruct();
+		for (int i = 0; i <= 100; i++)
+		{
+			for (long j=0; j<50000; ++j)
+			{
+				String takeMoreTime = " " + (j + i);
+			}
+			screen.setProgress("Loading:" + i, i);  // progress bar with a message
+		}   
+		splashScreenDestruct();
 		//clientResource = new ClientApplet();
 		loginGUI = new ClientLogin();
-		
+
 	}
 }

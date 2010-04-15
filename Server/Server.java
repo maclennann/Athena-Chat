@@ -52,7 +52,7 @@ public class Server
 	private static Connection con = null;
 	
 	//Defines which port on which we listen for client
-	private static int listenPort = 7778;
+	private static int listenPort = 7777;
 
 	//Will control listener thread when we do that
 	@SuppressWarnings("unused")
@@ -164,7 +164,7 @@ public class Server
 		System.out.println("**     v0.0.2a                           **");
 		System.out.println("**                                       **");
 		System.out.println("**     Server accepting connections:     **");
-		System.out.println("**     Port 7778                         **");
+		System.out.println("**     Port 7777                         **");
 		System.out.println("**                                       **");
 		System.out.println("*******************************************");
 
@@ -199,13 +199,13 @@ public class Server
 		//make sure the outputStreams hashtable is up-to-date
 		synchronized( outputStreams ) {
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
-			
+			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
 			//Get the outputStream for each socket and send message
 			for (Enumeration<?> e = getOutputStreams(); e.hasMoreElements(); ) {
 				DataOutputStream dout = (DataOutputStream)e.nextElement();
 				try{
 					dout.writeUTF(eventCodeCipher.toString());
-					dout.writeUTF( message );
+					dout.writeUTF( messageCipher.toString() );
 				} catch( IOException ie ) { System.out.println( ie ); }
 			}
 		}

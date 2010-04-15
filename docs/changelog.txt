@@ -1,4 +1,20 @@
 ChangeLog: 
+4/14/2010:
+	## Encrypion Process Completed
+		!! Finished implementing message encryption. 	
+		!! Fully working encrypted: Creating a user, logging in, adding a buddy, removing a buddy, public key exchange, contact list, and now messaging
+			@@Proven on wireshark, see blog post at athenachat.org
+	## Implemented statuses while registering a user
+		!! Shows the status of the register attempt via the ClientLoginFailed class (will change name soon).
+	## Fixed and implemented validation checking in the UserRegistration window
+	## Fixed tab focus issues, now whenever you spawn a new tab the focus is at the textField
+	## Fixed "No Such User" public key error
+	## Implemented standard themes in the combobox in the PreferencesWindow
+	## Fixed Login Page usability issues
+	## Changed and made the Communication Window more aesthetically pleasing
+
+
+	
 
 04/08/2010:
 	## FIXED: NPE caused when hitting cancel on addbuddy dialog

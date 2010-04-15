@@ -39,7 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
+import javax.swing.JOptionPane;
 import sun.misc.BASE64Encoder;
 
 public class ClientLogin extends JFrame { 
@@ -48,6 +48,7 @@ public class ClientLogin extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -1646506272427417952L;
+	public static final int debug = 0;
 	//Components for the visual display of the login window
 	public JFrame login;
 	public JPanel contentPane = new JPanel();
@@ -73,7 +74,7 @@ public class ClientLogin extends JFrame {
 	ClientLogin() throws AWTException { 
 		logo.setIcon(logoicon);
 		//Initialize Login window
-		login = new JFrame("Athena Chat Application");
+		login = new JFrame("Athena");
 		login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		login.setSize(200,300);
 		login.setResizable(false);
@@ -86,7 +87,7 @@ public class ClientLogin extends JFrame {
 
 			ActionListener exitListener = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("Exiting...");
+					if(debug==1)System.out.println("Exiting...");
 					System.exit(0);
 				}
 			};
@@ -114,8 +115,8 @@ public class ClientLogin extends JFrame {
 		passwordLabel.setBounds(50,155,100,25);
 		password.setBounds(50,180,100,25);
 		registerJLabel.setBounds(55,210,90,25);
-		cancel.setBounds(10,235,75,30);
 		connect.setBounds(105,235,75,30);
+		cancel.setBounds(10,235,75,30);
 		logo.setBounds(60,10,100,100);
 		
 		
@@ -139,7 +140,7 @@ public class ClientLogin extends JFrame {
 					String passwordToHash = new String(password.getPassword());
 					String hashedPassword = computeHash(passwordToHash).toString();
 					Client.connect(username.getText(), hashedPassword);
-					login.setVisible(false);
+					login.dispose();
 					System.gc();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -148,6 +149,61 @@ public class ClientLogin extends JFrame {
 
 			}
 		});
+		
+		
+		//ActionListener to make the connect menu item connect
+		password.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				//Ya'll like some hash?
+				try {
+					
+					Client.setUsername(username.getText());
+					String uname = username.getText();
+					String passwordToHash = new String(password.getPassword());
+					if(!uname.equals("") || !passwordToHash.equals("")){
+						String hashedPassword = computeHash(passwordToHash).toString();
+						Client.connect(username.getText(), hashedPassword);
+						login.setVisible(false);
+						System.gc();}
+					else{
+						JOptionPane.showMessageDialog(null,"Please enter both a username and password!\n\n","Login Error",JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+		
+		
+				//ActionListener to make the connect menu item connect
+		username.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				//Ya'll like some hash?
+				try {
+					
+					Client.setUsername(username.getText());
+					String uname = username.getText();
+					String passwordToHash = new String(password.getPassword());
+					if(!uname.equals("") || !passwordToHash.equals("")){
+						String hashedPassword = computeHash(passwordToHash).toString();
+						Client.connect(username.getText(), hashedPassword);
+						login.setVisible(false);
+						System.gc();}
+					else{
+						JOptionPane.showMessageDialog(null,"Please enter both a username and password!\n\n","Login Error",JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+		
+		
+		
 
 		//ActionListener to make the connect menu item connect
 		cancel.addActionListener(new ActionListener() {
@@ -156,6 +212,7 @@ public class ClientLogin extends JFrame {
 			}
 		});
 
+		
 
 		//Add the components to the Frame
 		contentPane.add(usernameLabel);

@@ -33,6 +33,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +49,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -66,6 +71,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import com.inet.jortho.SpellChecker;
@@ -77,6 +83,7 @@ public class ClientApplet extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -7742402292330782311L;
+	public static final int debug = 0;
 
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();;
 
@@ -94,6 +101,10 @@ public class ClientApplet extends JFrame {
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
+	public Border blackline = BorderFactory.createLineBorder(Color.gray);
+	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
+	static public JLabel lockIconLabel = new JLabel();
+	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
@@ -126,6 +137,7 @@ public class ClientApplet extends JFrame {
 		boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 		setSpellCheck(enableSpellCheck);
 		boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
+		setEnableNotifications(enableNotifications);
 		boolean enableSounds = Boolean.parseBoolean(settingsArray[4].toString());
 		int encryptionType = Integer.parseInt(settingsArray[5].toString());
 		String fontFace = settingsArray[6].toString();
@@ -136,8 +148,8 @@ public class ClientApplet extends JFrame {
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		imContentFrame.setSize(830, 683);
-		imContentFrame.setResizable(true);
+		imContentFrame.setSize(813, 610);
+		imContentFrame.setResizable(false);
 
 		// Create the file menu.
 		file = new JMenu("File");
@@ -211,8 +223,8 @@ public class ClientApplet extends JFrame {
 
 		// Adds the contact list to a scroll pane
 		JScrollPane contactList = new JScrollPane(userBox);
-		contactList.setBounds(600, 10, 195, 538);
-
+		contactList.setBounds(600, 2, 195, 485);
+		contactList.setBorder(buddyBorder);
 		// Adds the Icons to Pane
 		// TODO Add ActionListeners to the images to bring up the add/remove
 		// user windows
@@ -232,8 +244,8 @@ public class ClientApplet extends JFrame {
 		
 		addContactLabel.setVisible(true);
 		removeContactLabel.setVisible(true);
-		addContactLabel.setBounds(600, 550, 100, 50);
-		removeContactLabel.setBounds(700, 550, 100, 50);
+		addContactLabel.setBounds(600, 495, 100, 50);
+		removeContactLabel.setBounds(700, 495, 100, 50);
 		
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
@@ -275,7 +287,7 @@ public class ClientApplet extends JFrame {
 					
 					// Find out what was double-clicked
 					int index = theList.getSelectedIndex();
-					System.out.println(index);
+					if(debug==1)System.out.println(index);
 					if (index >= 0) {
 
 						// Get the buddy that was double-clicked
@@ -379,8 +391,51 @@ public class ClientApplet extends JFrame {
 							makeTab(o.toString());
 							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 							Component[] currentTabComponents = currentTab.getComponents();
-							Component textFieldToFocus = currentTabComponents[1];
+							JTextComponent textFieldToFocus = (JTextComponent) currentTabComponents[1];
+							
+							textFieldToFocus.addKeyListener(new KeyListener() {
+								public void keyPressed(KeyEvent e) {
+								}
+								public void keyReleased(KeyEvent e) {
+									if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+										JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+										int tempIndex = imTabbedPane.getSelectedIndex();
+										imTabbedPane.remove(currentTab);
+										
+										if(tempIndex > 0)
+										{
+											imTabbedPane.setSelectedIndex(tempIndex - 1);
+											currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+											Component[] currentTabComponents = currentTab.getComponents();
+											JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+											currentTextField.requestFocusInWindow();
+										}
+										else
+										{
+											if(imTabbedPane.getTabCount() > 1)
+											{
+												imTabbedPane.setSelectedIndex(tempIndex);
+												currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
+												Component[] currentTabComponents = currentTab.getComponents();
+												JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+												currentTextField.requestFocusInWindow();											
+											}
+											else if(imTabbedPane.getTabCount() > 0)
+											{
+												imTabbedPane.setSelectedIndex(0);
+												currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+												Component[] currentTabComponents = currentTab.getComponents();
+												JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+												currentTextField.requestFocusInWindow();											
+											}
+										}
+										}
+									}
+								public void keyTyped(KeyEvent e) {
+								}
+								});
 							textFieldToFocus.requestFocusInWindow();
+							
 						} else {
 							// Focus the tab for this user name if it already
 							// exists
@@ -402,13 +457,16 @@ public class ClientApplet extends JFrame {
 
 		// Places the area for the tabs
 		imTabbedPane.setBounds(10, 10, 580, 537);
-
+		lockIconLabel.setIcon(lockIcon);
+		lockIconLabel.setVisible(true);
+		lockIconLabel.setBounds(148, 10, 580, 537);
 		// Generate panel by adding appropriate components
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.add(contactList);
 		panel.add(addContactLabel);
 		panel.add(removeContactLabel);
+		panel.add(lockIconLabel);
 		panel.add(imTabbedPane);
 
 		// Initialize window frame
@@ -430,6 +488,7 @@ public class ClientApplet extends JFrame {
 
 	// Make a tab for a conversation
 	public void makeTab(String user) {
+		lockIconLabel.setVisible(false);
 		// Create a hash table mapping a user name to the JPanel in a tab
 		tabPanels.put(user, new MapTextArea(user, spellCheckFlag));
 		// Make a temporary object for that JPanel
@@ -442,6 +501,8 @@ public class ClientApplet extends JFrame {
 		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(user));
 		// Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+		//Garbage collect!
+		System.gc();
 	}
 	
 	public void setSystemTrayIcon(boolean activated) throws AWTException
@@ -456,7 +517,7 @@ public class ClientApplet extends JFrame {
 				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
 				ActionListener exitListener = new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						System.out.println("Exiting...");
+						if(debug==1)System.out.println("Exiting...");
 						System.exit(0);
 					}
 				};
@@ -480,30 +541,79 @@ public class ClientApplet extends JFrame {
 	
 	public void closeTabWithESC(boolean activated)
 	{
+		int tabCount = imTabbedPane.getTabCount();
+		JPanel currentTab;
+		Component[] currentTabComponents;
+		JTextComponent currentTextField;
 		if(activated)
 		{
-			imTabbedPane.addKeyListener(new KeyListener() {
+			// Assign key listener to all existing text fields
+			for(int x = 0; x < tabCount; x++)
+			{
+				imTabbedPane.setSelectedIndex(x);
+				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				currentTabComponents = currentTab.getComponents();
+				currentTextField = (JTextComponent) currentTabComponents[1];
+				currentTextField.addKeyListener(new KeyListener() {
 				public void keyPressed(KeyEvent e) {
 				}
 				public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
-					Component tabToKill = imTabbedPane.getSelectedComponent();
-					imTabbedPane.remove(tabToKill);
+					if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+						int tempIndex = imTabbedPane.getSelectedIndex();
+						imTabbedPane.remove(currentTab);
+						
+						if(tempIndex > 0)
+						{
+							imTabbedPane.setSelectedIndex(tempIndex - 1);
+							currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+							Component[] currentTabComponents = currentTab.getComponents();
+							JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+							currentTextField.requestFocusInWindow();
+						}
+						else
+						{
+							if(imTabbedPane.getTabCount() > 1)
+							{
+								imTabbedPane.setSelectedIndex(tempIndex);
+								currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
+								Component[] currentTabComponents = currentTab.getComponents();
+								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+								currentTextField.requestFocusInWindow();											
+							}
+							else if(imTabbedPane.getTabCount() > 0)
+							{
+								imTabbedPane.setSelectedIndex(0);
+								currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+								Component[] currentTabComponents = currentTab.getComponents();
+								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+								currentTextField.requestFocusInWindow();											
+							}
+						}
+						}
 					}
-				}
 				public void keyTyped(KeyEvent e) {
 				}
-			});
+				});
+			}
 		}
 		else
 		{
-			KeyListener[] tabListeners = imTabbedPane.getKeyListeners();
-			if(tabListeners != null)
+			for(int x = 0; x < tabCount; x++)
 			{
-				for(int x = 0; x < tabListeners.length; x++)
-					imTabbedPane.removeKeyListener(tabListeners[x]);
+				imTabbedPane.setSelectedIndex(x);
+				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				currentTabComponents = currentTab.getComponents();
+				currentTextField = (JTextComponent) currentTabComponents[1];
+				KeyListener[] fieldListeners =  currentTextField.getKeyListeners();
+				if (fieldListeners != null)
+				{
+					currentTextField.removeKeyListener(fieldListeners[0]);
+				}
 			}
 		}
+		//Garbage collect!
+		System.gc();
 	}
 	
 	// Adjust spell check setting in current and future text fields
@@ -543,15 +653,73 @@ public class ClientApplet extends JFrame {
 			spellCheckFlag = false;
 		}
 	}
+	
+	public void setEnableNotifications(boolean activated)
+	{
+		int tabCount = imTabbedPane.getTabCount();
+		
+		//Enable all tabs for notifications
+		if(activated)
+		{
+			for(int x = 0; x < tabCount; x++)
+			{
+				imTabbedPane.setSelectedIndex(x);
+				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				Component[] currentTabComponents = currentTab.getComponents();
+				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+				
+				currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
+					public void insertUpdate(DocumentEvent e) {
+						if(debug==1)System.out.println("TEXT ADDED!!");
+						Icon alertIcon = new ImageIcon("../images/alert.png");
+						int currentTabIndex = imTabbedPane.getSelectedIndex();
+						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+						CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
+						JButton currentButton = (JButton) c.getComponent(1);
+						if(debug==1)System.out.println("Current button: " + currentButton.toString());
+						currentButton.setIcon(alertIcon);
+					}
+					public void changedUpdate(DocumentEvent e) {
+						// TODO Auto-generated method stub
+					}
+					public void removeUpdate(DocumentEvent e) {
+						// TODO Auto-generated method stub
+					}
+				});
+			}
+		}
+		else
+		{
+			for(int x = 0; x < tabCount; x++)
+			{
+				imTabbedPane.setSelectedIndex(x);
+				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				Component[] currentTabComponents = currentTab.getComponents();
+				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+				DocumentListener[] dls = (DocumentListener[]) (currentTab.getListeners(DocumentListener.class));
+				if(dls.length > 0)
+				{
+					currentTextArea.getDocument().removeDocumentListener(dls[0]);
+				}
+			}
+		}
+	}
+	
+	public void setEnableSounds(boolean activated)
+	{
+		
+	}
 
 	// Makes a new hash table with user's online status
 	public void mapUserStatus(String username, int status) {
-		System.out.println("Username: " + username + "\nStatus: " + status);
+		if(debug==1)System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
 	}
 	//TODO: Fix user folder that preference file writes to!
 	private Object[] loadSavedPreferences()
-	{	System.out.println("Importing preferences");
+	{	if(debug==1)System.out.println("Importing preferences");
 		Object[] settingsArray = new Object[11];
 		int arrayCount = 0;
 		String line = null;
@@ -560,7 +728,7 @@ public class ClientApplet extends JFrame {
 			
 			File newPrefFile = new File("users/" + Client.username + "/athena.conf");
 			if(!(newPrefFile.exists())) { 
-				System.out.println("File Not Found! Copying...");
+				if(debug==1)System.out.println("File Not Found! Copying...");
 				File oldFile = new File("users/Aegis/athena.conf");
 				FileChannel inChannel = new FileInputStream(oldFile).getChannel();
 				FileChannel outChannel = new FileOutputStream(newPrefFile).getChannel();
@@ -645,6 +813,8 @@ public class ClientApplet extends JFrame {
 					arrayCount++;
 				}
 			//inPref.close();
+				//Garbage collect!
+				System.gc();
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -785,7 +955,7 @@ class CloseTabButton extends JPanel implements ActionListener {
 	  /**
 	 * 
 	 */
-	private static final long serialVersionUID = -6032110177913133517L;
+	//private static final long serialVersionUID = -6032110177913133517L;
 	private JTabbedPane pane;
 	  public CloseTabButton(JTabbedPane pane, int index) {
 	    this.pane = pane;
@@ -802,10 +972,12 @@ class CloseTabButton extends JPanel implements ActionListener {
 	    btClose.addActionListener(this);
 	    pane.setTabComponentAt(index, this);
 	  }
+	  
 	  public void actionPerformed(ActionEvent e) {
 	    int i = pane.indexOfTabComponent(this);
 	    if (i != -1) {
 	      pane.remove(i);
+		  ClientApplet.lockIconLabel.setVisible(true);
 		  System.gc();
 	    }
 	  }

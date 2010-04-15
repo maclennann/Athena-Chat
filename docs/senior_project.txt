@@ -35,3 +35,5 @@ Last Edited 04/08/2010:
  ## Away message auto-responder
 	@@ There will be a new online status flag (proposed: 2)
 	@@ When away client receives a message, it auto-responds with an away message (if there is one)
+	
+ ## Should we build a p2p key exchange system

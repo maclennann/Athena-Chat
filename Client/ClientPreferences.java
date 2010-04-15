@@ -17,7 +17,8 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import javax.swing.UIManager;
+import javax.swing.LookAndFeel;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.SwingUtilities;
 
 /****************************************************
  * Athena: Encrypted Messaging Application v.0.0.2
@@ -58,8 +60,11 @@ public class ClientPreferences extends JPanel {
 	boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
 	boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
 	boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
+	boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
 	
 	//Define components
+	public String[] themeList = {"javax.swing.plaf.metal.MetalLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel","com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.mac.MacLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
+	
 	public JFrame preferences;
 	public JPanel contentPane = new JPanel();
 	public JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
@@ -84,8 +89,10 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components for the Notifications Menu Panel
 	public JLabel notificationsLabel = new JLabel();
-	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications");
+	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications", enableNotifications);
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable sounds");
+	public boolean enableNotificationsVal;
+	public boolean enableSoundsVal;
 	public boolean enableNotificationsFlag = false;
 	public boolean enableSoundsFlag = false;
 
@@ -107,7 +114,7 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components for the Theme Menu Panel
 	public JLabel themeLabel = new JLabel();
-	public JComboBox selectThemeComboBox = new JComboBox();
+	public JComboBox selectThemeComboBox = new JComboBox(themeList);
 	public JLabel selectThemeJLabel = new JLabel("Select theme");
 	public JButton installNewThemeJButton = new JButton("Install!");
 	public JLabel installNewThemeJLabel = new JLabel("Install new theme");
@@ -145,7 +152,7 @@ public class ClientPreferences extends JPanel {
 		prefLabelPane.setBorder(prefBorder);
 		apply.setBounds(700,525,75,30);
 		cancel.setBounds(615,525,75,30);
-		
+
 		// Set apply button default to disabled until changes are made
 		apply.setEnabled(false);
 		
@@ -154,8 +161,8 @@ public class ClientPreferences extends JPanel {
 			public void actionPerformed(ActionEvent event){
 				//Apply all changes
 				try {
-					setGeneralSettings(systemTrayVal, systemTrayFlag, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
-					setNotificationSettings(enableNotificationsFlag, enableSoundsFlag);
+					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
+					setNotificationSettings(enableNotificationsFlag, enableNotificationsVal, enableSoundsFlag, enableSoundsVal);
 					setFormattingSettings(selectFontFlag, toggleBoldFlag, toggleItalicsFlag, toggleUnderlineFlag);
 					writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
@@ -257,9 +264,28 @@ public class ClientPreferences extends JPanel {
 		notificationsPanel.add(enableNotificationsCheckBox);
 		notificationsPanel.add(enableSoundsCheckBox);
 		
-		//This settings array update will go in check box action listeners when implemented as seen above in general settings
-		//settingsToWrite[3] = "false";
-		//settingsToWrite[4] = "false";
+		enableNotificationsCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					enableNotificationsVal = true;
+				else
+					enableNotificationsVal = false;
+				settingsToWrite[3] = enableNotificationsVal;
+				enableNotificationsFlag = true;
+			}
+		});
+		enableSoundsCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					enableSoundsVal = true;
+				else
+					enableSoundsVal = false;
+				settingsToWrite[4] = enableSoundsVal;
+				enableSoundsFlag = true;
+			}
+		});
 		/*************************************************/		
 		
 		//Encrpytion Menu Selection
@@ -367,6 +393,17 @@ public class ClientPreferences extends JPanel {
 		//settingsToWrite[10] = "0";
 		/*************************************************/	
 	
+		//ActionListener to make the connect menu item connect
+		selectThemeComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+			try{System.out.println("FUCK");
+				UIManager.setLookAndFeel(selectThemeComboBox.getSelectedItem().toString());}catch(Exception e){e.printStackTrace();
+				SwingUtilities.updateComponentTreeUI(preferences);
+				preferences.pack();
+				preferences.repaint();
+				}
+			}
+		});
 		
 		//Mouse Listener for the options
 		//MouseListener for the generalPreferences
@@ -454,41 +491,18 @@ public class ClientPreferences extends JPanel {
 
 	}	
 	
-	private void setGeneralSettings (boolean systemTrayVal, boolean systemTrayFlag, boolean allowESCFlag,
+	private void setGeneralSettings (boolean systemTrayFlag, boolean systemTrayVal, boolean allowESCFlag,
 			boolean allowESCVal, boolean enableSpellCheckFlag, boolean enableSCVal) throws AWTException
 	{
 		if(systemTrayFlag)
-		{
-			SystemTray tray = SystemTray.getSystemTray();
-			TrayIcon[] trayArray = tray.getTrayIcons();
-			int tlength = trayArray.length;
-			
+		{	
 			if(!(systemTrayVal))
 			{
-				for(int x = 0; x < tlength; x++)
-					tray.remove(trayArray[x]);
+				Client.clientResource.setSystemTrayIcon(false);
 			}
 			if(systemTrayVal)
 			{
-				if(tlength == 0)
-				{
-					Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
-					ActionListener exitListener = new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							System.out.println("Exiting...");
-							System.exit(0);
-						}
-					};
-
-					PopupMenu popup = new PopupMenu();
-					MenuItem defaultItem = new MenuItem("Exit");
-					defaultItem.addActionListener(exitListener);
-					popup.add(defaultItem);
-
-					TrayIcon trayIcon = new TrayIcon(trayImage, "Tray Demo", popup);
-					trayIcon.setImageAutoSize(true);
-					tray.add(trayIcon);
-				}
+				Client.clientResource.setSystemTrayIcon(true);
 			}
 		}
 		if (allowESCFlag)
@@ -517,11 +531,19 @@ public class ClientPreferences extends JPanel {
 		}
 	}
 	
-	private void setNotificationSettings (boolean enableNotificationsFlag, boolean enableSoundsFlag)
+	private void setNotificationSettings (boolean enableNotificationsFlag, boolean enableNotificationsVal,
+											boolean enableSoundsFlag, boolean enableSoundsVal)
 	{
 		if (enableNotificationsFlag)
 		{
-			//Adjust setting
+			if(!(enableNotificationsVal))
+			{
+				Client.clientResource.setEnableNotifications(false);
+			}
+			if(enableNotificationsVal)
+			{
+				Client.clientResource.setEnableNotifications(true);
+			}
 		}
 		if (enableSoundsFlag)
 		{
