@@ -263,10 +263,8 @@ public class ServerThread extends Thread
 			File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
 				String hashOfBuddyList = computeHash(buddylist.toString());
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
-				BigInteger hashOfBuddyCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(hashOfBuddyList,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-				BigInteger modOfBuddyCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(lastModDateOfBuddyList,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-				sendSystemMessage(username, hashOfBuddyCipher.toString());
-				sendSystemMessage(username, modOfBuddyCipher.toString());
+				sendSystemMessage(username, hashOfBuddyList);
+				sendSystemMessage(username, lastModDateOfBuddyList);
 		} catch (Exception e) {
 		}
 	}
