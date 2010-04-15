@@ -266,7 +266,7 @@ public class ServerThread extends Thread
 				BigInteger hashOfBuddyCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(hashOfBuddyList,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				BigInteger modOfBuddyCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(lastModDateOfBuddyList,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				dout.writeUTF(hashOfBuddyCipher.toString());
-				dout.writeUTF(lastModDateOfBuddyList);
+				dout.writeUTF(modOfBuddyCipher.toString());
 		} catch (Exception e) {
 		}
 	}
