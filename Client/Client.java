@@ -118,6 +118,37 @@ public class Client
 
 			//Send the message
 			try{
+				if(message.length() > 245){
+					double messageNumbers = (double)message.length()/245;
+					double messageNumbersInt = Math.ceil(messageNumbers);
+					System.out.println("MessageLength: "+message.length()+"\nMessageLength/245: "+messageNumbers+"\nCeiling of that: "+messageNumbersInt);
+					String[] messageChunks = new String[(int)messageNumbersInt];
+					for(int i=0;i<messageChunks.length;i++){
+						int begin=i*245;
+						int end = begin+245;
+						if(end>message.length()){
+							end = message.length()-1;
+						}
+						messageChunks[i] = message.substring(begin,end);
+						
+						//Grab the other user's public key from file
+						RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
+						//Encrypt the toUser with the Server's public key and send it to the server
+						BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(toUser, serverPublic.getModulus(), serverPublic.getPublicExponent()));;
+						//Encrypt the message with the toUser's public key and send it to the server
+						BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(messageChunks[i], toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+						dout.writeUTF(firstNameCipher.toString());
+						dout.writeUTF(messageCipher.toString());
+						//Hash the Message for the digital signature
+						String hashedMessage = ClientLogin.computeHash(message);
+
+						// Append own message to IM window
+						print.moveToEnd();
+						// Clear out text input field
+						print.clearTextField();
+					}
+					
+				}else{
 				//Grab the other user's public key from file
 				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 				//Encrypt the toUser with the Server's public key and send it to the server
@@ -128,15 +159,13 @@ public class Client
 				dout.writeUTF(messageCipher.toString());
 				//Hash the Message for the digital signature
 				String hashedMessage = ClientLogin.computeHash(message);
-				//Send the server the digital signature (Hash of the message encrypted with UserA's private key
-				//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
 
 				// Append own message to IM window
 				print.moveToEnd();
 				// Clear out text input field
 				print.clearTextField();
 
-				//TADA
+				}//TADA
 			} catch( IOException ie ) { 
 				if(debug==1)System.out.println(ie);
 				print.writeToTextArea("Error: You are not connfected!\n");
