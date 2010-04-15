@@ -260,7 +260,7 @@ public class ServerThread extends Thread
 			String buddyListDecrypted = RSACrypto.rsaDecryptPrivate(buddyListBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			
 			//Grab the hash of the buddy list
-			File buddylist = new File("users/" + buddyListDecrypted + "/buddylist.csv");
+			File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
 				String hashOfBuddyList = computeHash(buddylist.toString());
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
 				BigInteger hashOfBuddyCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(hashOfBuddyList,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
