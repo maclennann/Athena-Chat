@@ -719,6 +719,7 @@ public class Client
 			if(debug==1)System.out.println("Username sent - now listening for result...");
 			//Grab result
 			String resultCipher = din.readUTF();
+			System.out.println("RESULTT CIPHERR " + resultCipher);
 			byte[] resultBytes = (new BigInteger(resultCipher)).toByteArray();
 			String resultString = RSACrypto.rsaDecryptPublic(resultBytes, serverPublic.getModulus(), serverPublic.getPublicExponent());
 			result = Integer.parseInt(resultString);
@@ -804,7 +805,8 @@ public class Client
 		System.out.println(din.readUTF()); 
 		
 		//Send buddyname
-		systemMessage(buddyname);
+		BigInteger buddynameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(buddyname,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+		dout.writeUTF(buddynameCipher.toString());
 		String[] remoteValues = new String[2];
 		//counter
 		int x = 0;
@@ -814,6 +816,7 @@ public class Client
 		byte[] remoteHashBytes = (new BigInteger(remoteVals)).toByteArray();
 		String decryptedVal = RSACrypto.rsaDecryptPublic(remoteHashBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
 		remoteValues[x] = decryptedVal;
+		System.out.println("REMOTE VALSSS " + remoteValues[x]);
 		x++;
 		}
 		System.out.println("Completed.");
