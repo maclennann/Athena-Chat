@@ -225,10 +225,12 @@ public class ServerThread extends Thread
 		String[] buddyListLines;
 		// TODO Auto-generated method stub
 		sendSystemMessage(username, "Access Granted. Send me the username.");
-		decryptServerPrivate(din.readUTF());
-		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(din.readUTF())))];	
+		System.out.println("Should be begin: " + decryptServerPrivate(din.readUTF()));
+		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(din.readUTF())))];
+		System.out.println("Buddylist lines: "  + buddyListLines.length);
 		for(int y=0; y<buddyListLines.length;y++) { 
 				buddyListLines[x] = decryptServerPrivate(din.readUTF());
+				System.out.println("Encrypted buddylist lines " + buddyListLines[x]);
 			}
 		writeBuddyListToFile(buddyListLines, username);
 		System.out.println("Successfully wrote buddy list to file");
