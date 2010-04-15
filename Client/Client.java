@@ -641,36 +641,20 @@ public class Client
 
 	//This method will send the user's buddy list to the server line by line
 	public static boolean sendBuddyListToServer() throws IOException {
-		File newFile = new File("users/" + username + "/buddylist.csv");
-		FileInputStream buddyListFileInputStream = new FileInputStream(newFile);
-		if(!newFile.exists()) { 
-			return false;
-		}
-		else  {
+			String[] buddylistArray = returnBuddyListArray(true);
 			systemMessage("006");
-	        System.out.println("Message received from server" + din.readUTF());
-	        
-			DataInputStream in = new DataInputStream(buddyListFileInputStream);
-	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-	        String strLine;
-	        
-	        int numLines = (returnBuddyListArray().length);
+	        System.out.println("Message received from server" + din.readUTF());	        
+	        int numLines = buddylistArray.length;
 	        
 	        //Send Aegis the begin message so it knows that this is beginning of the file
 	        dout.writeUTF(encryptServerPublic("begin"));
 	        //Send Aegis the number lines we're sending
 	        dout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
-	        while ((strLine = br.readLine()) != null)   {
-	            // Print the content on the console
-	        	byte[] lineBytes = (new BigInteger(strLine)).toByteArray();
-	        	String decryptedLine = descrypto.decryptData(lineBytes);;
-	            System.out.println (decryptedLine);
-	            	           
+	        for(int x=0; x<buddylistArray.length;x++) {         	          
 	            //Now send Aegis the file
-	            dout.writeUTF(encryptServerPublic(decryptedLine));
+	            dout.writeUTF(encryptServerPublic(buddylistArray[x]));
 	        }
 	        return true;
-		}
 	}
 	//This method encrypts the plaintext with the server's public key
 	public static String encryptServerPublic(String plaintext) { 
@@ -742,6 +726,68 @@ public class Client
 				str = descrypto.decryptData(strNum.toByteArray());
 
 				String foo[] = str.split(","); 
+				usernames[x] = foo[0];
+				x++;
+			}
+			return usernames;
+		}
+
+	}
+	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+	//TODO Make this return a multi-dementional array of all the fields in the CSV File
+	public static String[] returnBuddyListArray(boolean flag) throws IOException {
+		int count;
+		int readChars;
+		InputStream is;
+
+		//Let's get the number of lines in the file
+		File newFile = new File("users/" + username + "/buddylist.csv");
+		if(!(newFile.exists())) { 
+			boolean success = new File("users/" + username).mkdirs();
+			if(success) { 
+				newFile.createNewFile();
+				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+			}
+			else { 
+				newFile.createNewFile();
+			}
+		}
+
+		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+		byte[] c = new byte[1024];
+		count = 0;
+		readChars = 0;
+		while ((readChars = is.read(c)) != -1) {
+			for (int i = 0; i < readChars; ++i) {
+				if (c[i] == '\n')
+					++count;
+			}
+		} //End section
+
+		//Make the string array the size of the number of lines in the file
+		String[] usernames = new String[count];
+
+		//If there are no lines in the file we know that the user has no buddies! :(
+		if (count == 0) { 
+			return usernames;
+		}
+		else { 
+			File newFile2 = new File("users/" + username + "/buddylist.csv");
+			if(!(newFile2.exists())) { 
+				newFile2.createNewFile();
+			}
+			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
+			int x=0;
+			String raw;
+			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
+			while ((raw = in.readLine()) != null) 
+			{ 
+				// Read in the BigInteger in String form. Turn it to a BigInteger
+				// Turn the BigInteger to a byteArray, and decrypt it.
+				//strNum = new BigInteger(raw);
+				//str = descrypto.decryptData(strNum.toByteArray());
+
+				String foo[] = raw.split(","); 
 				usernames[x] = foo[0];
 				x++;
 			}

@@ -198,7 +198,7 @@ public class ServerThread extends Thread
 	}
 	public void writeBuddyListToFile(String[] buddyList, String buddyListName){
 		BufferedWriter out;
-		File newFile = new File("users/" + buddyListName + "/buddylist.csv");
+		File newFile = new File("buddylists/" + buddyListName + "/buddylist.csv");
 		try{
 			if(!(newFile.exists())) { 
 				boolean success = new File("users/" + buddyListName).mkdirs();
@@ -213,7 +213,7 @@ public class ServerThread extends Thread
 				newFile.delete();
 				newFile.createNewFile();
 			}
-			out = new BufferedWriter(new FileWriter("./users/" + buddyListName + "/buddylist.csv"));
+			out = new BufferedWriter(new FileWriter("buddylists/" + buddyListName + "/buddylist.csv"));
 
 			for(int i = 0; i < buddyList.length;i++){
 				out.write(buddyList[i] + "\n");
