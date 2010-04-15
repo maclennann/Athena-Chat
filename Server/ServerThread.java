@@ -189,6 +189,8 @@ public class ServerThread extends Thread
 		break;
 		case 005: returnBuddyListHash();
 		break;
+		case 006: recieveBuddyListFromClient();
+		break;
 		default: return;
 		}
 	}

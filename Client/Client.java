@@ -24,10 +24,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
@@ -548,6 +550,7 @@ public class Client
 			if(localBuddyListModDate > remoteBuddyListModDate) {
 				//TODO send buddylist to server!
 				System.out.println("SEND BUDDY LIST TO SERVER");
+				sendBuddyListToServer();
 			}
 			else if (localBuddyListModDate == remoteBuddyListModDate) { 
 				//TODO NOTHING
@@ -596,7 +599,6 @@ public class Client
 		System.gc();
 	}
 
-
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
 	/*
@@ -637,6 +639,49 @@ public class Client
 
 	}
 
+	//This method will send the user's buddy list to the server line by line
+	public static boolean sendBuddyListToServer() throws IOException {
+		File newFile = new File("users/" + username + "/buddylist.csv");
+		FileInputStream buddyListFileInputStream = new FileInputStream(newFile);
+		if(!newFile.exists()) { 
+			return false;
+		}
+		else  {
+			systemMessage("006");
+	        System.out.println("Message received from server" + din.readUTF());
+	        
+			DataInputStream in = new DataInputStream(buddyListFileInputStream);
+	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	        String strLine;
+	        //Send Aegis the begin message so it knows that this is beginning of the file
+	        dout.writeUTF(encryptServerPublic("begin"));
+	        while ((strLine = br.readLine()) != null)   {
+	            // Print the content on the console
+	        	byte[] lineBytes = (new BigInteger(strLine)).toByteArray();
+	        	String decryptedLine = descrypto.decryptData(lineBytes);;
+	            System.out.println (decryptedLine);
+	            	           
+	            //Now send Aegis the file
+	            dout.writeUTF(encryptServerPublic(decryptedLine));
+	          }
+	        //Send Aegis the end message
+	        dout.writeUTF(encryptServerPublic("end"));
+	        return true;
+		}
+	}
+	//This method encrypts the plaintext with the server's public key
+	public static String encryptServerPublic(String plaintext) { 
+		 BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+		 return cipherText.toString();
+	}
+	
+	//This method decrypts the ciphertext with the server's public key
+	public static String decryptServerPublic(String ciphertext) { 
+		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
+		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
+		//Decrypt the byte[], returns a String
+		return RSACrypto.rsaDecryptPrivate(cipherBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
+	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public static String[] returnBuddyListArray() throws IOException {
