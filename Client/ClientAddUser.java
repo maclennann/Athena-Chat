@@ -112,7 +112,7 @@ public class ClientAddUser extends JPanel {
 		emailMatchesJLabel.setIcon(redX);
 		emailMessageJLabel.setBounds(15,290,300,25);
 		emailMessageJLabel.setForeground(Color.RED);
-		
+
 		//Username Input
 		userNameJTextField = new JTextField();
 		userNameJLabel.setBounds(15,185,100,25);
