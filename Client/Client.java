@@ -765,24 +765,26 @@ public class Client
 		systemMessage("005");
 		
 		//Get acknowledge message
-		din.readUTF(); 
+		System.out.println(din.readUTF()); 
 		
 		//Send buddyname
-		BigInteger buddynameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(buddyname,serverPublic.getModulus(),serverPublic.getPublicExponent()));
-		dout.writeUTF(buddynameCipher.toString());
+		systemMessage(buddyname);
 		String[] remoteValues = new String[2];
 		//counter
 		int x = 0;
 		while(x<=1){ 
 		String remoteVals = din.readUTF();
+		System.out.println(remoteVals);
 		byte[] remoteHashBytes = (new BigInteger(remoteVals)).toByteArray();
 		String decryptedVal = RSACrypto.rsaDecryptPublic(remoteHashBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
 		remoteValues[x] = decryptedVal;
+		x++;
 		}
-		
+		System.out.println("Completed.");
 		return remoteValues;
 		
 		}catch (Exception e)  {
+			System.out.println(e);
 			return null;
 		} 
 		
