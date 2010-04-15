@@ -653,8 +653,13 @@ public class Client
 			DataInputStream in = new DataInputStream(buddyListFileInputStream);
 	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	        String strLine;
+	        
+	        int numLines = (returnBuddyListArray().length);
+	        
 	        //Send Aegis the begin message so it knows that this is beginning of the file
 	        dout.writeUTF(encryptServerPublic("begin"));
+	        //Send Aegis the number lines we're sending
+	        dout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
 	        while ((strLine = br.readLine()) != null)   {
 	            // Print the content on the console
 	        	byte[] lineBytes = (new BigInteger(strLine)).toByteArray();
@@ -663,9 +668,7 @@ public class Client
 	            	           
 	            //Now send Aegis the file
 	            dout.writeUTF(encryptServerPublic(decryptedLine));
-	          }
-	        //Send Aegis the end message
-	        dout.writeUTF(encryptServerPublic("end"));
+	        }
 	        return true;
 		}
 	}

@@ -20,10 +20,12 @@
  *
  ****************************************************/
 
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -167,7 +169,7 @@ public class ServerThread extends Thread
 	}
 
 	//Method that handles client to server messages
-	public void systemMessageListener(int eventCode) throws InterruptedException {
+	public void systemMessageListener(int eventCode) throws InterruptedException, IOException {
 
 		switch(eventCode) { 
 		case 000: try {
@@ -194,7 +196,50 @@ public class ServerThread extends Thread
 		default: return;
 		}
 	}
+	public void writeBuddyListToFile(String[] buddyList, String buddyListName){
+		BufferedWriter out;
+		File newFile = new File("users/" + buddyListName + "/buddylist.csv");
+		try{
+			if(!(newFile.exists())) { 
+				boolean success = new File("users/" + buddyListName).mkdirs();
+				if(success) { 
+					newFile.createNewFile();
+				}
+				else { 
+					newFile.createNewFile();
+				}
+			}
+			out = new BufferedWriter(new FileWriter("./users/" + buddyListName + "/buddylist.csv"));
 
+			for(int i = 0; i < buddyList.length;i++){
+				out.write(buddyList[i] + "\n");
+			}
+			out.close();
+		}catch(Exception e)
+		{if(debug==1)System.out.println("ERROR WRITING BUDDYLIST");
+		}
+	}
+	private void recieveBuddyListFromClient() throws IOException {
+		//TODO make this dynamic
+		int x=0;
+		String[] buddyListLines;
+		// TODO Auto-generated method stub
+		sendSystemMessage(username, "Access Granted. Send me the username.");
+		decryptServerPrivate(din.readUTF());
+		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(din.readUTF())))];	
+		for(int y=0; y<buddyListLines.length;y++) { 
+				buddyListLines[x] = decryptServerPrivate(din.readUTF());
+			}
+		writeBuddyListToFile(buddyListLines, username);
+		System.out.println("Successfully wrote buddy list to file");
+	}
+	//This method decrypts the ciphertext with the server's public key
+	public static String decryptServerPrivate(String ciphertext) { 
+		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
+		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
+		//Decrypt the byte[], returns a String
+		return RSACrypto.rsaDecryptPrivate(cipherBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+	}
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
