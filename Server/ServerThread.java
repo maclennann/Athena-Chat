@@ -209,6 +209,10 @@ public class ServerThread extends Thread
 					newFile.createNewFile();
 				}
 			}
+			else { 
+				newFile.delete();
+				newFile.createNewFile();
+			}
 			out = new BufferedWriter(new FileWriter("./users/" + buddyListName + "/buddylist.csv"));
 
 			for(int i = 0; i < buddyList.length;i++){
