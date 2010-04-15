@@ -49,7 +49,7 @@ public class Client
 	static DESCrypto descrypto;
 
 	//Print debug messages?
-	public static final int debug=0;
+	public static final int debug=1;
 
 	//Global username variable
 	public static String username="null";
@@ -514,12 +514,15 @@ public class Client
 			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
 			if(localBuddyListModDate > remoteBuddyListModDate) {
 				//TODO send buddylist to server!
+				System.out.println("SEND BUDDY LIST TO SERVER");
 			}
 			else if (localBuddyListModDate == remoteBuddyListModDate) { 
 				//TODO NOTHING
+				System.out.println("DONE");
 			}
 			else { 
 				//TODO 
+				System.out.println("GET BUDDY LIST FROM SERVER");
 			}
 		}
 		
