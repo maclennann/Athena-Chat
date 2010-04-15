@@ -25,9 +25,11 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
@@ -35,6 +37,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import sun.misc.BASE64Encoder;
 import sun.security.util.BigInt;
 
 public class ServerThread extends Thread
@@ -184,6 +187,8 @@ public class ServerThread extends Thread
 		break;
 		case 004: publicKeyRequest();
 		break;
+		case 005: returnBuddyListHash();
+		break;
 		default: return;
 		}
 	}
@@ -244,7 +249,27 @@ public class ServerThread extends Thread
 			e.printStackTrace();
 		} 
 	}
-
+	
+	public void returnBuddyListHash() { 
+		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+		sendSystemMessage(username, "Access granted. Send me the username.");
+		
+		try {
+			String buddyListToFind = din.readUTF();
+			byte[] buddyListBytes = (new BigInteger(buddyListToFind)).toByteArray();
+			String buddyListDecrypted = RSACrypto.rsaDecryptPrivate(buddyListBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			
+			//Grab the hash of the buddy list
+			File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
+				String hashOfBuddyList = computeHash(buddylist.toString());
+				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
+				BigInteger hashOfBuddyCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(hashOfBuddyList,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				BigInteger modOfBuddyCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(lastModDateOfBuddyList,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				dout.writeUTF(hashOfBuddyCipher.toString());
+				dout.writeUTF(modOfBuddyCipher.toString());
+		} catch (Exception e) {
+		}
+	}
 	//TODO Make this work better.
 	public boolean createUsername() throws IOException { 
 		try { 
@@ -466,25 +491,28 @@ public class ServerThread extends Thread
 		}	
 	}
 	//This will return the hashed input string
-	public static byte[] computeHash(String toHash) throws Exception { 
-		MessageDigest d = null;
-		d = MessageDigest.getInstance("SHA-1");
-		d.reset();
-		d.update(toHash.getBytes());
-		return d.digest();	
-	}
-
-	//This will turn a byteArray to a String
-	public static String byteArrayToHexString(byte[] b) { 
-		StringBuffer sb = new StringBuffer(b.length * 2);
-		for (int i = 0; i < b.length; i++) { 
-			int v = b[i] & 0xff;
-			if (v < 16) { 
-				sb.append('0');
-			}
-			sb.append(Integer.toHexString(v));
+	public String computeHash(String toHash) throws Exception { 
+		MessageDigest md = null;
+		try
+		{
+			md = MessageDigest.getInstance("SHA-1"); //step 2
 		}
-		return sb.toString().toUpperCase();
+		catch(NoSuchAlgorithmException e)
+		{
+			throw new Exception(e.getMessage());
+		}
+		try
+		{
+			md.update(toHash.getBytes("UTF-8")); //step 3
+		}
+		catch(UnsupportedEncodingException e)
+		{
+			throw new Exception(e.getMessage());
+		}
+
+		byte raw[] = md.digest(); //step 4
+		String hash = (new BASE64Encoder()).encode(raw); //step 5
+		return hash; //step 6
 	}
 
 	public void publicKeyRequest(){

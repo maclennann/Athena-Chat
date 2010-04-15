@@ -112,7 +112,7 @@ public class ClientAddUser extends JPanel {
 		emailMatchesJLabel.setIcon(redX);
 		emailMessageJLabel.setBounds(15,290,300,25);
 		emailMessageJLabel.setForeground(Color.RED);
-		
+
 		//Username Input
 		userNameJTextField = new JTextField();
 		userNameJLabel.setBounds(15,185,100,25);
@@ -134,8 +134,8 @@ public class ClientAddUser extends JPanel {
 		passwordMessageJLabel.setForeground(Color.RED);
 		
 		//Confirm and Cancel JButtons
-		confirmJButton.setBounds(160,345,100,25);
-		cancelJButton.setBounds(35,345,100,25);
+		confirmJButton.setBounds(35,345,100,25);
+		cancelJButton.setBounds(160,345,100,25);
 		confirmJButton.setEnabled(false);
 		
 		//ActionListener to make the connect menu item connect

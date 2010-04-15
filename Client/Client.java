@@ -118,37 +118,6 @@ public class Client
 
 			//Send the message
 			try{
-				if(message.length() > 245){
-					double messageNumbers = (double)message.length()/245;
-					double messageNumbersInt = Math.ceil(messageNumbers);
-					System.out.println("MessageLength: "+message.length()+"\nMessageLength/245: "+messageNumbers+"\nCeiling of that: "+messageNumbersInt);
-					String[] messageChunks = new String[(int)messageNumbersInt];
-					for(int i=0;i<messageChunks.length;i++){
-						int begin=i*245;
-						int end = begin+245;
-						if(end>message.length()){
-							end = message.length()-1;
-						}
-						messageChunks[i] = message.substring(begin,end);
-						
-						//Grab the other user's public key from file
-						RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
-						//Encrypt the toUser with the Server's public key and send it to the server
-						BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(toUser, serverPublic.getModulus(), serverPublic.getPublicExponent()));;
-						//Encrypt the message with the toUser's public key and send it to the server
-						BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(messageChunks[i], toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
-						dout.writeUTF(firstNameCipher.toString());
-						dout.writeUTF(messageCipher.toString());
-						//Hash the Message for the digital signature
-						String hashedMessage = ClientLogin.computeHash(message);
-
-						// Append own message to IM window
-						print.moveToEnd();
-						// Clear out text input field
-						print.clearTextField();
-					}
-					
-				}else{
 				//Grab the other user's public key from file
 				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 				//Encrypt the toUser with the Server's public key and send it to the server
@@ -159,13 +128,15 @@ public class Client
 				dout.writeUTF(messageCipher.toString());
 				//Hash the Message for the digital signature
 				String hashedMessage = ClientLogin.computeHash(message);
+				//Send the server the digital signature (Hash of the message encrypted with UserA's private key
+				//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
 
 				// Append own message to IM window
 				print.moveToEnd();
 				// Clear out text input field
 				print.clearTextField();
 
-				}//TADA
+				//TADA
 			} catch( IOException ie ) { 
 				if(debug==1)System.out.println(ie);
 				print.writeToTextArea("Error: You are not connfected!\n");
@@ -532,6 +503,27 @@ public class Client
 	//TODO Make sure the user's status gets changed when they sign on/off
 	//DONE 3/30/2010
 	public static void instantiateBuddyList() throws IOException { 	
+		//First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
+		String hashOfLocalBuddyList = returnHashOfLocalBuddyList(username);
+		//Now we need to get the hash of the user's buddylist on the server
+		String[] remoteVals = returnHashOfRemoteBuddyList(username);
+		long remoteBuddyListModDate = Long.parseLong(remoteVals[1].trim());
+		
+		//Now let's compare this hash with the hash on the server
+		if(!(hashOfLocalBuddyList.equals(remoteVals[0]))) { 
+			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
+			if(localBuddyListModDate > remoteBuddyListModDate) {
+				//TODO send buddylist to server!
+			}
+			else if (localBuddyListModDate == remoteBuddyListModDate) { 
+				//TODO NOTHING
+			}
+			else { 
+				//TODO 
+			}
+		}
+		
+		
 		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
 
@@ -567,6 +559,7 @@ public class Client
 		//Garbage collect!
 		System.gc();
 	}
+
 
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
@@ -746,8 +739,55 @@ public class Client
 	public static DataInputStream returnDIN() { 
 		return din;
 	}
-	private static void splashScreenDestruct() {
-		screen.setScreenVisible(false);
+	
+	//This method returns a hash of the buddy list 
+	public static String returnHashOfLocalBuddyList(String buddyname) { 
+		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
+		String hashOfBuddyList = null;
+		try {
+			hashOfBuddyList = ClientLogin.computeHash(buddylist.toString());
+		} catch (Exception e1) {
+			hashOfBuddyList = "Failed";
+		}	
+		return hashOfBuddyList;
+	}
+	
+	//Returns a long of the last day the file was modified
+	private static long returnLocalModDateOfBuddyList(String buddyname) {
+		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
+		return buddylist.lastModified();
+	}
+	
+	//This method returns a hash of the remote buddy list
+	public static String[] returnHashOfRemoteBuddyList(String buddyname) { 
+		try { 
+		
+		systemMessage("005");
+		
+		//Get acknowledge message
+		System.out.println(din.readUTF()); 
+		
+		//Send buddyname
+		systemMessage(buddyname);
+		String[] remoteValues = new String[2];
+		//counter
+		int x = 0;
+		while(x<=1){ 
+		String remoteVals = din.readUTF();
+		System.out.println(remoteVals);
+		byte[] remoteHashBytes = (new BigInteger(remoteVals)).toByteArray();
+		String decryptedVal = RSACrypto.rsaDecryptPublic(remoteHashBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+		remoteValues[x] = decryptedVal;
+		x++;
+		}
+		System.out.println("Completed.");
+		return remoteValues;
+		
+		}catch (Exception e)  {
+			System.out.println(e);
+			return null;
+		} 
+		
 	}
 
 	private static void splashScreenInit() {
@@ -760,17 +800,17 @@ public class Client
 
 	// Create the GUI for the client.
 	public static void main(String[] args) throws AWTException {
-		splashScreenInit();
+		//splashScreenInit();
 
-		for (int i = 0; i <= 100; i++)
+		/*for (int i = 0; i <= 100; i++)
 		{
 			for (long j=0; j<50000; ++j)
 			{
 				String takeMoreTime = " " + (j + i);
 			}
 			screen.setProgress("Loading:" + i, i);  // progress bar with a message
-		}   
-		splashScreenDestruct();
+		}*/  
+		//splashScreenDestruct();
 		//clientResource = new ClientApplet();
 		loginGUI = new ClientLogin();
 
