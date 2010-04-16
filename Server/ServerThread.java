@@ -582,9 +582,10 @@ public class ServerThread extends Thread
 	}
 	byte[] digest = md.digest();
 	String hash = new String(digest);
-	
+	System.out.println(hash);
 	return hash;
 	}
+	
 	public void publicKeyRequest(){
 
 		System.out.println(username);
