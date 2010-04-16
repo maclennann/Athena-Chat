@@ -83,7 +83,7 @@ public class ClientApplet extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -7742402292330782311L;
-	public static final int debug = 0;
+	public static final int debug = 1;
 
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();;
 
@@ -117,11 +117,11 @@ public class ClientApplet extends JFrame {
 	}
 
 	public static Object[] currentSettings = new Object[11];
-	
+
 	ClientApplet() {
 
 		// Initialize chat window
-		
+
 		//Load preference settings
 		Object[] settingsArray = loadSavedPreferences();
 		setCurrentSettingsArray(settingsArray);
@@ -236,17 +236,17 @@ public class ClientApplet extends JFrame {
 		addContactLabel.setText("Add Contact");
 		addContactLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		addContactLabel.setHorizontalTextPosition(JLabel.CENTER);
-		
+
 		removeContactLabel.setIcon(removeUserIcon);
 		removeContactLabel.setText("Remove Contact");
 		removeContactLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		removeContactLabel.setHorizontalTextPosition(JLabel.CENTER);
-		
+
 		addContactLabel.setVisible(true);
 		removeContactLabel.setVisible(true);
 		addContactLabel.setBounds(600, 495, 100, 50);
 		removeContactLabel.setBounds(700, 495, 100, 50);
-		
+
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				//JList theList = (JList) mouseEvent.getSource();
@@ -259,7 +259,7 @@ public class ClientApplet extends JFrame {
 				}
 			}		
 		});
-		
+
 		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
 			public void mousePressed(MouseEvent mouseEvent) {
@@ -280,11 +280,11 @@ public class ClientApplet extends JFrame {
 		// MouseListener for the removeUser image
 		MouseListener removeBuddyMouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				
+
 				try {				
 					JList theList = (JList) userBox;
 					String[] usernames = Client.returnBuddyListArray();
-					
+
 					// Find out what was double-clicked
 					int index = theList.getSelectedIndex();
 					if(debug==1)System.out.println(index);
@@ -305,34 +305,34 @@ public class ClientApplet extends JFrame {
 					}
 					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
 					else {
-						
+
 						final JFrame removeWindow = new JFrame("Remove user");
 						final JPanel contentPane = new JPanel();
 						final JComboBox listOfUsersJComboBox = new JComboBox();
 						final JButton removeJButton, cancelJButton;
 						removeJButton = new JButton("Remove");
 						cancelJButton = new JButton("Cancel");
-						
+
 						contentPane.setLayout(null);
-						
+
 						removeWindow.setSize(200,200);	
 						listOfUsersJComboBox.setBounds(45,40,100,25);
 						removeJButton.setBounds(45,75,100,25);
 						cancelJButton.setBounds(45,115,100,25);
-					
+
 						for(int x=0; x<usernames.length;x++) listOfUsersJComboBox.addItem(usernames[x]);
-						
+
 						contentPane.add(listOfUsersJComboBox);
 						contentPane.add(removeJButton);
 						contentPane.add(cancelJButton);
 						removeWindow.add(contentPane);
 						removeWindow.setVisible(true);
-						
+
 						removeJButton.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent event){
 								try {
 									String[] usernames = Client.returnBuddyListArray();
-									
+
 									Object o = listOfUsersJComboBox.getSelectedItem();
 									ArrayList<String> list = new ArrayList<String>(Arrays
 											.asList(usernames));
@@ -344,7 +344,7 @@ public class ClientApplet extends JFrame {
 									// previous file
 									Client.writeBuddyListToFile(usernames);
 									listOfUsersJComboBox.removeItemAt(listOfUsersJComboBox.getSelectedIndex());
-																	
+
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -352,13 +352,13 @@ public class ClientApplet extends JFrame {
 
 							}
 						});
-						
+
 						cancelJButton.addActionListener(new ActionListener() { 
 							public void actionPerformed(ActionEvent event) {
 								removeWindow.dispose();
 							}
 						});
-						
+
 						System.gc();
 					}
 				} catch (Exception e) {
@@ -392,7 +392,7 @@ public class ClientApplet extends JFrame {
 							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 							Component[] currentTabComponents = currentTab.getComponents();
 							JTextComponent textFieldToFocus = (JTextComponent) currentTabComponents[1];
-							
+
 							textFieldToFocus.addKeyListener(new KeyListener() {
 								public void keyPressed(KeyEvent e) {
 								}
@@ -401,7 +401,7 @@ public class ClientApplet extends JFrame {
 										JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 										int tempIndex = imTabbedPane.getSelectedIndex();
 										imTabbedPane.remove(currentTab);
-										
+
 										if(tempIndex > 0)
 										{
 											imTabbedPane.setSelectedIndex(tempIndex - 1);
@@ -429,13 +429,13 @@ public class ClientApplet extends JFrame {
 												currentTextField.requestFocusInWindow();											
 											}
 										}
-										}
 									}
+								}
 								public void keyTyped(KeyEvent e) {
 								}
-								});
+							});
 							textFieldToFocus.requestFocusInWindow();
-							
+
 						} else {
 							// Focus the tab for this user name if it already
 							// exists
@@ -480,7 +480,7 @@ public class ClientApplet extends JFrame {
 	{
 		return currentSettings;
 	}
-	
+
 	public void setCurrentSettingsArray(Object[] settingsArray)
 	{
 		currentSettings = settingsArray;
@@ -504,7 +504,7 @@ public class ClientApplet extends JFrame {
 		//Garbage collect!
 		System.gc();
 	}
-	
+
 	public void setSystemTrayIcon(boolean activated) throws AWTException
 	{
 		SystemTray tray = SystemTray.getSystemTray();
@@ -538,7 +538,7 @@ public class ClientApplet extends JFrame {
 				tray.remove(trayArray[x]);
 		}
 	}
-	
+
 	public void closeTabWithESC(boolean activated)
 	{
 		int tabCount = imTabbedPane.getTabCount();
@@ -555,45 +555,45 @@ public class ClientApplet extends JFrame {
 				currentTabComponents = currentTab.getComponents();
 				currentTextField = (JTextComponent) currentTabComponents[1];
 				currentTextField.addKeyListener(new KeyListener() {
-				public void keyPressed(KeyEvent e) {
-				}
-				public void keyReleased(KeyEvent e) {
-					if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
-						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-						int tempIndex = imTabbedPane.getSelectedIndex();
-						imTabbedPane.remove(currentTab);
-						
-						if(tempIndex > 0)
-						{
-							imTabbedPane.setSelectedIndex(tempIndex - 1);
-							currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-							Component[] currentTabComponents = currentTab.getComponents();
-							JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-							currentTextField.requestFocusInWindow();
-						}
-						else
-						{
-							if(imTabbedPane.getTabCount() > 1)
+					public void keyPressed(KeyEvent e) {
+					}
+					public void keyReleased(KeyEvent e) {
+						if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+							int tempIndex = imTabbedPane.getSelectedIndex();
+							imTabbedPane.remove(currentTab);
+
+							if(tempIndex > 0)
 							{
-								imTabbedPane.setSelectedIndex(tempIndex);
-								currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
-								Component[] currentTabComponents = currentTab.getComponents();
-								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-								currentTextField.requestFocusInWindow();											
-							}
-							else if(imTabbedPane.getTabCount() > 0)
-							{
-								imTabbedPane.setSelectedIndex(0);
+								imTabbedPane.setSelectedIndex(tempIndex - 1);
 								currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 								Component[] currentTabComponents = currentTab.getComponents();
 								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-								currentTextField.requestFocusInWindow();											
+								currentTextField.requestFocusInWindow();
+							}
+							else
+							{
+								if(imTabbedPane.getTabCount() > 1)
+								{
+									imTabbedPane.setSelectedIndex(tempIndex);
+									currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
+									Component[] currentTabComponents = currentTab.getComponents();
+									JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+									currentTextField.requestFocusInWindow();											
+								}
+								else if(imTabbedPane.getTabCount() > 0)
+								{
+									imTabbedPane.setSelectedIndex(0);
+									currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+									Component[] currentTabComponents = currentTab.getComponents();
+									JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+									currentTextField.requestFocusInWindow();											
+								}
 							}
 						}
-						}
 					}
-				public void keyTyped(KeyEvent e) {
-				}
+					public void keyTyped(KeyEvent e) {
+					}
 				});
 			}
 		}
@@ -615,7 +615,7 @@ public class ClientApplet extends JFrame {
 		//Garbage collect!
 		System.gc();
 	}
-	
+
 	// Adjust spell check setting in current and future text fields
 	public void setSpellCheck(boolean activated)
 	{
@@ -653,11 +653,11 @@ public class ClientApplet extends JFrame {
 			spellCheckFlag = false;
 		}
 	}
-	
+
 	public void setEnableNotifications(boolean activated)
 	{
 		int tabCount = imTabbedPane.getTabCount();
-		
+
 		//Enable all tabs for notifications
 		if(activated)
 		{
@@ -668,7 +668,7 @@ public class ClientApplet extends JFrame {
 				Component[] currentTabComponents = currentTab.getComponents();
 				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-				
+
 				currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
 					public void insertUpdate(DocumentEvent e) {
 						if(debug==1)System.out.println("TEXT ADDED!!");
@@ -706,10 +706,10 @@ public class ClientApplet extends JFrame {
 			}
 		}
 	}
-	
+
 	public void setEnableSounds(boolean activated)
 	{
-		
+
 	}
 
 	// Makes a new hash table with user's online status
@@ -720,15 +720,17 @@ public class ClientApplet extends JFrame {
 	//TODO: Fix user folder that preference file writes to!
 	private Object[] loadSavedPreferences()
 	{	if(debug==1)System.out.println("Importing preferences");
-		Object[] settingsArray = new Object[11];
-		int arrayCount = 0;
-		String line = null;
-		String temp = null;
-		try {
-			
-			File newPrefFile = new File("users/" + Client.username + "/athena.conf");
-			if(!(newPrefFile.exists())) { 
-				if(debug==1)System.out.println("File Not Found! Copying...");
+	Object[] settingsArray = new Object[11];
+	int arrayCount = 0;
+	String line = null;
+	String temp = null;
+	try {
+
+		File newPrefFile = new File("users/" + Client.username + "/athena.conf");
+		if(!(newPrefFile.exists())) { 
+			if(debug==1)System.out.println("File Not Found! Copying...");
+			boolean success = new File("users/" + Client.username + "/").mkdirs();
+			if(success){				
 				File oldFile = new File("users/Aegis/athena.conf");
 				FileChannel inChannel = new FileInputStream(oldFile).getChannel();
 				FileChannel outChannel = new FileOutputStream(newPrefFile).getChannel();
@@ -743,86 +745,87 @@ public class ClientApplet extends JFrame {
 					if (outChannel != null) outChannel.close();
 				}
 			}
-			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + Client.username + "/athena.conf"));
-			while((line = inPref.readLine()) != null)
-			{
-				if(line.equals("[GENERAL]"))
-				{
-					//Get general settings
-					//Get allowSystemTray (boolean)
-					temp = inPref.readLine().substring(16);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-					//Get allowESCTab (boolean)
-					temp = inPref.readLine().substring(12);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-					//Get enableSpellCheck (boolean)
-					temp = inPref.readLine().substring(17);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-				}
-				if(line.equals("[NOTIFICATIONS]"))
-				{
-					//Get notification settings
-					//Get enableNotifications (boolean)
-					temp = inPref.readLine().substring(20);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-					//Get enableSounds (boolean)
-					temp = inPref.readLine().substring(13);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-				}
-				if(line.equals("[ENCRYPTION]"))
-				{
-					//Get encryption settings
-					//Get encryptionType (integer)
-					inPref.readLine();
-					inPref.readLine();
-					temp = inPref.readLine().substring(15);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-				}
-				if(line.equals("[FORMATTING]"))
-				{
-					//Get formatting settings
-					//Get fontFace (string)
-					temp = inPref.readLine().substring(9);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-					//Get fontBold (boolean)
-					temp = inPref.readLine().substring(9);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-					//Get fontItalic (boolean)
-					temp = inPref.readLine().substring(11);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-					//Get fontUnderline (boolean)
-					temp = inPref.readLine().substring(14);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-				}
-				if(line.equals("[THEME]"))
-				{
-					//Get theme settings
-					//Get activeTheme (integer)
-					temp = inPref.readLine().substring(12);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-				}
-			//inPref.close();
-				//Garbage collect!
-				System.gc();
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		BufferedReader inPref = new BufferedReader(new FileReader("./users/" + Client.username + "/athena.conf"));
+		while((line = inPref.readLine()) != null)
+		{
+			if(line.equals("[GENERAL]"))
+			{
+				//Get general settings
+				//Get allowSystemTray (boolean)
+				temp = inPref.readLine().substring(16);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+				//Get allowESCTab (boolean)
+				temp = inPref.readLine().substring(12);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+				//Get enableSpellCheck (boolean)
+				temp = inPref.readLine().substring(17);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+			}
+			if(line.equals("[NOTIFICATIONS]"))
+			{
+				//Get notification settings
+				//Get enableNotifications (boolean)
+				temp = inPref.readLine().substring(20);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+				//Get enableSounds (boolean)
+				temp = inPref.readLine().substring(13);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+			}
+			if(line.equals("[ENCRYPTION]"))
+			{
+				//Get encryption settings
+				//Get encryptionType (integer)
+				inPref.readLine();
+				inPref.readLine();
+				temp = inPref.readLine().substring(15);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+			}
+			if(line.equals("[FORMATTING]"))
+			{
+				//Get formatting settings
+				//Get fontFace (string)
+				temp = inPref.readLine().substring(9);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+				//Get fontBold (boolean)
+				temp = inPref.readLine().substring(9);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+				//Get fontItalic (boolean)
+				temp = inPref.readLine().substring(11);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+				//Get fontUnderline (boolean)
+				temp = inPref.readLine().substring(14);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+			}
+			if(line.equals("[THEME]"))
+			{
+				//Get theme settings
+				//Get activeTheme (integer)
+				temp = inPref.readLine().substring(12);
+				settingsArray[arrayCount] = temp;
+				arrayCount++;
+			}
+			//inPref.close();
+			//Garbage collect!
+			System.gc();
+		}
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	return settingsArray;
 	}
 
@@ -848,13 +851,13 @@ class MapTextArea extends JFrame {
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
-		
+
 	// Constructor
 	MapTextArea(String user, boolean spellCheckFlag) { 
-		
-		 try {
+
+		try {
 			//Register the dictionaries for the spell checker
-			 SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "en" );
+			SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "en" );
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -870,7 +873,7 @@ class MapTextArea extends JFrame {
 		myTA.setEditable(false);
 		myTA.setLineWrap(true);
 		myTA.setWrapStyleWord(true);
-        // enable the spell checking on the text component with all features
+		// enable the spell checking on the text component with all features
 
 
 		JScrollPane mySP = new JScrollPane(myTA);
@@ -887,18 +890,18 @@ class MapTextArea extends JFrame {
 		//Register the spell checker in the text field
 		if (spellCheckFlag)
 			SpellChecker.register(myTF, true, true, true);
-		
+
 		username = user;
 
 		//Add an actionListener to the text field to send messages
 		myTF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(!(myTF.getText().equals(""))) { 
-				Client.processMessage(myTF.getText());
+					Client.processMessage(myTF.getText());
 				}
 			}
 		});
-		
+
 		//Set font to Arial
 		Font font = new Font("Arial",Font.PLAIN,17);
 		myTA.setFont(font);
@@ -952,34 +955,34 @@ class MapTextArea extends JFrame {
 }
 
 class CloseTabButton extends JPanel implements ActionListener {
-	  /**
+	/**
 	 * 
 	 */
 	//private static final long serialVersionUID = -6032110177913133517L;
 	private JTabbedPane pane;
-	  public CloseTabButton(JTabbedPane pane, int index) {
-	    this.pane = pane;
-	    setOpaque(false);
-	    add(new JLabel(
-	        pane.getTitleAt(index),
-	        pane.getIconAt(index),
-	        JLabel.LEFT));
-	    Icon closeIcon = new ImageIcon("../images/close_button.png");
-	    JButton btClose = new JButton(closeIcon);
-	    btClose.setPreferredSize(new Dimension(
-	        closeIcon.getIconWidth(), closeIcon.getIconHeight()));
-	    add(btClose);
-	    btClose.addActionListener(this);
-	    pane.setTabComponentAt(index, this);
-	  }
-	  
-	  public void actionPerformed(ActionEvent e) {
-	    int i = pane.indexOfTabComponent(this);
-	    if (i != -1) {
-	      pane.remove(i);
-		  ClientApplet.lockIconLabel.setVisible(true);
-		  System.gc();
-	    }
-	  }
+	public CloseTabButton(JTabbedPane pane, int index) {
+		this.pane = pane;
+		setOpaque(false);
+		add(new JLabel(
+				pane.getTitleAt(index),
+				pane.getIconAt(index),
+				JLabel.LEFT));
+		Icon closeIcon = new ImageIcon("../images/close_button.png");
+		JButton btClose = new JButton(closeIcon);
+		btClose.setPreferredSize(new Dimension(
+				closeIcon.getIconWidth(), closeIcon.getIconHeight()));
+		add(btClose);
+		btClose.addActionListener(this);
+		pane.setTabComponentAt(index, this);
 	}
+
+	public void actionPerformed(ActionEvent e) {
+		int i = pane.indexOfTabComponent(this);
+		if (i != -1) {
+			pane.remove(i);
+			ClientApplet.lockIconLabel.setVisible(true);
+			System.gc();
+		}
+	}
+}
 

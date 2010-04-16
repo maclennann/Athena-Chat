@@ -271,7 +271,19 @@ public class Client
 			//BigInteger fromUserBytes = new BigInteger(fromUserCipher);
 
 			//Grab the user's private key - SHHH!!
-			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv");
+			String privateKeyPath = "users/" + username + "/keys/" + username + ".priv";
+			File privateKey = new File(privateKeyPath);
+			if(!(privateKey.exists())) { 
+				boolean success = new File("users/" + username + "/keys/").mkdirs();
+				if(success) { 
+					//TODO GRAB THE PRIVATE KEY FROM SERVER
+					
+				}
+				else { //TODO GRAB THE PRIVATE KEY FROM SERVER
+					
+				}				
+			}
+			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
 			//Decrypt the fromUser to see what user this message came from!
 
@@ -884,6 +896,17 @@ public class Client
 	//This method returns a hash of the buddy list 
 	public static String returnHashOfLocalBuddyList(String buddyname) throws NoSuchAlgorithmException, IOException { 
 		String path = "users/".concat(buddyname).concat("/buddylist.csv");
+		File buddyList = new File(path);
+		if(!buddyList.exists()) { 
+			boolean success = new File("users/" + username).mkdirs();
+			if(success) { 
+				buddyList.createNewFile();
+				//getBuddyListFromServer();
+			}
+			else { 
+				buddyList.createNewFile();
+			}
+		}
 		return returnHashOfFile(path);
 	}
 	

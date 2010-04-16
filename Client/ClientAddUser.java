@@ -143,6 +143,14 @@ public class ClientAddUser extends JPanel {
 			public void actionPerformed(ActionEvent event){
 				String password;
 				try {
+					
+					//Create the DESCrypto object for buddylist and preferences cryptography
+					String saltUser;
+					if(userNameJTextField.getText().length()>=8){
+						saltUser = userNameJTextField.getText().substring(0,8);
+					}else saltUser = userNameJTextField.getText();
+					DESCrypto descrypto = new DESCrypto(passwordJPasswordField.getPassword().toString(),saltUser);
+										
 					//Hash the password
 					password = ClientLogin.computeHash(new String(passwordJPasswordField.getPassword()));
 					
@@ -171,9 +179,10 @@ public class ClientAddUser extends JPanel {
 							privKeyFile.createNewFile();
 					}
 					
+					
 					//Write the keys to the file
+					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".priv",new BigInteger(descrypto.encryptData(privateMod.toString())),new BigInteger(descrypto.encryptData(privateExp.toString())));
 					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".pub",publicMod,publicExp);
-					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".priv",privateMod,privateExp);
 					
 					//System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
 					//Send the information to Aegis

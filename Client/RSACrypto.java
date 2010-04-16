@@ -285,7 +285,7 @@ public class RSACrypto {
 	}
 	//This method grabs the private key from the file
 	//TODO Make this more secure! 3/31/2010
-	static RSAPrivateKeySpec readPrivKeyFromFile(String keyFileName) throws IOException {
+	static RSAPrivateKeySpec readPrivKeyFromFile(String keyFileName, DESCrypto descrypto) throws IOException {
 		//This is how we'll get the file
 		ObjectInputStream oin = null;
 		try{
@@ -294,9 +294,15 @@ public class RSACrypto {
 			//Grab the m and e values for the RSA key file process
 			BigInteger m = (BigInteger) oin.readObject();
 			BigInteger e = (BigInteger) oin.readObject();
+			
+			byte[] modBytes = new BigInteger(m.toString()).toByteArray();
+			byte[] expBytes = new BigInteger(e.toString()).toByteArray();
+			
+			BigInteger modDecrypted = new BigInteger(descrypto.decryptData(modBytes));
+			BigInteger expDecrypted = new BigInteger(descrypto.decryptData(expBytes));
 
 			//Run RSA Private Key input 
-			RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
+			RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(modDecrypted, expDecrypted);
 
 			//Return the private key
 			return keySpec;
