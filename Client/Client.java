@@ -883,7 +883,7 @@ public class Client
 	
 	//This method returns a hash of the buddy list 
 	public static String returnHashOfLocalBuddyList(String buddyname) throws NoSuchAlgorithmException, IOException { 
-		String path = "users/".concat(buddyname).concat("buddylist.csv");
+		String path = "users/".concat(buddyname).concat("/buddylist.csv");
 		return returnHashOfFile(path);
 	}
 	
