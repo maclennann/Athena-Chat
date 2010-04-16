@@ -899,7 +899,7 @@ public class Client
 	try {
 	  is = new DigestInputStream(is, md);
 	  // read stream to EOF as normal...
-	}
+	} catch (Exception e) { System.out.println(e); } 
 	finally {
 	  is.close();
 	}

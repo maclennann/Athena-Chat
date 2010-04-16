@@ -316,7 +316,7 @@ public class ServerThread extends Thread
 			
 			//Grab the hash of the buddy list
 				File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
-				String path = "buddylists/".concat(buddyListDecrypted).concat("buddylist.csv");
+				String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
 				String hashOfBuddyList = returnHashOfFile(path);
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
 				sendSystemMessage(username, hashOfBuddyList);
