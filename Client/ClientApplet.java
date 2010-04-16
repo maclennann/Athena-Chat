@@ -91,7 +91,6 @@ public class ClientApplet extends JFrame {
 	DefaultListModel listModel = new DefaultListModel();
 
 	// Components for the visual display of the chat windows
-	public boolean spellCheckFlag = false;
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
@@ -105,6 +104,18 @@ public class ClientApplet extends JFrame {
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	static public JLabel lockIconLabel = new JLabel();
 	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
+	public int sessionTabCount = 0;
+	public boolean enableSystemTray;
+	public boolean enableESCToClose;
+	public boolean enableSpellCheck;
+	public boolean enableNotifications;
+	public boolean enableSounds;
+	public int encryptionType;
+	public String fontFace;
+	public boolean fontBold;
+	public boolean fontItalic;
+	public boolean fontUnderline;
+	public int activeTheme;
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
@@ -125,26 +136,26 @@ public class ClientApplet extends JFrame {
 		//Load preference settings
 		Object[] settingsArray = loadSavedPreferences();
 		setCurrentSettingsArray(settingsArray);
-		boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
+		enableSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
 		try {
-			setSystemTrayIcon(allowSystemTray);
+			setSystemTrayIcon(enableSystemTray);
 		} catch (AWTException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
-		closeTabWithESC(allowESCTab);
-		boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
+		enableESCToClose = Boolean.parseBoolean(settingsArray[1].toString());
+		closeTabWithESC(enableESCToClose);
+		enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 		setSpellCheck(enableSpellCheck);
-		boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
+		enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
 		setEnableNotifications(enableNotifications);
-		boolean enableSounds = Boolean.parseBoolean(settingsArray[4].toString());
-		int encryptionType = Integer.parseInt(settingsArray[5].toString());
-		String fontFace = settingsArray[6].toString();
-		boolean fontBold = Boolean.parseBoolean(settingsArray[7].toString());
-		boolean fontItalic = Boolean.parseBoolean(settingsArray[8].toString());
-		boolean fontUnderline = Boolean.parseBoolean(settingsArray[9].toString());
-		int activeTheme = Integer.parseInt(settingsArray[10].toString());
+		enableSounds = Boolean.parseBoolean(settingsArray[4].toString());
+		encryptionType = Integer.parseInt(settingsArray[5].toString());
+		fontFace = settingsArray[6].toString();
+		fontBold = Boolean.parseBoolean(settingsArray[7].toString());
+		fontItalic = Boolean.parseBoolean(settingsArray[8].toString());
+		fontUnderline = Boolean.parseBoolean(settingsArray[9].toString());
+		activeTheme = Integer.parseInt(settingsArray[10].toString());
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -468,7 +479,7 @@ public class ClientApplet extends JFrame {
 	public void makeTab(String user) {
 		lockIconLabel.setVisible(false);
 		// Create a hash table mapping a user name to the JPanel in a tab
-		tabPanels.put(user, new MapTextArea(user, spellCheckFlag));
+		tabPanels.put(user, new MapTextArea(user, enableSpellCheck));
 		// Make a temporary object for that JPanel
 		MapTextArea temp = (MapTextArea) tabPanels.get(user);
 		// Actually pull the JPanel out
@@ -478,9 +489,11 @@ public class ClientApplet extends JFrame {
 		// Add close button to tab
 		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(user));
 		//Add ESC Key listener
-		addESCKeyListener(imTabbedPane.indexOfTab(user));
+		if(enableESCToClose)
+			addESCKeyListener(imTabbedPane.indexOfTab(user));
 		//Add alert notification listener
-		addAlertNotificationListener(imTabbedPane.indexOfTab(user));
+		if(enableNotifications)
+			addAlertNotificationListener(imTabbedPane.indexOfTab(user));
 		// Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
 		FocusCurrentTextField();
@@ -564,7 +577,7 @@ public class ClientApplet extends JFrame {
 				SpellChecker.register(currentTextField, true, true, true);
 			}
 			// Enable future spell check registration
-			spellCheckFlag = true;
+			enableSpellCheck = true;
 		}
 		else
 		{
@@ -578,7 +591,7 @@ public class ClientApplet extends JFrame {
 				SpellChecker.unregister(currentTextField);
 			}
 			// Disable future spell check registration
-			spellCheckFlag = false;
+			enableSpellCheck = false;
 		}
 	}
 	
@@ -618,6 +631,7 @@ public class ClientApplet extends JFrame {
 		
 		currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
+				
 				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				Component[] currentTabComponents = currentTab.getComponents();
 				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
@@ -839,7 +853,7 @@ class MapTextArea extends JFrame {
 	// All of the JComponents in the tab
 	public JPanel myJPanel;
 	public JTextArea myTA;
-	public JTextField myTF;	
+	public JTextField myTF;
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
