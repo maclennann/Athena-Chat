@@ -582,7 +582,8 @@ public class ServerThread extends Thread
 	  is.close();
 	}
 	byte[] digest = md.digest();
-	String hash = new String(digest);
+	BigInteger digestBigInt = new BigInteger(digest);
+	String hash = new String(digestBigInt.toString());
 	System.out.println(hash);
 	return hash;
 	}
