@@ -181,7 +181,7 @@ public class ClientAddUser extends JPanel {
 
 					File buddyList = new File("users/"+newUsername+"/buddylist.csv");
 					if(!(buddyList.exists())){
-						boolean success = new File("users/"+newUsername+"/buddylist.csv").mkdirs();
+						boolean success = new File("users/"+newUsername + "/").mkdirs();
 						System.out.println("Created Directory");
 						buddyList.createNewFile();
 						System.out.println("Created File");
