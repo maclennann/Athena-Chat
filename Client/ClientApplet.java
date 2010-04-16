@@ -94,7 +94,7 @@ public class ClientApplet extends JFrame {
 	public boolean spellCheckFlag = false;
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
-	public JMenu file, edit, encryption;
+	public JMenu file, edit, encryption, view, help;
 	public JMenuItem disconnect, exit, preferences;
 	public JPanel panel; // still need this?
 	public JFrame imContentFrame, buddyListFrame;
@@ -184,6 +184,16 @@ public class ClientApplet extends JFrame {
 		encryption = new JMenu("Encryption");
 		encryption.setMnemonic(KeyEvent.VK_A);
 		menuBar.add(encryption);
+		
+		// Create the view menu
+		view = new JMenu("View");
+		view.setMnemonic(KeyEvent.VK_A);
+		menuBar.add(view);
+		
+		// Create the help menu
+		help = new JMenu("Help");
+		help.setMnemonic(KeyEvent.VK_A);
+		menuBar.add(help);
 
 		// TODO Add items to the encryption menu
 
@@ -389,62 +399,22 @@ public class ClientApplet extends JFrame {
 						// Create a tab for the conversation if it doesn't exist
 						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
 							makeTab(o.toString());
-							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-							Component[] currentTabComponents = currentTab.getComponents();
-							JTextComponent textFieldToFocus = (JTextComponent) currentTabComponents[1];
+							int currentTabIndex = imTabbedPane.getSelectedIndex();
 							
-							textFieldToFocus.addKeyListener(new KeyListener() {
-								public void keyPressed(KeyEvent e) {
-								}
-								public void keyReleased(KeyEvent e) {
-									if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
-										JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-										int tempIndex = imTabbedPane.getSelectedIndex();
-										imTabbedPane.remove(currentTab);
-										
-										if(tempIndex > 0)
-										{
-											imTabbedPane.setSelectedIndex(tempIndex - 1);
-											currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-											Component[] currentTabComponents = currentTab.getComponents();
-											JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-											currentTextField.requestFocusInWindow();
-										}
-										else
-										{
-											if(imTabbedPane.getTabCount() > 1)
-											{
-												imTabbedPane.setSelectedIndex(tempIndex);
-												currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
-												Component[] currentTabComponents = currentTab.getComponents();
-												JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-												currentTextField.requestFocusInWindow();											
-											}
-											else if(imTabbedPane.getTabCount() > 0)
-											{
-												imTabbedPane.setSelectedIndex(0);
-												currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-												Component[] currentTabComponents = currentTab.getComponents();
-												JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-												currentTextField.requestFocusInWindow();											
-											}
-										}
-										}
-									}
-								public void keyTyped(KeyEvent e) {
-								}
-								});
-							textFieldToFocus.requestFocusInWindow();
+							//Add ESC Key listener
+							addESCKeyListener(currentTabIndex);
+							//Add alert notification listener
+							addAlertNotificationListener(currentTabIndex);
+							
+							//Focus text field
+							FocusCurrentTextField();
 							
 						} else {
 							// Focus the tab for this user name if it already
 							// exists
 							imTabbedPane.setSelectedIndex(imTabbedPane
 									.indexOfTab(o.toString()));
-							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-							Component[] currentTabComponents = currentTab.getComponents();
-							Component textFieldToFocus = currentTabComponents[1];
-							textFieldToFocus.requestFocusInWindow();
+							FocusCurrentTextField();
 						}
 					}
 				}
@@ -475,6 +445,14 @@ public class ClientApplet extends JFrame {
 		imContentFrame.setVisible(true);
 
 	}
+	
+	private void FocusCurrentTextField()
+	{
+		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+		Component[] currentTabComponents = currentTab.getComponents();
+		Component textFieldToFocus = currentTabComponents[1];
+		textFieldToFocus.requestFocusInWindow();
+	}
 
 	public Object[] getCurrentSettingsArray()
 	{
@@ -499,8 +477,13 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.addTab(user, null, tempPanel, "Something");
 		// Add close button to tab
 		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(user));
+		//Add ESC Key listener
+		addESCKeyListener(imTabbedPane.indexOfTab(user));
+		//Add alert notification listener
+		addAlertNotificationListener(imTabbedPane.indexOfTab(user));
 		// Focus the new tab
 		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+		FocusCurrentTextField();
 		//Garbage collect!
 		System.gc();
 	}
@@ -542,74 +525,19 @@ public class ClientApplet extends JFrame {
 	public void closeTabWithESC(boolean activated)
 	{
 		int tabCount = imTabbedPane.getTabCount();
-		JPanel currentTab;
-		Component[] currentTabComponents;
-		JTextComponent currentTextField;
 		if(activated)
 		{
 			// Assign key listener to all existing text fields
 			for(int x = 0; x < tabCount; x++)
 			{
-				imTabbedPane.setSelectedIndex(x);
-				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-				currentTabComponents = currentTab.getComponents();
-				currentTextField = (JTextComponent) currentTabComponents[1];
-				currentTextField.addKeyListener(new KeyListener() {
-				public void keyPressed(KeyEvent e) {
-				}
-				public void keyReleased(KeyEvent e) {
-					if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
-						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-						int tempIndex = imTabbedPane.getSelectedIndex();
-						imTabbedPane.remove(currentTab);
-						
-						if(tempIndex > 0)
-						{
-							imTabbedPane.setSelectedIndex(tempIndex - 1);
-							currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-							Component[] currentTabComponents = currentTab.getComponents();
-							JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-							currentTextField.requestFocusInWindow();
-						}
-						else
-						{
-							if(imTabbedPane.getTabCount() > 1)
-							{
-								imTabbedPane.setSelectedIndex(tempIndex);
-								currentTab = (JPanel) imTabbedPane.getSelectedComponent();		
-								Component[] currentTabComponents = currentTab.getComponents();
-								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-								currentTextField.requestFocusInWindow();											
-							}
-							else if(imTabbedPane.getTabCount() > 0)
-							{
-								imTabbedPane.setSelectedIndex(0);
-								currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-								Component[] currentTabComponents = currentTab.getComponents();
-								JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
-								currentTextField.requestFocusInWindow();											
-							}
-						}
-						}
-					}
-				public void keyTyped(KeyEvent e) {
-				}
-				});
+				addESCKeyListener(x);
 			}
 		}
 		else
 		{
 			for(int x = 0; x < tabCount; x++)
 			{
-				imTabbedPane.setSelectedIndex(x);
-				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-				currentTabComponents = currentTab.getComponents();
-				currentTextField = (JTextComponent) currentTabComponents[1];
-				KeyListener[] fieldListeners =  currentTextField.getKeyListeners();
-				if (fieldListeners != null)
-				{
-					currentTextField.removeKeyListener(fieldListeners[0]);
-				}
+				removeESCKeyListener(x);
 			}
 		}
 		//Garbage collect!
@@ -663,46 +591,14 @@ public class ClientApplet extends JFrame {
 		{
 			for(int x = 0; x < tabCount; x++)
 			{
-				imTabbedPane.setSelectedIndex(x);
-				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-				Component[] currentTabComponents = currentTab.getComponents();
-				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-				
-				currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
-					public void insertUpdate(DocumentEvent e) {
-						if(debug==1)System.out.println("TEXT ADDED!!");
-						Icon alertIcon = new ImageIcon("../images/alert.png");
-						int currentTabIndex = imTabbedPane.getSelectedIndex();
-						JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-						CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
-						JButton currentButton = (JButton) c.getComponent(1);
-						if(debug==1)System.out.println("Current button: " + currentButton.toString());
-						currentButton.setIcon(alertIcon);
-					}
-					public void changedUpdate(DocumentEvent e) {
-						// TODO Auto-generated method stub
-					}
-					public void removeUpdate(DocumentEvent e) {
-						// TODO Auto-generated method stub
-					}
-				});
+				addAlertNotificationListener(x);
 			}
 		}
 		else
 		{
 			for(int x = 0; x < tabCount; x++)
 			{
-				imTabbedPane.setSelectedIndex(x);
-				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-				Component[] currentTabComponents = currentTab.getComponents();
-				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-				DocumentListener[] dls = (DocumentListener[]) (currentTab.getListeners(DocumentListener.class));
-				if(dls.length > 0)
-				{
-					currentTextArea.getDocument().removeDocumentListener(dls[0]);
-				}
+				removeAlertNotificationListener(x);
 			}
 		}
 	}
@@ -710,6 +606,105 @@ public class ClientApplet extends JFrame {
 	public void setEnableSounds(boolean activated)
 	{
 		
+	}
+	
+	private void addAlertNotificationListener(int count)
+	{
+		imTabbedPane.setSelectedIndex(count);
+		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+		Component[] currentTabComponents = currentTab.getComponents();
+		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		
+		currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {
+				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				Component[] currentTabComponents = currentTab.getComponents();
+				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+				if(!(currentTextArea.hasFocus()))
+				{
+					Icon alertIcon = new ImageIcon("../images/alert.png");
+					int currentTabIndex = imTabbedPane.getSelectedIndex();
+					CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
+					JButton currentButton = (JButton) c.getComponent(1);
+					currentButton.setIcon(alertIcon);
+				}
+			}
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
+			public void removeUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	private void removeAlertNotificationListener(int count)
+	{
+		imTabbedPane.setSelectedIndex(count);
+		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+		Component[] currentTabComponents = currentTab.getComponents();
+		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		DocumentListener[] dls = (DocumentListener[]) (currentTab.getListeners(DocumentListener.class));
+		if(dls.length > 0)
+		{
+			currentTextArea.getDocument().removeDocumentListener(dls[0]);
+		}
+	}
+	
+	private void addESCKeyListener(int count)
+	{
+		imTabbedPane.setSelectedIndex(count);
+		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+		Component[] currentTabComponents = currentTab.getComponents();
+		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		currentTextField.addKeyListener(new KeyListener() {
+		public void keyPressed(KeyEvent e) {
+		}
+		public void keyReleased(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				int tempIndex = imTabbedPane.getSelectedIndex();
+				imTabbedPane.remove(currentTab);
+				
+				if(tempIndex > 0)
+				{
+					imTabbedPane.setSelectedIndex(tempIndex - 1);
+					FocusCurrentTextField();
+				}
+				else
+				{
+					if(imTabbedPane.getTabCount() > 1)
+					{
+						imTabbedPane.setSelectedIndex(tempIndex);
+						FocusCurrentTextField();											
+					}
+					else if(imTabbedPane.getTabCount() > 0)
+					{
+						imTabbedPane.setSelectedIndex(0);
+						FocusCurrentTextField();											
+					}
+				}
+				}
+			}
+		public void keyTyped(KeyEvent e) {
+		}
+		});
+	}
+	
+	private void removeESCKeyListener(int count)
+	{
+		imTabbedPane.setSelectedIndex(count);
+		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+		Component[] currentTabComponents = currentTab.getComponents();
+		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		KeyListener[] fieldListeners =  currentTextField.getKeyListeners();
+		if (fieldListeners != null)
+		{
+			currentTextField.removeKeyListener(fieldListeners[0]);
+		}
 	}
 
 	// Makes a new hash table with user's online status
