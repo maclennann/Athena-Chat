@@ -35,6 +35,9 @@ import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Enumeration;
+import java.security.MessageDigest;
+import java.security.DigestInputStream;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -492,7 +495,10 @@ public class Client
 				//Start the thread
 				listeningProcedure.start();
 			}
-		} catch( IOException ie ) { ie.printStackTrace(); }
+		} catch( IOException ie ) { ie.printStackTrace(); } catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	// Method to connect the user
@@ -537,17 +543,18 @@ public class Client
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
 	//DONE 3/30/2010
-	public static void instantiateBuddyList() throws IOException { 	
+	public static void instantiateBuddyList() throws IOException, NoSuchAlgorithmException { 	
 		//First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
 		String hashOfLocalBuddyList = returnHashOfLocalBuddyList(username);
 		//Now we need to get the hash of the user's buddylist on the server
 		String[] remoteVals = returnHashOfRemoteBuddyList(username);
 		long remoteBuddyListModDate = Long.parseLong(remoteVals[1].trim());
 		
+		System.out.println("Hash of local: " + hashOfLocalBuddyList + "\nHash of remote buddylist: " + remoteVals[0]);
 		//Now let's compare this hash with the hash on the server
 		if(!(hashOfLocalBuddyList.equals(remoteVals[0]))) { 
 			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
-			if(localBuddyListModDate > remoteBuddyListModDate) {
+			if(localBuddyListModDate < remoteBuddyListModDate) {
 				//TODO send buddylist to server!
 				System.out.println("SEND BUDDY LIST TO SERVER");
 				sendBuddyListToServer();
@@ -560,6 +567,9 @@ public class Client
 				//TODO 
 				System.out.println("GET BUDDY LIST FROM SERVER");
 			}
+		}
+		else { 
+			System.out.println("Hashes match!");
 		}
 		
 		
@@ -872,21 +882,31 @@ public class Client
 	}
 	
 	//This method returns a hash of the buddy list 
-	public static String returnHashOfLocalBuddyList(String buddyname) { 
-		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
-		String hashOfBuddyList = null;
-		try {
-			hashOfBuddyList = ClientLogin.computeHash(buddylist.toString());
-		} catch (Exception e1) {
-			hashOfBuddyList = "Failed";
-		}	
-		return hashOfBuddyList;
+	public static String returnHashOfLocalBuddyList(String buddyname) throws NoSuchAlgorithmException, IOException { 
+		String path = "users/".concat(buddyname).concat("buddylist.csv");
+		return returnHashOfFile(path);
 	}
 	
 	//Returns a long of the last day the file was modified
 	private static long returnLocalModDateOfBuddyList(String buddyname) {
 		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
 		return buddylist.lastModified();
+	}
+	//Returns hash of files
+	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
+	MessageDigest md = MessageDigest.getInstance("MD5");
+	InputStream is = new FileInputStream(filePath);
+	try {
+	  is = new DigestInputStream(is, md);
+	  // read stream to EOF as normal...
+	}
+	finally {
+	  is.close();
+	}
+	byte[] digest = md.digest();
+	String hash = new String(digest);
+	
+	return hash;
 	}
 	
 	//This method returns a hash of the remote buddy list

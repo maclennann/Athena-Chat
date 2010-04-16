@@ -25,11 +25,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.RSAPrivateKeySpec;
@@ -312,8 +315,9 @@ public class ServerThread extends Thread
 			String buddyListDecrypted = RSACrypto.rsaDecryptPrivate(buddyListBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			
 			//Grab the hash of the buddy list
-			File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
-				String hashOfBuddyList = computeHash(buddylist.toString());
+				File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
+				String path = "buddylists/".concat(buddyListDecrypted).concat("buddylist.csv");
+				String hashOfBuddyList = returnHashOfFile(path);
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
 				sendSystemMessage(username, hashOfBuddyList);
 				sendSystemMessage(username, lastModDateOfBuddyList);
@@ -564,7 +568,23 @@ public class ServerThread extends Thread
 		String hash = (new BASE64Encoder()).encode(raw); //step 5
 		return hash; //step 6
 	}
-
+	
+	//Returns hash of files
+	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
+	MessageDigest md = MessageDigest.getInstance("MD5");
+	InputStream is = new FileInputStream(filePath);
+	try {
+	  is = new DigestInputStream(is, md);
+	  // read stream to EOF as normal...
+	}
+	finally {
+	  is.close();
+	}
+	byte[] digest = md.digest();
+	String hash = new String(digest);
+	
+	return hash;
+	}
 	public void publicKeyRequest(){
 
 		System.out.println(username);
