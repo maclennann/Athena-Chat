@@ -316,6 +316,9 @@ public class ServerThread extends Thread
 			
 			//Grab the hash of the buddy list
 				File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
+				if(!(buddylist.exists())) { 
+					buddylist.createNewFile();
+				}
 				String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
 				System.out.println("PATH: " + path);
 				String hashOfBuddyList = returnHashOfFile(path);
