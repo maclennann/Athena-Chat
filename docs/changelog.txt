@@ -1,4 +1,13 @@
 ChangeLog: 
+4/16/2010:
+	## Implemented private key encryption
+	## Implemented sending buddylist to server
+		!! When checking the hashes, the hashes end up different, even though they should be the same (verified with md5sum)
+		!! Check github for the BUG ticket
+4/15/2010:
+	## Implemented message chunking (so you can send receive large messages)
+	## UI Fixes
+	## Fixes issues with buddylist
 4/14/2010:
 	## Encrypion Process Completed
 		!! Finished implementing message encryption. 	
