@@ -51,6 +51,7 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.Enumeration;
 
+import javax.swing.text.Document;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.BorderFactory;
@@ -89,7 +90,7 @@ public class ClientApplet extends JFrame {
 	public static final int debug = 0;
 
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();
-	public Hashtable<JTextArea, JPanel> uniqueIDHash = new Hashtable<JTextArea, JPanel>();
+	public static Hashtable<Document, JPanel> uniqueIDHash = new Hashtable<Document, JPanel>();
 
 	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -485,7 +486,7 @@ public class ClientApplet extends JFrame {
 		//int uniqueTabID = ranGen.nextInt(1000);
 		lockIconLabel.setVisible(false);
 		// Create a hash table mapping a user name to the JPanel in a tab
-		tabPanels.put(user, new MapTextArea(user, enableSpellCheck));
+		tabPanels.put(user, new MapTextArea(user, enableSpellCheck, uniqueIDHash));
 		// Make a temporary object for that JPanel
 		MapTextArea temp = (MapTextArea) tabPanels.get(user);
 		// Actually pull the JPanel out
@@ -855,15 +856,20 @@ public class ClientApplet extends JFrame {
 					System.out.println("Key for tab: " + tempKey);
 			  }
 		    }*/
-			
-			JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+			System.out.println("EVENT ON ITEM: " + e.getDocument());
+			JPanel currentTab = uniqueIDHash.get(e.getDocument());
+			int currentTabIndex = imTabbedPane.indexOfComponent(currentTab);
 			Component[] currentTabComponents = currentTab.getComponents();
 			JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 			JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-			if(!(currentTextArea.hasFocus()))
+			if(currentTab == imTabbedPane.getSelectedComponent())
+			{
+				//Don't change icon
+			}
+			else
 			{
 				Icon alertIcon = new ImageIcon("../images/alert.png");
-				int currentTabIndex = imTabbedPane.getSelectedIndex();
+				//currentTabIndex = imTabbedPane.getSelectedIndex();
 				CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
 				JButton currentButton = (JButton) c.getComponent(1);
 				currentButton.setIcon(alertIcon);
@@ -900,7 +906,7 @@ class MapTextArea extends JFrame {
 	int tabIndex = -1;
 		
 	// Constructor
-	MapTextArea(String user, boolean spellCheckFlag) { 
+	MapTextArea(String user, boolean spellCheckFlag, Hashtable<Document, JPanel> uniqueIDHash) { 
 		
 		 try {
 			//Register the dictionaries for the spell checker
@@ -921,6 +927,8 @@ class MapTextArea extends JFrame {
 		myTA.setLineWrap(true);
 		myTA.setWrapStyleWord(true);
         // enable the spell checking on the text component with all features
+		
+		uniqueIDHash.put(myTA.getDocument(), myJPanel);
 
 
 		JScrollPane mySP = new JScrollPane(myTA);
@@ -1000,6 +1008,7 @@ class MapTextArea extends JFrame {
 		myTF.setText("");
 	}
 }
+
 
 class CloseTabButton extends JPanel implements ActionListener {
 	  /**
