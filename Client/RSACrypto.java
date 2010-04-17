@@ -183,8 +183,9 @@ public class RSACrypto {
 			return plainText;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaDecryptPublic'");
-		}return null;
+			return "SYSTEM ERROR: There was an issue decrypting the message. Please check that you have the public keyfile for the user.";
+			//System.out.println("An error has occured in 'rsaDecryptPublic'");
+		}//return null;
 	}
 
 	
@@ -207,6 +208,7 @@ public class RSACrypto {
 			return cipherData;
 		}
 		catch(Exception e){
+			//return "SYSTEM ERROR: There was an issue encrypting the message. Please check your private key";
 			System.out.println("An error has occured in 'rsaEncryptPrivate'");
 		}return null;
 	}
@@ -225,8 +227,9 @@ public class RSACrypto {
 			return plainText;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaDecrypt Private'");
-		}return null;
+			return "SYSTEM ERROR: There was an issue decrypting the message. Please check your private key";
+			//System.out.println("An error has occured in 'rsaDecrypt Private'");
+		}//return null;
 	}
 	
 	

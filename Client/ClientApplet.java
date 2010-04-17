@@ -169,16 +169,16 @@ public class ClientApplet extends JFrame {
 
 		// Create the file menu.
 		file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_A);
+		file.setMnemonic(KeyEvent.VK_F);
 
 		// Create button File -> Disconnect
 		disconnect = new JMenuItem("Disconnect");
-		disconnect.setMnemonic(KeyEvent.VK_H);
+		disconnect.setMnemonic(KeyEvent.VK_D);
 		file.add(disconnect);
 
 		// Create button File -> Exit
 		exit = new JMenuItem("Exit");
-		exit.setMnemonic(KeyEvent.VK_H);
+		exit.setMnemonic(KeyEvent.VK_X);
 		file.add(exit);
 
 		// Add the file menu to the menu bar
@@ -186,31 +186,36 @@ public class ClientApplet extends JFrame {
 
 		// Create the edit menu.
 		edit = new JMenu("Edit");
-		edit.setMnemonic(KeyEvent.VK_A);
+		edit.setMnemonic(KeyEvent.VK_E);
 		menuBar.add(edit);
 
 		// TODO Add items to the edit menu
 
 		// Create button Edit -> Preferences
 		preferences = new JMenuItem("Preferences");
-		preferences.setMnemonic(KeyEvent.VK_H);
+		preferences.setMnemonic(KeyEvent.VK_P);
 		edit.add(preferences);
 
 		// Create the encryption menu.
 		encryption = new JMenu("Encryption");
-		encryption.setMnemonic(KeyEvent.VK_A);
+		encryption.setMnemonic(KeyEvent.VK_E);
 		menuBar.add(encryption);
 		
 		// Create the view menu
 		view = new JMenu("View");
-		view.setMnemonic(KeyEvent.VK_A);
+		view.setMnemonic(KeyEvent.VK_V);
 		menuBar.add(view);
 		
 		// Create the help menu
 		help = new JMenu("Help");
-		help.setMnemonic(KeyEvent.VK_A);
+		help.setMnemonic(KeyEvent.VK_H);
 		menuBar.add(help);
 
+		// Create the button Help -> About
+		JMenuItem about = new JMenuItem("About Athena");
+		about.setMnemonic(KeyEvent.VK_A);
+		help.add(about);
+		
 		// TODO Add items to the encryption menu
 
 		// ActionListener to make the disconnect menu item disconnect
@@ -241,6 +246,17 @@ public class ClientApplet extends JFrame {
 		preferences.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				new ClientPreferences();
+			}
+		});
+		
+		// ActionListener to make the exit menu item exit
+		about.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				try{
+					new ClientAbout();
+				} catch(AWTException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
