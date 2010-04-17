@@ -1,5 +1,5 @@
 /****************************************************
- * Athena: Encrypted Messaging Application v.0.0.2
+ * Athena: Encrypted Messaging Application v.0.0.5
  * By: 	
  * 			Gregory LeBlanc
  * 			Norm Maclennan 
@@ -9,9 +9,8 @@
  * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
  * using a randomly generated email address
  * 
- * File: ClientApplet.java
+ * File: ClientAbout.java
  * 
- * Creates the window for the client and sets connection variables.
  *
  ****************************************************/
 /**
@@ -70,10 +69,10 @@ public class ClientAbout extends JFrame {
 
 		//Adjust font sizes
 		cancel.setFont(new Font("Dialog", 1, 10));
-		usernameLabel.setFont(new Font("Dialog", 1, 10));
+		usernameLabel.setFont(new Font("Dialog", 1, 12));
 
 		//Size the components
-		usernameLabel.setBounds(30,210,150,25);
+		usernameLabel.setBounds(20,210,150,25);
 		cancel.setBounds(110,235,75,30);
 		logo.setBounds(10,10,175,200);
 		

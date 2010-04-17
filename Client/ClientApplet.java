@@ -216,6 +216,10 @@ public class ClientApplet extends JFrame {
 		about.setMnemonic(KeyEvent.VK_A);
 		help.add(about);
 		
+		JMenuItem web = new JMenuItem("Athena Website");
+		web.setMnemonic(KeyEvent.VK_W);
+		help.add(web);
+		
 		// TODO Add items to the encryption menu
 
 		// ActionListener to make the disconnect menu item disconnect
@@ -255,6 +259,17 @@ public class ClientApplet extends JFrame {
 				try{
 					new ClientAbout();
 				} catch(AWTException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		// ActionListener to make the exit menu item exit
+		web.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				try{
+					Runtime.getRuntime().exec("C:\\Program Files\\Internet Explorer\\iexplore.exe http://athenachat.org");
+				}catch(IOException e){
 					e.printStackTrace();
 				}
 			}
