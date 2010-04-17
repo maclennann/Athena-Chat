@@ -48,6 +48,8 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Random;
+import java.util.Enumeration;
 
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -73,8 +75,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.Element;
 
-import com.inet.jortho.SpellChecker;
+import com.inet.jortho.SpellChecker;	
 
 //Client swing window.
 //TODO: Rename it to something else. It's not an applet
@@ -85,7 +88,8 @@ public class ClientApplet extends JFrame {
 	private static final long serialVersionUID = -7742402292330782311L;
 	public static final int debug = 0;
 
-	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();;
+	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();
+	public Hashtable<JTextArea, JPanel> uniqueIDHash = new Hashtable<JTextArea, JPanel>();
 
 	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -477,6 +481,8 @@ public class ClientApplet extends JFrame {
 
 	// Make a tab for a conversation
 	public void makeTab(String user) {
+		//Random ranGen = new Random();
+		//int uniqueTabID = ranGen.nextInt(1000);
 		lockIconLabel.setVisible(false);
 		// Create a hash table mapping a user name to the JPanel in a tab
 		tabPanels.put(user, new MapTextArea(user, enableSpellCheck));
@@ -484,7 +490,7 @@ public class ClientApplet extends JFrame {
 		MapTextArea temp = (MapTextArea) tabPanels.get(user);
 		// Actually pull the JPanel out
 		JPanel tempPanel = temp.getJPanel();
-		// Create a tab with that JPanel on it
+		// Create a tab with that JPanel on it and add tab to ID hash table
 		imTabbedPane.addTab(user, null, tempPanel, "Something");
 		// Add close button to tab
 		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(user));
@@ -621,37 +627,27 @@ public class ClientApplet extends JFrame {
 		
 	}
 	
-	private void addAlertNotificationListener(int count)
+	private void addAlertNotificationListener(int index)
 	{
-		imTabbedPane.setSelectedIndex(count);
+		int z = 0;
+		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		
-		currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
-			public void insertUpdate(DocumentEvent e) {
-				
-				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-				Component[] currentTabComponents = currentTab.getComponents();
-				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-				if(!(currentTextArea.hasFocus()))
-				{
-					Icon alertIcon = new ImageIcon("../images/alert.png");
-					int currentTabIndex = imTabbedPane.getSelectedIndex();
-					CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
-					JButton currentButton = (JButton) c.getComponent(1);
-					currentButton.setIcon(alertIcon);
-				}
-			}
-			public void changedUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
-			}
-			public void removeUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
-			}
-		});
+		/*if(uniqueIDHash.size() > 0)
+	    {
+		for(Enumeration n = uniqueIDHash.keys(), f = uniqueIDHash.elements(); z < uniqueIDHash.size(); z++)
+		  {
+			String tempTab = f.nextElement().toString();
+			System.out.println("TEMPTAB: " + tempTab);
+			String tempKey = n.nextElement().toString();
+			System.out.println("TEMPKEY: " + tempKey);
+			if (tempTab.equals(currentTab.toString()))
+				System.out.println("Key for tab: " + tempKey);
+		  }
+	    }*/
+		currentTextArea.getDocument().addDocumentListener(new UberDocumentListener());
 	}
 	
 	private void removeAlertNotificationListener(int count)
@@ -835,6 +831,51 @@ public class ClientApplet extends JFrame {
 	return settingsArray;
 	}
 
+	class UberDocumentListener extends JPanel implements DocumentListener
+	{
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void insertUpdate(DocumentEvent e) {
+			// TODO Auto-generated method stub
+			//JPanel currentTab = uniqueIDHash.get(tempID);
+			//System.out.println("TAB TO DELETE: " + tempID);
+			/*if(uniqueIDHash.size() > 0)
+		    {
+			for(Enumeration n = uniqueIDHash.keys(), f = uniqueIDHash.elements(); z < uniqueIDHash.size(); z++)
+			  {
+				String tempTab = f.nextElement().toString();
+				System.out.println("TEMPTAB: " + tempTab);
+				String tempKey = n.nextElement().toString();
+				System.out.println("TEMPKEY: " + tempKey);
+				if (tempTab.equals(currentTab.toString()))
+					System.out.println("Key for tab: " + tempKey);
+			  }
+		    }*/
+			
+			JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+			Component[] currentTabComponents = currentTab.getComponents();
+			JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+			JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+			if(!(currentTextArea.hasFocus()))
+			{
+				Icon alertIcon = new ImageIcon("../images/alert.png");
+				int currentTabIndex = imTabbedPane.getSelectedIndex();
+				CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
+				JButton currentButton = (JButton) c.getComponent(1);
+				currentButton.setIcon(alertIcon);
+			}
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
 	// End of class ClientApplet
 }
 
