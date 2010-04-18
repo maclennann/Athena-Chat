@@ -206,10 +206,10 @@ public class ServerThread extends Thread
 	}
 	private boolean sendBuddyListToClient() throws IOException {
 		String[] buddylistArray = returnBuddyListArray(true);
-		
+		System.out.println("Inside sendBuddyListToClient.");
         sendSystemMessage(username, "Access granted, incoming buddylist");  
         int numLines = buddylistArray.length;
-        
+        System.out.println("numLines: " + numLines);
         //Send Aegis the begin message so it knows that this is beginning of the file
         dout.writeUTF(encryptServerPrivate("Begin"));
         //Send Aegis the number lines we're sending
@@ -345,7 +345,7 @@ public class ServerThread extends Thread
 			//Acknowledge connection. Make sure we are doing the right thing
 			//Encrypt the String, turn it into a BigInteger
 			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-
+			
 			sendSystemMessage(username, "Access Granted. Send me the username.");
 			//Listen for the username
 			String findUserCipher = din.readUTF();
