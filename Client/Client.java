@@ -793,14 +793,14 @@ public class Client
 			boolean success = new File("users/" + username).mkdirs();
 			if(success) { 
 				newFile.createNewFile();
-				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+				is = new BufferedInputStream(new FileInputStream("users/" + username + "/buddylist.csv"));
 			}
 			else { 
 				newFile.createNewFile();
 			}
 		}
 
-		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+		is = new BufferedInputStream(new FileInputStream("users/" + username + "/buddylist.csv"));
 		byte[] c = new byte[1024];
 		count = 0;
 		readChars = 0;
