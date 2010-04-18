@@ -663,7 +663,6 @@ public class ClientApplet extends JFrame {
 	public void setEnableNotifications(boolean activated)
 	{
 		int tabCount = imTabbedPane.getTabCount();
-		enableNotifications = activated;
 		//Enable all tabs for notifications
 		if(activated)
 		{
@@ -673,12 +672,14 @@ public class ClientApplet extends JFrame {
 			}
 		}
 		else
+		//Remove notification listeners from tabs
 		{
 			for(int x = 0; x < tabCount; x++)
 			{
 				removeAlertNotificationListener(x);
 			}
 		}
+		enableNotifications = activated;
 	}
 	
 	public void setEnableSounds(boolean activated)
@@ -725,10 +726,12 @@ public class ClientApplet extends JFrame {
 		Component[] currentTabComponents = currentTab.getComponents();
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		DocumentListener[] dls = (DocumentListener[]) (currentTab.getListeners(DocumentListener.class));
+		DocumentListener[] dls = (DocumentListener[]) (currentScrollPane.getListeners(DocumentListener.class));
+		System.out.println("Text area listeners found: " + dls.length);
 		if(dls.length > 0)
 		{
-			currentTextArea.getDocument().removeDocumentListener(dls[0]);
+			for( int i = 0; i < dls.length; i++)
+				currentTextArea.getDocument().removeDocumentListener(dls[i]);
 		}
 	}
 	
