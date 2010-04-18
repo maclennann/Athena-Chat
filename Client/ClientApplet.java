@@ -90,7 +90,7 @@ public class ClientApplet extends JFrame {
 	public static final int debug = 0;
 
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();
-	public static Hashtable<Document, JPanel> uniqueIDHash = new Hashtable<Document, JPanel>();
+	public Hashtable<Document, JPanel> uniqueIDHash = new Hashtable<Document, JPanel>();
 
 	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -309,10 +309,7 @@ public class ClientApplet extends JFrame {
 				//JList theList = (JList) mouseEvent.getSource();
 				if (imTabbedPane.getTabCount() > 0)
 				{
-					JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-					Component[] currentTabComponents = currentTab.getComponents();
-					Component textFieldToFocus = currentTabComponents[1];
-					textFieldToFocus.requestFocusInWindow();
+					FocusCurrentTextField();
 				}
 			}		
 		});
@@ -453,10 +450,15 @@ public class ClientApplet extends JFrame {
 							//Add alert notification listener
 							addAlertNotificationListener(currentTabIndex);
 							
-							//Focus text field
-							FocusCurrentTextField();
+							//Set textfield focus manually
+							JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+							Component[] currentTabComponents = currentTab.getComponents();
+							Component textFieldToFocus = currentTabComponents[1];
+							textFieldToFocus.requestFocusInWindow();
 							
-						} else {
+						}
+						else
+						{
 							// Focus the tab for this user name if it already
 							// exists
 							imTabbedPane.setSelectedIndex(imTabbedPane
@@ -495,6 +497,13 @@ public class ClientApplet extends JFrame {
 	
 	private void FocusCurrentTextField()
 	{
+		//Set default icon
+		Icon closeIcon = new ImageIcon("../images/close_button.png");
+		CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.getSelectedIndex());
+		JButton currentButton = (JButton) c.getComponent(1);
+		currentButton.setIcon(closeIcon);
+		
+		//Set textfield focus
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		Component textFieldToFocus = currentTabComponents[1];
@@ -532,9 +541,26 @@ public class ClientApplet extends JFrame {
 		//Add alert notification listener
 		if(enableNotifications)
 			addAlertNotificationListener(imTabbedPane.indexOfTab(user));
-		// Focus the new tab
-		imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
-		FocusCurrentTextField();
+		// Focus the new tab if first tab or if textarea is empty
+		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
+		Component[] currentTabComponents = currentTab.getComponents();
+		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		if(imTabbedPane.indexOfTab(user) == 0)
+		{
+			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+			FocusCurrentTextField();
+		}
+		else
+		{
+			//Icon alertIcon = new ImageIcon("../images/alert.png");
+			//CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.indexOfTab(user));
+			//JButton currentButton = (JButton) c.getComponent(1);
+			//currentButton.setIcon(alertIcon);
+			//imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
+			//FocusCurrentTextField();
+			
+		}
 		//Garbage collect!
 		System.gc();
 	}
@@ -576,6 +602,7 @@ public class ClientApplet extends JFrame {
 	public void closeTabWithESC(boolean activated)
 	{
 		int tabCount = imTabbedPane.getTabCount();
+		enableESCToClose = activated;
 		if(activated)
 		{
 			// Assign key listener to all existing text fields
@@ -636,7 +663,7 @@ public class ClientApplet extends JFrame {
 	public void setEnableNotifications(boolean activated)
 	{
 		int tabCount = imTabbedPane.getTabCount();
-		
+		enableNotifications = activated;
 		//Enable all tabs for notifications
 		if(activated)
 		{
@@ -661,30 +688,39 @@ public class ClientApplet extends JFrame {
 	
 	private void addAlertNotificationListener(int index)
 	{
-		int z = 0;
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		/*if(uniqueIDHash.size() > 0)
-	    {
-		for(Enumeration n = uniqueIDHash.keys(), f = uniqueIDHash.elements(); z < uniqueIDHash.size(); z++)
-		  {
-			String tempTab = f.nextElement().toString();
-			System.out.println("TEMPTAB: " + tempTab);
-			String tempKey = n.nextElement().toString();
-			System.out.println("TEMPKEY: " + tempKey);
-			if (tempTab.equals(currentTab.toString()))
-				System.out.println("Key for tab: " + tempKey);
-		  }
-	    }*/
-		currentTextArea.getDocument().addDocumentListener(new UberDocumentListener());
+		currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {
+				JPanel currentTab = uniqueIDHash.get(e.getDocument());
+				int currentTabIndex = imTabbedPane.indexOfComponent(currentTab);
+				if(currentTab != imTabbedPane.getSelectedComponent() && currentTabIndex != -1)
+				{
+					Icon alertIcon = new ImageIcon("../images/alert.png");
+					CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
+					JButton currentButton = (JButton) c.getComponent(1);
+					currentButton.setIcon(alertIcon);
+				}
+			}
+
+			public void changedUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void removeUpdate(DocumentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 	
-	private void removeAlertNotificationListener(int count)
+	private void removeAlertNotificationListener(int index)
 	{
-		imTabbedPane.setSelectedIndex(count);
+		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
@@ -706,10 +742,23 @@ public class ClientApplet extends JFrame {
 		public void keyPressed(KeyEvent e) {
 		}
 		public void keyReleased(KeyEvent e) {
+			int zz = 0;
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
 				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				int tempIndex = imTabbedPane.getSelectedIndex();
 				imTabbedPane.remove(currentTab);
+					Component[] currentTabComponents = currentTab.getComponents();
+					JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+					JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+			      uniqueIDHash.remove(currentTextArea.getDocument());
+			      
+			      for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
+			      {
+			    	  String tempUser = e1.nextElement().toString();
+			    	  String tempTab = e2.nextElement().toString();
+			    	  if (tempTab.equals(currentTab))
+			    		  tabPanels.remove(tempUser);
+			      }
 				
 				if(tempIndex > 0)
 				{
@@ -863,56 +912,94 @@ public class ClientApplet extends JFrame {
 	return settingsArray;
 	}
 
-	class UberDocumentListener extends JPanel implements DocumentListener
-	{
+	
+	
+	class CloseTabButton extends JPanel implements ActionListener, MouseListener {
+		  /**
+		 * 
+		 */
+		//private static final long serialVersionUID = -6032110177913133517L;
+		private JTabbedPane pane;
+		public JButton btClose;
+	    Icon closeIcon = new ImageIcon("../images/close_button.png");
+	    Icon alertIcon = new ImageIcon("../images/alert.png");
+	    int myIndex;
+	    Icon originalIcon;
+		  public CloseTabButton(JTabbedPane pane, int index) {
+		    this.pane = pane;
+		    myIndex = index;
+		    setOpaque(false);
+		    add(new JLabel(
+		        pane.getTitleAt(index),
+		        pane.getIconAt(index),
+		        JLabel.LEFT));
+		    btClose = new JButton(closeIcon);
+		    btClose.setPreferredSize(new Dimension(
+		        closeIcon.getIconWidth(), closeIcon.getIconHeight()));
+		    add(btClose);
+		    btClose.addActionListener(this);
+		    pane.setTabComponentAt(index, this);
+		    
+		    //btClose.addMouseListener(this);
+		  }
+		  
+		  public void mouseEntered(MouseEvent evt) {
+			//JButton currentButton = (JButton) this.getComponent(1);
+			//originalIcon = currentButton.getIcon();
+		    //     btClose.setIcon(closeIcon);
+		  }
+		  public void mouseExited(MouseEvent evt) {
+		      //if(originalIcon == alertIcon)
+		      //{
+		      //	  JButton currentButton = (JButton) this.getComponent(1);
+		      //      currentButton.setIcon(alertIcon);
+		      //  }
+		  }
+		  
+		  public void actionPerformed(ActionEvent e) {
+		    int i = pane.indexOfTabComponent(this);
+		    int zz = 0;
+		    if (i != -1) {
+		      pane.remove(i);
+		      if(imTabbedPane.getTabCount() > 0)
+		      {
+		      JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
+				Component[] currentTabComponents = currentTab.getComponents();
+				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		      uniqueIDHash.remove(currentTextArea.getDocument());
+		      
+		      for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
+		      {
+		    	  String tempUser = e1.nextElement().toString();
+		    	  String tempTab = e2.nextElement().toString();
+		    	  if (tempTab.equals(currentTab))
+		    		  tabPanels.remove(tempUser);
+		      }
+		      }
+			  ClientApplet.lockIconLabel.setVisible(true);
+			  System.gc();
+		    }
+		  }
+
 		@Override
-		public void changedUpdate(DocumentEvent e) {
+		public void mouseClicked(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		public void insertUpdate(DocumentEvent e) {
-			// TODO Auto-generated method stub
-			//JPanel currentTab = uniqueIDHash.get(tempID);
-			//System.out.println("TAB TO DELETE: " + tempID);
-			/*if(uniqueIDHash.size() > 0)
-		    {
-			for(Enumeration n = uniqueIDHash.keys(), f = uniqueIDHash.elements(); z < uniqueIDHash.size(); z++)
-			  {
-				String tempTab = f.nextElement().toString();
-				System.out.println("TEMPTAB: " + tempTab);
-				String tempKey = n.nextElement().toString();
-				System.out.println("TEMPKEY: " + tempKey);
-				if (tempTab.equals(currentTab.toString()))
-					System.out.println("Key for tab: " + tempKey);
-			  }
-		    }*/
-			System.out.println("EVENT ON ITEM: " + e.getDocument());
-			JPanel currentTab = uniqueIDHash.get(e.getDocument());
-			int currentTabIndex = imTabbedPane.indexOfComponent(currentTab);
-			Component[] currentTabComponents = currentTab.getComponents();
-			JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-			JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-			if(currentTab == imTabbedPane.getSelectedComponent())
-			{
-				//Don't change icon
-			}
-			else
-			{
-				Icon alertIcon = new ImageIcon("../images/alert.png");
-				//currentTabIndex = imTabbedPane.getSelectedIndex();
-				CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
-				JButton currentButton = (JButton) c.getComponent(1);
-				currentButton.setIcon(alertIcon);
-			}
-		}
-
 		@Override
-		public void removeUpdate(DocumentEvent e) {
+		public void mousePressed(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 			
 		}
-	}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		}
 	// End of class ClientApplet
 }
 
@@ -1039,37 +1126,3 @@ class MapTextArea extends JFrame {
 		myTF.setText("");
 	}
 }
-
-
-class CloseTabButton extends JPanel implements ActionListener {
-	  /**
-	 * 
-	 */
-	//private static final long serialVersionUID = -6032110177913133517L;
-	private JTabbedPane pane;
-	  public CloseTabButton(JTabbedPane pane, int index) {
-	    this.pane = pane;
-	    setOpaque(false);
-	    add(new JLabel(
-	        pane.getTitleAt(index),
-	        pane.getIconAt(index),
-	        JLabel.LEFT));
-	    Icon closeIcon = new ImageIcon("../images/close_button.png");
-	    JButton btClose = new JButton(closeIcon);
-	    btClose.setPreferredSize(new Dimension(
-	        closeIcon.getIconWidth(), closeIcon.getIconHeight()));
-	    add(btClose);
-	    btClose.addActionListener(this);
-	    pane.setTabComponentAt(index, this);
-	  }
-	  
-	  public void actionPerformed(ActionEvent e) {
-	    int i = pane.indexOfTabComponent(this);
-	    if (i != -1) {
-	      pane.remove(i);
-		  ClientApplet.lockIconLabel.setVisible(true);
-		  System.gc();
-	    }
-	  }
-	}
-

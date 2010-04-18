@@ -52,7 +52,7 @@ public class ClientAbout extends JFrame {
 	public JFrame aboutWindow;
 	public JPanel contentPane = new JPanel();
 	public JLabel usernameLabel = new JLabel("Athena Chat Client v0.0.5b");
-	public JButton cancel = new JButton("Okay");
+	public JButton cancel = new JButton("OK");
 	ImageIcon logoicon = new ImageIcon("../images/splash.png");
 	JLabel logo = new JLabel(); 
 
