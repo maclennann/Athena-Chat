@@ -977,7 +977,9 @@ public class ClientApplet extends JFrame {
 		    		  tabPanels.remove(tempUser);
 		      }
 		      }
-			  ClientApplet.lockIconLabel.setVisible(true);
+			  if(imTabbedPane.getTabCount() ==0){
+				ClientApplet.lockIconLabel.setVisible(true);
+				}
 			  System.gc();
 		    }
 		  }
