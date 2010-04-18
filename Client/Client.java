@@ -578,6 +578,7 @@ public class Client
 			else { 
 				//TODO 
 				System.out.println("GET BUDDY LIST FROM SERVER");
+				recieveBuddyListFromServer();
 			}
 		}
 		else { 
@@ -619,6 +620,30 @@ public class Client
 		systemMessage("002");
 		//Garbage collect!
 		System.gc();
+	}
+
+	private static void recieveBuddyListFromServer() throws IOException {
+		// Let Aegis know what we're about to do
+		systemMessage("007"); //Shaken, not stirred
+		
+		//Receive acknowledge message
+		System.out.println("System message recieved: " + din.readUTF());
+		//String array of the buddylist
+		String[] buddyListLines;
+		
+		//Recieve buddylist header (Should be begin)
+		din.readUTF();
+		//Parse out how many lines the buddylist is
+		buddyListLines = new String[(Integer.parseInt(decryptServerPublic(din.readUTF())))];
+		for(int y=0; y<buddyListLines.length;y++) { 
+			buddyListLines[y] = decryptServerPublic(din.readUTF());
+			System.out.println("Encrypted buddylist lines " + buddyListLines[y]);
+		}
+		//Write the buddylist to the file
+		writeBuddyListToFile(buddyListLines);
+		System.out.println("Successfully wrote buddy list to file");
+		
+		
 	}
 
 	// Startup method to initiate the buddy list
