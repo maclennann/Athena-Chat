@@ -566,10 +566,12 @@ public class Client
 		long remoteBuddyListModDate = Long.parseLong(remoteVals[1].trim());
 		
 		System.out.println("Hash of local: " + hashOfLocalBuddyList + "\nHash of remote buddylist: " + remoteVals[0]);
+
 		//Now let's compare this hash with the hash on the server
 		if(!(hashOfLocalBuddyList.equals(remoteVals[0]))) { 
 			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
-			if(localBuddyListModDate < remoteBuddyListModDate) {
+			System.out.println("Local UNIX TIME: " + localBuddyListModDate + "\nREMOTE UNIX TIME: " + remoteBuddyListModDate);
+			if(localBuddyListModDate > remoteBuddyListModDate) {
 				//TODO send buddylist to server!
 				System.out.println("SEND BUDDY LIST TO SERVER");
 				sendBuddyListToServer();
