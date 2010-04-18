@@ -208,7 +208,6 @@ public class ServerThread extends Thread
 		String[] buddylistArray = returnBuddyListArray(true);
 		
         sendSystemMessage(username, "Access granted, incoming buddylist");  
-        dout.writeUTF("Begin");
         int numLines = buddylistArray.length;
         
         //Send Aegis the begin message so it knows that this is beginning of the file
