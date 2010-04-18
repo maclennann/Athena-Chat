@@ -1,4 +1,10 @@
 ChangeLog: 
+
+4/18/2010:
+	## Visual Notifications on each tab!!!!
+	## All tabs close cleanly (better memory management)
+	## Added an about page and web link
+	
 4/16/2010:
 	## Implemented private key encryption
 	## Implemented sending buddylist to server
