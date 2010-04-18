@@ -336,7 +336,7 @@ public class ServerThread extends Thread
 	
 	//This method encrypts the plaintext with the server's private key
 	public static String encryptServerPrivate(String plaintext) { 
-		BigInteger plainTextCipher = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+		BigInteger plainTextCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 		return plainTextCipher.toString();
 		
 	}

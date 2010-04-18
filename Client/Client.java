@@ -632,7 +632,7 @@ public class Client
 		systemMessage("007"); //Shaken, not stirred
 		
 		//Receive acknowledge message
-		System.out.println("System message recieved: " + din.readUTF());
+		System.out.println("System message recieved: " + decryptServerPublic(din.readUTF()));
 		//String array of the buddylist
 		String[] buddyListLines;
 		
@@ -647,8 +647,6 @@ public class Client
 		//Write the buddylist to the file
 		writeBuddyListToFile(buddyListLines);
 		System.out.println("Successfully wrote buddy list to file");
-		
-		
 	}
 
 	// Startup method to initiate the buddy list
