@@ -539,8 +539,7 @@ public class ClientApplet extends JFrame {
 		if(enableESCToClose)
 			addESCKeyListener(imTabbedPane.indexOfTab(user));
 		//Add alert notification listener
-		if(enableNotifications)
-			addAlertNotificationListener(imTabbedPane.indexOfTab(user));
+		addAlertNotificationListener(imTabbedPane.indexOfTab(user));
 		// Focus the new tab if first tab or if textarea is empty
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
 		Component[] currentTabComponents = currentTab.getComponents();
@@ -719,6 +718,7 @@ public class ClientApplet extends JFrame {
 		});
 	}
 	
+	//Probably aren't going to use this!
 	private void removeAlertNotificationListener(int index)
 	{
 		imTabbedPane.setSelectedIndex(index);
