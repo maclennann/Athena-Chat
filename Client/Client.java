@@ -815,7 +815,6 @@ public class Client
 			}
 			return usernames;
 		}
-
 	}
 
 	public static void checkUserStatus(String findUserName) {
