@@ -960,7 +960,10 @@ public class ClientApplet extends JFrame {
 		    int i = pane.indexOfTabComponent(this);
 		    int zz = 0;
 		    if (i != -1) {
+			  String userToRemove = pane.getTitleAt(i);
 		      pane.remove(i);
+			  tabPanels.remove(userToRemove);
+			  System.out.println("Removed Tab for user: "+userToRemove);
 		      if(imTabbedPane.getTabCount() > 0)
 		      {
 		      JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
@@ -969,13 +972,14 @@ public class ClientApplet extends JFrame {
 				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
 		      uniqueIDHash.remove(currentTextArea.getDocument());
 		      
-		      for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
-		      {
-		    	  String tempUser = e1.nextElement().toString();
-		    	  String tempTab = e2.nextElement().toString();
-		    	  if (tempTab.equals(currentTab))
-		    		  tabPanels.remove(tempUser);
-		      }
+		     //for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
+		      //{
+		    	//  String tempUser = e1.nextElement().toString();
+		    	  //String tempTab = e2.nextElement().toString();
+		    	//  if (tempTab.equals(currentTab)){
+		    		  
+					//  }
+		      //}
 		      }
 			  if(imTabbedPane.getTabCount() ==0){
 				ClientApplet.lockIconLabel.setVisible(true);
