@@ -420,7 +420,7 @@ public class ServerThread extends Thread
 				}
 				String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
 				System.out.println("PATH: " + path);
-				String hashOfBuddyList = returnHashOfFile(path);
+				String hashOfBuddyList = FileHash.getMD5Checksum(path);
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
 				sendSystemMessage(username, hashOfBuddyList);
 				sendSystemMessage(username, lastModDateOfBuddyList);
@@ -670,24 +670,6 @@ public class ServerThread extends Thread
 		byte raw[] = md.digest(); //step 4
 		String hash = (new BASE64Encoder()).encode(raw); //step 5
 		return hash; //step 6
-	}
-	
-	//Returns hash of files
-	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
-	MessageDigest md = MessageDigest.getInstance("MD5");
-	InputStream is = new FileInputStream(filePath);
-	try {
-	  is = new DigestInputStream(is, md);
-	  // read stream to EOF as normal...
-	}
-	finally {
-	  is.close();
-	}
-	byte[] digest = md.digest();
-	BigInteger digestBigInt = new BigInteger(digest);
-	String hash = new String(digestBigInt.toString());
-	System.out.println(hash);
-	return hash;
 	}
 	
 	public void publicKeyRequest(){

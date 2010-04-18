@@ -510,6 +510,9 @@ public class Client
 		} catch( IOException ie ) { ie.printStackTrace(); } catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -555,7 +558,7 @@ public class Client
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
 	//DONE 3/30/2010
-	public static void instantiateBuddyList() throws IOException, NoSuchAlgorithmException { 	
+	public static void instantiateBuddyList() throws Exception { 	
 		//First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
 		String hashOfLocalBuddyList = returnHashOfLocalBuddyList(username);
 		//Now we need to get the hash of the user's buddylist on the server
@@ -918,7 +921,7 @@ public class Client
 	}
 	
 	//This method returns a hash of the buddy list 
-	public static String returnHashOfLocalBuddyList(String buddyname) throws NoSuchAlgorithmException, IOException { 
+	public static String returnHashOfLocalBuddyList(String buddyname) throws Exception { 
 		String path = "users/".concat(buddyname).concat("/buddylist.csv");
 		File buddyList = new File(path);
 		if(!buddyList.exists()) { 
@@ -931,7 +934,7 @@ public class Client
 				buddyList.createNewFile();
 			}
 		}
-		return returnHashOfFile(path);
+		return FileHash.getMD5Checksum(path);
 	}
 	
 	//Returns a long of the last day the file was modified
@@ -939,24 +942,6 @@ public class Client
 		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
 		return buddylist.lastModified();
 	}
-	//Returns hash of files
-	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
-	MessageDigest md = MessageDigest.getInstance("MD5");
-	InputStream is = new FileInputStream(filePath);
-	try {
-	  is = new DigestInputStream(is, md);
-	  // read stream to EOF as normal...
-	} catch (Exception e) { System.out.println(e); } 
-	finally {
-	  is.close();
-	}
-	byte[] digest = md.digest();
-	BigInteger digestBigInt = new BigInteger(digest);
-	String hash = new String(digestBigInt.toString());
-	System.out.println(hash);
-	return hash;
-	}
-	
 	//This method returns a hash of the remote buddy list
 	public static String[] returnHashOfRemoteBuddyList(String buddyname) { 
 		try { 
