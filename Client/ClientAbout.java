@@ -46,7 +46,6 @@ public class ClientAbout extends JFrame {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1646506272427417952L;
 	public static final int debug = 0;
 	//Components for the visual display of the aboutWindow window
 	public JFrame aboutWindow;
@@ -62,7 +61,7 @@ public class ClientAbout extends JFrame {
 		
 		//Initialize aboutWindow window
 		aboutWindow = new JFrame("About Athena");
-		aboutWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//aboutWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		aboutWindow.setSize(200,300);
 		aboutWindow.setResizable(false);
 		contentPane.setLayout(null);
