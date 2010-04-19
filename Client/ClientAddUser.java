@@ -72,6 +72,8 @@ public class ClientAddUser extends JPanel {
 	public BigInteger publicExp;
 	public BigInteger privateMod;
 	public BigInteger privateExp;
+	private BigInteger privateModBigInteger;
+	private BigInteger privateExpBigInteger;
 	public Color goGreen = new Color(51,153,51);
 	ClientAddUser() {
 		//Create the Main Frame
@@ -186,9 +188,10 @@ public class ClientAddUser extends JPanel {
 						buddyList.createNewFile();
 						System.out.println("Created File");
 					}
-
+					privateModBigInteger = new BigInteger(descrypto.encryptData(privateMod.toString()));
+					privateExpBigInteger = new BigInteger(descrypto.encryptData(privateExp.toString()));
 					//Write the keys to the file
-					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".priv",new BigInteger(descrypto.encryptData(privateMod.toString())),new BigInteger(descrypto.encryptData(privateExp.toString())));
+					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".priv",privateModBigInteger,privateExpBigInteger);
 					RSACrypto.saveToFile("users/"+newUsername+"/keys/"+userNameJTextField.getText()+".pub",publicMod,publicExp);
 
 					//System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
@@ -439,6 +442,7 @@ public class ClientAddUser extends JPanel {
 		try {
 			//Encrypt information to send to Aegis. Turn them into BigIntegers so we can move them
 			//TODO These should be encrypted with Aegis' public key
+			//DONE
 			BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(firstName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			BigInteger lastNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(lastName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPublic(emailAddress,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
@@ -450,6 +454,17 @@ public class ClientAddUser extends JPanel {
 			//For this test the server needs these numbers to decrypt things
 			dout.writeUTF(publicMod.toString());
 			dout.writeUTF(publicExp.toString());
+			
+			//Send the server the pieces of our encrypted private key to write to a file
+			dout.writeUTF(privateModBigInteger.toString());
+			dout.writeUTF(privateExpBigInteger.toString());
+			
+			//Create the DESCrypto object for the private key sync
+			String saltUser;
+			if(userName.length()>=8){
+				saltUser = userName.substring(0,8);
+			}else saltUser = userName;
+			DESCrypto descrypto = new DESCrypto(password,saltUser);
 
 			//Turn the encrypted data into numbers for
 			//BigInteger firstNameNumber = new BigInteger(firstNameCipher);

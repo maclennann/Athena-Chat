@@ -196,9 +196,21 @@ public class ServerThread extends Thread
 		break;
 		case 006: recieveBuddyListFromClient();
 		break;
+		case 007: sendPrivateKeyToClient();
+		break;
 		default: return;
 		}
 	}
+	private void sendPrivateKeyToClient() throws IOException {
+		RSAPrivateKeySpec privateKey = RSACrypto.readPrivKeyFromFile("keys/" + username + "priv");
+		//Send over ack message
+		sendSystemMessage(username, "Incoming private key components");
+		
+		//Send over components
+		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString()));
+		dout.writeUTF(encryptServerPrivate(privateKey.getPrivateExponent().toString()));		
+	}
+
 	public void writeBuddyListToFile(String[] buddyList, String buddyListName){
 		BufferedWriter out;
 		File newFile = new File("buddylists/" + buddyListName + "/buddylist.csv");
@@ -247,6 +259,12 @@ public class ServerThread extends Thread
 		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
 		//Decrypt the byte[], returns a String
 		return RSACrypto.rsaDecryptPrivate(cipherBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+	}
+	
+	//This method decrypts the ciphertext with the server's public key
+	public static String encryptServerPrivate(String plaintext) { 
+		//Encrypt the string and return it
+		return (new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent())).toString());
 	}
 	public void negotiateClientStatus() {
 		try { 
@@ -327,7 +345,7 @@ public class ServerThread extends Thread
 				}
 				String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
 				System.out.println("PATH: " + path);
-				String hashOfBuddyList = returnHashOfFile(path);
+				String hashOfBuddyList = FileHash.getMD5Checksum(path);
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
 				sendSystemMessage(username, hashOfBuddyList);
 				sendSystemMessage(username, lastModDateOfBuddyList);
@@ -352,6 +370,9 @@ public class ServerThread extends Thread
 			//TODO in this test we use this key for decryption, but we need to generate server keys for this
 			String publicModString = din.readUTF();
 			String publicExpString = din.readUTF();
+			//Read in the private key components
+			String privateKeyModString = din.readUTF();
+			String privateKeyExpString = din.readUTF();
 
 			//Read all encrypted data in
 			String firstNameCipher = din.readUTF();
@@ -363,6 +384,11 @@ public class ServerThread extends Thread
 			//Turn the public key components into BigIntegers for use
 			BigInteger publicMod = new BigInteger(publicModString);
 			BigInteger publicExp = new BigInteger(publicExpString);
+			
+			//Turn the private key components into BigIntegers for use
+			BigInteger privateMod = new BigInteger(privateKeyModString);
+			BigInteger privateExp = new BigInteger(privateKeyExpString);
+
 
 			//Turn encrypted data into BigIntegers, then byte[]s
 			byte[] firstNameBytes = (new BigInteger(firstNameCipher)).toByteArray(); //does this work?
@@ -379,6 +405,9 @@ public class ServerThread extends Thread
 			String emailAddress = RSACrypto.rsaDecryptPrivate(emailAddressBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			String newUser = RSACrypto.rsaDecryptPrivate(userNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			String newPassword = RSACrypto.rsaDecryptPrivate(passwordBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			
+			//Write encrpyted private key to file		
+			RSACrypto.saveToFile("keys/" + newUser + ".priv", privateMod, privateExp);
 
 			System.out.println("New User Decrypted Information:");
 			System.out.println("First Name: "+firstName);
@@ -579,23 +608,6 @@ public class ServerThread extends Thread
 		return hash; //step 6
 	}
 	
-	//Returns hash of files
-	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
-	MessageDigest md = MessageDigest.getInstance("MD5");
-	InputStream is = new FileInputStream(filePath);
-	try {
-	  is = new DigestInputStream(is, md);
-	  // read stream to EOF as normal...
-	}
-	finally {
-	  is.close();
-	}
-	byte[] digest = md.digest();
-	BigInteger digestBigInt = new BigInteger(digest);
-	String hash = new String(digestBigInt.toString());
-	System.out.println(hash);
-	return hash;
-	}
 	
 	public void publicKeyRequest(){
 
