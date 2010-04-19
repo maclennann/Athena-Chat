@@ -24,15 +24,20 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Enumeration;
+import java.security.MessageDigest;
+import java.security.DigestInputStream;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -49,7 +54,7 @@ public class Client
 	static DESCrypto descrypto;
 
 	//Print debug messages?
-	public static final int debug=0;
+	public static final int debug=1;
 
 	//Global username variable
 	public static String username="null";
@@ -118,6 +123,39 @@ public class Client
 
 			//Send the message
 			try{
+				if(message.length() > 245){
+					double messageNumbers = (double)message.length()/245;
+					double messageNumbersInt = Math.ceil(messageNumbers);
+					System.out.println("MessageLength: "+message.length()+"\nMessageLength/245: "+messageNumbers+"\nCeiling of that: "+messageNumbersInt);
+					String[] messageChunks = new String[(int)messageNumbersInt];
+					for(int i=0;i<messageChunks.length;i++){
+						int begin=i*245;
+						int end = begin+245;
+						if(end>message.length()){
+							end = message.length()-1;
+						}
+						messageChunks[i] = message.substring(begin,end);
+						
+						//Grab the other user's public key from file
+						RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
+						//Encrypt the toUser with the Server's public key and send it to the server
+						BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(toUser, serverPublic.getModulus(), serverPublic.getPublicExponent()));;
+						//Encrypt the message with the toUser's public key and send it to the server
+						BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(messageChunks[i], toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+						dout.writeUTF(firstNameCipher.toString());
+						dout.writeUTF(messageCipher.toString());
+						//Hash the Message for the digital signature
+						String hashedMessage = ClientLogin.computeHash(message);
+
+						// Append own message to IM window
+						print.moveToEnd();
+						// Clear out text input field
+						print.clearTextField();
+					}
+					
+				}else{
+			
+			
 				//Grab the other user's public key from file
 				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 				//Encrypt the toUser with the Server's public key and send it to the server
@@ -135,7 +173,7 @@ public class Client
 				print.moveToEnd();
 				// Clear out text input field
 				print.clearTextField();
-
+}
 				//TADA
 			} catch( IOException ie ) { 
 				if(debug==1)System.out.println(ie);
@@ -233,7 +271,19 @@ public class Client
 			//BigInteger fromUserBytes = new BigInteger(fromUserCipher);
 
 			//Grab the user's private key - SHHH!!
-			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv");
+			String privateKeyPath = "users/" + username + "/keys/" + username + ".priv";
+			File privateKey = new File(privateKeyPath);
+			if(!(privateKey.exists())) { 
+				boolean success = new File("users/" + username + "/keys/").mkdirs();
+				if(success) { 
+					//TODO GRAB THE PRIVATE KEY FROM SERVER
+					
+				}
+				else { //TODO GRAB THE PRIVATE KEY FROM SERVER
+					
+				}				
+			}
+			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
 			//Decrypt the fromUser to see what user this message came from!
 
@@ -457,7 +507,10 @@ public class Client
 				//Start the thread
 				listeningProcedure.start();
 			}
-		} catch( IOException ie ) { ie.printStackTrace(); }
+		} catch( IOException ie ) { ie.printStackTrace(); } catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	// Method to connect the user
@@ -502,7 +555,36 @@ public class Client
 	// Startup method to initiate the buddy list
 	//TODO Make sure the user's status gets changed when they sign on/off
 	//DONE 3/30/2010
-	public static void instantiateBuddyList() throws IOException { 	
+	public static void instantiateBuddyList() throws IOException, NoSuchAlgorithmException { 	
+		//First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
+		String hashOfLocalBuddyList = returnHashOfLocalBuddyList(username);
+		//Now we need to get the hash of the user's buddylist on the server
+		String[] remoteVals = returnHashOfRemoteBuddyList(username);
+		long remoteBuddyListModDate = Long.parseLong(remoteVals[1].trim());
+		
+		System.out.println("Hash of local: " + hashOfLocalBuddyList + "\nHash of remote buddylist: " + remoteVals[0]);
+		//Now let's compare this hash with the hash on the server
+		if(!(hashOfLocalBuddyList.equals(remoteVals[0]))) { 
+			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
+			if(localBuddyListModDate < remoteBuddyListModDate) {
+				//TODO send buddylist to server!
+				System.out.println("SEND BUDDY LIST TO SERVER");
+				sendBuddyListToServer();
+			}
+			else if (localBuddyListModDate == remoteBuddyListModDate) { 
+				//TODO NOTHING
+				System.out.println("DONE");
+			}
+			else { 
+				//TODO 
+				System.out.println("GET BUDDY LIST FROM SERVER");
+			}
+		}
+		else { 
+			System.out.println("Hashes match!");
+		}
+		
+		
 		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
 
@@ -579,6 +661,36 @@ public class Client
 
 	}
 
+	//This method will send the user's buddy list to the server line by line
+	public static boolean sendBuddyListToServer() throws IOException {
+			String[] buddylistArray = returnBuddyListArray(true);
+			systemMessage("006");
+	        System.out.println("Message received from server" + din.readUTF());	        
+	        int numLines = buddylistArray.length;
+	        
+	        //Send Aegis the begin message so it knows that this is beginning of the file
+	        dout.writeUTF(encryptServerPublic("begin"));
+	        //Send Aegis the number lines we're sending
+	        dout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
+	        for(int x=0; x<buddylistArray.length;x++) {         	          
+	            //Now send Aegis the file
+	            dout.writeUTF(encryptServerPublic(buddylistArray[x]));
+	        }
+	        return true;
+	}
+	//This method encrypts the plaintext with the server's public key
+	public static String encryptServerPublic(String plaintext) { 
+		 BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+		 return cipherText.toString();
+	}
+	
+	//This method decrypts the ciphertext with the server's public key
+	public static String decryptServerPublic(String ciphertext) { 
+		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
+		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
+		//Decrypt the byte[], returns a String
+		return RSACrypto.rsaDecryptPrivate(cipherBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
+	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public static String[] returnBuddyListArray() throws IOException {
@@ -643,6 +755,67 @@ public class Client
 		}
 
 	}
+	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+	//TODO Make this return a multi-dementional array of all the fields in the CSV File
+	public static String[] returnBuddyListArray(boolean flag) throws IOException {
+		int count;
+		int readChars;
+		InputStream is;
+
+		//Let's get the number of lines in the file
+		File newFile = new File("users/" + username + "/buddylist.csv");
+		if(!(newFile.exists())) { 
+			boolean success = new File("users/" + username).mkdirs();
+			if(success) { 
+				newFile.createNewFile();
+				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+			}
+			else { 
+				newFile.createNewFile();
+			}
+		}
+
+		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+		byte[] c = new byte[1024];
+		count = 0;
+		readChars = 0;
+		while ((readChars = is.read(c)) != -1) {
+			for (int i = 0; i < readChars; ++i) {
+				if (c[i] == '\n')
+					++count;
+			}
+		} //End section
+
+		//Make the string array the size of the number of lines in the file
+		String[] usernames = new String[count];
+
+		//If there are no lines in the file we know that the user has no buddies! :(
+		if (count == 0) { 
+			return usernames;
+		}
+		else { 
+			File newFile2 = new File("users/" + username + "/buddylist.csv");
+			if(!(newFile2.exists())) { 
+				newFile2.createNewFile();
+			}
+			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
+			int x=0;
+			String raw;
+			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
+			while ((raw = in.readLine()) != null) 
+			{ 
+				// Read in the BigInteger in String form. Turn it to a BigInteger
+				// Turn the BigInteger to a byteArray, and decrypt it.
+				//strNum = new BigInteger(raw);
+				//str = descrypto.decryptData(strNum.toByteArray());
+
+				String foo[] = raw.split(","); 
+				usernames[x] = foo[0];
+				x++;
+			}
+			return usernames;
+		}
+	}
 
 	public static void checkUserStatus(String findUserName) {
 		try { 
@@ -661,6 +834,7 @@ public class Client
 			if(debug==1)System.out.println("Username sent - now listening for result...");
 			//Grab result
 			String resultCipher = din.readUTF();
+			System.out.println("RESULTT CIPHERR " + resultCipher);
 			byte[] resultBytes = (new BigInteger(resultCipher)).toByteArray();
 			String resultString = RSACrypto.rsaDecryptPublic(resultBytes, serverPublic.getModulus(), serverPublic.getPublicExponent());
 			result = Integer.parseInt(resultString);
@@ -717,8 +891,79 @@ public class Client
 	public static DataInputStream returnDIN() { 
 		return din;
 	}
-	private static void splashScreenDestruct() {
-		screen.setScreenVisible(false);
+	
+	//This method returns a hash of the buddy list 
+	public static String returnHashOfLocalBuddyList(String buddyname) throws NoSuchAlgorithmException, IOException { 
+		String path = "users/".concat(buddyname).concat("/buddylist.csv");
+		File buddyList = new File(path);
+		if(!buddyList.exists()) { 
+			boolean success = new File("users/" + username).mkdirs();
+			if(success) { 
+				buddyList.createNewFile();
+				//getBuddyListFromServer();
+			}
+			else { 
+				buddyList.createNewFile();
+			}
+		}
+		return returnHashOfFile(path);
+	}
+	
+	//Returns a long of the last day the file was modified
+	private static long returnLocalModDateOfBuddyList(String buddyname) {
+		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
+		return buddylist.lastModified();
+	}
+	//Returns hash of files
+	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
+	MessageDigest md = MessageDigest.getInstance("MD5");
+	InputStream is = new FileInputStream(filePath);
+	try {
+	  is = new DigestInputStream(is, md);
+	  // read stream to EOF as normal...
+	} catch (Exception e) { System.out.println(e); } 
+	finally {
+	  is.close();
+	}
+	byte[] digest = md.digest();
+	BigInteger digestBigInt = new BigInteger(digest);
+	String hash = new String(digestBigInt.toString());
+	System.out.println(hash);
+	return hash;
+	}
+	
+	//This method returns a hash of the remote buddy list
+	public static String[] returnHashOfRemoteBuddyList(String buddyname) { 
+		try { 
+		
+		systemMessage("005");
+		
+		//Get acknowledge message
+		System.out.println(din.readUTF()); 
+		
+		//Send buddyname
+		BigInteger buddynameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(buddyname,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+		dout.writeUTF(buddynameCipher.toString());
+		String[] remoteValues = new String[2];
+		//counter
+		int x = 0;
+		while(x<=1){ 
+		String remoteVals = din.readUTF();
+		System.out.println(remoteVals);
+		byte[] remoteHashBytes = (new BigInteger(remoteVals)).toByteArray();
+		String decryptedVal = RSACrypto.rsaDecryptPublic(remoteHashBytes,serverPublic.getModulus(),serverPublic.getPublicExponent());
+		remoteValues[x] = decryptedVal;
+		System.out.println("REMOTE VALSSS " + remoteValues[x]);
+		x++;
+		}
+		System.out.println("Completed.");
+		return remoteValues;
+		
+		}catch (Exception e)  {
+			System.out.println(e);
+			return null;
+		} 
+		
 	}
 
 	private static void splashScreenInit() {
@@ -731,17 +976,17 @@ public class Client
 
 	// Create the GUI for the client.
 	public static void main(String[] args) throws AWTException {
-		splashScreenInit();
+		//splashScreenInit();
 
-		for (int i = 0; i <= 100; i++)
+		/*for (int i = 0; i <= 100; i++)
 		{
 			for (long j=0; j<50000; ++j)
 			{
 				String takeMoreTime = " " + (j + i);
 			}
 			screen.setProgress("Loading:" + i, i);  // progress bar with a message
-		}   
-		splashScreenDestruct();
+		}*/  
+		//splashScreenDestruct();
 		//clientResource = new ClientApplet();
 		loginGUI = new ClientLogin();
 

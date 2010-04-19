@@ -593,7 +593,7 @@ public class ClientPreferences extends JPanel {
 			outPref.newLine();
 			outPref.write("enableNotifications=" + settingsToWrite[3]);
 			outPref.newLine();
-			outPref.write("enableNotifications=" + settingsToWrite[4]);
+			outPref.write("enableSounds=" + settingsToWrite[4]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();

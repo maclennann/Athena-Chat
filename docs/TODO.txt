@@ -10,6 +10,13 @@ BOTH:
 	## Make the code many many times more efficient
 	## CREATE JAVADOC Comments
 	## SECURE the code. We have EVERYTHING as public.
+	## Secret Question/Answer for forgotten password
+	## Password reset
+		@@ Decrypt all relevant info with old password, and re-encrypt with new password
+		@@ Probably doesn't make a new keypair at the same time
+	## Private key and buddylist (encrypted) backups on the server
+	## Store/check/verify hashes and datemodified times of all critical data (keys, buddylists)
+		@@ Latest version get's propagated.
 
 CLIENT:
 	## Hash password before sending it to the server. --COMPLETE AT SOME POINT

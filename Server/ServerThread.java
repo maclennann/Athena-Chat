@@ -20,14 +20,21 @@
  *
  ****************************************************/
 
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
@@ -35,6 +42,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import sun.misc.BASE64Encoder;
 import sun.security.util.BigInt;
 
 public class ServerThread extends Thread
@@ -164,7 +172,7 @@ public class ServerThread extends Thread
 	}
 
 	//Method that handles client to server messages
-	public void systemMessageListener(int eventCode) throws InterruptedException {
+	public void systemMessageListener(int eventCode) throws InterruptedException, IOException {
 
 		switch(eventCode) { 
 		case 000: try {
@@ -184,10 +192,62 @@ public class ServerThread extends Thread
 		break;
 		case 004: publicKeyRequest();
 		break;
+		case 005: returnBuddyListHash();
+		break;
+		case 006: recieveBuddyListFromClient();
+		break;
 		default: return;
 		}
 	}
+	public void writeBuddyListToFile(String[] buddyList, String buddyListName){
+		BufferedWriter out;
+		File newFile = new File("buddylists/" + buddyListName + "/buddylist.csv");
+		try{
+			if(!(newFile.exists())) { 
+				boolean success = new File("users/" + buddyListName).mkdirs();
+				if(success) { 
+					newFile.createNewFile();
+				}
+				else { 
+					newFile.createNewFile();
+				}
+			}
+			else { 
+				newFile.delete();
+				newFile.createNewFile();
+			}
+			out = new BufferedWriter(new FileWriter("buddylists/" + buddyListName + "/buddylist.csv"));
 
+			for(int i = 0; i < buddyList.length;i++){
+				out.write(buddyList[i] + "\n");
+			}
+			out.close();
+		}catch(Exception e)
+		{if(debug==1)System.out.println("ERROR WRITING BUDDYLIST");
+		}
+	}
+	private void recieveBuddyListFromClient() throws IOException {
+		//TODO make this dynamic
+		String[] buddyListLines;
+		// TODO Auto-generated method stub
+		sendSystemMessage(username, "Access Granted. Send me the username.");
+		System.out.println("Should be begin: " + decryptServerPrivate(din.readUTF()));
+		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(din.readUTF())))];
+		System.out.println("Buddylist lines: "  + buddyListLines.length);
+		for(int y=0; y<buddyListLines.length;y++) { 
+				buddyListLines[y] = decryptServerPrivate(din.readUTF());
+				System.out.println("Encrypted buddylist lines " + buddyListLines[y]);
+			}
+		writeBuddyListToFile(buddyListLines, username);
+		System.out.println("Successfully wrote buddy list to file");
+	}
+	//This method decrypts the ciphertext with the server's public key
+	public static String decryptServerPrivate(String ciphertext) { 
+		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
+		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
+		//Decrypt the byte[], returns a String
+		return RSACrypto.rsaDecryptPrivate(cipherBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+	}
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
@@ -244,7 +304,36 @@ public class ServerThread extends Thread
 			e.printStackTrace();
 		} 
 	}
-
+	
+	public void returnBuddyListHash() { 
+		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+		sendSystemMessage(username, "Access granted. Send me the username.");
+		
+		try {
+			String buddyListToFind = din.readUTF();
+			byte[] buddyListBytes = (new BigInteger(buddyListToFind)).toByteArray();
+			String buddyListDecrypted = RSACrypto.rsaDecryptPrivate(buddyListBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
+			
+			//Grab the hash of the buddy list
+				File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
+				if(!(buddylist.exists())) { 
+					boolean success = new File("buddylists/" + buddyListDecrypted + "/").mkdirs();
+					if(success) { 
+						buddylist.createNewFile();
+					}
+					else { 
+					buddylist.createNewFile();
+					}
+				}
+				String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
+				System.out.println("PATH: " + path);
+				String hashOfBuddyList = returnHashOfFile(path);
+				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
+				sendSystemMessage(username, hashOfBuddyList);
+				sendSystemMessage(username, lastModDateOfBuddyList);
+		} catch (Exception e) {
+		}
+	}
 	//TODO Make this work better.
 	public boolean createUsername() throws IOException { 
 		try { 
@@ -466,27 +555,48 @@ public class ServerThread extends Thread
 		}	
 	}
 	//This will return the hashed input string
-	public static byte[] computeHash(String toHash) throws Exception { 
-		MessageDigest d = null;
-		d = MessageDigest.getInstance("SHA-1");
-		d.reset();
-		d.update(toHash.getBytes());
-		return d.digest();	
-	}
-
-	//This will turn a byteArray to a String
-	public static String byteArrayToHexString(byte[] b) { 
-		StringBuffer sb = new StringBuffer(b.length * 2);
-		for (int i = 0; i < b.length; i++) { 
-			int v = b[i] & 0xff;
-			if (v < 16) { 
-				sb.append('0');
-			}
-			sb.append(Integer.toHexString(v));
+	public String computeHash(String toHash) throws Exception { 
+		MessageDigest md = null;
+		try
+		{
+			md = MessageDigest.getInstance("SHA-1"); //step 2
 		}
-		return sb.toString().toUpperCase();
-	}
+		catch(NoSuchAlgorithmException e)
+		{
+			throw new Exception(e.getMessage());
+		}
+		try
+		{
+			md.update(toHash.getBytes("UTF-8")); //step 3
+		}
+		catch(UnsupportedEncodingException e)
+		{
+			throw new Exception(e.getMessage());
+		}
 
+		byte raw[] = md.digest(); //step 4
+		String hash = (new BASE64Encoder()).encode(raw); //step 5
+		return hash; //step 6
+	}
+	
+	//Returns hash of files
+	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
+	MessageDigest md = MessageDigest.getInstance("MD5");
+	InputStream is = new FileInputStream(filePath);
+	try {
+	  is = new DigestInputStream(is, md);
+	  // read stream to EOF as normal...
+	}
+	finally {
+	  is.close();
+	}
+	byte[] digest = md.digest();
+	BigInteger digestBigInt = new BigInteger(digest);
+	String hash = new String(digestBigInt.toString());
+	System.out.println(hash);
+	return hash;
+	}
+	
 	public void publicKeyRequest(){
 
 		System.out.println(username);
