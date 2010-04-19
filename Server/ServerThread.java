@@ -72,7 +72,7 @@ public class ServerThread extends Thread
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive=1;
 
-	private RSAPrivateKeySpec serverPrivate;
+	//private RSAPrivateKeySpec serverPrivate;
 	// Constructor. Instantiate this thread on the current socket
 	public ServerThread( Server server, Socket socket ) {
 
@@ -143,7 +143,7 @@ public class ServerThread extends Thread
 	public void routeMessage(DataInputStream din) throws NumberFormatException, InterruptedException{
 		try {
 			//Grab the server's private key - SHHH!!
-			serverPrivate = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+			//serverPrivate = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 			//Read in the Encrypted toUser
 			String toUserEncrypted=din.readUTF();
 			//Read in the Encrypted message
@@ -160,11 +160,11 @@ public class ServerThread extends Thread
 			//Is the message an eventcode meant for the server?
 			if (toUserDecrypted.equals("Aegis")) { 
 				if(debug==1)System.out.println("Server eventcode detected!");
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
+				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent())));
 				return;
 			}
 			if (toUserDecrypted.equals("Interupt")) {
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
+				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent())));
 				return;
 			}	
 			else { 
@@ -172,7 +172,9 @@ public class ServerThread extends Thread
 				sendMessage(toUserDecrypted, username, messageEncrypted);
 			}
 
-		} catch (IOException e) {isAlive=0;}
+		} catch (IOException e) {
+			e.printStackTrace();
+			isAlive=0;}
 	}
 
 	//Method that handles client to server messages
@@ -345,7 +347,7 @@ public class ServerThread extends Thread
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			//Encrypt the String, turn it into a BigInteger
-			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			
 			sendSystemMessage(username, "Access Granted. Send me the username.");
 			//Listen for the username
@@ -371,7 +373,7 @@ public class ServerThread extends Thread
 		try {
 			System.out.println(username);
 			//Encrypt the String, turn it into a BigInteger
-			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendMessage(username, "CheckUserStatus", accessGrantedCipher.toString());
 			//Listen for the username
@@ -384,12 +386,12 @@ public class ServerThread extends Thread
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToSocket.containsKey(findUserDecrypted))) { 
 				String message = "1";
-				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
 				System.out.println("(Online)\n");
 			} else {
 				String message = "0";
-				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
 				System.out.println("(Offline)\n");
 			} 
@@ -399,7 +401,7 @@ public class ServerThread extends Thread
 	}
 	
 	public void returnBuddyListHash() { 
-		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 		sendSystemMessage(username, "Access granted. Send me the username.");
 		
 		try {
@@ -603,10 +605,9 @@ public class ServerThread extends Thread
 		//Send the message, and the user it is from
 		try {
 			System.out.println("TOUSER: " + toUser + "\nMESSAGE: " + message);
-			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-			BigInteger toUserCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(toUser, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			encryptServerPrivate(message);
 			//dout.writeUTF(toUserCipher.toString());
-			dout.writeUTF(messageCipher.toString());
+			dout.writeUTF(message);
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
@@ -676,7 +677,7 @@ public class ServerThread extends Thread
 
 		System.out.println(username);
 		//Acknowledge connection. Make sure we are doing the right thing
-		BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username to find the key for.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+		BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username to find the key for.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 		sendMessage(username, "ReturnPublicKey", accessGrantedCipher.toString());
 		try{
 			//Listen for the username
@@ -703,7 +704,7 @@ public class ServerThread extends Thread
 				System.out.println("Exponent Returned\n");
 
 			} else { 
-				BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				sendMessage(username, "ReturnPublicKeyMod",keyNotFoundCipher.toString() );
 				System.out.println("User does not have a keyfile with us");
 			} }catch(Exception e){e.printStackTrace();}
