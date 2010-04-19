@@ -344,15 +344,23 @@ public class ClientApplet extends JFrame {
 						// Get the buddy that was double-clicked
 						Object o = theList.getModel().getElementAt(index);						
 
-						ArrayList<String> list = new ArrayList<String>(Arrays
-								.asList(usernames));
-						list.removeAll(Arrays.asList(o));
-						usernames = list.toArray(new String[0]);
-						buddySignOff(o.toString());
+						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + o.toString(), "Confirm Removal", JOptionPane.YES_NO_OPTION);
+						if (ans == JOptionPane.YES_OPTION)
+						{
+							ArrayList<String> list = new ArrayList<String>(Arrays
+									.asList(usernames));
+							list.removeAll(Arrays.asList(o));
+							usernames = list.toArray(new String[0]);
+							buddySignOff(o.toString());
 
-						// Print the array back to the file (will overwrite the
-						// previous file
-						Client.writeBuddyListToFile(usernames);
+							// Print the array back to the file (will overwrite the
+							// previous file
+							Client.writeBuddyListToFile(usernames);
+						}
+						else
+						{
+							return;
+						}
 					}
 					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
 					else {
