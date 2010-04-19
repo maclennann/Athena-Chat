@@ -207,7 +207,11 @@ public class ServerThread extends Thread
 		sendSystemMessage(username, "Incoming private key components");
 		
 		//Send over components
-		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString()));
+		String privateKeyMod = privateKey.getModulus().toString();
+		String privateKeyExp = privateKey.getPrivateExponent().toString();
+		//Send half a time plz!
+		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/2)-1))));
+		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/2), ((privateKeyMod.length()-1)))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getPrivateExponent().toString()));		
 	}
 

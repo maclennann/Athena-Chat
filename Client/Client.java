@@ -449,7 +449,9 @@ public class Client
 		System.out.println("Message received from server: " + decryptServerPublic(din.readUTF()));
 		
 		//Grab the private key information from the server
-		BigInteger privateMod = new BigInteger(decryptServerPublic(din.readUTF()));
+		String privateMod1 = decryptServerPublic(din.readUTF());
+		String privateMod2 = decryptServerPublic(din.readUTF());
+		BigInteger privateMod = new BigInteger(privateMod1.concat(privateMod2));
 		BigInteger privateExp = new BigInteger(decryptServerPublic(din.readUTF()));
 		
 		//Write it to the file
