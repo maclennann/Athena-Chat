@@ -605,9 +605,9 @@ public class ServerThread extends Thread
 		//Send the message, and the user it is from
 		try {
 			System.out.println("TOUSER: " + toUser + "\nMESSAGE: " + message);
-			encryptServerPrivate(message);
+			
 			//dout.writeUTF(toUserCipher.toString());
-			dout.writeUTF(message);
+			dout.writeUTF(encryptServerPrivate(message));
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
