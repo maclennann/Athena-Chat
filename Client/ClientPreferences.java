@@ -124,7 +124,7 @@ public class ClientPreferences extends JPanel {
 		
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
-		preferences.setSize(800,600);
+		preferences.setSize(800,750);
 		preferences.setResizable(true);
 		contentPane.setLayout(null);
 		
@@ -145,10 +145,10 @@ public class ClientPreferences extends JPanel {
 			       blackline, "Theme Options");
 		
 		//Size the default components
-		prefLabelPane.setBounds(15, 15, 120, 530);
+		prefLabelPane.setBounds(15, 15, 120, 660);
 		prefLabelPane.setBorder(prefBorder);
-		apply.setBounds(700,525,75,30);
-		cancel.setBounds(615,525,75,30);
+		apply.setBounds(700,660,75,30);
+		cancel.setBounds(615,660,75,30);
 
 		// Set apply button default to disabled until changes are made
 		apply.setEnabled(false);
@@ -184,7 +184,7 @@ public class ClientPreferences extends JPanel {
 		generalLabel.setText("General");
 		generalLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		generalLabel.setHorizontalTextPosition(JLabel.CENTER);
-		generalLabel.setBounds(30,20,85,75);
+		generalLabel.setBounds(30,20,100,100);
 		generalLabel.setBorder(labelBorder);
 		
 		generalPanel = new JPanel();
@@ -239,14 +239,13 @@ public class ClientPreferences extends JPanel {
 		//Notification Menu Section
 		/*************************************************/	
 		//Image notificationPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/notificationsPref.png");
-		//notificationDrawingPanel = new DrawingPanel(notificationPreferencesImage);
 
 		ImageIcon notificationImageIcon = new ImageIcon("../images/notificationsPref.png");
 		notificationsLabel.setIcon(notificationImageIcon);
 		notificationsLabel.setText("Notifications");
 		notificationsLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		notificationsLabel.setHorizontalTextPosition(JLabel.CENTER);
-		notificationsLabel.setBounds(30,120,85,75);
+		notificationsLabel.setBounds(30,140,100,100);
 		notificationsLabel.setBorder(labelBorder);
 		
 		notificationsPanel = new JPanel();
@@ -284,7 +283,7 @@ public class ClientPreferences extends JPanel {
 		encryptionLabel.setText("Encryption");
 		encryptionLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		encryptionLabel.setHorizontalTextPosition(JLabel.CENTER);
-		encryptionLabel.setBounds(30,220,85,75);
+		encryptionLabel.setBounds(30,260,100,100);
 		encryptionLabel.setBorder(labelBorder);
 		
 		encryptionPanel = new JPanel();
@@ -315,7 +314,7 @@ public class ClientPreferences extends JPanel {
 		formattingLabel.setText("Font Options");
 		formattingLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		formattingLabel.setHorizontalTextPosition(JLabel.CENTER);
-		formattingLabel.setBounds(30,320,85,75);
+		formattingLabel.setBounds(30,380,100,100);
 		formattingLabel.setBorder(labelBorder);
 		
 		formattingPanel = new JPanel();
@@ -353,7 +352,7 @@ public class ClientPreferences extends JPanel {
 		themeLabel.setText("Appearance");
 		themeLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		themeLabel.setHorizontalTextPosition(JLabel.CENTER);
-		themeLabel.setBounds(30,420,85,75);
+		themeLabel.setBounds(30,500,100,100);
 		themeLabel.setBorder(labelBorder);
 		
 		themePanel = new JPanel();
