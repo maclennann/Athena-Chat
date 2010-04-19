@@ -48,7 +48,7 @@ import sun.security.util.BigInt;
 public class ServerThread extends Thread
 {
 	//Change to 1 for debug output
-	private int debug = 1;
+	private static int debug = 1;
 
 	//Create the DataInputStream on the current socket 
 	public DataInputStream din = null;
@@ -264,6 +264,7 @@ public class ServerThread extends Thread
 	//This method decrypts the ciphertext with the server's public key
 	public static String encryptServerPrivate(String plaintext) { 
 		//Encrypt the string and return it
+		if(debug==1) System.out.println("Plaintext in encryptServerPrivate: " + plaintext);
 		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 		return plaintextBigInt.toString();
 	}
