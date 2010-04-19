@@ -262,11 +262,11 @@ public class ServerThread extends Thread
 			return usernames;
 		}
 		else { 
-			File newFile2 = new File("buddylist/" + username + "/buddylist.csv");
+			File newFile2 = new File("buddylists/" + username + "/buddylist.csv");
 			if(!(newFile2.exists())) { 
 				newFile2.createNewFile();
 			}
-			BufferedReader in = new BufferedReader(new FileReader("buddylist/" + username + "/buddylist.csv")); 
+			BufferedReader in = new BufferedReader(new FileReader("buddylists/" + username + "/buddylist.csv")); 
 			int x=0;
 			String raw;
 			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
