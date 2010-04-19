@@ -202,7 +202,7 @@ public class ServerThread extends Thread
 		}
 	}
 	private void sendPrivateKeyToClient() throws IOException {
-		RSAPrivateKeySpec privateKey = RSACrypto.readPrivKeyFromFile("keys/" + username + "priv");
+		RSAPrivateKeySpec privateKey = RSACrypto.readPrivKeyFromFile("keys/" + username + ".priv");
 		//Send over ack message
 		sendSystemMessage(username, "Incoming private key components");
 		
