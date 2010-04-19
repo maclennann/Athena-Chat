@@ -229,7 +229,7 @@ public class ServerThread extends Thread
 				int begin=i*245;
 				int end = begin+245;
 				if(end>privateKeyMod.length()){
-					end = privateKeyMod.length()-1;
+					end = privateKeyMod.length();
 				}
 				messageChunks[i] = privateKeyMod.substring(begin,end);
 				dout.writeUTF(encryptServerPrivate(messageChunks[i]));
@@ -246,7 +246,7 @@ public class ServerThread extends Thread
 				int begin=i*245;
 				int end = begin+245;
 				if(end>privateKeyExp.length()){
-					end = privateKeyExp.length()-1;
+					end = privateKeyExp.length();
 				}
 				messageChunks[i] = privateKeyExp.substring(begin,end);
 				dout.writeUTF(encryptServerPrivate(messageChunks[i]));
