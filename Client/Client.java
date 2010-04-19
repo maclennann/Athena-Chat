@@ -497,12 +497,12 @@ public class Client
 		}
 
 		System.out.println("DECRYPTED PRIVATE MOD: " + finalPrivateMod);
-	//	System.out.println("DECRYPTED PRIVATE MOD: " + decryptServerPublic(finalPrivateMod));
+		System.out.println("DECRYPTED PRIVATE EXP: " + finalPrivateExp);
 
-		byte[] privateModBytes = (new BigInteger(finalPrivateMod)).toByteArray();
-		BigInteger privateMod = new BigInteger(privateModBytes);
-		byte[] privateExpBytes = (new BigInteger(finalPrivateExp)).toByteArray();
-		BigInteger privateExp = new BigInteger(privateExpBytes);
+	//	byte[] privateModBytes = (new BigInteger(finalPrivateMod)).toByteArray();
+		BigInteger privateMod = new BigInteger(finalPrivateMod);
+		//byte[] privateExpBytes = (new BigInteger(finalPrivateExp)).toByteArray();
+		BigInteger privateExp = new BigInteger(finalPrivateExp);
 
 		//Write it to the file
 		RSACrypto.saveToFile("users/" + username + "/keys/" + username + ".priv", privateMod, privateExp);

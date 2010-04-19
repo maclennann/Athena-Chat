@@ -211,7 +211,9 @@ public class ServerThread extends Thread
 		
 		//Send over components
 		String privateKeyMod = privateKey.getModulus().toString();
+		System.out.println("PRIVATE KEY MOD: " + privateKeyMod);
 		String privateKeyExp = privateKey.getPrivateExponent().toString();
+		System.out.println("PRIVATE KEY MOD: " + privateKeyExp);
 		//Send half a time plz!
 		System.out.println(privateKeyMod.length());
 		//Send how many chunks will be coming

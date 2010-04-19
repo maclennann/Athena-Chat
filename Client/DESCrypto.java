@@ -121,7 +121,7 @@ public class DESCrypto{
 			
 		}catch(Exception e){
 			//Something went wrong. Return null.
-			System.out.println("Error encryting data.");
+			System.out.println("Error decryting data.");
 			return null;
 		}
 		
