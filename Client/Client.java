@@ -478,9 +478,10 @@ public class Client
 		System.out.println("DECRYPTED PRIVATE MOD: " + finalPrivateMod);
 	//	System.out.println("DECRYPTED PRIVATE MOD: " + decryptServerPublic(finalPrivateMod));
 
-
-		BigInteger privateMod = new BigInteger(finalPrivateMod);
-		BigInteger privateExp = new BigInteger(decryptServerPublic(din.readUTF()));
+		byte[] privateModBytes = (new BigInteger(finalPrivateMod)).toByteArray();
+		BigInteger privateMod = new BigInteger(privateModBytes);
+		byte[] privateExpBytes = (new BigInteger(decryptServerPublic(din.readUTF()))).toByteArray();
+		BigInteger privateExp = new BigInteger(privateExpBytes);
 
 		//Write it to the file
 		RSACrypto.saveToFile("users/" + username + "/keys/" + username + ".priv", privateMod, privateExp);
