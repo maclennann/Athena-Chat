@@ -172,7 +172,9 @@ public class ServerThread extends Thread
 				sendMessage(toUserDecrypted, username, messageEncrypted);
 			}
 
-		} catch (IOException e) {isAlive=0;}
+		} catch (IOException e) {
+			e.printStackTrace();
+			isAlive=0;}
 	}
 
 	//Method that handles client to server messages
