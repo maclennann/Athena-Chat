@@ -219,7 +219,7 @@ public class ServerThread extends Thread
 		 */
 		StringReader r = new StringReader (privateKeyMod);
 		String encoding = "UTF-8"; 
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream (1024*2); // Twice as large as necessary 
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream (245); // Twice as large as necessary 
 		OutputStreamWriter w = new OutputStreamWriter  (buffer, encoding); 
 		 
 		char[] cbuf = new char[100]; 
