@@ -217,7 +217,7 @@ public class ServerThread extends Thread
         sendSystemMessage(username, new String(String.valueOf(numLines)));
         for(int x=0; x<buddylistArray.length;x++) {         	          
             //Now send Aegis the file
-            sendSystemMessage(username, encryptServerPrivate(buddylistArray[x]));
+            sendSystemMessage(username, (buddylistArray[x]));
         }
         return true;
 		
