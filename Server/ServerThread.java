@@ -264,7 +264,8 @@ public class ServerThread extends Thread
 	//This method decrypts the ciphertext with the server's public key
 	public static String encryptServerPrivate(String plaintext) { 
 		//Encrypt the string and return it
-		return (new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent())).toString());
+		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+		return plaintextBigInt.toString();
 	}
 	public void negotiateClientStatus() {
 		try { 
