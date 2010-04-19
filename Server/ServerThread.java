@@ -228,14 +228,14 @@ public class ServerThread extends Thread
 		while ((len = r.read(cbuf, 0, cbuf.length)) > 0) { 
 		    w.write(cbuf, 0, len); 
 		    w.flush(); 
-		    if (buffer.size() >= 244) { 
+		    if (buffer.size() >= 254) { 
 		        tempBuf = buffer.toByteArray(); 
 		        
 		        //Try to write one chunk!!
 		        dout.writeUTF(encryptServerPrivate(tempBuf.toString()));
 		        buffer.reset(); 
 		        if (tempBuf.length > 255) { 
-		            buffer.write(tempBuf, 255, tempBuf.length - 1024); 
+		            buffer.write(tempBuf, 254, tempBuf.length - 254); 
 		        } 
 		    } 
 		} 
