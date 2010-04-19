@@ -212,12 +212,12 @@ public class ServerThread extends Thread
         int numLines = buddylistArray.length;
         System.out.println("numLines: " + numLines);
         //Send Aegis the begin message so it knows that this is beginning of the file
-        dout.writeUTF(encryptServerPrivate("Begin"));
+        sendSystemMessage(username, encryptServerPrivate("Begin"));
         //Send Aegis the number lines we're sending
-        dout.writeUTF(encryptServerPrivate(new String(String.valueOf(numLines))));
+        sendSystemMessage(username, encryptServerPrivate(new String(String.valueOf(numLines))));
         for(int x=0; x<buddylistArray.length;x++) {         	          
             //Now send Aegis the file
-            dout.writeUTF(encryptServerPrivate(buddylistArray[x]));
+            sendSystemMessage(username, encryptServerPrivate(buddylistArray[x]));
         }
         return true;
 		
