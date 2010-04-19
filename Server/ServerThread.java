@@ -212,7 +212,7 @@ public class ServerThread extends Thread
         int numLines = buddylistArray.length;
         System.out.println("numLines: " + numLines);
         //Send Aegis the begin message so it knows that this is beginning of the file
-        sendSystemMessage(username, "Begin"));
+        sendSystemMessage(username, "Begin");
         //Send Aegis the number lines we're sending
         sendSystemMessage(username, new String(String.valueOf(numLines)));
         for(int x=0; x<buddylistArray.length;x++) {         	          
