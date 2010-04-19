@@ -219,8 +219,8 @@ public class ServerThread extends Thread
 		
 		if(privateKeyMod.length() > 245){
 			double messageNumbers = (double)privateKeyMod.length()/245;
-			double messageNumbersInt = Math.ceil(messageNumbers);
-			dout.writeUTF(String.valueOf(Integer.parseInt(String.valueOf(messageNumbersInt))));
+			int messageNumbersInt = (int)Math.ceil(messageNumbers);
+			dout.writeUTF(String.valueOf(messageNumbersInt));
 			System.out.println("MessageLength: "+privateKeyMod.length()+"\nMessageLength/245: "+messageNumbers+"\nCeiling of that: "+messageNumbersInt);
 			String[] messageChunks = new String[(int)messageNumbersInt];
 			for(int i=0;i<messageChunks.length;i++){
