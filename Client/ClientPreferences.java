@@ -60,7 +60,7 @@ public class ClientPreferences extends JPanel {
 	boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
 	boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
 	boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
-	boolean enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
+	boolean enableNotifications = Boolean.parseBoolean(settingsArray[3].toString());
 	
 	//Define components
 	public String[] themeList = {"javax.swing.plaf.metal.MetalLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel","com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.mac.MacLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
@@ -89,8 +89,11 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components for the Notifications Menu Panel
 	public JLabel notificationsLabel = new JLabel();
+	public JCheckBox enableNotificationsCheckBox = new JCheckBox("Enable Notifications", enableNotifications);
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable sounds");
+	public boolean enableNotificationsVal;
 	public boolean enableSoundsVal;
+	public boolean enableNotificationsFlag = false;
 	public boolean enableSoundsFlag = false;
 
 	//Define components for the Encryption Menu Panel
@@ -159,7 +162,7 @@ public class ClientPreferences extends JPanel {
 				//Apply all changes
 				try {
 					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
-					setNotificationSettings(enableSoundsFlag, enableSoundsVal);
+					setNotificationSettings(enableNotificationsFlag, enableNotificationsVal, enableSoundsFlag, enableSoundsVal);
 					setFormattingSettings(selectFontFlag, toggleBoldFlag, toggleItalicsFlag, toggleUnderlineFlag);
 					writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
@@ -255,10 +258,23 @@ public class ClientPreferences extends JPanel {
 		notificationsPanel.setBounds(185,15,500,500);
 		notificationsPanel.setVisible(false);
 		
+		enableNotificationsCheckBox.setBounds(50,15,200,50);
 		enableSoundsCheckBox.setBounds(50,55,200,50);
 		
+		notificationsPanel.add(enableNotificationsCheckBox);
 		notificationsPanel.add(enableSoundsCheckBox);
 		
+		enableNotificationsCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e){
+				apply.setEnabled(true);
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					enableNotificationsVal = true;
+				else
+					enableNotificationsVal = false;
+				settingsToWrite[3] = enableNotificationsVal;
+				enableNotificationsFlag = true;
+			}
+		});
 		enableSoundsCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e){
 				apply.setEnabled(true);
@@ -515,18 +531,23 @@ public class ClientPreferences extends JPanel {
 		}
 	}
 	
-	private void setNotificationSettings (boolean enableSoundsFlag, boolean enableSoundsVal)
+	private void setNotificationSettings (boolean enableNotificationsFlag, boolean enableNotificationsVal,
+											boolean enableSoundsFlag, boolean enableSoundsVal)
 	{
+		if (enableNotificationsFlag)
+		{
+			if(!(enableNotificationsVal))
+			{
+				Client.clientResource.setEnableNotifications(false);
+			}
+			if(enableNotificationsVal)
+			{
+				Client.clientResource.setEnableNotifications(true);
+			}
+		}
 		if (enableSoundsFlag)
 		{
-			if(!(enableSoundsVal))
-			{
-				Client.clientResource.setEnableSounds(false);
-			}
-			if(enableSoundsVal)
-			{
-				Client.clientResource.setEnableSounds(true);
-			}
+			//Adjust setting
 		}
 	}
 	
@@ -570,7 +591,9 @@ public class ClientPreferences extends JPanel {
 			//Write notification settings
 			outPref.write("[NOTIFICATIONS]");
 			outPref.newLine();
-			outPref.write("enableSounds=" + settingsToWrite[3]);
+			outPref.write("enableNotifications=" + settingsToWrite[3]);
+			outPref.newLine();
+			outPref.write("enableSounds=" + settingsToWrite[4]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -582,7 +605,7 @@ public class ClientPreferences extends JPanel {
 			outPref.newLine();
 			outPref.write(";");
 			outPref.newLine();
-			outPref.write("encryptionType=" + settingsToWrite[4]);
+			outPref.write("encryptionType=" + settingsToWrite[5]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -590,13 +613,13 @@ public class ClientPreferences extends JPanel {
 			//Write formatting settings
 			outPref.write("[FORMATTING]");
 			outPref.newLine();
-			outPref.write("fontFace=" + settingsToWrite[5]);
+			outPref.write("fontFace=" + settingsToWrite[6]);
 			outPref.newLine();
-			outPref.write("fontBold=" + settingsToWrite[6]);
+			outPref.write("fontBold=" + settingsToWrite[7]);
 			outPref.newLine();
-			outPref.write("fontItalic=" + settingsToWrite[7]);
+			outPref.write("fontItalic=" + settingsToWrite[8]);
 			outPref.newLine();
-			outPref.write("fontUnderline=" + settingsToWrite[8]);
+			outPref.write("fontUnderline=" + settingsToWrite[9]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -604,7 +627,7 @@ public class ClientPreferences extends JPanel {
 			//Write theme settings
 			outPref.write("[THEME]");
 			outPref.newLine();
-			outPref.write("activeTheme=" + settingsToWrite[9]);
+			outPref.write("activeTheme=" + settingsToWrite[10]);
 			
 			outPref.close();
 			

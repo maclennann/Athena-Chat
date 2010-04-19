@@ -20,15 +20,12 @@
  *
  ****************************************************/
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +58,7 @@ public class ServerThread extends Thread
 	private static Server server;
 
 	//Define Global Variable Username / Password
-	private static String username;
+	private String username;
 	private String password;
 
 	//Our current socket
@@ -72,7 +69,7 @@ public class ServerThread extends Thread
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive=1;
 
-	//private RSAPrivateKeySpec serverPrivate;
+	private RSAPrivateKeySpec serverPrivate;
 	// Constructor. Instantiate this thread on the current socket
 	public ServerThread( Server server, Socket socket ) {
 
@@ -126,9 +123,7 @@ public class ServerThread extends Thread
 			}
 
 		} catch ( EOFException ie ) {
-			ie.printStackTrace();
 		} catch ( IOException ie ) {
-			ie.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -143,7 +138,7 @@ public class ServerThread extends Thread
 	public void routeMessage(DataInputStream din) throws NumberFormatException, InterruptedException{
 		try {
 			//Grab the server's private key - SHHH!!
-			//serverPrivate = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+			serverPrivate = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 			//Read in the Encrypted toUser
 			String toUserEncrypted=din.readUTF();
 			//Read in the Encrypted message
@@ -159,12 +154,13 @@ public class ServerThread extends Thread
 
 			//Is the message an eventcode meant for the server?
 			if (toUserDecrypted.equals("Aegis")) { 
-				if(debug==1)System.out.println("Server eventcode detected!");
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent())));
+				//if(debug==1)System.out.println("Server eventcode detected!");
+
+				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
 				return;
 			}
 			if (toUserDecrypted.equals("Interupt")) {
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent())));
+				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
 				return;
 			}	
 			else { 
@@ -172,9 +168,7 @@ public class ServerThread extends Thread
 				sendMessage(toUserDecrypted, username, messageEncrypted);
 			}
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			isAlive=0;}
+		} catch (IOException e) {isAlive=0;}
 	}
 
 	//Method that handles client to server messages
@@ -202,91 +196,9 @@ public class ServerThread extends Thread
 		break;
 		case 006: recieveBuddyListFromClient();
 		break;
-		case 007: sendBuddyListToClient();
-		break;
 		default: return;
 		}
 	}
-	private boolean sendBuddyListToClient() throws IOException {
-		String[] buddylistArray = returnBuddyListArray(true);
-		System.out.println("Inside sendBuddyListToClient.");
-        sendSystemMessage(username, "Access granted, incoming buddylist");  
-        int numLines = buddylistArray.length;
-        System.out.println("numLines: " + numLines);
-        //Send Aegis the begin message so it knows that this is beginning of the file
-        sendSystemMessage(username, "Begin");
-        //Send Aegis the number lines we're sending
-        sendSystemMessage(username, new String(String.valueOf(numLines)));
-        for(int x=0; x<buddylistArray.length;x++) {         	          
-            //Now send Aegis the file
-            sendSystemMessage(username, (buddylistArray[x]));
-        }
-        return true;
-		
-	}
-	
-	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
-	public static String[] returnBuddyListArray(boolean flag) throws IOException {
-		int count;
-		int readChars;
-		InputStream is;
-
-		//Let's get the number of lines in the file
-		File newFile = new File("buddylists/" + username + "/buddylist.csv");
-		if(!(newFile.exists())) { 
-			boolean success = new File("buddylists/" + username).mkdirs();
-			if(success) { 
-				newFile.createNewFile();
-				is = new BufferedInputStream(new FileInputStream("buddylists/" + username + "/buddylist.csv"));
-			}
-			else { 
-				newFile.createNewFile();
-			}
-		}
-
-		is = new BufferedInputStream(new FileInputStream("buddylists/" + username + "/buddylist.csv"));
-		byte[] c = new byte[1024];
-		count = 0;
-		readChars = 0;
-		while ((readChars = is.read(c)) != -1) {
-			for (int i = 0; i < readChars; ++i) {
-				if (c[i] == '\n')
-					++count;
-			}
-		} //End section
-
-		//Make the string array the size of the number of lines in the file
-		String[] usernames = new String[count];
-
-		//If there are no lines in the file we know that the user has no buddies! :(
-		if (count == 0) { 
-			return usernames;
-		}
-		else { 
-			File newFile2 = new File("buddylists/" + username + "/buddylist.csv");
-			if(!(newFile2.exists())) { 
-				newFile2.createNewFile();
-			}
-			BufferedReader in = new BufferedReader(new FileReader("buddylists/" + username + "/buddylist.csv")); 
-			int x=0;
-			String raw;
-			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
-			while ((raw = in.readLine()) != null) 
-			{ 
-				// Read in the BigInteger in String form. Turn it to a BigInteger
-				// Turn the BigInteger to a byteArray, and decrypt it.
-				//strNum = new BigInteger(raw);
-				//str = descrypto.decryptData(strNum.toByteArray());
-
-				String foo[] = raw.split(","); 
-				usernames[x] = foo[0];
-				x++;
-			}
-			return usernames;
-		}
-	}
-
 	public void writeBuddyListToFile(String[] buddyList, String buddyListName){
 		BufferedWriter out;
 		File newFile = new File("buddylists/" + buddyListName + "/buddylist.csv");
@@ -336,19 +248,12 @@ public class ServerThread extends Thread
 		//Decrypt the byte[], returns a String
 		return RSACrypto.rsaDecryptPrivate(cipherBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 	}
-	
-	//This method encrypts the plaintext with the server's private key
-	public static String encryptServerPrivate(String plaintext) { 
-		BigInteger plainTextCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-		return plainTextCipher.toString();
-		
-	}
 	public void negotiateClientStatus() {
 		try { 
 			//Acknowledge connection. Make sure we are doing the right thing
 			//Encrypt the String, turn it into a BigInteger
-			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-			
+			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+
 			sendSystemMessage(username, "Access Granted. Send me the username.");
 			//Listen for the username
 			String findUserCipher = din.readUTF();
@@ -373,7 +278,7 @@ public class ServerThread extends Thread
 		try {
 			System.out.println(username);
 			//Encrypt the String, turn it into a BigInteger
-			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 			//Acknowledge connection. Make sure we are doing the right thing
 			sendMessage(username, "CheckUserStatus", accessGrantedCipher.toString());
 			//Listen for the username
@@ -386,12 +291,12 @@ public class ServerThread extends Thread
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToSocket.containsKey(findUserDecrypted))) { 
 				String message = "1";
-				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
 				System.out.println("(Online)\n");
 			} else {
 				String message = "0";
-				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
 				System.out.println("(Offline)\n");
 			} 
@@ -401,7 +306,7 @@ public class ServerThread extends Thread
 	}
 	
 	public void returnBuddyListHash() { 
-		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 		sendSystemMessage(username, "Access granted. Send me the username.");
 		
 		try {
@@ -422,7 +327,7 @@ public class ServerThread extends Thread
 				}
 				String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
 				System.out.println("PATH: " + path);
-				String hashOfBuddyList = FileHash.getMD5Checksum(path);
+				String hashOfBuddyList = returnHashOfFile(path);
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
 				sendSystemMessage(username, hashOfBuddyList);
 				sendSystemMessage(username, lastModDateOfBuddyList);
@@ -605,9 +510,10 @@ public class ServerThread extends Thread
 		//Send the message, and the user it is from
 		try {
 			System.out.println("TOUSER: " + toUser + "\nMESSAGE: " + message);
-			
+			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+			BigInteger toUserCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(toUser, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 			//dout.writeUTF(toUserCipher.toString());
-			dout.writeUTF(encryptServerPrivate(message));
+			dout.writeUTF(messageCipher.toString());
 			System.out.println("Message sent:\n " + message);
 		} catch( IOException ie ) { System.out.println( ie ); }
 	}
@@ -673,11 +579,29 @@ public class ServerThread extends Thread
 		return hash; //step 6
 	}
 	
+	//Returns hash of files
+	public static String returnHashOfFile(String filePath) throws NoSuchAlgorithmException, IOException { 
+	MessageDigest md = MessageDigest.getInstance("MD5");
+	InputStream is = new FileInputStream(filePath);
+	try {
+	  is = new DigestInputStream(is, md);
+	  // read stream to EOF as normal...
+	}
+	finally {
+	  is.close();
+	}
+	byte[] digest = md.digest();
+	BigInteger digestBigInt = new BigInteger(digest);
+	String hash = new String(digestBigInt.toString());
+	System.out.println(hash);
+	return hash;
+	}
+	
 	public void publicKeyRequest(){
 
 		System.out.println(username);
 		//Acknowledge connection. Make sure we are doing the right thing
-		BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username to find the key for.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+		BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username to find the key for.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 		sendMessage(username, "ReturnPublicKey", accessGrantedCipher.toString());
 		try{
 			//Listen for the username
@@ -704,7 +628,7 @@ public class ServerThread extends Thread
 				System.out.println("Exponent Returned\n");
 
 			} else { 
-				BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
+				BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 				sendMessage(username, "ReturnPublicKeyMod",keyNotFoundCipher.toString() );
 				System.out.println("User does not have a keyfile with us");
 			} }catch(Exception e){e.printStackTrace();}
