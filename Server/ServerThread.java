@@ -21,6 +21,7 @@
  ****************************************************/
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -29,6 +30,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
@@ -211,6 +214,34 @@ public class ServerThread extends Thread
 		String privateKeyExp = privateKey.getPrivateExponent().toString();
 		//Send half a time plz!
 		System.out.println(privateKeyMod.length());
+		/*
+		 * Copied code
+		 */
+		StringReader r = new StringReader (privateKeyMod);
+		String encoding = "UTF-8"; 
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream (1024*2); // Twice as large as necessary 
+		OutputStreamWriter w = new OutputStreamWriter  (buffer, encoding); 
+		 
+		char[] cbuf = new char[100]; 
+		byte[] tempBuf; 
+		int len; 
+		while ((len = r.read(cbuf, 0, cbuf.length)) > 0) { 
+		    w.write(cbuf, 0, len); 
+		    w.flush(); 
+		    if (buffer.size() >= 244) { 
+		        tempBuf = buffer.toByteArray(); 
+		        
+		        //Try to write one chunk!!
+		        dout.writeUTF(encryptServerPrivate(tempBuf.toString()));
+		        buffer.reset(); 
+		        if (tempBuf.length > 255) { 
+		            buffer.write(tempBuf, 255, tempBuf.length - 1024); 
+		        } 
+		    } 
+		} 
+		/*
+		 * End copied code
+		 */
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/4)-1))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/4),(privateKeyMod.length()/2))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/2)-((privateKeyMod.length()-1)-(privateKeyMod.length()/4)))));
