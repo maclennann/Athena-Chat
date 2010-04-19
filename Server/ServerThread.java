@@ -242,11 +242,11 @@ public class ServerThread extends Thread
 		/*
 		 * End copied code
 		 */
-		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/4)-1))));
+		/*dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/4)-1))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/4),(privateKeyMod.length()/2))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/2)-((privateKeyMod.length()-1)-(privateKeyMod.length()/4)))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(((privateKeyMod.length()-1)-(privateKeyMod.length()/4)), ((privateKeyMod.length()-1)))));
-		dout.writeUTF(encryptServerPrivate(privateKey.getPrivateExponent().toString()));		
+		dout.writeUTF(encryptServerPrivate(privateKey.getPrivateExponent().toString()));*/		
 	}
 
 	public void writeBuddyListToFile(String[] buddyList, String buddyListName){
