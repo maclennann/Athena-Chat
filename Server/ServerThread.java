@@ -210,8 +210,10 @@ public class ServerThread extends Thread
 		String privateKeyMod = privateKey.getModulus().toString();
 		String privateKeyExp = privateKey.getPrivateExponent().toString();
 		//Send half a time plz!
-		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/2)-1))));
-		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/2), ((privateKeyMod.length()-1)))));
+		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/4)-1))));
+		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/4),(privateKeyMod.length()/2))));
+		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/2)-((privateKeyMod.length()-1)-(privateKeyMod.length()/4)))));
+		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(((privateKeyMod.length()-1)-(privateKeyMod.length()/4)), ((privateKeyMod.length()-1)))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getPrivateExponent().toString()));		
 	}
 
