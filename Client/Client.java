@@ -84,6 +84,9 @@ public class Client
 
 	//Thread that will be used to listen for incoming messages
 	static Thread listeningProcedure;
+	
+	//Flag to control sound notifications
+	public static boolean enableSounds;
 
 	//If the client is connect to the server
 	static int connected = 0;
@@ -313,13 +316,16 @@ public class Client
 						//We know that the buddy is in his/her buddy list! 
 						clientResource.buddySignOff(decryptedMessage);
 						//** add this into your application code as appropriate
-						// Open an input stream  to the audio file.
-						InputStream in = new FileInputStream("sounds/signOff.wav");
-						// Create an AudioStream object from the input stream.
-						AudioStream as = new AudioStream(in);         
-						// Use the static class member "player" from class AudioPlayer to play
-						// clip.
-						AudioPlayer.player.start(as);   
+						// If enabled, open an input stream  to the audio file.
+						if(getEnableSounds())
+						{
+							InputStream in = new FileInputStream("sounds/signOff.wav");
+							// Create an AudioStream object from the input stream.
+							AudioStream as = new AudioStream(in);         
+							// Use the static class member "player" from class AudioPlayer to play
+							// clip.
+							AudioPlayer.player.start(as);  
+						}
 					}
 				}
 
@@ -380,13 +386,16 @@ public class Client
 							//We know that the buddy is in his/her buddy list! 
 							clientResource.newBuddyListItems(decryptedMessage);
 							//** add this into your application code as appropriate
-							// Open an input stream  to the audio file.
-							InputStream in = new FileInputStream("sounds/signOn.wav");
-							// Create an AudioStream object from the input stream.
-							AudioStream as = new AudioStream(in);         
-							// Use the static class member "player" from class AudioPlayer to play
-							// clip.
-							AudioPlayer.player.start(as);   
+							if(getEnableSounds())
+							{
+								// If enabled, open an input stream  to the audio file.
+								InputStream in = new FileInputStream("sounds/signOn.wav");
+								// Create an AudioStream object from the input stream.
+								AudioStream as = new AudioStream(in);         
+								// Use the static class member "player" from class AudioPlayer to play
+								// clip.
+								AudioPlayer.player.start(as);
+							}
 						}
 					}
 					return;
@@ -401,7 +410,7 @@ public class Client
 
 					//If there isn't already a tab for the conversation, make one
 					if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
-						clientResource.makeTab(fromUserDecrypted);
+						clientResource.makeTab(fromUserDecrypted, false);
 					}
 
 					//Write message to the correct tab
@@ -412,13 +421,16 @@ public class Client
 					print.writeToTextArea(decryptedMessage+"\n");
 					print.moveToEnd();
 
-					// Open an input stream  to the audio file.
-					InputStream in = new FileInputStream("sounds/recvMesg.wav");
-					// Create an AudioStream object from the input stream.
-					AudioStream as = new AudioStream(in);         
-					// Use the static class member "player" from class AudioPlayer to play
-					// clip.
-					AudioPlayer.player.start(as);
+					// If enabled, open an input stream  to the audio file.
+					if(getEnableSounds())
+					{
+						InputStream in = new FileInputStream("sounds/recvMesg.wav");
+						// Create an AudioStream object from the input stream.
+						AudioStream as = new AudioStream(in);         
+						// Use the static class member "player" from class AudioPlayer to play
+						// clip.
+						AudioPlayer.player.start(as);
+					}
 					//AudioPlayer.player.stop(as);
 					System.gc();
 					/*} else { 
@@ -501,7 +513,7 @@ public class Client
 									Client.recvMesg(din);
 								}
 							}});
-				//Instanciate Buddy List
+				//Instantiate Buddy List
 				instantiateBuddyList();	
 				//System.gc();
 				//Start the thread
@@ -972,6 +984,19 @@ public class Client
 		screen.setLocationRelativeTo(null);
 		screen.setProgressMax(100);
 		screen.setScreenVisible(true);
+	}
+	
+	public static void setEnableSounds(boolean activated)
+	{
+		if(activated)
+			enableSounds = true;
+		else
+			enableSounds = false;
+	}
+	
+	public static boolean getEnableSounds()
+	{
+		return enableSounds;
 	}
 
 	// Create the GUI for the client.

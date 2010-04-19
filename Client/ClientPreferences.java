@@ -77,9 +77,9 @@ public class ClientPreferences extends JPanel {
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
 	public JLabel generalLabel = new JLabel();
-	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in system tray", allowSystemTray);
-	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC to close a tab", allowESCTab);
-	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable spell check", enableSpellCheck);
+	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
+	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
+	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
 	public boolean systemTrayVal;
 	public boolean allowESCVal;
 	public boolean enableSCVal;
@@ -89,14 +89,14 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components for the Notifications Menu Panel
 	public JLabel notificationsLabel = new JLabel();
-	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable sounds");
+	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable Sounds", enableSounds);
 	public boolean enableSoundsVal;
 	public boolean enableSoundsFlag = false;
 
 	//Define components for the Encryption Menu Panel
 	public JLabel encryptionLabel = new JLabel();
-	public JLabel generateNewKeyPairJLabel = new JLabel("Generate new encryption key pair");
-	public JButton generateNewKeyPairJButton = new JButton("Generate!");
+	public JLabel generateNewKeyPairJLabel = new JLabel("Generate New Encryption Key Pair");
+	public JButton generateNewKeyPairJButton = new JButton("Generate");
 	
 	//Define components for the Formatting Menu Panel
 	public JLabel formattingLabel = new JLabel();
@@ -112,9 +112,9 @@ public class ClientPreferences extends JPanel {
 	//Define components for the Theme Menu Panel
 	public JLabel themeLabel = new JLabel();
 	public JComboBox selectThemeComboBox = new JComboBox(themeList);
-	public JLabel selectThemeJLabel = new JLabel("Select theme");
-	public JButton installNewThemeJButton = new JButton("Install!");
-	public JLabel installNewThemeJLabel = new JLabel("Install new theme");
+	public JLabel selectThemeJLabel = new JLabel("Select Theme");
+	public JButton installNewThemeJButton = new JButton("Install");
+	public JLabel installNewThemeJLabel = new JLabel("Install New Theme");
 	
 	//Initialize array to hold current file settings and accept all new setting changes
 	public Object[] settingsToWrite = settingsArray;
@@ -255,7 +255,7 @@ public class ClientPreferences extends JPanel {
 		notificationsPanel.setBounds(185,15,500,500);
 		notificationsPanel.setVisible(false);
 		
-		enableSoundsCheckBox.setBounds(50,55,200,50);
+		enableSoundsCheckBox.setBounds(50,15,200,50);
 		
 		notificationsPanel.add(enableSoundsCheckBox);
 		
@@ -266,7 +266,7 @@ public class ClientPreferences extends JPanel {
 					enableSoundsVal = true;
 				else
 					enableSoundsVal = false;
-				settingsToWrite[4] = enableSoundsVal;
+				settingsToWrite[3] = enableSoundsVal;
 				enableSoundsFlag = true;
 			}
 		});
@@ -521,11 +521,11 @@ public class ClientPreferences extends JPanel {
 		{
 			if(!(enableSoundsVal))
 			{
-				Client.clientResource.setEnableSounds(false);
+				Client.setEnableSounds(false);
 			}
 			if(enableSoundsVal)
 			{
-				Client.clientResource.setEnableSounds(true);
+				Client.setEnableSounds(true);
 			}
 		}
 	}

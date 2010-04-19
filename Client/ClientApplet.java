@@ -32,6 +32,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
@@ -152,6 +154,7 @@ public class ClientApplet extends JFrame {
 		enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 		setSpellCheck(enableSpellCheck);
 		enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
+		Client.setEnableSounds(enableSounds);
 		encryptionType = Integer.parseInt(settingsArray[4].toString());
 		fontFace = settingsArray[5].toString();
 		fontBold = Boolean.parseBoolean(settingsArray[6].toString());
@@ -447,7 +450,7 @@ public class ClientApplet extends JFrame {
 
 						// Create a tab for the conversation if it doesn't exist
 						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
-							makeTab(o.toString());
+							makeTab(o.toString(), true);
 							//int currentTabIndex = imTabbedPane.getSelectedIndex();
 							//if(currentTabIndex == 0)
 							//{
@@ -539,7 +542,7 @@ public class ClientApplet extends JFrame {
 	}
 
 	// Make a tab for a conversation
-	public void makeTab(String user) {
+	public void makeTab(String user, boolean userCreated) {
 		lockIconLabel.setVisible(false);
 		int prevIndex = 0;
 		// Create a hash table mapping a user name to the JPanel in a tab
@@ -561,11 +564,12 @@ public class ClientApplet extends JFrame {
 		//Add alert notification listener
 		addAlertNotificationListener(imTabbedPane.indexOfTab(user));
 		// Focus the new tab if first tab or if textarea is empty
-		//JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
-		//Component[] currentTabComponents = currentTab.getComponents();
-		//JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-		//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		if(imTabbedPane.indexOfTab(user) == 0)
+		addTextFieldFocusListener(imTabbedPane.indexOfTab(user));
+		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
+		Component[] currentTabComponents = currentTab.getComponents();
+		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		if(imTabbedPane.indexOfTab(user) == 0 || userCreated)
 		{
 			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
 			FocusCurrentTextField();
@@ -577,12 +581,8 @@ public class ClientApplet extends JFrame {
 			JButton currentButton = (JButton) c.getComponent(1);
 			currentButton.setIcon(alertIcon);
 			imTabbedPane.setSelectedIndex(prevIndex);
-			FocusCurrentTextField();
-			//imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
-			//FocusCurrentTextField();
-			
+			FocusCurrentTextField();			
 		}
-		
 		//Garbage collect!
 		System.gc();
 	}
@@ -682,11 +682,6 @@ public class ClientApplet extends JFrame {
 		}
 	}
 	
-	public void setEnableSounds(boolean activated)
-	{
-		
-	}
-	
 	private void addAlertNotificationListener(int index)
 	{
 		imTabbedPane.setSelectedIndex(index);
@@ -719,9 +714,9 @@ public class ClientApplet extends JFrame {
 		});
 	}
 	
-	private void addESCKeyListener(int count)
+	private void addESCKeyListener(int index)
 	{
-		imTabbedPane.setSelectedIndex(count);
+		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
@@ -772,9 +767,9 @@ public class ClientApplet extends JFrame {
 		});
 	}
 	
-	private void removeESCKeyListener(int count)
+	private void removeESCKeyListener(int index)
 	{
-		imTabbedPane.setSelectedIndex(count);
+		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
@@ -783,6 +778,26 @@ public class ClientApplet extends JFrame {
 		{
 			currentTextField.removeKeyListener(fieldListeners[0]);
 		}
+	}
+	
+	private void addTextFieldFocusListener(int index)
+	{
+		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
+		Component[] currentTabComponents = currentTab.getComponents();
+		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		currentTextField.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				Icon closeIcon = new ImageIcon("../images/close_button.png");
+				CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.getSelectedIndex());
+				JButton currentButton = (JButton) c.getComponent(1);
+				currentButton.setIcon(closeIcon);
+			}
+			
+			public void focusLost(FocusEvent e) {
+				// Do nothing
+			}
+		});
+		
 	}
 
 	// Makes a new hash table with user's online status
