@@ -94,8 +94,8 @@ public class RSACrypto {
 			
 			// Save the keys to their respective files.
 			// TODO Should we do this automatically, or wait until it is called?
-			saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
-			saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
+			//saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
+			//saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
 			
 		}catch(Exception e){
 			System.out.println("An error has occured in 'generateRSAKeyPair'");
@@ -113,7 +113,7 @@ public class RSACrypto {
 	/*public static byte[] rsaEncrypt(byte[] data) {
 		try{
 			// Grab the key from this file 
-			RSAPublicKeySpec pubKey = readPubKeyFromFile("/public.key");
+			PublicKey pubKey = readPubKeyFromFile("/public.key");
 			
 			// Define the cipher style
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -130,7 +130,7 @@ public class RSACrypto {
 	public static byte[] rsaDecrypt(byte[] data) {
 		try{
 			// Grab the private key from the file
-			RSAPrivateKeySpec privKey = readPrivKeyFromFile("private.key");	
+			PrivateKey privKey = readPrivKeyFromFile("private.key");	
 			
 			// Define the decryption type
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -183,8 +183,9 @@ public class RSACrypto {
 			return plainText;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaDecryptPublic'");
-		}return null;
+			return "SYSTEM ERROR: There was an issue decrypting the message. Please check that you have the public keyfile for the user.";
+			//System.out.println("An error has occured in 'rsaDecryptPublic'");
+		}//return null;
 	}
 
 	
@@ -207,6 +208,7 @@ public class RSACrypto {
 			return cipherData;
 		}
 		catch(Exception e){
+			//return "SYSTEM ERROR: There was an issue encrypting the message. Please check your private key";
 			System.out.println("An error has occured in 'rsaEncryptPrivate'");
 		}return null;
 	}
@@ -225,8 +227,9 @@ public class RSACrypto {
 			return plainText;
 		}
 		catch(Exception e){
-			System.out.println("An error has occured in 'rsaDecryptPrivate'");
-		}return null;
+			return "SYSTEM ERROR: There was an issue decrypting the message. Please check your private key";
+			//System.out.println("An error has occured in 'rsaDecrypt Private'");
+		}//return null;
 	}
 	
 	
@@ -294,10 +297,16 @@ public class RSACrypto {
 			//Grab the m and e values for the RSA key file process
 			BigInteger m = (BigInteger) oin.readObject();
 			BigInteger e = (BigInteger) oin.readObject();
+			
+			byte[] modBytes = new BigInteger(m.toString()).toByteArray();
+			byte[] expBytes = new BigInteger(e.toString()).toByteArray();
+			
+			BigInteger modDecrypted = new BigInteger(modBytes);
+			BigInteger expDecrypted = new BigInteger(expBytes);
 
 			//Run RSA Private Key input 
-			RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
-			
+			RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(modDecrypted, expDecrypted);
+
 			//Return the private key
 			return keySpec;
 		} catch (Exception e) {
