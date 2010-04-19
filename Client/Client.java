@@ -84,7 +84,7 @@ public class Client
 
 	//Thread that will be used to listen for incoming messages
 	static Thread listeningProcedure;
-	
+
 	//Flag to control sound notifications
 	public static boolean enableSounds;
 
@@ -138,11 +138,11 @@ public class Client
 							end = message.length()-1;
 						}
 						messageChunks[i] = message.substring(begin,end);
-						
+
 						//Grab the other user's public key from file
 						RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 						//Encrypt the toUser with the Server's public key and send it to the server
-						
+
 						//Encrypt the message with the toUser's public key and send it to the server
 						BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(messageChunks[i], toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 						dout.writeUTF(encryptServerPublic(toUser));
@@ -155,26 +155,26 @@ public class Client
 						// Clear out text input field
 						print.clearTextField();
 					}
-					
-				}else{
-			
-			
-				//Grab the other user's public key from file
-				RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
-				//Encrypt the message with the toUser's public key and send it to the server
-				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
-				dout.writeUTF(encryptServerPublic(toUser));
-				dout.writeUTF(messageCipher.toString());
-				//Hash the Message for the digital signature
-				String hashedMessage = ClientLogin.computeHash(message);
-				//Send the server the digital signature (Hash of the message encrypted with UserA's private key
-				//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
 
-				// Append own message to IM window
-				print.moveToEnd();
-				// Clear out text input field
-				print.clearTextField();
-}
+				}else{
+
+
+					//Grab the other user's public key from file
+					RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
+					//Encrypt the message with the toUser's public key and send it to the server
+					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+					dout.writeUTF(encryptServerPublic(toUser));
+					dout.writeUTF(messageCipher.toString());
+					//Hash the Message for the digital signature
+					String hashedMessage = ClientLogin.computeHash(message);
+					//Send the server the digital signature (Hash of the message encrypted with UserA's private key
+					//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+
+					// Append own message to IM window
+					print.moveToEnd();
+					// Clear out text input field
+					print.clearTextField();
+				}
 				//TADA
 			} catch( IOException ie ) { 
 				if(debug==1)System.out.println(ie);
@@ -278,11 +278,11 @@ public class Client
 				boolean success = new File("users/" + username + "/keys/").mkdirs();
 				if(success) { 
 					receivePrivateKeyFromServer();
-					
+
 				}
 				else { 
 					receivePrivateKeyFromServer();
-					
+
 				}				
 			}
 			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
@@ -402,36 +402,36 @@ public class Client
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
 
-					//If there isn't already a tab for the conversation, make one
-					if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
-						clientResource.makeTab(fromUserDecrypted, false);
-					}
+				//If there isn't already a tab for the conversation, make one
+				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
+					clientResource.makeTab(fromUserDecrypted, false);
+				}
 
-					//Write message to the correct tab
-					print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
-					print.setTextColor(Color.blue);
-					print.writeToTextArea(fromUserDecrypted+": "); 
-					print.setTextColor(Color.black);
-					print.writeToTextArea(decryptedMessage+"\n");
-					print.moveToEnd();
+				//Write message to the correct tab
+				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
+				print.setTextColor(Color.blue);
+				print.writeToTextArea(fromUserDecrypted+": "); 
+				print.setTextColor(Color.black);
+				print.writeToTextArea(decryptedMessage+"\n");
+				print.moveToEnd();
 
-					// If enabled, open an input stream  to the audio file.
-					if(getEnableSounds())
-					{
-						InputStream in = new FileInputStream("sounds/recvMesg.wav");
-						// Create an AudioStream object from the input stream.
-						AudioStream as = new AudioStream(in);         
-						// Use the static class member "player" from class AudioPlayer to play
-						// clip.
-						AudioPlayer.player.start(as);
-					}
-					//AudioPlayer.player.stop(as);
-					System.gc();
-					/*} else { 
+				// If enabled, open an input stream  to the audio file.
+				if(getEnableSounds())
+				{
+					InputStream in = new FileInputStream("sounds/recvMesg.wav");
+					// Create an AudioStream object from the input stream.
+					AudioStream as = new AudioStream(in);         
+					// Use the static class member "player" from class AudioPlayer to play
+					// clip.
+					AudioPlayer.player.start(as);
+				}
+				//AudioPlayer.player.stop(as);
+				System.gc();
+				/*} else { 
 				//TODO Make some type of alert to the user.
 				if(debug==1)System.out.println("MESSAGE COMPROMISED. RUN");
 			}*/
-				}
+			}
 			//}
 		}
 		catch ( IOException ie ) {
@@ -447,21 +447,41 @@ public class Client
 		systemMessage("007");
 		//Receive ack message
 		System.out.println("Message received from server: " + decryptServerPublic(din.readUTF()));
-		
+
 		int chunks = Integer.parseInt(din.readUTF());
-		
+		System.out.println(chunks);
+
 		//Grab the private key information from the server
 		String finalPrivateMod="";
+		String[] privateModArray = new String[chunks];
 		for(int x=0; x<chunks; x++) { 
-		String privateMod = din.readUTF();
-		if(!(privateMod.equals("end"))) {
-			finalPrivateMod.concat(privateMod);
+			String privateMod = din.readUTF();
+			System.out.println("PRIVATE MOD: " + privateMod);
+			if(privateMod.indexOf("-") > -1) { 
+				String tmpString = privateMod.replaceAll("-", "");
+				privateMod = tmpString;
+			}
+			if(!(privateMod.equals("end"))) {
+				if (privateModArray.length > 0) {
+					privateModArray[x] = decryptServerPublic(privateMod).getBytes().toString();
+				}
+			}
 		}
+
+		if (privateModArray.length > 0) {
+			finalPrivateMod = privateModArray[0];    // start with the first element
+			for (int i=1; i<privateModArray.length; i++) {
+				finalPrivateMod = finalPrivateMod + privateModArray[i];
+			}
 		}
-		
+
+		System.out.println("DECRYPTED PRIVATE MOD: " + finalPrivateMod);
+	//	System.out.println("DECRYPTED PRIVATE MOD: " + decryptServerPublic(finalPrivateMod));
+
+
 		BigInteger privateMod = new BigInteger(finalPrivateMod);
 		BigInteger privateExp = new BigInteger(decryptServerPublic(din.readUTF()));
-		
+
 		//Write it to the file
 		RSACrypto.saveToFile("users/" + username + "/keys/" + username + ".priv", privateMod, privateExp);
 	}
@@ -584,7 +604,7 @@ public class Client
 		//Now we need to get the hash of the user's buddylist on the server
 		String[] remoteVals = returnHashOfRemoteBuddyList(username);
 		long remoteBuddyListModDate = Long.parseLong(remoteVals[1].trim());
-		
+
 		System.out.println("Hash of local: " + hashOfLocalBuddyList + "\nHash of remote buddylist: " + remoteVals[0]);
 		//Now let's compare this hash with the hash on the server
 		if(!(hashOfLocalBuddyList.equals(remoteVals[0]))) { 
@@ -606,8 +626,8 @@ public class Client
 		else { 
 			System.out.println("Hashes match!");
 		}
-		
-		
+
+
 		//Grab string array of the buddylist.csv file 
 		String[] usernames = returnBuddyListArray();
 
@@ -686,27 +706,27 @@ public class Client
 
 	//This method will send the user's buddy list to the server line by line
 	public static boolean sendBuddyListToServer() throws IOException {
-			String[] buddylistArray = returnBuddyListArray(true);
-			systemMessage("006");
-	        System.out.println("Message received from server" + din.readUTF());	        
-	        int numLines = buddylistArray.length;
-	        
-	        //Send Aegis the begin message so it knows that this is beginning of the file
-	        dout.writeUTF(encryptServerPublic("begin"));
-	        //Send Aegis the number lines we're sending
-	        dout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
-	        for(int x=0; x<buddylistArray.length;x++) {         	          
-	            //Now send Aegis the file
-	            dout.writeUTF(encryptServerPublic(buddylistArray[x]));
-	        }
-	        return true;
+		String[] buddylistArray = returnBuddyListArray(true);
+		systemMessage("006");
+		System.out.println("Message received from server" + din.readUTF());	        
+		int numLines = buddylistArray.length;
+
+		//Send Aegis the begin message so it knows that this is beginning of the file
+		dout.writeUTF(encryptServerPublic("begin"));
+		//Send Aegis the number lines we're sending
+		dout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
+		for(int x=0; x<buddylistArray.length;x++) {         	          
+			//Now send Aegis the file
+			dout.writeUTF(encryptServerPublic(buddylistArray[x]));
+		}
+		return true;
 	}
 	//This method encrypts the plaintext with the server's public key
 	public static String encryptServerPublic(String plaintext) { 
-		 BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-		 return cipherText.toString();
+		BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+		return cipherText.toString();
 	}
-	
+
 	//This method decrypts the ciphertext with the server's public key
 	public static String decryptServerPublic(String ciphertext) { 
 		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
@@ -907,7 +927,7 @@ public class Client
 	public static DataInputStream returnDIN() { 
 		return din;
 	}
-	
+
 	//This method returns a hash of the buddy list 
 	public static String returnHashOfLocalBuddyList(String buddyname) throws Exception { 
 		String path = "users/".concat(buddyname).concat("/buddylist.csv");
@@ -924,40 +944,40 @@ public class Client
 		}
 		return FileHash.getMD5Checksum(path);
 	}
-	
+
 	//Returns a long of the last day the file was modified
 	private static long returnLocalModDateOfBuddyList(String buddyname) {
 		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
 		return buddylist.lastModified();
 	}
-	
+
 	//This method returns a hash of the remote buddy list
 	public static String[] returnHashOfRemoteBuddyList(String buddyname) { 
 		try { 
-		
-		systemMessage("005");
-		
-		//Get acknowledge message
-		System.out.println(din.readUTF()); 
-		
-		//Send buddyname
-		dout.writeUTF(encryptServerPublic(buddyname));
-		String[] remoteValues = new String[2];
-		//counter
-		int x = 0;
-		while(x<=1){ 
-		remoteValues[x] = decryptServerPublic(din.readUTF());
-		System.out.println("REMOTE VALSSS " + remoteValues[x]);
-		x++;
-		}
-		System.out.println("Completed.");
-		return remoteValues;
-		
+
+			systemMessage("005");
+
+			//Get acknowledge message
+			System.out.println(din.readUTF()); 
+
+			//Send buddyname
+			dout.writeUTF(encryptServerPublic(buddyname));
+			String[] remoteValues = new String[2];
+			//counter
+			int x = 0;
+			while(x<=1){ 
+				remoteValues[x] = decryptServerPublic(din.readUTF());
+				System.out.println("REMOTE VALSSS " + remoteValues[x]);
+				x++;
+			}
+			System.out.println("Completed.");
+			return remoteValues;
+
 		}catch (Exception e)  {
 			System.out.println(e);
 			return null;
 		} 
-		
+
 	}
 
 	private static void splashScreenInit() {
@@ -967,7 +987,7 @@ public class Client
 		screen.setProgressMax(100);
 		screen.setScreenVisible(true);
 	}
-	
+
 	public static void setEnableSounds(boolean activated)
 	{
 		if(activated)
@@ -975,7 +995,7 @@ public class Client
 		else
 			enableSounds = false;
 	}
-	
+
 	public static boolean getEnableSounds()
 	{
 		return enableSounds;

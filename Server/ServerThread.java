@@ -214,37 +214,26 @@ public class ServerThread extends Thread
 		String privateKeyExp = privateKey.getPrivateExponent().toString();
 		//Send half a time plz!
 		System.out.println(privateKeyMod.length());
-		int chunks = (privateKeyMod.length()/245);
 		//Send how many chunks will be coming
-		dout.writeUTF(String.valueOf(chunks));
-		/*
-		 * Copied code
-		 */
-		StringReader r = new StringReader (privateKeyMod);
-		String encoding = "UTF-8"; 
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream (245); // Twice as large as necessary 
-		OutputStreamWriter w = new OutputStreamWriter  (buffer, encoding); 
-		 
-		char[] cbuf = new char[100]; 
-		byte[] tempBuf; 
-		int len; 
-		while ((len = r.read(cbuf, 0, cbuf.length)) > 0) { 
-		    w.write(cbuf, 0, len); 
-		    w.flush(); 
-		    if (buffer.size() >= 245) { 
-		        tempBuf = buffer.toByteArray(); 		        
-		        //Try to write one chunk!!
-		        dout.writeUTF(encryptServerPrivate(tempBuf.toString()));
-		        buffer.reset(); 
-		        if (tempBuf.length > 245) { 
-		            buffer.write(tempBuf, 245, tempBuf.length - 245); 
-		        } 
-		    } 
+;
+		
+		if(privateKeyMod.length() > 245){
+			double messageNumbers = (double)privateKeyMod.length()/245;
+			double messageNumbersInt = Math.ceil(messageNumbers);
+			dout.writeUTF(String.valueOf(messageNumbersInt));
+			System.out.println("MessageLength: "+privateKeyMod.length()+"\nMessageLength/245: "+messageNumbers+"\nCeiling of that: "+messageNumbersInt);
+			String[] messageChunks = new String[(int)messageNumbersInt];
+			for(int i=0;i<messageChunks.length;i++){
+				int begin=i*245;
+				int end = begin+245;
+				if(end>privateKeyMod.length()){
+					end = privateKeyMod.length()-1;
+				}
+				messageChunks[i] = privateKeyMod.substring(begin,end);
+				dout.writeUTF(encryptServerPrivate(messageChunks[i]));
+			}
+			dout.writeUTF("end");
 		}
-		dout.writeUTF("end");
-		/*
-		 * End copied code
-		 */
 		/*dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/4)-1))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/4),(privateKeyMod.length()/2))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/2)-((privateKeyMod.length()-1)-(privateKeyMod.length()/4)))));
