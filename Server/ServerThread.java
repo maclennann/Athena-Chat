@@ -233,11 +233,23 @@ public class ServerThread extends Thread
 				dout.writeUTF(encryptServerPrivate(messageChunks[i]));
 			}
 		}
-		/*dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/4)-1))));
-		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/4),(privateKeyMod.length()/2))));
-		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/2)-((privateKeyMod.length()-1)-(privateKeyMod.length()/4)))));
-		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(((privateKeyMod.length()-1)-(privateKeyMod.length()/4)), ((privateKeyMod.length()-1)))));*/
-		dout.writeUTF(encryptServerPrivate(privateKey.getPrivateExponent().toString()));	
+		
+		if(privateKeyExp.length() > 245){
+			double messageNumbers = (double)privateKeyExp.length()/245;
+			int messageNumbersInt = (int)Math.ceil(messageNumbers);
+			dout.writeUTF(String.valueOf(messageNumbersInt));
+			System.out.println("MessageLength: "+privateKeyMod.length()+"\nMessageLength/245: "+messageNumbers+"\nCeiling of that: "+messageNumbersInt);
+			String[] messageChunks = new String[(int)messageNumbersInt];
+			for(int i=0;i<messageChunks.length;i++){
+				int begin=i*245;
+				int end = begin+245;
+				if(end>privateKeyExp.length()){
+					end = privateKeyExp.length()-1;
+				}
+				messageChunks[i] = privateKeyExp.substring(begin,end);
+				dout.writeUTF(encryptServerPrivate(messageChunks[i]));
+			}
+		}
 	}
 
 	public void writeBuddyListToFile(String[] buddyList, String buddyListName){

@@ -459,11 +459,7 @@ public class Client
 			System.out.println("PRIVATE MOD: " + privateMod);
 			
 			if(!(privateMod.equals("end"))) {
-				if (privateModArray.length > 0) {
-					//byte[] privateModBytes = (new BigInteger(privateMod)).toByteArray();
-					
-					//privateModArray[x] = decryptServerPublic(privateModBytes.toString());
-					
+				if (privateModArray.length > 0) {					
 					privateModArray[x] = decryptServerPublic(privateMod);
 				}
 			}
@@ -475,13 +471,37 @@ public class Client
 				finalPrivateMod = finalPrivateMod + privateModArray[i];
 			}
 		}
+		
+		int expChunks = Integer.parseInt(din.readUTF());
+		System.out.println(expChunks);
+
+		//Grab the private key information from the server
+		String finalPrivateExp="";
+		String[] privateExpArray = new String[expChunks];
+		for(int x=0; x<expChunks; x++) { 
+			String privateExp = din.readUTF();
+			System.out.println("PRIVATE EXP: " + privateExp);
+			
+			if(!(privateExp.equals("end"))) {
+				if (privateExpArray.length > 0) {					
+					privateExpArray[x] = decryptServerPublic(privateExp);
+				}
+			}
+		}
+
+		if (privateExpArray.length > 0) {
+			finalPrivateExp = privateExpArray[0];    // start with the first element
+			for (int i=1; i<privateExpArray.length; i++) {
+				finalPrivateExp = finalPrivateExp + privateExpArray[i];
+			}
+		}
 
 		System.out.println("DECRYPTED PRIVATE MOD: " + finalPrivateMod);
 	//	System.out.println("DECRYPTED PRIVATE MOD: " + decryptServerPublic(finalPrivateMod));
 
 		byte[] privateModBytes = (new BigInteger(finalPrivateMod)).toByteArray();
 		BigInteger privateMod = new BigInteger(privateModBytes);
-		byte[] privateExpBytes = (new BigInteger(decryptServerPublic(din.readUTF()))).toByteArray();
+		byte[] privateExpBytes = (new BigInteger(finalPrivateExp)).toByteArray();
 		BigInteger privateExp = new BigInteger(privateExpBytes);
 
 		//Write it to the file
