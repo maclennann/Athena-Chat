@@ -214,6 +214,9 @@ public class ServerThread extends Thread
 		String privateKeyExp = privateKey.getPrivateExponent().toString();
 		//Send half a time plz!
 		System.out.println(privateKeyMod.length());
+		int chunks = (privateKeyMod.length()/245);
+		//Send how many chunks will be coming
+		dout.writeUTF(String.valueOf(chunks));
 		/*
 		 * Copied code
 		 */
@@ -228,17 +231,17 @@ public class ServerThread extends Thread
 		while ((len = r.read(cbuf, 0, cbuf.length)) > 0) { 
 		    w.write(cbuf, 0, len); 
 		    w.flush(); 
-		    if (buffer.size() >= 254) { 
-		        tempBuf = buffer.toByteArray(); 
-		        
+		    if (buffer.size() >= 245) { 
+		        tempBuf = buffer.toByteArray(); 		        
 		        //Try to write one chunk!!
 		        dout.writeUTF(encryptServerPrivate(tempBuf.toString()));
 		        buffer.reset(); 
-		        if (tempBuf.length > 255) { 
-		            buffer.write(tempBuf, 254, tempBuf.length - 254); 
+		        if (tempBuf.length > 245) { 
+		            buffer.write(tempBuf, 245, tempBuf.length - 245); 
 		        } 
 		    } 
-		} 
+		}
+		dout.writeUTF("end");
 		/*
 		 * End copied code
 		 */

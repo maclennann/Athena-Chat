@@ -448,12 +448,18 @@ public class Client
 		//Receive ack message
 		System.out.println("Message received from server: " + decryptServerPublic(din.readUTF()));
 		
+		int chunks = Integer.parseInt(din.readUTF());
+		
 		//Grab the private key information from the server
-		String privateMod1 = decryptServerPublic(din.readUTF());
-		String privateMod2 = decryptServerPublic(din.readUTF());
-		String privateMod3 = decryptServerPublic(din.readUTF());
-		String privateMod4 = decryptServerPublic(din.readUTF());
-		BigInteger privateMod = new BigInteger(privateMod1.concat(privateMod2).concat(privateMod3).concat(privateMod4));
+		String finalPrivateMod="";
+		for(int x=0; x<chunks; x++) { 
+		String privateMod = din.readUTF();
+		if(!(privateMod.equals("end"))) {
+			finalPrivateMod.concat(privateMod);
+		}
+		}
+		
+		BigInteger privateMod = new BigInteger(finalPrivateMod);
 		BigInteger privateExp = new BigInteger(decryptServerPublic(din.readUTF()));
 		
 		//Write it to the file
