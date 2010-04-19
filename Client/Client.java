@@ -463,7 +463,11 @@ public class Client
 			}
 			if(!(privateMod.equals("end"))) {
 				if (privateModArray.length > 0) {
-					privateModArray[x] = decryptServerPublic(privateMod).getBytes().toString();
+					//byte[] privateModBytes = (new BigInteger(privateMod)).toByteArray();
+					
+					//privateModArray[x] = decryptServerPublic(privateModBytes.toString());
+					
+					privateModArray[x] = decryptServerPublic(privateMod);
 				}
 			}
 		}
