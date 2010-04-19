@@ -126,7 +126,9 @@ public class ServerThread extends Thread
 			}
 
 		} catch ( EOFException ie ) {
+			ie.printStackTrace();
 		} catch ( IOException ie ) {
+			ie.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
