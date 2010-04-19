@@ -232,7 +232,6 @@ public class ServerThread extends Thread
 				messageChunks[i] = privateKeyMod.substring(begin,end);
 				dout.writeUTF(encryptServerPrivate(messageChunks[i]));
 			}
-			dout.writeUTF("end");
 		}
 		/*dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring(0, ((privateKeyMod.length()/4)-1))));
 		dout.writeUTF(encryptServerPrivate(privateKey.getModulus().toString().substring((privateKeyMod.length()/4),(privateKeyMod.length()/2))));
