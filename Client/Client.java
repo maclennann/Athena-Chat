@@ -457,10 +457,7 @@ public class Client
 		for(int x=0; x<chunks; x++) { 
 			String privateMod = din.readUTF();
 			System.out.println("PRIVATE MOD: " + privateMod);
-			if(privateMod.indexOf("-") > -1) { 
-				String tmpString = privateMod.replaceAll("-", "");
-				privateMod = tmpString;
-			}
+			
 			if(!(privateMod.equals("end"))) {
 				if (privateModArray.length > 0) {
 					//byte[] privateModBytes = (new BigInteger(privateMod)).toByteArray();
