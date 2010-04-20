@@ -740,7 +740,7 @@ public class ClientApplet extends JFrame {
 					JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 					JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
 					JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
-			      //uniqueIDHash.remove(currentTextArea.getDocument());
+			      uniqueIDHash.remove(currentTextArea.getDocument());
 			      
 			      for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
 			      {
@@ -999,7 +999,7 @@ public class ClientApplet extends JFrame {
 				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 				//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
 				JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
-		      //uniqueIDHash.remove(currentTextArea.getDocument());
+		      uniqueIDHash.remove(currentTextPane.getDocument());
 		      
 		      }
 			  if(imTabbedPane.getTabCount() ==0){
@@ -1077,8 +1077,7 @@ class MapTextArea extends JFrame {
 		myJEP = new JEditorPane();
 		myJEP.setEditable(false);
         // enable the spell checking on the text component with all features
-		
-		//uniqueIDHash.put(myTA.getDocument(), myJPanel);
+	
 
 
 		//JScrollPane mySP = new JScrollPane(myTA);
@@ -1097,6 +1096,8 @@ class MapTextArea extends JFrame {
 		myTP.setBounds(10,440,560,50);
 		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
 		myJPanel.add(myTP);
+		
+		uniqueIDHash.put(myTP.getDocument(), myJPanel);
 
 		//Register the spell checker in the text field
 		if (spellCheckFlag)
@@ -1168,7 +1169,7 @@ class MapTextArea extends JFrame {
 
 	// Set the text color (does nothing)
 	public void setTextColor(Color color) {
-		myTA.setForeground(color);
+		//myTA.setForeground(color);
 	}
 
 	// Write a string to the text area

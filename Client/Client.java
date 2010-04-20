@@ -110,9 +110,9 @@ public class Client
 	public static void processMessage( String message ) throws BadLocationException {	
 		//Get user to send message to from active tab
 		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
-
 		//Get the JPanel in the active tab
 		print = (MapTextArea)clientResource.tabPanels.get(toUser);
+		System.out.println(print.toString());
 
 		//See if the user is logged in. If yes, send it. If no, error.
 		if (debug == 1) System.out.println("USERNAME: " + username);
