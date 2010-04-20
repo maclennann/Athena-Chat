@@ -187,8 +187,8 @@ public class ServerThread extends Thread
 			//Is the message an eventcode meant for the server?
 			if (toUserDecrypted.equals("Aegis")) { 
 				if(debug>=1)System.out.print("Server eventcode detected! ");
-				if(debug>=1)System.out.println(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()));
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
+				if(debug>=1)System.out.println(decryptServerPrivate(messageEncrypted));
+				systemMessageListener(Integer.parseInt(decryptServerPrivate(messageEncrypted)));
 				return;
 			}//Is the message someone trying to create an account?
 			if (toUserDecrypted.equals("Interupt")) {
@@ -469,26 +469,20 @@ public class ServerThread extends Thread
 		try {
 			System.out.println(username);
 			//Encrypt the String, turn it into a BigInteger
-			BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 			//Acknowledge connection. Make sure we are doing the right thing
-			sendMessage(username, "CheckUserStatus", accessGrantedCipher.toString());
+			//(username, "CheckUserStatus", accessGrantedCipher.toString());
 			//Listen for the username
-			String findUserCipher = serverDin.readUTF();
+			String findUser = decryptServerPrivate(serverDin.readUTF());
 
-			byte[] findUserBytes = (new BigInteger(findUserCipher)).toByteArray();
-			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			//Print out the received username
-			System.out.println("Username received: " + findUserDecrypted);
+			System.out.println("Username received: " + findUser);
 			//Check to see if the username is in the current Hashtable, return result
-			if ((server.userToServerSocket.containsKey(findUserDecrypted))) { 
-				String message = "1";
-				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
+			if ((server.userToServerSocket.containsKey(findUser))) { 				
+				sendMessage(username, "CheckUserStatusResult", encryptServerPrivate("1"));
 				System.out.println("(Online)\n");
-			} else {
-				String message = "0";
-				BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-				sendMessage(username, "CheckUserStatusResult", messageCipher.toString());
+			} else {				
+				sendMessage(username, "CheckUserStatusResult", encryptServerPrivate("0"));
 				System.out.println("(Offline)\n");
 			} 
 		} catch ( Exception e ) { 
@@ -784,7 +778,7 @@ public class ServerThread extends Thread
 	}
 	
 	
-	public void publicKeyRequest(){
+	public void publicKeyRequest() throws IOException{
 
 		System.out.println(username);
 		//Acknowledge connection. Make sure we are doing the right thing
