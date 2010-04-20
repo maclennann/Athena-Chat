@@ -1054,9 +1054,6 @@ public class Client
 
 			systemMessage("005");
 
-			//Get acknowledge message
-			if(debug>=1)System.out.println(decryptServerPublic(c2sdin.readUTF())); 
-
 			//Send buddyname
 			c2sdout.writeUTF(encryptServerPublic(buddyname));
 			String[] remoteValues = new String[2];
