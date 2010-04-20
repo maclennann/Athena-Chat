@@ -344,9 +344,6 @@ public class Client
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			//First contact with Aegis!
 			systemMessage("001");
-			//Listen for the incoming Acknowledge message
-			c2sdin.readUTF(); 
-			if(debug>=1)System.out.println("Acknowledge message received from server.");
 			//Go ahead and send Aegis the user name we want to find 
 			c2sdout.writeUTF(encryptServerPublic(findUserName));
 			if(debug>=1)System.out.println("Username sent - now listening for result...");
