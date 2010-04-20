@@ -794,8 +794,9 @@ public class Client
 	/**
 	 * Method gets the user's public key from Aegis
 	 * @param usernameToFind
+	 * @throws IOException 
 	 */
-	public static void getUsersPublicKeyFromAegis(String usernameToFind) {
+	public static void getUsersPublicKeyFromAegis(String usernameToFind) throws IOException {
 		usernameToCheck = usernameToFind;
 		if(debug>=1)System.out.println("Getting " + usernameToFind + "'s public key!");
 		publicKeyToFind = usernameToFind;
