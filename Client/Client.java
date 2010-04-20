@@ -704,7 +704,7 @@ public class Client
 
 	private static void receiveBuddyListFromServer() throws IOException {
 		// TODO Auto-generated method stub
-		systemMessage("8");
+		systemMessage("8");//Can't go over 007
 		
 		//Receive ack message
 		//System.out.println("System message received : " + decryptServerPublic(din.readUTF()));
