@@ -374,7 +374,7 @@ public class Client
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			systemMessage("003");
-
+			systemMessage(findUserName);
 			if(debug>=1)System.out.println("SENT SERVER FLAG 003");
 
 		} catch (Exception e) { 
