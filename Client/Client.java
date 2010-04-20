@@ -226,7 +226,7 @@ public class Client
 				out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv", true));
 				encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
 				out.write(encryptedUsername + "\n");
-				out.close();	
+				out.close();
 			}
 		}
 		catch (IOException e) { } 
@@ -265,38 +265,14 @@ public class Client
 			String fromUserCipher = din.readUTF();
 			// What is the message?
 			String encryptedMessage = din.readUTF();
-			if(debug==1)System.out.println("DFSAFSFD: "  + encryptedMessage);
+			if(debug==1)System.out.println("Encrypted Message: "  + encryptedMessage);
 			// Grab the digital signature 
 			//String digitalSignatureCipher = din.readUTF();
 
 			//Don't have to do the below, waste of memory, simple do String.getBytes()
 			//BigInteger fromUserBytes = new BigInteger(fromUserCipher);
 			
-			//Grab the user's private key - SHHH!!
-			String privateKeyPath = "users/" + username + "/keys/" + username + ".priv";
-			File privateKey = new File(privateKeyPath);
-			if(!(privateKey.exists())) {
-				//Check to see if the public key is there too
-				boolean success = new File("users/" + username + "/keys/").mkdirs();
-				if(success) { 
-					try {
-						receivePrivateKeyFromServer();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 
-				}
-				else { 
-					try {
-						receivePrivateKeyFromServer();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}				
-			}
 			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
 			//Decrypt the fromUser to see what user this message came from!
@@ -586,6 +562,31 @@ public class Client
 				File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
 				if (!(publicKey.exists())) {
 					getUsersPublicKeyFromAegis(username);
+				}
+				//Grab the user's private key - SHHH!!
+				String privateKeyPath = "users/" + username + "/keys/" + username + ".priv";
+				File privateKey = new File(privateKeyPath);
+				if(!(privateKey.exists())) {
+					//Check to see if the public key is there too
+					boolean success = new File("users/" + username + "/keys/").mkdirs();
+					if(success) { 
+						try {
+							receivePrivateKeyFromServer();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+					else { 
+						try {
+							receivePrivateKeyFromServer();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}				
 				}
 			}
 		} catch( IOException ie ) { ie.printStackTrace(); } catch (NoSuchAlgorithmException e) {

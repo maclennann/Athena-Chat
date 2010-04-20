@@ -363,6 +363,7 @@ public class ClientApplet extends JFrame {
 							// Print the array back to the file (will overwrite the
 							// previous file
 							Client.writeBuddyListToFile(usernames);
+
 						}
 						else
 						{
