@@ -521,8 +521,8 @@ public class ServerThread extends Thread
 				System.out.println("PATH: " + path);
 				String hashOfBuddyList = FileHash.getMD5Checksum(path);
 				String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
-				sendSystemMessage(username, hashOfBuddyList);
-				sendSystemMessage(username, lastModDateOfBuddyList);
+				serverDout.writeUTF(encryptServerPrivate(hashOfBuddyList));
+				serverDout.writeUTF(encryptServerPrivate(lastModDateOfBuddyList));
 		} catch (Exception e) {
 		}
 	}
