@@ -171,7 +171,7 @@ public class ServerThread extends Thread
 				return;
 			}	
 			else { 
-				if(debug==1)System.out.println("Routing normal message");
+				if(debug==1)System.out.println("Routing normal message to: " + toUserDecrypted + "\n" + username + "\n" + messageEncrypted);
 				sendMessage(toUserDecrypted, username, messageEncrypted);
 			}
 
