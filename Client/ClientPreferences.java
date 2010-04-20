@@ -103,9 +103,9 @@ public class ClientPreferences extends JPanel {
 	//Define components for the Formatting Menu Panel
 	public JButton formattingLabel = new JButton("Font Format", new ImageIcon("../images/fontPref.png"));
 	public JComboBox selectFontComboBox = new JComboBox();
-	public JButton toggleBoldJButton = new JButton("Bold");
-	public JButton toggleItalicsJButton = new JButton("Italics");
-	public JButton toggleUnderlineJButton = new JButton("Underlined");
+	public JCheckBox toggleBoldJButton = new JCheckBox("Bold");
+	public JCheckBox toggleItalicsJButton = new JCheckBox("Italics");
+	public JCheckBox toggleUnderlineJButton = new JCheckBox("Underlined");
 	public boolean selectFontFlag = false;
 	public boolean toggleBoldFlag = false;
 	public boolean toggleItalicsFlag = false;

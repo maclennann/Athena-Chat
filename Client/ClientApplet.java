@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
@@ -115,6 +116,7 @@ public class ClientApplet extends JFrame {
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
+	public Border buttonBorder = BorderFactory.createRaisedBevelBorder();
 	public Border blackline = BorderFactory.createLineBorder(Color.gray);
 	public Border oneColor = BorderFactory.createLineBorder(Color.black);
 	public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
@@ -299,31 +301,33 @@ public class ClientApplet extends JFrame {
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, twoColor);
 		Border contactListBorderBB = BorderFactory.createCompoundBorder(contactListBorderAA, threeColor);
 		Border contactListBorderCC = BorderFactory.createCompoundBorder(contactListBorderBB, oneColor);
-		//TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderCC, "Contact List");
 		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderCC, Client.username + "'s Contact List", TitledBorder.CENTER,
-											TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.ITALIC,14), new Color(0, 0, 120));
+											TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
 		// Adds the Icons to Pane
 		// TODO Add ActionListeners to the images to bring up the add/remove
 		// user windows
-		ImageIcon addUserIcon = new ImageIcon("../images/addUser.png");
-		ImageIcon removeUserIcon = new ImageIcon("../images/removeUser.png");
-		JLabel addContactLabel = new JLabel();
-		JLabel removeContactLabel = new JLabel();;
-		addContactLabel.setIcon(addUserIcon);
-		addContactLabel.setText("Add Contact");
-		addContactLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		addContactLabel.setHorizontalTextPosition(JLabel.CENTER);
+
+		JButton addContactLabel = new JButton(new ImageIcon("../images/addUser.png"));
+		JButton removeContactLabel = new JButton(new ImageIcon("../images/removeUser.png"));
+
+		addContactLabel.setFont(new Font("Arial", Font.BOLD, 10));
+		addContactLabel.setMargin(new Insets(1, 1, 1, 1));
+		addContactLabel.setForeground(Color.black);
+		addContactLabel.setBackground(new Color(240, 240, 240));
+		buttonBorder = BorderFactory.createCompoundBorder(buttonBorder, buttonBorder);
+		addContactLabel.setBorder(buttonBorder);
 		
-		removeContactLabel.setIcon(removeUserIcon);
-		removeContactLabel.setText("Remove Contact");
-		removeContactLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		removeContactLabel.setHorizontalTextPosition(JLabel.CENTER);
+		removeContactLabel.setFont(new Font("Arial", Font.BOLD, 10));
+		removeContactLabel.setMargin(new Insets(1, 1, 1, 1));
+		removeContactLabel.setForeground(Color.black);
+		removeContactLabel.setBackground(new Color(240, 240, 240));
+		removeContactLabel.setBorder(buttonBorder);
 		
 		addContactLabel.setVisible(true);
 		removeContactLabel.setVisible(true);
-		addContactLabel.setBounds(600, 495, 100, 50);
-		removeContactLabel.setBounds(700, 495, 100, 50);
+		addContactLabel.setBounds(610, 490, 50, 50);
+		removeContactLabel.setBounds(700, 490, 50, 50);
 		
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
@@ -461,7 +465,7 @@ public class ClientApplet extends JFrame {
 				JList theList = (JList) mouseEvent.getSource();
 				Object o;
 				// If it was double-clicked
-				if (mouseEvent.getClickCount() == 1)
+				if (mouseEvent.getClickCount() == 1 && (!(theList.getModel().toString().equals("[]"))))
 				{
 					int index = theList.locationToIndex(mouseEvent.getPoint());
 					Rectangle r = theList.getCellBounds(index, index);
@@ -476,8 +480,8 @@ public class ClientApplet extends JFrame {
 						theList.clearSelection();
 					}
 				}
-				if (mouseEvent.getClickCount() == 2) {
-
+				if (mouseEvent.getClickCount() == 2 && (!(theList.getModel().toString().equals("[]"))))
+				{
 					// Find out what was double-clicked
 					int index = theList.locationToIndex(mouseEvent.getPoint());
 					Rectangle r = theList.getCellBounds(index, index);
