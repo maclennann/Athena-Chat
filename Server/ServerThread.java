@@ -235,19 +235,19 @@ public class ServerThread extends Thread
 		InputStream is;
 
 		//Let's get the number of lines in the file
-		File newFile = new File("users/" + username + "/buddylist.csv");
+		File newFile = new File("buddylists/" + username + "/buddylist.csv");
 		if(!(newFile.exists())) { 
 			boolean success = new File("users/" + username).mkdirs();
 			if(success) { 
 				newFile.createNewFile();
-				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+				is = new BufferedInputStream(new FileInputStream("buddylists/" + username + "/buddylist.csv"));
 			}
 			else { 
 				newFile.createNewFile();
 			}
 		}
 
-		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+		is = new BufferedInputStream(new FileInputStream("buddylists/" + username + "/buddylist.csv"));
 		byte[] c = new byte[1024];
 		count = 0;
 		readChars = 0;
@@ -266,7 +266,7 @@ public class ServerThread extends Thread
 			return usernames;
 		}
 		else { 
-			File newFile2 = new File("users/" + username + "/buddylist.csv");
+			File newFile2 = new File("buddylists/" + username + "/buddylist.csv");
 			if(!(newFile2.exists())) { 
 				newFile2.createNewFile();
 			}
