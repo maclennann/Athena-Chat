@@ -139,7 +139,10 @@ public class ClientApplet extends JFrame {
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
-		listModel.addElement(availableUser);
+		if(listModel.indexOf(availableUser) == -1){
+			listModel.addElement(availableUser);
+		}
+		
 	}
 
 	// Method to remove user from the JList who signs off

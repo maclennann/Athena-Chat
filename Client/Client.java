@@ -445,38 +445,6 @@ public class Client
 				return;
 			}
 
-			if(fromUserDecrypted.equals("CheckUserStatus"))
-			{
-				//Decrypt message
-				decryptedMessage = decryptServerPublic(encryptedMessage);
-				if(debug==2)System.out.println(decryptedMessage);
-				c2sdout.writeUTF(encryptServerPublic(checkUserBuddy));
-				return;
-			}
-			if(fromUserDecrypted.equals("CheckUserStatusResult"))
-			{
-				//Decrypt message
-				decryptedMessage = decryptServerPublic(encryptedMessage);
-				int result = Integer.parseInt(decryptedMessage);
-				clientResource.mapUserStatus(checkUserBuddy, result);
-				if (result == 1)
-				{
-					clientResource.newBuddyListItems(checkUserBuddy);						
-				}
-				return;
-			}
-
-			if(fromUserDecrypted.equals("Aegis")) { 
-				if(debug>=1) System.out.println("FROM USER AEGIS RECEIVED! " + fromUserDecrypted);
-				decryptedMessage = decryptServerPublic(encryptedMessage);
-				/*if(decryptedMessage.equals("ReturnPublicKey")) { 
-					modOfBuddy = new BigInteger(decryptServerPublic(din.readUTF()));
-					expOfBuddy = new BigInteger(decryptServerPublic(din.readUTF()));
-					writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
-					return;
-				}*/
-			}
-
 			//Create buddy list entry for user sign on
 			if(fromUserDecrypted.equals("ServerLogOn")) {
 				//Decrypt Message
