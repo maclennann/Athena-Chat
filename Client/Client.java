@@ -225,7 +225,9 @@ public class Client
 				out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv", true));
 				encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
 				out.write(encryptedUsername + "\n");
-				out.close();	
+				out.close();
+				//Sync the buddylist with the server
+				//Client.sendBuddyListToServer();
 			}
 		}
 		catch (IOException e) { } 
@@ -252,6 +254,8 @@ public class Client
 				out.write(encryptedUsername + "\n");
 			}
 			out.close();
+			//Sync the buddylist with the server
+			Client.sendBuddyListToServer();
 		}catch(Exception e)
 		{if(debug==1)System.out.println("ERROR WRITING BUDDYLIST");
 		}
