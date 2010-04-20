@@ -505,7 +505,10 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
+				//This socket is for client -> server coms
 				socket = new Socket( "71.234.132.9", 7777 );
+				//This socket is for client -> client coms
+				//socket = new Socket("71.234.132.9", 7778 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -524,8 +527,12 @@ public class Client
 
 
 			//Bind the datastreams to the socket in order to send/receive
+			//These datastreams are for client -> server coms
 			din = new DataInputStream( socket.getInputStream() );
 			dout = new DataOutputStream( socket.getOutputStream() );
+			//These datastreams are for client -> client coms
+			//c2cdin = new DataInputStream(c2csocket.getInputStream());
+			//c2cdout = new DataOutputStream(c2ssocket.getOutputStream());
 
 			//Read in the server's public key for encryption of headers
 			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
@@ -986,7 +993,7 @@ public static void checkUserStatus(String findUserName, String checkStatusFlag) 
 	} catch (Exception e) { 
 		if(debug==1)System.out.println(e);
 	}	
-}	
+}
 
 //Use this method if Contact with Aegis is needed
 public static void systemMessage( String message ) {	
