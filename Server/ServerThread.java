@@ -444,7 +444,7 @@ public class ServerThread extends Thread
 			//Encrypt the String, turn it into a BigInteger
 			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 
-			sendSystemMessage(username, "Access Granted. Send me the username.");
+			//serverDout.write "Access Granted. Send me the username.");
 			//Listen for the username
 			String findUserCipher = serverDin.readUTF();
 			System.out.println("FINDUSERCIPHER!@$!#@" +findUserCipher);
