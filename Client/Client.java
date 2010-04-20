@@ -992,6 +992,7 @@ public static void systemMessage( String message ) {
 	try{
 		//Send recipient's name and message to server
 		dout.writeUTF(encryptServerPublic("Aegis"));
+		dout.writeUTF(encryptServerPublic(""));
 		dout.writeUTF(encryptServerPublic(message));
 		//dout.writeUTF("TEST");
 	} catch( IOException ie ) {
