@@ -329,6 +329,7 @@ public class Client
 
 		if(debug>=1)System.out.println("Current Buddy To Check: " + usernameToCheck);
 		checkUserStatus(usernameToCheck, "PauseThread!");
+		getUsersPublicKeyFromAegis(usernameToCheck);
 	}
 
 	/**
@@ -455,7 +456,6 @@ public class Client
 				{
 					clientResource.newBuddyListItems(checkUserBuddy);						
 				}
-				getUsersPublicKeyFromAegis(checkUserBuddy);
 				return;
 			}
 
