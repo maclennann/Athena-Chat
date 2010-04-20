@@ -474,7 +474,7 @@ public class ServerThread extends Thread
 			//(username, "CheckUserStatus", accessGrantedCipher.toString());
 			//Listen for the username
 			String findUser = decryptServerPrivate(serverDin.readUTF());
-
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			//Print out the received username
 			System.out.println("Username received: " + findUser);
 			System.out.println("Socket serverDout: "+serverDout.toString());
