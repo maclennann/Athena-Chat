@@ -707,7 +707,7 @@ public class Client
 		systemMessage("8");
 		
 		//Receive ack message
-		System.out.println("System message received : " + decryptServerPublic(din.readUTF()));
+		//System.out.println("System message received : " + decryptServerPublic(din.readUTF()));
 		
 		//String array of the buddylist
 		String[] buddyListLines;
