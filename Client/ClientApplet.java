@@ -83,6 +83,7 @@ import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Element;
+import javax.swing.text.AttributeSet;
 
 import com.inet.jortho.SpellChecker;	
 
@@ -1048,6 +1049,7 @@ class MapTextArea extends JFrame {
 	public JTextPane myTP;
 	public JTextArea myTA;
 	public JTextField myTF;
+	public AttributeSet attr;
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
@@ -1119,7 +1121,7 @@ class MapTextArea extends JFrame {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER && (!(myTP.getText().equals(""))))
 					try {
 						Client.processMessage(myTP.getText());
-						myTP.getDocument().remove(0, myTP.getDocument().getLength());
+						myTP.getDocument().remove(0, myTP.getText().length());
 					} catch (BadLocationException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -1137,7 +1139,7 @@ class MapTextArea extends JFrame {
 		System.out.println("Listener added to tab!");
 		
 		//Set font to Arial
-		Font font = new Font("Arial",Font.PLAIN,17);
+		Font font = new Font("Arial",Font.PLAIN,14);
 		//myTA.setFont(font);
 		myTP.setFont(font);
 	}
@@ -1169,25 +1171,24 @@ class MapTextArea extends JFrame {
 
 	// Set the text color (does nothing)
 	public void setTextColor(Color color) {
-		//myTA.setForeground(color);
+		myJEP.setForeground(color);
+		attr = myJEP.getDocument().getDefaultRootElement().getAttributes().copyAttributes();
 	}
 
 	// Write a string to the text area
 	public void writeToTextArea(String message) throws BadLocationException {
 		//myTA.append(message);
-		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, null);
+		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, attr);
 	}
 
 	// Move the cursor to the end of the ScrollPane
 	// TODO: Sometimes it shows highlighted text
 	public void moveToEnd() {
-		//myTA.setCaretPosition(myTA.getText().length());
-		//myJEP.setCaretPosition(myJEP.getText().length()-1);
+		myJEP.setCaretPosition(myJEP.getDocument().getLength());
 	}
 
 	// Clear the text out of the text field
 	public void clearTextField() {
-		//myTF.setText("");
 		myTP.setText("");
 	}
 }
