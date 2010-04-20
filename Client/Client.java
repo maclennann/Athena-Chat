@@ -55,7 +55,7 @@ public class Client
 	static DESCrypto descrypto;
 
 	//Print debug messages?
-	public static final int debug=1;
+	public static final int debug=2;
 
 	//Global username variable
 	public static String username="null";
@@ -89,6 +89,9 @@ public class Client
 	//Thread that will be used to listen for incoming messages
 	static Thread listeningProcedureClientToClient;
 	static Thread listeningProcedureClientToServer;
+	
+	//Username to check
+	static String usernameToCheck;
 
 	//Flag to control sound notifications
 	public static boolean enableSounds;
@@ -785,6 +788,7 @@ public class Client
 	 * @param usernameToFind
 	 */
 	public static void getUsersPublicKeyFromAegis(String usernameToFind) {
+		usernameToCheck = usernameToFind;
 		if(debug>=1)System.out.println("Getting " + usernameToFind + "'s public key!");
 		publicKeyToFind = usernameToFind;
 		//Send Aegis event code 004 to let it know what we're doing
