@@ -376,6 +376,11 @@ public class Client
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			systemMessage("003");
 			c2sdout.writeUTF(encryptServerPublic(findUserName));
+			result = Integer.parseInt(decryptServerPublic(c2sdin.readUTF()));
+			clientResource.mapUserStatus(findUserName,result);
+			if(result==1){
+				clientResource.newBuddyListItems(findUserName);
+			}
 			if(debug>=1)System.out.println("SENT SERVER FLAG 003");
 
 		} catch (Exception e) { 
