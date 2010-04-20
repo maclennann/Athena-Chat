@@ -131,7 +131,7 @@ public class ServerThread extends Thread
 				server.mapUserServerSocket(username, c2ssocket);	
 				server.mapUserClientSocket(username, c2csocket);
 				server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
-				server.addServerOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));
+				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));
 				
 				
 			}
