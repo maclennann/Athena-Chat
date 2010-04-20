@@ -181,7 +181,7 @@ public class Server
 			DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
 			
 			//Map the outputstream to the socket for later reference
-			outputStreams.put( s, dout );
+			//outputStreams.put( s, dout );
 			
 			//Handle the rest of the connection in the new thread
 			new ServerThread( this, s );
@@ -192,6 +192,10 @@ public class Server
 	// Get an enumeration of all the OutputStreams.
 	Enumeration<DataOutputStream> getOutputStreams() {
 		return outputStreams.elements();
+	}
+	
+	public void addOutputStream(Socket servSoc, DataOutputStream dataOut){
+		outputStreams.put(servSoc,dataOut);
 	}
 	
 	// Send a message to all clients (utility routine)

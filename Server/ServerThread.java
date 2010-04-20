@@ -116,6 +116,7 @@ public class ServerThread extends Thread
 
 				//Maps username to socket after user logs in
 				server.mapUserSocket(username, socket);	
+				server.addOutputStream(socket,new DataOutputStream(socket.getOutputStream()));
 			}
 			if(username.equals("Interupt")) {
 				routeMessage(din);
