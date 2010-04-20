@@ -454,9 +454,9 @@ public class ServerThread extends Thread
 			System.out.println("Username received: " + findUserDecrypted);
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToServerSocket.containsKey(findUserDecrypted))) { 
-				sendSystemMessage(username,"1");
+				serverDout.writeUTF(encryptServerPrivate("1"));
 				System.out.println("(Online)\n");
-			} else { sendSystemMessage(username,"0");
+			} else { serverDout.writeUTF(encryptServerPrivate("0"));
 			System.out.println("(Offline)\n");
 			} 
 			
