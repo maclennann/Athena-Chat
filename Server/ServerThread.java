@@ -477,7 +477,7 @@ public class ServerThread extends Thread
 
 			//Print out the received username
 			System.out.println("Username received: " + findUser);
-			System.out.println("Socket serverDout: "+serverDout);
+			System.out.println("Socket serverDout: "+serverDout.toString());
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToServerSocket.containsKey(findUser))) { 
 				
