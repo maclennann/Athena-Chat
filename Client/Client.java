@@ -460,6 +460,7 @@ public class Client
 			}
 
 			if(fromUserDecrypted.equals("Aegis")) { 
+				if(debug>=1) System.out.println("FROM USER AEGIS RECEIVED! " + fromUserDecrypted);
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				if(decryptedMessage.equals("ReturnPublicKey")) { 
 					modOfBuddy = new BigInteger(decryptServerPublic(din.readUTF()));
