@@ -20,6 +20,8 @@
  *
  ****************************************************/
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -27,6 +29,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +64,7 @@ public class ServerThread extends Thread
 	private static Server server;
 
 	//Define Global Variable Username / Password
-	private String username;
+	private static String username;
 	private String password;
 
 	//Our current socket
@@ -201,9 +204,91 @@ public class ServerThread extends Thread
 		break;
 		case 007: sendPrivateKeyToClient();
 		break;
+		case 8: sendBuddyListToClient();
+		break;
 		default: return;
 		}
 	}
+	private boolean sendBuddyListToClient() throws IOException {
+		// TODO Auto-generated method stub
+		String[] buddyListArray = returnBuddyListArray(true);
+		System.out.println("Inside sendBuddyListToClient");
+		
+		int numLines = buddyListArray.length;
+		System.out.println("numLines: " + numLines);
+		//Send Athena the begin message so it knows that this is the beginning of the file
+		dout.writeUTF(encryptServerPrivate("Begin"));
+		//Send Athena the number of lines we're sending
+		dout.writeUTF(encryptServerPrivate(new String(String.valueOf(numLines))));
+		//Send the lines of the file!
+		for(int x=0;x<buddyListArray.length;x++) { 
+			dout.writeUTF(encryptServerPrivate(buddyListArray[x]));
+		}
+		return true;
+		
+	}
+	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+	//TODO Make this return a multi-dementional array of all the fields in the CSV File
+	public static String[] returnBuddyListArray(boolean flag) throws IOException {
+		int count;
+		int readChars;
+		InputStream is;
+
+		//Let's get the number of lines in the file
+		File newFile = new File("users/" + username + "/buddylist.csv");
+		if(!(newFile.exists())) { 
+			boolean success = new File("users/" + username).mkdirs();
+			if(success) { 
+				newFile.createNewFile();
+				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+			}
+			else { 
+				newFile.createNewFile();
+			}
+		}
+
+		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+		byte[] c = new byte[1024];
+		count = 0;
+		readChars = 0;
+		while ((readChars = is.read(c)) != -1) {
+			for (int i = 0; i < readChars; ++i) {
+				if (c[i] == '\n')
+					++count;
+			}
+		} //End section
+
+		//Make the string array the size of the number of lines in the file
+		String[] usernames = new String[count];
+
+		//If there are no lines in the file we know that the user has no buddies! :(
+		if (count == 0) { 
+			return usernames;
+		}
+		else { 
+			File newFile2 = new File("users/" + username + "/buddylist.csv");
+			if(!(newFile2.exists())) { 
+				newFile2.createNewFile();
+			}
+			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
+			int x=0;
+			String raw;
+			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
+			while ((raw = in.readLine()) != null) 
+			{ 
+				// Read in the BigInteger in String form. Turn it to a BigInteger
+				// Turn the BigInteger to a byteArray, and decrypt it.
+				//strNum = new BigInteger(raw);
+				//str = descrypto.decryptData(strNum.toByteArray());
+
+				String foo[] = raw.split(","); 
+				usernames[x] = foo[0];
+				x++;
+			}
+			return usernames;
+		}
+	}
+
 	private void sendPrivateKeyToClient() throws IOException {
 		RSAPrivateKeySpec privateKey = RSACrypto.readPrivKeyFromFile("keys/" + username + ".priv");
 		//Send over ack message

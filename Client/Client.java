@@ -646,7 +646,7 @@ public class Client
 		//Now let's compare this hash with the hash on the server
 		if(!(hashOfLocalBuddyList.equals(remoteVals[0]))) { 
 			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
-			if(localBuddyListModDate < remoteBuddyListModDate) {
+			if(localBuddyListModDate > remoteBuddyListModDate) {
 				//TODO send buddylist to server!
 				System.out.println("SEND BUDDY LIST TO SERVER");
 				sendBuddyListToServer();
@@ -658,6 +658,7 @@ public class Client
 			else { 
 				//TODO 
 				System.out.println("GET BUDDY LIST FROM SERVER");
+				receiveBuddyListFromServer();
 			}
 		}
 		else { 
@@ -699,6 +700,29 @@ public class Client
 		systemMessage("002");
 		//Garbage collect!
 		System.gc();
+	}
+
+	private static void receiveBuddyListFromServer() throws IOException {
+		// TODO Auto-generated method stub
+		systemMessage("8");
+		
+		//Receive ack message
+		System.out.println("System message received : " + decryptServerPublic(din.readUTF()));
+		
+		//String array of the buddylist
+		String[] buddyListLines;
+		
+		//Receive buddylist head(should be begin)
+		System.out.println("BuddyList header: " + decryptServerPublic(din.readUTF()));
+		//Parse out how many lines buddylist is
+		buddyListLines = new String[(Integer.parseInt(decryptServerPublic(din.readUTF())))];
+		for(int y=0; y<buddyListLines.length;y++) { 
+			buddyListLines[y] = decryptServerPublic(din.readUTF());
+			System.out.println("Decrypted buddylist lines: " + buddyListLines[y]);
+		}
+		writeBuddyListToFile(buddyListLines);
+		System.out.println("Successfully wrote Buddylist to file");
+		
 	}
 
 	// Startup method to initiate the buddy list
