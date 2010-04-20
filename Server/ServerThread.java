@@ -789,17 +789,15 @@ public class ServerThread extends Thread
 		//serverDout.writeUTF(accessGrantedCipher.toString());
 		try{
 			//Listen for the username
-			String findUser = serverDin.readUTF();
-			byte[] findUserBytes = (new BigInteger(findUser)).toByteArray();
-			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-
+			String findUser = decryptServerPrivate(serverDin.readUTF());
+			
 			//Print out the received username
 			if(debug>=1)System.out.println("Username received PUBLIC FUCKING KEY REQUEST: " + findUser);
 
 
-			File newFile = new File("keys/" + findUserDecrypted + ".pub");
+			File newFile = new File("keys/" + findUser + ".pub");
 			if((newFile.exists())) {
-				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/"+findUserDecrypted+".pub");
+				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/"+findUser+".pub");
 				System.out.println("MOD: " + keyToReturn.getModulus().toString());
 				System.out.println("EXP: " + keyToReturn.getPublicExponent().toString());
 
