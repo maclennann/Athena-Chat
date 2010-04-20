@@ -148,6 +148,8 @@ public class ServerThread extends Thread
 			serverPrivate = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 			//Read in the Encrypted toUser
 			String toUserEncrypted=din.readUTF();
+			//Read in the From User
+			String fromUserEncrypted=din.readUTF();
 			//Read in the Encrypted message
 			String messageEncrypted=din.readUTF(); 
 			//Read in the Digital Signature
@@ -157,6 +159,8 @@ public class ServerThread extends Thread
 			byte[] toUserBytes = (new BigInteger(toUserEncrypted)).toByteArray();
 			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 
+			//Decrypt the from user
+			String fromUser = decryptServerPrivate(fromUserEncrypted);
 			System.out.println("Decrypted:" +  toUserDecrypted);
 
 			//Is the message an eventcode meant for the server?
@@ -171,8 +175,8 @@ public class ServerThread extends Thread
 				return;
 			}	
 			else { 
-				if(debug==1)System.out.println("Routing normal message to: " + toUserDecrypted + "\n" + username + "\n" + messageEncrypted);
-				sendMessage(toUserDecrypted, username, messageEncrypted);
+				if(debug==1)System.out.println("Routing normal message to: " + toUserDecrypted + "\n" + fromUser + "\n" + messageEncrypted);
+				sendMessage(toUserDecrypted, fromUser, messageEncrypted);
 			}
 
 		} catch (IOException e) {isAlive=0;}
