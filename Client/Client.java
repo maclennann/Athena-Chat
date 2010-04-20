@@ -274,7 +274,12 @@ public class Client
 			//Grab the user's private key - SHHH!!
 			String privateKeyPath = "users/" + username + "/keys/" + username + ".priv";
 			File privateKey = new File(privateKeyPath);
-			if(!(privateKey.exists())) { 
+			if(!(privateKey.exists())) {
+				//Check to see if the public key is there too!
+				File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
+				if(!(privateKey.exists())) { 
+					getUsersPublicKeyFromAegis(username);
+				}
 				boolean success = new File("users/" + username + "/keys/").mkdirs();
 				if(success) { 
 					receivePrivateKeyFromServer();
@@ -285,6 +290,7 @@ public class Client
 
 				}				
 			}
+			
 			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
 			//Decrypt the fromUser to see what user this message came from!
