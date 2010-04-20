@@ -92,6 +92,7 @@ public class Client
 	
 	//Username to check
 	static String usernameToCheck;
+	static String checkUserBuddy;
 
 	//Flag to control sound notifications
 	public static boolean enableSounds;
@@ -365,6 +366,7 @@ public class Client
 	 */
 	public static void checkUserStatus(String findUserName, String checkStatusFlag) {
 		try {
+			checkUserBuddy = findUserName;
 			//DataInputStream din = new DataInputStream(socket.getInputStream());
 			if(debug>=1)System.out.println("Checking availability for user: " + findUserName);
 			//Initialize Result to -1
@@ -439,7 +441,7 @@ public class Client
 				//Decrypt message
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				if(debug==2)System.out.println(decryptedMessage);
-				c2sdout.writeUTF(encryptServerPublic(usernameToCheck));
+				c2sdout.writeUTF(encryptServerPublic(checkUserBuddy));
 				return;
 			}
 			if(fromUserDecrypted.equals("CheckUserStatusResult"))
@@ -447,12 +449,12 @@ public class Client
 				//Decrypt message
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				int result = Integer.parseInt(decryptedMessage);
-				clientResource.mapUserStatus(usernameToCheck, result);
+				clientResource.mapUserStatus(checkUserBuddy, result);
 				if (result == 1)
 				{
-					clientResource.newBuddyListItems(usernameToCheck);						
+					clientResource.newBuddyListItems(checkUserBuddy);						
 				}
-				getUsersPublicKeyFromAegis(usernameToCheck);
+				getUsersPublicKeyFromAegis(checkUserBuddy);
 				return;
 			}
 
