@@ -341,7 +341,7 @@ public class ClientApplet extends JFrame {
 		
 		// MouseListener for the AddUser image
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
-			public void mousePressed(MouseEvent mouseEvent) {
+			public void mouseClicked(MouseEvent mouseEvent) {
 				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
 				try {
 					if(usernameToAdd != null){
@@ -399,7 +399,7 @@ public class ClientApplet extends JFrame {
 						final JComboBox listOfUsersJComboBox = new JComboBox();
 						final JButton removeJButton, cancelJButton;
 						removeJButton = new JButton("Remove");
-						cancelJButton = new JButton("Cancel");
+						cancelJButton = new JButton("Done");
 						
 						contentPane.setLayout(null);
 						
@@ -410,6 +410,8 @@ public class ClientApplet extends JFrame {
 					
 						for(int x=0; x<usernames.length;x++) listOfUsersJComboBox.addItem(usernames[x]);
 						
+						if(listOfUsersJComboBox.getItemCount() == 0)
+							removeJButton.setEnabled(false);
 						contentPane.add(listOfUsersJComboBox);
 						contentPane.add(removeJButton);
 						contentPane.add(cancelJButton);
@@ -432,7 +434,8 @@ public class ClientApplet extends JFrame {
 									// previous file
 									Client.writeBuddyListToFile(usernames);
 									listOfUsersJComboBox.removeItemAt(listOfUsersJComboBox.getSelectedIndex());
-																	
+									if(listOfUsersJComboBox.getItemCount() == 0)
+										removeJButton.setEnabled(false);								
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
