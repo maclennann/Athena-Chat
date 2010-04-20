@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
+import java.awt.Rectangle;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
@@ -437,16 +438,30 @@ public class ClientApplet extends JFrame {
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				JList theList = (JList) mouseEvent.getSource();
-
+				Object o;
 				// If it was double-clicked
+				if (mouseEvent.getClickCount() == 1)
+				{
+					int index = theList.locationToIndex(mouseEvent.getPoint());
+					Rectangle r = theList.getCellBounds(index, index);
+					if (r.contains(mouseEvent.getPoint())) {
+						theList.getSelectionModel().setLeadSelectionIndex(index);
+					}
+					else
+					{
+						theList.getSelectionModel().setLeadSelectionIndex(theList.getModel().getSize());
+						theList.clearSelection();
+					}
+				}
 				if (mouseEvent.getClickCount() == 2) {
 
 					// Find out what was double-clicked
 					int index = theList.locationToIndex(mouseEvent.getPoint());
-					if (index >= 0) {
+					Rectangle r = theList.getCellBounds(index, index);
+					if (r.contains(mouseEvent.getPoint())) {
 
 						// Get the buddy that was double-clicked
-						Object o = theList.getModel().getElementAt(index);
+						o = theList.getModel().getElementAt(index);
 
 						// Create a tab for the conversation if it doesn't exist
 						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
@@ -487,11 +502,16 @@ public class ClientApplet extends JFrame {
 							FocusCurrentTextField();
 						}
 					}
+					else
+					{
+						theList.getSelectionModel().setLeadSelectionIndex(theList.getModel().getSize());
+						theList.clearSelection();
+					}
 				}
-				if(!(hasFocus())) { 
+				//if(!(o.hasFocus())) { 
 				//if(getFocusOwner().equals(null)){					
-					theList.clearSelection();
-				}
+				//	theList.clearSelection();
+				//}
 			}
 		};
 

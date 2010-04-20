@@ -68,15 +68,17 @@ public class ClientPreferences extends JPanel {
 	public JFrame preferences;
 	public JPanel contentPane = new JPanel();
 	public JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
-	public JPanel prefLabelPane = new JPanel();
+	public JPanel prefLabelPaneLeft = new JPanel();
+	public JPanel prefLabelPaneRight = new JPanel();
 	public JButton apply = new JButton("Apply");
 	public JButton cancel = new JButton("Close");
-	public Border blackline;
+	public Border blackline, whiteline;
+	public Color originalColor;
 	public TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
 
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
-	public JLabel generalLabel = new JLabel();
+	public JButton generalLabel = new JButton("Test", new ImageIcon("../images/generalPref.png"));
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
 	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
 	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
@@ -88,18 +90,18 @@ public class ClientPreferences extends JPanel {
 	public boolean enableSpellCheckFlag = false;
 	
 	//Define components for the Notifications Menu Panel
-	public JLabel notificationsLabel = new JLabel();
+	public JButton notificationsLabel = new JButton("Notifications", new ImageIcon("../images/notificationsPref.png"));
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable Sounds", enableSounds);
 	public boolean enableSoundsVal;
 	public boolean enableSoundsFlag = false;
 
 	//Define components for the Encryption Menu Panel
-	public JLabel encryptionLabel = new JLabel();
+	public JButton encryptionLabel = new JButton("Encryption", new ImageIcon("../images/encryptionPref.png"));
 	public JLabel generateNewKeyPairJLabel = new JLabel("Generate New Encryption Key Pair");
 	public JButton generateNewKeyPairJButton = new JButton("Generate");
 	
 	//Define components for the Formatting Menu Panel
-	public JLabel formattingLabel = new JLabel();
+	public JButton formattingLabel = new JButton("Font Format", new ImageIcon("../images/fontPref.png"));
 	public JComboBox selectFontComboBox = new JComboBox();
 	public JButton toggleBoldJButton = new JButton("Bold");
 	public JButton toggleItalicsJButton = new JButton("Italics");
@@ -110,7 +112,7 @@ public class ClientPreferences extends JPanel {
 	public boolean toggleUnderlineFlag = false;
 	
 	//Define components for the Theme Menu Panel
-	public JLabel themeLabel = new JLabel();
+	public JButton themeLabel = new JButton("Appearance", new ImageIcon("../images/themePref.png"));
 	public JComboBox selectThemeComboBox = new JComboBox(themeList);
 	public JLabel selectThemeJLabel = new JLabel("Select Theme");
 	public JButton installNewThemeJButton = new JButton("Install");
@@ -124,31 +126,36 @@ public class ClientPreferences extends JPanel {
 		
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
-		preferences.setSize(800,750);
-		preferences.setResizable(true);
+		preferences.setSize(615,375);
+		preferences.setResizable(false);
 		contentPane.setLayout(null);
 		
 		//Initialize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
+		whiteline = BorderFactory.createLineBorder(Color.white);
 		Border labelBorder = BorderFactory.createRaisedBevelBorder();
+		Border blackBorder = BorderFactory.createBevelBorder(1, Color.darkGray, Color.black);
 		Border extraBorder = BorderFactory.createLoweredBevelBorder();
-		Border prefBorder = BorderFactory.createCompoundBorder(labelBorder, extraBorder);
+		Border prefAltBorder = BorderFactory.createCompoundBorder(labelBorder, extraBorder);
+		Border prefBorder = BorderFactory.createCompoundBorder(blackBorder, labelBorder);
 		generalTitledBorder = BorderFactory.createTitledBorder(
-			       blackline, "General Options");
+			       prefBorder, "General Options");
 		encryptionTitledBorder = BorderFactory.createTitledBorder(
-			       blackline, "Encryption Options");
+					prefBorder, "Encryption Options");
 		formattingTitledBorder = BorderFactory.createTitledBorder(
-			       blackline, "Formatting Options");
+					prefBorder, "Formatting Options");
 		notificationsTitledBorder = BorderFactory.createTitledBorder(
-			       blackline, "Notification Options");
+					prefBorder, "Notification Options");
 		themeTitleBorder = BorderFactory.createTitledBorder(
-			       blackline, "Theme Options");
+					prefBorder, "Theme Options");
 		
 		//Size the default components
-		prefLabelPane.setBounds(15, 15, 120, 660);
-		prefLabelPane.setBorder(prefBorder);
-		apply.setBounds(700,660,75,30);
-		cancel.setBounds(615,660,75,30);
+		prefLabelPaneLeft.setBounds(15, 10, 100, 320);
+		prefLabelPaneRight.setBounds(470, 10, 100, 220);
+		prefLabelPaneLeft.setBorder(prefAltBorder);
+		prefLabelPaneRight.setBorder(prefAltBorder);
+		apply.setBounds(470,250,100,30);
+		cancel.setBounds(470,290,100,30);
 
 		// Set apply button default to disabled until changes are made
 		apply.setEnabled(false);
@@ -179,23 +186,24 @@ public class ClientPreferences extends JPanel {
 		//Initialize the JPanels for each of the options
 		//General Menu Section
 		/*************************************************/		
-		ImageIcon generalImageIcon = new ImageIcon("../images/generalPref.png");
-		generalLabel.setIcon(generalImageIcon);
-		generalLabel.setText("General");
+		generalLabel.setForeground(Color.white);
+		originalColor = generalLabel.getBackground();
+		generalLabel.setBackground(Color.black);
+		generalLabel.setBorder(whiteline);
 		generalLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		generalLabel.setHorizontalTextPosition(JLabel.CENTER);
-		generalLabel.setBounds(30,20,100,100);
+		generalLabel.setBounds(30,20,75,75);
 		generalLabel.setBorder(labelBorder);
 		
 		generalPanel = new JPanel();
 		generalPanel.setLayout(null);
 		generalPanel.setBorder(generalTitledBorder);
-		generalPanel.setBounds(185,15,500,500);
-		generalPanel.setVisible(false);		
+		generalPanel.setBounds(140,15,300,300);
+		generalPanel.setVisible(true);		
 		
-		systemTrayCheckBox.setBounds(50,15,200,50);
-		allowESCCheckBox.setBounds(50,55,200,50);
-		enableSpellCheckCheckBox.setBounds(50,95,200,50);
+		systemTrayCheckBox.setBounds(50,20,200,50);
+		allowESCCheckBox.setBounds(50,60,200,50);
+		enableSpellCheckCheckBox.setBounds(50,100,200,50);
 		
 		generalPanel.add(systemTrayCheckBox);
 		generalPanel.add(allowESCCheckBox);
@@ -238,23 +246,19 @@ public class ClientPreferences extends JPanel {
 		
 		//Notification Menu Section
 		/*************************************************/	
-		//Image notificationPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/notificationsPref.png");
-
-		ImageIcon notificationImageIcon = new ImageIcon("../images/notificationsPref.png");
-		notificationsLabel.setIcon(notificationImageIcon);
-		notificationsLabel.setText("Notifications");
+		notificationsLabel.setForeground(Color.black);
 		notificationsLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		notificationsLabel.setHorizontalTextPosition(JLabel.CENTER);
-		notificationsLabel.setBounds(30,140,100,100);
+		notificationsLabel.setBounds(30,100,75,75);
 		notificationsLabel.setBorder(labelBorder);
 		
 		notificationsPanel = new JPanel();
 		notificationsPanel.setLayout(null);
 		notificationsPanel.setBorder(notificationsTitledBorder);
-		notificationsPanel.setBounds(185,15,500,500);
+		notificationsPanel.setBounds(140,15,300,300);
 		notificationsPanel.setVisible(false);
 		
-		enableSoundsCheckBox.setBounds(50,15,200,50);
+		enableSoundsCheckBox.setBounds(50,20,200,50);
 		
 		notificationsPanel.add(enableSoundsCheckBox);
 		
@@ -273,27 +277,20 @@ public class ClientPreferences extends JPanel {
 		
 		//Encrpytion Menu Selection
 		/*************************************************/	
-		//Image encryptionPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/encryptionPref.png");
-		//encryptionLabel = new DrawingPanel(encryptionPreferencesImage);
-		//encryptionLabel.setBounds(30,185,75,75);
-		//encryptionLabel.setBorder(blackline);
-		
-		ImageIcon encryptionImageIcon = new ImageIcon("../images/encryptionPref.png");
-		encryptionLabel.setIcon(encryptionImageIcon);
-		encryptionLabel.setText("Encryption");
+		encryptionLabel.setForeground(Color.black);
 		encryptionLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		encryptionLabel.setHorizontalTextPosition(JLabel.CENTER);
-		encryptionLabel.setBounds(30,260,100,100);
+		encryptionLabel.setBounds(30,180,75,75);
 		encryptionLabel.setBorder(labelBorder);
 		
 		encryptionPanel = new JPanel();
 		encryptionPanel.setLayout(null);
 		encryptionPanel.setBorder(encryptionTitledBorder);
-		encryptionPanel.setBounds(185,15,500,500);
+		encryptionPanel.setBounds(140,15,300,300);
 		encryptionPanel.setVisible(false);
 		
-		generateNewKeyPairJLabel.setBounds(50,15,200,50);
-		generateNewKeyPairJButton.setBounds(50,65,100,50);
+		generateNewKeyPairJLabel.setBounds(50,20,200,50);
+		generateNewKeyPairJButton.setBounds(50,70,100,50);
 
 		encryptionPanel.add(generateNewKeyPairJButton);
 		encryptionPanel.add(generateNewKeyPairJLabel);
@@ -304,26 +301,19 @@ public class ClientPreferences extends JPanel {
 		
 		//Formatting Menu Selection
 		/*************************************************/	
-		//Image formattingPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/fontPref.png");
-		//formattingLabel = new DrawingPanel(formattingPreferencesImage);
-		//formattingLabel.setBounds(30,270,75,75);
-		//formattingLabel.setBorder(blackline);
-		
-		ImageIcon formattingImageIcon = new ImageIcon("../images/fontPref.png");
-		formattingLabel.setIcon(formattingImageIcon);
-		formattingLabel.setText("Font Options");
+		formattingLabel.setForeground(Color.black);
 		formattingLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		formattingLabel.setHorizontalTextPosition(JLabel.CENTER);
-		formattingLabel.setBounds(30,380,100,100);
+		formattingLabel.setBounds(485,20,75,75);
 		formattingLabel.setBorder(labelBorder);
 		
 		formattingPanel = new JPanel();
 		formattingPanel.setLayout(null);
 		formattingPanel.setBorder(formattingTitledBorder);
-		formattingPanel.setBounds(185,15,500,500);
+		formattingPanel.setBounds(140,15,300,300);
 		formattingPanel.setVisible(false);
 		
-		selectFontComboBox.setBounds(50,35, 200, 50);
+		selectFontComboBox.setBounds(50,35, 200, 30);
 		toggleBoldJButton.setBounds(50,95,100,25);
 		toggleItalicsJButton.setBounds(50,135,100,25);
 		toggleUnderlineJButton.setBounds(50,175,100,25);
@@ -342,30 +332,23 @@ public class ClientPreferences extends JPanel {
 		
 		//Theme Menu Selection
 		/*************************************************/	
-		//Image themePreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/themePref.png");
-		//themeLabel = new DrawingPanel(themePreferencesImage);
-		//themeLabel.setBounds(30,355,75,75);
-		//themeLabel.setBorder(blackline);
-		
-		ImageIcon themeImageIcon = new ImageIcon("../images/themePref.png");
-		themeLabel.setIcon(themeImageIcon);
-		themeLabel.setText("Appearance");
+		themeLabel.setForeground(Color.black);
 		themeLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		themeLabel.setHorizontalTextPosition(JLabel.CENTER);
-		themeLabel.setBounds(30,500,100,100);
+		themeLabel.setBounds(485,100,75,75);
 		themeLabel.setBorder(labelBorder);
 		
 		themePanel = new JPanel();
 		themePanel.setLayout(null);
 		themePanel.setBorder(themeTitleBorder);
-		themePanel.setBounds(185,15,500,500);
+		themePanel.setBounds(140,15,300,300);
 		themePanel.setVisible(false);
 		
 		//Define components for the Theme Menu Panel
-		selectThemeComboBox.setBounds(50,65,200,50);
-		selectThemeJLabel.setBounds(50,15,100,50);
-		installNewThemeJButton.setBounds(50,165,100,50);
-		installNewThemeJLabel.setBounds(50,125,100,50);
+		selectThemeComboBox.setBounds(50,70,200,50);
+		selectThemeJLabel.setBounds(50,20,100,50);
+		installNewThemeJButton.setBounds(50,175,100,50);
+		installNewThemeJLabel.setBounds(50,125,120,50);
 		
 		themePanel.add(selectThemeComboBox);
 		themePanel.add(selectThemeJLabel);
@@ -392,52 +375,32 @@ public class ClientPreferences extends JPanel {
 		//MouseListener for the generalPreferences
 	    	MouseListener mouseListenerGeneral = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				generalPanel.setVisible(true); // set to true
-				notificationsPanel.setVisible(false);
-				encryptionPanel.setVisible(false);
-				formattingPanel.setVisible(false);
-				themePanel.setVisible(false);
+				refreshSettingsView(generalLabel);
 		}};
 		
 		//MouseListener for the notificationsPreferences
 			MouseListener mouseListenerNotifications = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				generalPanel.setVisible(false);
-				notificationsPanel.setVisible(true); // set to true
-				encryptionPanel.setVisible(false);
-				formattingPanel.setVisible(false);
-				themePanel.setVisible(false);
+				refreshSettingsView(notificationsLabel);
 
 		}};
 		
 		//MouseListener for the encryptionPreferences
 			MouseListener mouseListenerEncryption = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {	
-				generalPanel.setVisible(false);
-				notificationsPanel.setVisible(false);
-				encryptionPanel.setVisible(true); // set to true
-				formattingPanel.setVisible(false);
-				themePanel.setVisible(false);
+				refreshSettingsView(encryptionLabel);
 		}};
 		
 		//MouseListener for the formattingPreferences
 			MouseListener mouseListenerFormatting = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {	
-				generalPanel.setVisible(false);
-				notificationsPanel.setVisible(false);
-				encryptionPanel.setVisible(false);
-				formattingPanel.setVisible(true); // set to true
-				themePanel.setVisible(false);
+				refreshSettingsView(formattingLabel);
 		}};
 		
 		//MouseListener for the themePreferences
 			MouseListener mouseListenerTheme = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				generalPanel.setVisible(false);
-				notificationsPanel.setVisible(false);
-				encryptionPanel.setVisible(false);
-				formattingPanel.setVisible(false);
-				themePanel.setVisible(true); // set to true
+				refreshSettingsView(themeLabel);
 		}};
 		
 		
@@ -450,11 +413,11 @@ public class ClientPreferences extends JPanel {
 		
 		
 		//Add the Drawing Panels to the LabelPane
-		prefLabelPane.add(generalLabel);
-		prefLabelPane.add(notificationsLabel);
-		prefLabelPane.add(encryptionLabel);
-		prefLabelPane.add(formattingLabel);
-		prefLabelPane.add(themeLabel);
+		prefLabelPaneLeft.add(generalLabel);
+		prefLabelPaneLeft.add(notificationsLabel);
+		prefLabelPaneLeft.add(encryptionLabel);
+		prefLabelPaneRight.add(formattingLabel);
+		prefLabelPaneRight.add(themeLabel);
 				
 		//Add the JPanels to the ContentPane (set to default until Label Image is clicked)
 		contentPane.add(notificationsPanel);
@@ -462,7 +425,8 @@ public class ClientPreferences extends JPanel {
 		contentPane.add(encryptionPanel);
 		contentPane.add(formattingPanel);
 		contentPane.add(themePanel);
-		contentPane.add(prefLabelPane);
+		contentPane.add(prefLabelPaneLeft);
+		contentPane.add(prefLabelPaneRight);
 		contentPane.add(apply);
 		contentPane.add(cancel);
 
@@ -472,7 +436,101 @@ public class ClientPreferences extends JPanel {
 		preferences.setVisible(true);
 
 
-	}	
+	}
+	
+	private void refreshSettingsView(JButton activeButton)
+	{
+		if(activeButton == generalLabel)
+		{
+			generalPanel.setVisible(true);
+			generalLabel.setBackground(Color.black);
+			generalLabel.setForeground(Color.white);
+			notificationsPanel.setVisible(false);
+			notificationsLabel.setBackground(originalColor);
+			notificationsLabel.setForeground(Color.black);
+			encryptionPanel.setVisible(false);
+			encryptionLabel.setBackground(originalColor);
+			encryptionLabel.setForeground(Color.black);
+			formattingPanel.setVisible(false);
+			formattingLabel.setBackground(originalColor);
+			formattingLabel.setForeground(Color.black);
+			themePanel.setVisible(false);
+			themeLabel.setBackground(originalColor);
+			themeLabel.setForeground(Color.black);
+		}
+		if(activeButton == notificationsLabel)
+		{
+			generalPanel.setVisible(false);
+			generalLabel.setBackground(originalColor);
+			generalLabel.setForeground(Color.black);
+			notificationsPanel.setVisible(true);
+			notificationsLabel.setBackground(Color.black);
+			notificationsLabel.setForeground(Color.white);
+			encryptionPanel.setVisible(false);
+			encryptionLabel.setBackground(originalColor);
+			encryptionLabel.setForeground(Color.black);
+			formattingPanel.setVisible(false);
+			formattingLabel.setBackground(originalColor);
+			formattingLabel.setForeground(Color.black);
+			themePanel.setVisible(false);
+			themeLabel.setBackground(originalColor);
+			themeLabel.setForeground(Color.black);
+		}
+		if(activeButton == encryptionLabel)
+		{
+			generalPanel.setVisible(false);
+			generalLabel.setBackground(originalColor);
+			generalLabel.setForeground(Color.black);
+			notificationsPanel.setVisible(false);
+			notificationsLabel.setBackground(originalColor);
+			notificationsLabel.setForeground(Color.black);
+			encryptionPanel.setVisible(true);
+			encryptionLabel.setBackground(Color.black);
+			encryptionLabel.setForeground(Color.white);
+			formattingPanel.setVisible(false);
+			formattingLabel.setBackground(originalColor);
+			formattingLabel.setForeground(Color.black);
+			themePanel.setVisible(false);
+			themeLabel.setBackground(originalColor);
+			themeLabel.setForeground(Color.black);
+		}
+		if(activeButton == formattingLabel)
+		{
+			generalPanel.setVisible(false);
+			generalLabel.setBackground(originalColor);
+			generalLabel.setForeground(Color.black);
+			notificationsPanel.setVisible(false);
+			notificationsLabel.setBackground(originalColor);
+			notificationsLabel.setForeground(Color.black);
+			encryptionPanel.setVisible(false);
+			encryptionLabel.setBackground(originalColor);
+			encryptionLabel.setForeground(Color.black);
+			formattingPanel.setVisible(true);
+			formattingLabel.setBackground(Color.black);
+			formattingLabel.setForeground(Color.white);
+			themePanel.setVisible(false);
+			themeLabel.setBackground(originalColor);
+			themeLabel.setForeground(Color.black);
+		}
+		if(activeButton == themeLabel)
+		{
+			generalPanel.setVisible(false);
+			generalLabel.setBackground(originalColor);
+			generalLabel.setForeground(Color.black);
+			notificationsPanel.setVisible(false);
+			notificationsLabel.setBackground(originalColor);
+			notificationsLabel.setForeground(Color.black);
+			encryptionPanel.setVisible(false);
+			encryptionLabel.setBackground(originalColor);
+			encryptionLabel.setForeground(Color.black);
+			formattingPanel.setVisible(false);
+			formattingLabel.setBackground(originalColor);
+			formattingLabel.setForeground(Color.black);
+			themePanel.setVisible(true);
+			themeLabel.setBackground(Color.black);
+			themeLabel.setForeground(Color.white);
+		}
+	}
 	
 	private void setGeneralSettings (boolean systemTrayFlag, boolean systemTrayVal, boolean allowESCFlag,
 			boolean allowESCVal, boolean enableSpellCheckFlag, boolean enableSCVal) throws AWTException
