@@ -810,8 +810,8 @@ public class Client
 		//Send Aegis event code 004 to let it know what we're doing
 		systemMessage("004");
 		c2sdout.writeUTF(encryptServerPublic(usernameToFind));
-		modOfBuddy = new BigInteger(decryptServerPublic(c2sdin.readUTF()));
-		expOfBuddy = new BigInteger(decryptServerPublic(c2sdin.readUTF()));
+		modOfBuddy = new BigInteger(c2sdin.readUTF());
+		expOfBuddy = new BigInteger(c2sdin.readUTF());
 		writeBuddysPubKeyToFile(usernameToFind,modOfBuddy,expOfBuddy);
 
 	}
