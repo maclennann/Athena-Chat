@@ -270,7 +270,7 @@ public class Client
 
 			//Don't have to do the below, waste of memory, simple do String.getBytes()
 			//BigInteger fromUserBytes = new BigInteger(fromUserCipher);
-
+			
 			//Grab the user's private key - SHHH!!
 			String privateKeyPath = "users/" + username + "/keys/" + username + ".priv";
 			File privateKey = new File(privateKeyPath);
@@ -278,15 +278,24 @@ public class Client
 				//Check to see if the public key is there too
 				boolean success = new File("users/" + username + "/keys/").mkdirs();
 				if(success) { 
-					receivePrivateKeyFromServer();
+					try {
+						receivePrivateKeyFromServer();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 				}
 				else { 
-					receivePrivateKeyFromServer();
+					try {
+						receivePrivateKeyFromServer();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 				}				
 			}
-
 			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
 			//Decrypt the fromUser to see what user this message came from!
@@ -562,7 +571,7 @@ public class Client
 				//Thread created to listen for messages coming in from the server
 				listeningProcedure = new Thread(
 						new Runnable() {
-							public void run() {
+							public void run() {								
 								//While we are connected to the server, receive messages
 								while(connected ==1) {
 									Client.recvMesg(din);
@@ -573,6 +582,10 @@ public class Client
 				//System.gc();
 				//Start the thread
 				listeningProcedure.start();
+				File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
+				if (!(publicKey.exists())) {
+					getUsersPublicKeyFromAegis(username);
+				}
 			}
 		} catch( IOException ie ) { ie.printStackTrace(); } catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
