@@ -186,8 +186,8 @@ public class ServerThread extends Thread
 
 			//Is the message an eventcode meant for the server?
 			if (toUserDecrypted.equals("Aegis")) { 
-				if(debug==1)System.out.println("Server eventcode detected!");
-
+				if(debug>=1)System.out.print("Server eventcode detected! ");
+				if(debug>=1)System.out.println(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent()));
 				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
 				return;
 			}//Is the message someone trying to create an account?
