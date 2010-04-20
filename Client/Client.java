@@ -41,6 +41,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.text.BadLocationException;
 
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
@@ -106,7 +107,7 @@ public class Client
 
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
-	public static void processMessage( String message ) {	
+	public static void processMessage( String message ) throws BadLocationException {	
 		//Get user to send message to from active tab
 		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
 

@@ -73,11 +73,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JEditorPane;
+import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Element;
 
@@ -445,10 +448,12 @@ public class ClientApplet extends JFrame {
 					int index = theList.locationToIndex(mouseEvent.getPoint());
 					Rectangle r = theList.getCellBounds(index, index);
 					if (r.contains(mouseEvent.getPoint())) {
+						//Focus selected object
 						theList.getSelectionModel().setLeadSelectionIndex(index);
 					}
 					else
 					{
+						//Clear selection if user clicks outside list selection
 						theList.getSelectionModel().setLeadSelectionIndex(theList.getModel().getSize());
 						theList.clearSelection();
 					}
@@ -466,32 +471,7 @@ public class ClientApplet extends JFrame {
 						// Create a tab for the conversation if it doesn't exist
 						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
 							makeTab(o.toString(), true);
-							//int currentTabIndex = imTabbedPane.getSelectedIndex();
-							//if(currentTabIndex == 0)
-							//{
-							//	FocusCurrentTextField();
-							//}
-							//else
-							//{
-							//	Icon alertIcon = new ImageIcon("../images/alert.png");
-							//	CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
-							//	JButton currentButton = (JButton) c.getComponent(1);
-							//	currentButton.setIcon(alertIcon);
-								//JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
-								//Component[] currentTabComponents = currentTab.getComponents();
-								//Component textFieldToFocus = currentTabComponents[1];
-								//textFieldToFocus.requestFocusInWindow();
-								
-							//}
-							FocusCurrentTextField();
-							
-							//Add ESC Key listener
-							//addESCKeyListener(currentTabIndex);
-							//Add alert notification listener
-							//addAlertNotificationListener(currentTabIndex);
-							
-							//Set textfield focus manually
-							
+							FocusCurrentTextField();						
 						}
 						else
 						{
@@ -504,14 +484,11 @@ public class ClientApplet extends JFrame {
 					}
 					else
 					{
+						//Clear selection if user clicks outside list selection
 						theList.getSelectionModel().setLeadSelectionIndex(theList.getModel().getSize());
 						theList.clearSelection();
 					}
 				}
-				//if(!(o.hasFocus())) { 
-				//if(getFocusOwner().equals(null)){					
-				//	theList.clearSelection();
-				//}
 			}
 		};
 
@@ -590,9 +567,10 @@ public class ClientApplet extends JFrame {
 		// Focus the new tab if first tab or if textarea is empty
 		addTextFieldFocusListener(imTabbedPane.indexOfTab(user));
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
-		Component[] currentTabComponents = currentTab.getComponents();
-		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		//Component[] currentTabComponents = currentTab.getComponents();
+		//JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
+		//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		//JTextPane currentTextPane = (JTextPane) currentScrollPane.getViewport().getComponent(0);
 		if(imTabbedPane.indexOfTab(user) == 0 || userCreated)
 		{
 			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
@@ -675,7 +653,7 @@ public class ClientApplet extends JFrame {
 		int tabCount = imTabbedPane.getTabCount();
 		JPanel currentTab;
 		Component[] currentTabComponents;
-		JTextComponent currentTextField;
+		JTextPane currentTextField;
 		if(activated)
 		{
 			// Register all current text fields for spell check
@@ -684,7 +662,8 @@ public class ClientApplet extends JFrame {
 				imTabbedPane.setSelectedIndex(x);
 				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				currentTabComponents = currentTab.getComponents();
-				currentTextField = (JTextComponent) currentTabComponents[1];
+				//currentTextField = (JTextComponent) currentTabComponents[1];
+				currentTextField = (JTextPane) currentTabComponents[1];
 				SpellChecker.register(currentTextField, true, true, true);
 			}
 			// Enable future spell check registration
@@ -698,7 +677,8 @@ public class ClientApplet extends JFrame {
 				imTabbedPane.setSelectedIndex(x);
 				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				currentTabComponents = currentTab.getComponents();
-				currentTextField = (JTextComponent) currentTabComponents[1];
+				//currentTextField = (JTextComponent) currentTabComponents[1];
+				currentTextField = (JTextPane) currentTabComponents[1];
 				SpellChecker.unregister(currentTextField);
 			}
 			// Disable future spell check registration
@@ -712,8 +692,9 @@ public class ClientApplet extends JFrame {
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-		JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		currentTextArea.getDocument().addDocumentListener(new DocumentListener() {
+		//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+		JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
+		currentTextPane.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
 				JPanel currentTab = uniqueIDHash.get(e.getDocument());
 				int currentTabIndex = imTabbedPane.indexOfComponent(currentTab);
@@ -743,7 +724,8 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
-		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		//JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		currentTextField.addKeyListener(new KeyListener() {
 		public void keyPressed(KeyEvent e) {
 		}
@@ -756,7 +738,8 @@ public class ClientApplet extends JFrame {
 					Component[] currentTabComponents = currentTab.getComponents();
 					JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 					JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-			      uniqueIDHash.remove(currentTextArea.getDocument());
+					JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
+			      //uniqueIDHash.remove(currentTextArea.getDocument());
 			      
 			      for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
 			      {
@@ -796,7 +779,8 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
-		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		//JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		KeyListener[] fieldListeners =  currentTextField.getKeyListeners();
 		if (fieldListeners != null)
 		{
@@ -808,7 +792,8 @@ public class ClientApplet extends JFrame {
 	{
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
 		Component[] currentTabComponents = currentTab.getComponents();
-		JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		//JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
+		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		currentTextField.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
 				Icon closeIcon = new ImageIcon("../images/close_button.png");
@@ -1011,17 +996,10 @@ public class ClientApplet extends JFrame {
 		      JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				Component[] currentTabComponents = currentTab.getComponents();
 				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-				JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		      uniqueIDHash.remove(currentTextArea.getDocument());
+				//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
+				JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
+		      //uniqueIDHash.remove(currentTextArea.getDocument());
 		      
-		     //for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
-		      //{
-		    	//  String tempUser = e1.nextElement().toString();
-		    	  //String tempTab = e2.nextElement().toString();
-		    	//  if (tempTab.equals(currentTab)){
-		    		  
-					//  }
-		      //}
 		      }
 			  if(imTabbedPane.getTabCount() ==0){
 				ClientApplet.lockIconLabel.setVisible(true);
@@ -1065,6 +1043,8 @@ class MapTextArea extends JFrame {
 
 	// All of the JComponents in the tab
 	public JPanel myJPanel;
+	public JEditorPane myJEP;
+	public JTextPane myTP;
 	public JTextArea myTA;
 	public JTextField myTF;
 
@@ -1088,44 +1068,76 @@ class MapTextArea extends JFrame {
 		myJPanel.setLayout(null);
 
 		//Create the text area and the scroll pane around it
-		myTA = new JTextArea();
-		myTA.setEditable(false);
-		myTA.setLineWrap(true);
-		myTA.setWrapStyleWord(true);
+		//myTA = new JTextArea();
+		//myTA.setEditable(false);
+		//myTA.setLineWrap(true);
+		//myTA.setWrapStyleWord(true);
+		
+		myJEP = new JEditorPane();
+		myJEP.setEditable(false);
         // enable the spell checking on the text component with all features
 		
-		uniqueIDHash.put(myTA.getDocument(), myJPanel);
+		//uniqueIDHash.put(myTA.getDocument(), myJPanel);
 
 
-		JScrollPane mySP = new JScrollPane(myTA);
-		mySP.setBounds(10,10,559,450);
+		//JScrollPane mySP = new JScrollPane(myTA);
+		JScrollPane mySP = new JScrollPane(myJEP);
+		mySP.setBounds(10,10,559,420);
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		mySP.setOpaque(true);    
 		myJPanel.add(mySP);
 
 		//Create the text field
-		myTF = new JTextField();
-		myTF.setBounds(10,469,560,30);
-		myJPanel.add(myTF);
+		//myTF = new JTextField();
+		//myTF.setBounds(10,469,560,30);
+		//myJPanel.add(myTF);
+		
+		myTP = new JTextPane();
+		myTP.setBounds(10,440,560,50);
+		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
+		myJPanel.add(myTP);
 
 		//Register the spell checker in the text field
 		if (spellCheckFlag)
-			SpellChecker.register(myTF, true, true, true);
+			SpellChecker.register(myTP, true, true, true);
 		
 		username = user;
 
 		//Add an actionListener to the text field to send messages
-		myTF.addActionListener(new ActionListener() {
+		/*myTF.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(!(myTF.getText().equals(""))) { 
 				Client.processMessage(myTF.getText());
 				}
 			}
+		});*/
+
+		myTP.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER && (!(myTP.getText().equals(""))))
+					try {
+						Client.processMessage(myTP.getText());
+						myTP.getDocument().remove(0, myTP.getDocument().getLength());
+					} catch (BadLocationException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub		
+			}
+
+			public void keyTyped(KeyEvent e) {
+				
+			}
 		});
+		System.out.println("Listener added to tab!");
 		
 		//Set font to Arial
 		Font font = new Font("Arial",Font.PLAIN,17);
-		myTA.setFont(font);
+		//myTA.setFont(font);
+		myTP.setFont(font);
 	}
 
 	// Set the user name associated with the tab
@@ -1159,18 +1171,21 @@ class MapTextArea extends JFrame {
 	}
 
 	// Write a string to the text area
-	public void writeToTextArea(String message) {
-		myTA.append(message);
+	public void writeToTextArea(String message) throws BadLocationException {
+		//myTA.append(message);
+		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, null);
 	}
 
 	// Move the cursor to the end of the ScrollPane
 	// TODO: Sometimes it shows highlighted text
 	public void moveToEnd() {
-		myTA.setCaretPosition(myTA.getText().length());
+		//myTA.setCaretPosition(myTA.getText().length());
+		//myJEP.setCaretPosition(myJEP.getText().length()-1);
 	}
 
 	// Clear the text out of the text field
 	public void clearTextField() {
-		myTF.setText("");
+		//myTF.setText("");
+		myTP.setText("");
 	}
 }
