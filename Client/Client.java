@@ -147,6 +147,7 @@ public class Client
 						//Encrypt the message with the toUser's public key and send it to the server
 						BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(messageChunks[i], toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 						dout.writeUTF(encryptServerPublic(toUser));
+						dout.writeUTF(encryptServerPublic(username));
 						dout.writeUTF(messageCipher.toString());
 						//Hash the Message for the digital signature
 						String hashedMessage = ClientLogin.computeHash(message);
@@ -165,6 +166,7 @@ public class Client
 					//Encrypt the message with the toUser's public key and send it to the server
 					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 					dout.writeUTF(encryptServerPublic(toUser));
+					dout.writeUTF(encryptServerPublic(username));
 					dout.writeUTF(messageCipher.toString());
 					//Hash the Message for the digital signature
 					String hashedMessage = ClientLogin.computeHash(message);
