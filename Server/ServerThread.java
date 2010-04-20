@@ -499,7 +499,7 @@ public class ServerThread extends Thread
 	
 	public void returnBuddyListHash() { 
 		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-		sendSystemMessage(username, "Access granted. Send me the username.");
+		//"Access granted. Send me the username.");
 		
 		try {
 			String buddyListToFind = serverDin.readUTF();
