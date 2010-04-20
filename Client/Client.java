@@ -439,7 +439,7 @@ public class Client
 				//Decrypt message
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				if(debug==2)System.out.println(decryptedMessage);
-				c2sdout.writeUTF(encryptServerPublic(userNameToCheck));
+				c2sdout.writeUTF(encryptServerPublic(usernameToCheck));
 				return;
 			}
 			if(fromUserDecrypted.equals("CheckUserStatusResult"))
@@ -447,12 +447,12 @@ public class Client
 				//Decrypt message
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				int result = Integer.parseInt(decryptedMessage);
-				clientResource.mapUserStatus(userNameToCheck, result);
+				clientResource.mapUserStatus(usernameToCheck, result);
 				if (result == 1)
 				{
-					clientResource.newBuddyListItems(userNameToCheck);						
+					clientResource.newBuddyListItems(usernameToCheck);						
 				}
-				getUsersPublicKeyFromAegis(userNameToCheck);
+				getUsersPublicKeyFromAegis(usernameToCheck);
 				return;
 			}
 
