@@ -208,7 +208,7 @@ public class Client
 			}
 			//Start the thread
 			listeningProcedureClientToClient.start();
-			listeningProcedureClientToServer.start();
+			//listeningProcedureClientToServer.start();
 			
 			//Check to see if the user's public key is there
 			File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
