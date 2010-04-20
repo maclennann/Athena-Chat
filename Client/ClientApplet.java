@@ -84,6 +84,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Element;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledEditorKit;
 
 import com.inet.jortho.SpellChecker;	
 
@@ -113,6 +116,10 @@ public class ClientApplet extends JFrame {
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
 	public Border blackline = BorderFactory.createLineBorder(Color.gray);
+	public Border oneColor = BorderFactory.createLineBorder(Color.black);
+	public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
+	public Border threeColor = BorderFactory.createLineBorder(new Color(150, 190, 255)); //Sky blue
+	public Border contactListBorder;
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	static public JLabel lockIconLabel = new JLabel();
 	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
@@ -286,6 +293,15 @@ public class ClientApplet extends JFrame {
 		// Adds the contact list to a scroll pane
 		JScrollPane contactList = new JScrollPane(userBox);
 		contactList.setBounds(600, 2, 195, 485);
+		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, twoColor);
+		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
+		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
+		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, twoColor);
+		Border contactListBorderBB = BorderFactory.createCompoundBorder(contactListBorderAA, threeColor);
+		Border contactListBorderCC = BorderFactory.createCompoundBorder(contactListBorderBB, oneColor);
+		//TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderCC, "Contact List");
+		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderCC, Client.username + "'s Contact List", TitledBorder.CENTER,
+											TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.ITALIC,14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
 		// Adds the Icons to Pane
 		// TODO Add ActionListeners to the images to bring up the add/remove
@@ -1049,7 +1065,8 @@ class MapTextArea extends JFrame {
 	public JTextPane myTP;
 	public JTextArea myTA;
 	public JTextField myTF;
-	public AttributeSet attr;
+	//public AttributeSet attr;
+	SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
@@ -1075,9 +1092,10 @@ class MapTextArea extends JFrame {
 		//myTA.setEditable(false);
 		//myTA.setLineWrap(true);
 		//myTA.setWrapStyleWord(true);
-		
+		StyledEditorKit kit = new StyledEditorKit();
 		myJEP = new JEditorPane();
 		myJEP.setEditable(false);
+		myJEP.setEditorKit(kit);
         // enable the spell checking on the text component with all features
 	
 
@@ -1171,14 +1189,17 @@ class MapTextArea extends JFrame {
 
 	// Set the text color (does nothing)
 	public void setTextColor(Color color) {
-		myJEP.setForeground(color);
-		attr = myJEP.getDocument().getDefaultRootElement().getAttributes().copyAttributes();
+		StyleConstants.setForeground(keyWord, color);
+		StyleConstants.setBold(keyWord, true);
 	}
 
 	// Write a string to the text area
 	public void writeToTextArea(String message) throws BadLocationException {
 		//myTA.append(message);
-		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, attr);
+		System.out.println("# of ATTS: " + keyWord.getAttributeCount());
+		System.out.println(keyWord.toString());
+		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, keyWord);
+		System.out.println("DEFAULT: " + myJEP.getDocument().getDefaultRootElement());
 	}
 
 	// Move the cursor to the end of the ScrollPane
