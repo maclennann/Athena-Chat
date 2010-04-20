@@ -430,7 +430,7 @@ public class ClientApplet extends JFrame {
 			}
 		};
 		removeContactLabel.addMouseListener(removeBuddyMouseListener);
-
+		
 		// MouseListener for the BuddyList
 		// Opens a tab or focuses a tab when a user name in the contact list is
 		// double-clicked
@@ -487,6 +487,10 @@ public class ClientApplet extends JFrame {
 							FocusCurrentTextField();
 						}
 					}
+				}
+				if(!(hasFocus())) { 
+				//if(getFocusOwner().equals(null)){					
+					theList.clearSelection();
 				}
 			}
 		};

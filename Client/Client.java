@@ -275,11 +275,7 @@ public class Client
 			String privateKeyPath = "users/" + username + "/keys/" + username + ".priv";
 			File privateKey = new File(privateKeyPath);
 			if(!(privateKey.exists())) {
-				//Check to see if the public key is there too!
-				File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
-				if(!(privateKey.exists())) { 
-					getUsersPublicKeyFromAegis(username);
-				}
+				//Check to see if the public key is there too
 				boolean success = new File("users/" + username + "/keys/").mkdirs();
 				if(success) { 
 					receivePrivateKeyFromServer();
@@ -290,7 +286,7 @@ public class Client
 
 				}				
 			}
-			
+
 			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
 			//Decrypt the fromUser to see what user this message came from!
@@ -463,7 +459,7 @@ public class Client
 		for(int x=0; x<chunks; x++) { 
 			String privateMod = din.readUTF();
 			System.out.println("PRIVATE MOD: " + privateMod);
-			
+
 			if(!(privateMod.equals("end"))) {
 				if (privateModArray.length > 0) {					
 					privateModArray[x] = decryptServerPublic(privateMod);
@@ -477,7 +473,7 @@ public class Client
 				finalPrivateMod = finalPrivateMod + privateModArray[i];
 			}
 		}
-		
+
 		int expChunks = Integer.parseInt(din.readUTF());
 		System.out.println(expChunks);
 
@@ -487,7 +483,7 @@ public class Client
 		for(int x=0; x<expChunks; x++) { 
 			String privateExp = din.readUTF();
 			System.out.println("PRIVATE EXP: " + privateExp);
-			
+
 			if(!(privateExp.equals("end"))) {
 				if (privateExpArray.length > 0) {					
 					privateExpArray[x] = decryptServerPublic(privateExp);
@@ -505,7 +501,7 @@ public class Client
 		System.out.println("DECRYPTED PRIVATE MOD: " + finalPrivateMod);
 		System.out.println("DECRYPTED PRIVATE EXP: " + finalPrivateExp);
 
-	//	byte[] privateModBytes = (new BigInteger(finalPrivateMod)).toByteArray();
+		//	byte[] privateModBytes = (new BigInteger(finalPrivateMod)).toByteArray();
 		BigInteger privateMod = new BigInteger(finalPrivateMod);
 		//byte[] privateExpBytes = (new BigInteger(finalPrivateExp)).toByteArray();
 		BigInteger privateExp = new BigInteger(finalPrivateExp);
@@ -712,328 +708,346 @@ public class Client
 
 	}
 
-	public static void writeBuddysPubKeyToFile(String buddysUsername, BigInteger mod, BigInteger exp) throws IOException { 
-		BufferedInputStream is;
-		//Let's get the number of lines in the file
-		File newFile = new File("users/" + username + "/keys/" + buddysUsername + ".pub");
-		if(!(newFile.exists())) { 
-			boolean success = new File("users/" + username + "/keys/").mkdirs();
-			if(success) { 
-				newFile.createNewFile();
-				is = new BufferedInputStream(new FileInputStream("users/" + username + "/keys/" + buddysUsername + ".pub"));
-				RSACrypto.saveToFile("users/" + username + "/keys/" + buddysUsername + ".pub", mod, exp);
-			}
-			else { 
-				newFile.createNewFile();
-				RSACrypto.saveToFile("users/" + username + "/keys/" + buddysUsername + ".pub", mod, exp);			
-			}
-		}
+	public static void getUsersPublicKeyFromAegis(String usernameToFind, boolean flag) throws IOException {
+		if(debug==1)System.out.println("Getting " + usernameToFind + "'s public key!");
+		publicKeyToFind = usernameToFind;
+		//Send Aegis event code 004 to let it know what we're doing
+		systemMessage("004");
+		din.readUTF();
+		String decryptedMessage = decryptServerPublic(din.readUTF());
+		if(debug==1)System.out.println(decryptedMessage);
+		if(debug==1)System.out.println(publicKeyToFind);
+		dout.writeUTF(encryptServerPublic(publicKeyToFind));
+		din.readUTF();
+		modOfBuddy = new BigInteger(decryptServerPublic(din.readUTF()));
+		din.readUTF(); 
 
-
+		expOfBuddy = new BigInteger(decryptServerPublic(din.readUTF()));
+		writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
 	}
 
-	//This method will send the user's buddy list to the server line by line
-	public static boolean sendBuddyListToServer() throws IOException {
-		String[] buddylistArray = returnBuddyListArray(true);
-		systemMessage("006");
-		System.out.println("Message received from server" + din.readUTF());	        
-		int numLines = buddylistArray.length;
-
-		//Send Aegis the begin message so it knows that this is beginning of the file
-		dout.writeUTF(encryptServerPublic("begin"));
-		//Send Aegis the number lines we're sending
-		dout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
-		for(int x=0; x<buddylistArray.length;x++) {         	          
-			//Now send Aegis the file
-			dout.writeUTF(encryptServerPublic(buddylistArray[x]));
-		}
-		return true;
-	}
-	//This method encrypts the plaintext with the server's public key
-	public static String encryptServerPublic(String plaintext) { 
-		BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-		return cipherText.toString();
-	}
-
-	//This method decrypts the ciphertext with the server's public key
-	public static String decryptServerPublic(String ciphertext) { 
-		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
-		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
-		//Decrypt the byte[], returns a String
-		return RSACrypto.rsaDecryptPublic(cipherBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
-	}
-	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
-	public static String[] returnBuddyListArray() throws IOException {
-		int count;
-		int readChars;
-		InputStream is;
-
-		//Let's get the number of lines in the file
-		File newFile = new File("users/" + username + "/buddylist.csv");
-		if(!(newFile.exists())) { 
-			boolean success = new File("users/" + username).mkdirs();
-			if(success) { 
-				newFile.createNewFile();
-				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
-			}
-			else { 
-				newFile.createNewFile();
-			}
-		}
-
-		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
-		byte[] c = new byte[1024];
-		count = 0;
-		readChars = 0;
-		while ((readChars = is.read(c)) != -1) {
-			for (int i = 0; i < readChars; ++i) {
-				if (c[i] == '\n')
-					++count;
-			}
-		} //End section
-
-		//Make the string array the size of the number of lines in the file
-		String[] usernames = new String[count];
-
-		//If there are no lines in the file we know that the user has no buddies! :(
-		if (count == 0) { 
-			return usernames;
+public static void writeBuddysPubKeyToFile(String buddysUsername, BigInteger mod, BigInteger exp) throws IOException { 
+	BufferedInputStream is;
+	//Let's get the number of lines in the file
+	File newFile = new File("users/" + username + "/keys/" + buddysUsername + ".pub");
+	if(!(newFile.exists())) { 
+		boolean success = new File("users/" + username + "/keys/").mkdirs();
+		if(success) { 
+			newFile.createNewFile();
+			is = new BufferedInputStream(new FileInputStream("users/" + username + "/keys/" + buddysUsername + ".pub"));
+			RSACrypto.saveToFile("users/" + username + "/keys/" + buddysUsername + ".pub", mod, exp);
 		}
 		else { 
-			File newFile2 = new File("users/" + username + "/buddylist.csv");
-			if(!(newFile2.exists())) { 
-				newFile2.createNewFile();
-			}
-			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
-			int x=0;
-			String raw, str;
-			BigInteger strNum;
-
-			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
-			while ((raw = in.readLine()) != null) 
-			{ 
-				// Read in the BigInteger in String form. Turn it to a BigInteger
-				// Turn the BigInteger to a byteArray, and decrypt it.
-				strNum = new BigInteger(raw);
-				str = descrypto.decryptData(strNum.toByteArray());
-
-				String foo[] = str.split(","); 
-				usernames[x] = foo[0];
-				x++;
-			}
-			return usernames;
+			newFile.createNewFile();
+			RSACrypto.saveToFile("users/" + username + "/keys/" + buddysUsername + ".pub", mod, exp);			
 		}
-
 	}
-	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
-	public static String[] returnBuddyListArray(boolean flag) throws IOException {
-		int count;
-		int readChars;
-		InputStream is;
 
-		//Let's get the number of lines in the file
-		File newFile = new File("users/" + username + "/buddylist.csv");
-		if(!(newFile.exists())) { 
-			boolean success = new File("users/" + username).mkdirs();
-			if(success) { 
-				newFile.createNewFile();
-				is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
-			}
-			else { 
-				newFile.createNewFile();
-			}
-		}
 
-		is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
-		byte[] c = new byte[1024];
-		count = 0;
-		readChars = 0;
-		while ((readChars = is.read(c)) != -1) {
-			for (int i = 0; i < readChars; ++i) {
-				if (c[i] == '\n')
-					++count;
-			}
-		} //End section
+}
 
-		//Make the string array the size of the number of lines in the file
-		String[] usernames = new String[count];
+//This method will send the user's buddy list to the server line by line
+public static boolean sendBuddyListToServer() throws IOException {
+	String[] buddylistArray = returnBuddyListArray(true);
+	systemMessage("006");
+	System.out.println("Message received from server" + din.readUTF());	        
+	int numLines = buddylistArray.length;
 
-		//If there are no lines in the file we know that the user has no buddies! :(
-		if (count == 0) { 
-			return usernames;
+	//Send Aegis the begin message so it knows that this is beginning of the file
+	dout.writeUTF(encryptServerPublic("begin"));
+	//Send Aegis the number lines we're sending
+	dout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
+	for(int x=0; x<buddylistArray.length;x++) {         	          
+		//Now send Aegis the file
+		dout.writeUTF(encryptServerPublic(buddylistArray[x]));
+	}
+	return true;
+}
+//This method encrypts the plaintext with the server's public key
+public static String encryptServerPublic(String plaintext) { 
+	BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+	return cipherText.toString();
+}
+
+//This method decrypts the ciphertext with the server's public key
+public static String decryptServerPublic(String ciphertext) { 
+	//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
+	byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
+	//Decrypt the byte[], returns a String
+	return RSACrypto.rsaDecryptPublic(cipherBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
+}
+//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+//TODO Make this return a multi-dementional array of all the fields in the CSV File
+public static String[] returnBuddyListArray() throws IOException {
+	int count;
+	int readChars;
+	InputStream is;
+
+	//Let's get the number of lines in the file
+	File newFile = new File("users/" + username + "/buddylist.csv");
+	if(!(newFile.exists())) { 
+		boolean success = new File("users/" + username).mkdirs();
+		if(success) { 
+			newFile.createNewFile();
+			is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
 		}
 		else { 
-			File newFile2 = new File("users/" + username + "/buddylist.csv");
-			if(!(newFile2.exists())) { 
-				newFile2.createNewFile();
-			}
-			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
-			int x=0;
-			String raw;
-			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
-			while ((raw = in.readLine()) != null) 
-			{ 
-				// Read in the BigInteger in String form. Turn it to a BigInteger
-				// Turn the BigInteger to a byteArray, and decrypt it.
-				//strNum = new BigInteger(raw);
-				//str = descrypto.decryptData(strNum.toByteArray());
-
-				String foo[] = raw.split(","); 
-				usernames[x] = foo[0];
-				x++;
-			}
-			return usernames;
+			newFile.createNewFile();
 		}
 	}
 
-	public static void checkUserStatus(String findUserName) {
-		try { 
-			if(debug==1)System.out.println("Checking availability for user: "+findUserName);
-			//Initalize Result
-			int result = -1;
-			//Run the systemMessage Method to let Aegis know what we're about to do
-			//First contact with Aegis!
-			systemMessage("001");
-			//Listen for the incoming Acknowledge message
-			din.readUTF(); 
-			if(debug==1)System.out.println("Acknowledge message received from server.");
-			//Go ahead and send Aegis the user name we want to find 
-			dout.writeUTF(encryptServerPublic(findUserName));
-			if(debug==1)System.out.println("Username sent - now listening for result...");
-			//Grab result and turn it into an integer
-			result = Integer.parseInt(decryptServerPublic(din.readUTF()));
-			//Print result 
-			if(debug==1)System.out.println("Result for user " + findUserName + " is " + result + ".");
-			//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
-			clientResource.mapUserStatus(findUserName, result);
-			if(debug==1)System.out.println("SENT SERVER FLAG 001");
+	is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+	byte[] c = new byte[1024];
+	count = 0;
+	readChars = 0;
+	while ((readChars = is.read(c)) != -1) {
+		for (int i = 0; i < readChars; ++i) {
+			if (c[i] == '\n')
+				++count;
+		}
+	} //End section
 
-		} catch (Exception e) { 
-			if(debug==1)System.out.println(e);
-		}	
+	//Make the string array the size of the number of lines in the file
+	String[] usernames = new String[count];
+
+	//If there are no lines in the file we know that the user has no buddies! :(
+	if (count == 0) { 
+		return usernames;
 	}
-	public static void checkUserStatus(String findUserName, String checkStatusFlag) {
-		try {
-			userNameToCheck = findUserName;
-			//DataInputStream din = new DataInputStream(socket.getInputStream());
-			if(debug==1)System.out.println("Checking availability for user: "+userNameToCheck);
-			//Initialize Result
-			int result = -1;
-			//Run the systemMessage Method to let Aegis know what we're about to do
-			//First contact with Aegis!
-			systemMessage("003");
+	else { 
+		File newFile2 = new File("users/" + username + "/buddylist.csv");
+		if(!(newFile2.exists())) { 
+			newFile2.createNewFile();
+		}
+		BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
+		int x=0;
+		String raw, str;
+		BigInteger strNum;
 
-			if(debug==1)System.out.println("SENT SERVER FLAG 003");
-			//listeningProcedure.start();
+		//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
+		while ((raw = in.readLine()) != null) 
+		{ 
+			// Read in the BigInteger in String form. Turn it to a BigInteger
+			// Turn the BigInteger to a byteArray, and decrypt it.
+			strNum = new BigInteger(raw);
+			str = descrypto.decryptData(strNum.toByteArray());
 
-		} catch (Exception e) { 
-			if(debug==1)System.out.println(e);
-		}	
+			String foo[] = str.split(","); 
+			usernames[x] = foo[0];
+			x++;
+		}
+		return usernames;
+	}
+
+}
+//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+//TODO Make this return a multi-dementional array of all the fields in the CSV File
+public static String[] returnBuddyListArray(boolean flag) throws IOException {
+	int count;
+	int readChars;
+	InputStream is;
+
+	//Let's get the number of lines in the file
+	File newFile = new File("users/" + username + "/buddylist.csv");
+	if(!(newFile.exists())) { 
+		boolean success = new File("users/" + username).mkdirs();
+		if(success) { 
+			newFile.createNewFile();
+			is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+		}
+		else { 
+			newFile.createNewFile();
+		}
+	}
+
+	is = new BufferedInputStream(new FileInputStream("./users/" + username + "/buddylist.csv"));
+	byte[] c = new byte[1024];
+	count = 0;
+	readChars = 0;
+	while ((readChars = is.read(c)) != -1) {
+		for (int i = 0; i < readChars; ++i) {
+			if (c[i] == '\n')
+				++count;
+		}
+	} //End section
+
+	//Make the string array the size of the number of lines in the file
+	String[] usernames = new String[count];
+
+	//If there are no lines in the file we know that the user has no buddies! :(
+	if (count == 0) { 
+		return usernames;
+	}
+	else { 
+		File newFile2 = new File("users/" + username + "/buddylist.csv");
+		if(!(newFile2.exists())) { 
+			newFile2.createNewFile();
+		}
+		BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
+		int x=0;
+		String raw;
+		//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
+		while ((raw = in.readLine()) != null) 
+		{ 
+			// Read in the BigInteger in String form. Turn it to a BigInteger
+			// Turn the BigInteger to a byteArray, and decrypt it.
+			//strNum = new BigInteger(raw);
+			//str = descrypto.decryptData(strNum.toByteArray());
+
+			String foo[] = raw.split(","); 
+			usernames[x] = foo[0];
+			x++;
+		}
+		return usernames;
+	}
+}
+
+public static void checkUserStatus(String findUserName) {
+	try { 
+		if(debug==1)System.out.println("Checking availability for user: "+findUserName);
+		//Initalize Result
+		int result = -1;
+		//Run the systemMessage Method to let Aegis know what we're about to do
+		//First contact with Aegis!
+		systemMessage("001");
+		//Listen for the incoming Acknowledge message
+		din.readUTF(); 
+		if(debug==1)System.out.println("Acknowledge message received from server.");
+		//Go ahead and send Aegis the user name we want to find 
+		dout.writeUTF(encryptServerPublic(findUserName));
+		if(debug==1)System.out.println("Username sent - now listening for result...");
+		//Grab result and turn it into an integer
+		result = Integer.parseInt(decryptServerPublic(din.readUTF()));
+		//Print result 
+		if(debug==1)System.out.println("Result for user " + findUserName + " is " + result + ".");
+		//Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
+		clientResource.mapUserStatus(findUserName, result);
+		if(debug==1)System.out.println("SENT SERVER FLAG 001");
+
+	} catch (Exception e) { 
+		if(debug==1)System.out.println(e);
 	}	
+}
+public static void checkUserStatus(String findUserName, String checkStatusFlag) {
+	try {
+		userNameToCheck = findUserName;
+		//DataInputStream din = new DataInputStream(socket.getInputStream());
+		if(debug==1)System.out.println("Checking availability for user: "+userNameToCheck);
+		//Initialize Result
+		int result = -1;
+		//Run the systemMessage Method to let Aegis know what we're about to do
+		//First contact with Aegis!
+		systemMessage("003");
 
-	//Use this method if Contact with Aegis is needed
-	public static void systemMessage( String message ) {	
-		//Send the message
-		try{
-			//Send recipient's name and message to server
-			dout.writeUTF(encryptServerPublic("Aegis"));
-			dout.writeUTF(encryptServerPublic(message));
-			//dout.writeUTF("TEST");
-		} catch( IOException ie ) {
+		if(debug==1)System.out.println("SENT SERVER FLAG 003");
+		//listeningProcedure.start();
+
+	} catch (Exception e) { 
+		if(debug==1)System.out.println(e);
+	}	
+}	
+
+//Use this method if Contact with Aegis is needed
+public static void systemMessage( String message ) {	
+	//Send the message
+	try{
+		//Send recipient's name and message to server
+		dout.writeUTF(encryptServerPublic("Aegis"));
+		dout.writeUTF(encryptServerPublic(message));
+		//dout.writeUTF("TEST");
+	} catch( IOException ie ) {
+	}
+}
+public static void setUsername(String usernameToSet) { 
+	username = usernameToSet;
+}
+//This method returns a DOUT for other classes to use
+public static DataOutputStream returnDOUT() { 
+	return dout;
+}
+//This method returns a DIN for other classes to use
+public static DataInputStream returnDIN() { 
+	return din;
+}
+
+//This method returns a hash of the buddy list 
+public static String returnHashOfLocalBuddyList(String buddyname) throws Exception { 
+	String path = "users/".concat(buddyname).concat("/buddylist.csv");
+	File buddyList = new File(path);
+	if(!buddyList.exists()) { 
+		boolean success = new File("users/" + username).mkdirs();
+		if(success) { 
+			buddyList.createNewFile();
+			//getBuddyListFromServer();
+		}
+		else { 
+			buddyList.createNewFile();
 		}
 	}
-	public static void setUsername(String usernameToSet) { 
-		username = usernameToSet;
-	}
-	//This method returns a DOUT for other classes to use
-	public static DataOutputStream returnDOUT() { 
-		return dout;
-	}
-	//This method returns a DIN for other classes to use
-	public static DataInputStream returnDIN() { 
-		return din;
-	}
+	return FileHash.getMD5Checksum(path);
+}
 
-	//This method returns a hash of the buddy list 
-	public static String returnHashOfLocalBuddyList(String buddyname) throws Exception { 
-		String path = "users/".concat(buddyname).concat("/buddylist.csv");
-		File buddyList = new File(path);
-		if(!buddyList.exists()) { 
-			boolean success = new File("users/" + username).mkdirs();
-			if(success) { 
-				buddyList.createNewFile();
-				//getBuddyListFromServer();
-			}
-			else { 
-				buddyList.createNewFile();
-			}
+//Returns a long of the last day the file was modified
+private static long returnLocalModDateOfBuddyList(String buddyname) {
+	File buddylist = new File("users/" + buddyname + "/buddylist.csv");
+	return buddylist.lastModified();
+}
+
+//This method returns a hash of the remote buddy list
+public static String[] returnHashOfRemoteBuddyList(String buddyname) { 
+	try { 
+
+		systemMessage("005");
+
+		//Get acknowledge message
+		System.out.println(din.readUTF()); 
+
+		//Send buddyname
+		dout.writeUTF(encryptServerPublic(buddyname));
+		String[] remoteValues = new String[2];
+		//counter
+		int x = 0;
+		while(x<=1){ 
+			remoteValues[x] = decryptServerPublic(din.readUTF());
+			System.out.println("REMOTE VALSSS " + remoteValues[x]);
+			x++;
 		}
-		return FileHash.getMD5Checksum(path);
-	}
+		System.out.println("Completed.");
+		return remoteValues;
 
-	//Returns a long of the last day the file was modified
-	private static long returnLocalModDateOfBuddyList(String buddyname) {
-		File buddylist = new File("users/" + buddyname + "/buddylist.csv");
-		return buddylist.lastModified();
-	}
+	}catch (Exception e)  {
+		System.out.println(e);
+		return null;
+	} 
 
-	//This method returns a hash of the remote buddy list
-	public static String[] returnHashOfRemoteBuddyList(String buddyname) { 
-		try { 
+}
 
-			systemMessage("005");
+private static void splashScreenInit() {
+	ImageIcon myImage = new ImageIcon(("splash.jpg"));
+	screen = new ClientSplash(myImage);
+	screen.setLocationRelativeTo(null);
+	screen.setProgressMax(100);
+	screen.setScreenVisible(true);
+}
 
-			//Get acknowledge message
-			System.out.println(din.readUTF()); 
+public static void setEnableSounds(boolean activated)
+{
+	if(activated)
+		enableSounds = true;
+	else
+		enableSounds = false;
+}
 
-			//Send buddyname
-			dout.writeUTF(encryptServerPublic(buddyname));
-			String[] remoteValues = new String[2];
-			//counter
-			int x = 0;
-			while(x<=1){ 
-				remoteValues[x] = decryptServerPublic(din.readUTF());
-				System.out.println("REMOTE VALSSS " + remoteValues[x]);
-				x++;
-			}
-			System.out.println("Completed.");
-			return remoteValues;
+public static boolean getEnableSounds()
+{
+	return enableSounds;
+}
 
-		}catch (Exception e)  {
-			System.out.println(e);
-			return null;
-		} 
+// Create the GUI for the client.
+public static void main(String[] args) throws AWTException {
+	//splashScreenInit();
 
-	}
-
-	private static void splashScreenInit() {
-		ImageIcon myImage = new ImageIcon(("splash.jpg"));
-		screen = new ClientSplash(myImage);
-		screen.setLocationRelativeTo(null);
-		screen.setProgressMax(100);
-		screen.setScreenVisible(true);
-	}
-
-	public static void setEnableSounds(boolean activated)
-	{
-		if(activated)
-			enableSounds = true;
-		else
-			enableSounds = false;
-	}
-
-	public static boolean getEnableSounds()
-	{
-		return enableSounds;
-	}
-
-	// Create the GUI for the client.
-	public static void main(String[] args) throws AWTException {
-		//splashScreenInit();
-
-		/*for (int i = 0; i <= 100; i++)
+	/*for (int i = 0; i <= 100; i++)
 		{
 			for (long j=0; j<50000; ++j)
 			{
@@ -1041,9 +1055,9 @@ public class Client
 			}
 			screen.setProgress("Loading:" + i, i);  // progress bar with a message
 		}*/  
-		//splashScreenDestruct();
-		//clientResource = new ClientApplet();
-		loginGUI = new ClientLogin();
+	//splashScreenDestruct();
+	//clientResource = new ClientApplet();
+	loginGUI = new ClientLogin();
 
-	}
+}
 }
