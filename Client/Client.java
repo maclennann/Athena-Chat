@@ -462,12 +462,12 @@ public class Client
 			if(fromUserDecrypted.equals("Aegis")) { 
 				if(debug>=1) System.out.println("FROM USER AEGIS RECEIVED! " + fromUserDecrypted);
 				decryptedMessage = decryptServerPublic(encryptedMessage);
-				if(decryptedMessage.equals("ReturnPublicKey")) { 
+				/*if(decryptedMessage.equals("ReturnPublicKey")) { 
 					modOfBuddy = new BigInteger(decryptServerPublic(din.readUTF()));
 					expOfBuddy = new BigInteger(decryptServerPublic(din.readUTF()));
 					writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
 					return;
-				}
+				}*/
 			}
 
 			//Create buddy list entry for user sign on
@@ -801,6 +801,10 @@ public class Client
 		publicKeyToFind = usernameToFind;
 		//Send Aegis event code 004 to let it know what we're doing
 		systemMessage("004");
+		c2sdout.writeUTF(usernameToFind);
+		modOfBuddy = new BigInteger(decryptServerPublic(c2sdin.readUTF()));
+		expOfBuddy = new BigInteger(decryptServerPublic(c2sdin.readUTF()));
+		writeBuddysPubKeyToFile(usernameToFind,modOfBuddy,expOfBuddy);
 
 	}
 	/**
