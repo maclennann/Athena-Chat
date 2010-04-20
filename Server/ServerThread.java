@@ -782,7 +782,9 @@ public class ServerThread extends Thread
 		System.out.println(username);
 		//Acknowledge connection. Make sure we are doing the right thing
 		BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username to find the key for.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-		sendSystemMessage(username, "ReturnPublicKey");
+		sendSystemMessage(username, "Aegis");
+		serverDout.writeUTF(encryptServerPrivate("ReturnPublicKey"));
+		
 		//serverDout.writeUTF(accessGrantedCipher.toString());
 		try{
 			//Listen for the username
