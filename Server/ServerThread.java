@@ -805,10 +805,10 @@ public class ServerThread extends Thread
 
 				//Check to see if the user has a key file on the server
 				//BigInteger keyToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getModulus().toString(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-				serverDout.writeUTF(encryptServerPrivate(keyToReturn.getModulus().toString()));
+				serverDout.writeUTF(keyToReturn.getModulus().toString());
 				if(debug>=1)System.out.println("Modulus Returned\n");
 				//BigInteger exponentToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getPublicExponent().toString(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
-				serverDout.writeUTF(encryptServerPrivate(keyToReturn.getPublicExponent().toString()));
+				serverDout.writeUTF(keyToReturn.getPublicExponent().toString());
 				if(debug>=1)System.out.println("Exponent Returned\n");
 
 			} else { 
