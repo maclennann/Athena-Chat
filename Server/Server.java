@@ -223,7 +223,7 @@ public class Server
 	}
 	
 	// Send a message to all clients (utility routine)
-	void sendToAll(String eventCode, String message ) {
+	synchronized void sendToAll(String eventCode, String message ) {
 		//make sure the outputStreams hashtable is up-to-date
 		synchronized( clientOutputStreams ) {
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
