@@ -521,7 +521,7 @@ public class ClientApplet extends JFrame {
 		statusBox.setBounds(602, 452, 191, 25);
 		statusBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
-				if(statusBox.getSelectedItem().equals("Away"))
+				if(statusBox.getSelectedItem().equals("Busy"))
 				{
 					Client.setAwayText(JOptionPane.showInputDialog("Please enter an auto-response message:"));
 					Client.setStatus(1);
