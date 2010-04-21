@@ -142,7 +142,7 @@ public class ClientPreferences extends JPanel {
 		preferences.setSize(615,375);
 		preferences.setResizable(false);
 		contentPane.setLayout(null);
-		
+		preferences.setLocationRelativeTo(ClientApplet.imContentFrame);
 		//Retrieve all available font names and set font combo box
 		String[] allFontNames = new String[500];
 		for(int a = 0; a < allFonts.length; a++)

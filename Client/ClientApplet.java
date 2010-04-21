@@ -113,7 +113,7 @@ public class ClientApplet extends JFrame {
 	public JMenu file, edit, encryption, view, help;
 	public JMenuItem disconnect, exit, preferences;
 	public JPanel panel;
-	public JFrame imContentFrame, buddyListFrame;
+	public static JFrame imContentFrame, buddyListFrame;
 	public JComboBox statusBox = new JComboBox(new String[] {"Available", "Busy"});
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
