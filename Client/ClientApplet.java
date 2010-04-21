@@ -81,10 +81,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
+import javax.swing.text.html.HTMLEditorKit;
 
 import com.inet.jortho.SpellChecker;	
 
@@ -516,6 +519,20 @@ public class ClientApplet extends JFrame {
 		};
 		
 		statusBox.setBounds(602, 452, 191, 25);
+		statusBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+				if(statusBox.getSelectedItem().equals("Away"))
+				{
+					Client.setAwayText(JOptionPane.showInputDialog("Please enter an auto-response message:"));
+					Client.setStatus(1);
+				}
+				else
+				{
+					Client.setStatus(0);
+				}
+			}
+		});
+		
 
 		// Add the mouseListener to the contact list
 		userBox.addMouseListener(mouseListener);
@@ -1074,6 +1091,7 @@ class MapTextArea extends JFrame {
 	public JTextArea myTA;
 	public JTextField myTF;
 	SimpleAttributeSet keyWord = new SimpleAttributeSet();
+	SimpleAttributeSet miniKeyWord = new SimpleAttributeSet();
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
@@ -1096,9 +1114,10 @@ class MapTextArea extends JFrame {
 
 		//Create the styled text area and the scroll pane around it
 		StyledEditorKit kit = new StyledEditorKit();
+		HTMLEditorKit htmlKit = new HTMLEditorKit();
 		myJEP = new JEditorPane();
 		myJEP.setEditable(false);
-		myJEP.setEditorKit(kit);
+		myJEP.setEditorKit(htmlKit);
         // enable the spell checking on the text component with all features
 	
 
@@ -1109,10 +1128,10 @@ class MapTextArea extends JFrame {
 		myJPanel.add(mySP);
 
 		//Create the text pane
-		StyledEditorKit miniKit = new StyledEditorKit();
+		//StyledEditorKit miniKit = new StyledEditorKit();
 		myTP = new JTextPane();
 		myTP.setBounds(10,440,560,50);
-		myTP.setEditorKit(miniKit);
+		//myTP.setEditorKit(miniKit);
 		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
 		
 		myJPanel.add(myTP);
@@ -1148,7 +1167,7 @@ class MapTextArea extends JFrame {
 		});
 		System.out.println("Listener added to tab!");
 		
-		//Set font to Arial
+		//Set default font to Arial
 		Font font = new Font("Arial",Font.PLAIN,12);
 		myTP.setFont(font);
 	}
