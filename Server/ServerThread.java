@@ -111,7 +111,7 @@ public class ServerThread extends Thread
 			
 			realUsername = username;
 			if(debug>=1)System.out.println("Decrypted Username: "+username);
-			
+			System.out.println("\n\n\n\nFIRST REAL USERNAME::::: "+realUsername"+\nUSERNAME:::::: "+username);
 			//Interupt means they want to create a new user
 			if(username.equals("Interupt")) { 
 				//Do nothing
@@ -128,23 +128,25 @@ public class ServerThread extends Thread
 				//Authenticate the user.
 				String loginOutcome = login(username, password);
 				if (debug>=1)System.out.println(loginOutcome);
-
+				System.out.println("\n\n\n\nSECOND REAL USERNAME (POSTLOGIN)::::: "+realUsername"+\nUSERNAME:::::: "+username);
 				//Maps username to socket after user logs in
 				server.mapUserServerSocket(username, c2ssocket);	
 				server.mapUserClientSocket(username, c2csocket);
 				server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
 				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));		
-				
+				System.out.println("\n\n\n\nREAL USERNAME (POST HASHTABLE)::::: "+realUsername"+\nUSERNAME:::::: "+username);
 			}
 			if(username.equals("Interupt")) {
 				routeMessage(serverDin,clientDin);
 				//server.removeConnection(socket);				
 			} else { 
+			System.out.println("\n\n\n\nREAL USERNAME (PREMESSAGES)::::: "+realUsername"+\nUSERNAME:::::: "+username);
 				//Route around messages coming in from the client while they are connected
 				while (isAlive==1) {
 					//Take in messages from this thread's client and route them to another client
 					routeMessage(serverDin,clientDin);
 				}
+				System.out.println("\n\n\n\nREAL USERNAME (POSTMESSAGES::::: "+realUsername"+\nUSERNAME:::::: "+username);
 				
 			}
 			
