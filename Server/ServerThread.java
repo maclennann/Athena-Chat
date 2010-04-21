@@ -293,7 +293,7 @@ public class ServerThread extends Thread
 		//Let's get the number of lines in the file
 		File newFile = new File("buddylists/" + username + "/buddylist.csv");
 		if(!(newFile.exists())) { 
-			boolean success = new File("users/" + username).mkdirs();
+			boolean success = new File("buddylists/" + username).mkdirs();
 			if(success) { 
 				newFile.createNewFile();
 				is = new BufferedInputStream(new FileInputStream("buddylists/" + username + "/buddylist.csv"));
@@ -326,7 +326,7 @@ public class ServerThread extends Thread
 			if(!(newFile2.exists())) { 
 				newFile2.createNewFile();
 			}
-			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
+			BufferedReader in = new BufferedReader(new FileReader("buddylists/" + username + "/buddylist.csv")); 
 			int x=0;
 			String raw;
 			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
