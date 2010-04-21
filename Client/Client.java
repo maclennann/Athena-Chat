@@ -108,7 +108,7 @@ public class Client
 
 	//Aegis' public key
 	static RSAPublicKeySpec serverPublic;
-
+	public static RSAPrivateKeySpec usersPrivate;
 	// Method to connect the user
 	public static void connect(String user_name, String hashedPassword) throws InterruptedException, AWTException, Exception { 
 		//Try to connect with and authenticate to the socket
@@ -197,6 +197,8 @@ public class Client
 
 					}				
 				}
+				
+				usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 			}
 			//Start the thread
 			listeningProcedureClientToClient.start();
