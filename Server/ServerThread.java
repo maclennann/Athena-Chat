@@ -568,11 +568,11 @@ public class ServerThread extends Thread
 			String privateKeyExpString = serverDin.readUTF();
 
 			//Read all encrypted data in
-			String firstNameCipher = serverDin.readUTF();
-			String lastNameCipher = serverDin.readUTF();
-			String emailAddressCipher = serverDin.readUTF();
-			String userNameCipher = serverDin.readUTF();
-			String passwordCipher = serverDin.readUTF();
+			String firstName = decryptServerPrivate(serverDin.readUTF());
+			String lastName = decryptServerPrivate(serverDin.readUTF());
+			String emailAddress = decryptServerPrivate(serverDin.readUTF());			
+			String newUser = decryptServerPrivate(serverDin.readUTF());
+			String newPassword = decryptServerPrivate(serverDin.readUTF());
 
 			//Turn the public key components into BigIntegers for use
 			BigInteger publicMod = new BigInteger(publicModString);
@@ -583,22 +583,6 @@ public class ServerThread extends Thread
 			BigInteger privateExp = new BigInteger(privateKeyExpString);
 
 
-			//Turn encrypted data into BigIntegers, then byte[]s
-			byte[] firstNameBytes = (new BigInteger(firstNameCipher)).toByteArray(); //does this work?
-			byte[] lastNameBytes = (new BigInteger(lastNameCipher)).toByteArray();
-			byte[] emailAddressBytes = (new BigInteger(emailAddressCipher)).toByteArray();
-			byte[] userNameBytes = (new BigInteger(userNameCipher)).toByteArray();
-			byte[] passwordBytes = (new BigInteger(passwordCipher)).toByteArray();
-			//BigInteger firstNameNumber = new BigInteger(firstNameCipher);
-			//byte[] firstNameBytes = firstNameNumber.toByteArray();
-
-			//Finally, decrypt the ciphertext
-			String firstName = RSACrypto.rsaDecryptPrivate(firstNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String lastName = RSACrypto.rsaDecryptPrivate(lastNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String emailAddress = RSACrypto.rsaDecryptPrivate(emailAddressBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String newUser = RSACrypto.rsaDecryptPrivate(userNameBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			String newPassword = RSACrypto.rsaDecryptPrivate(passwordBytes,server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
-			
 			//Write encrpyted private key to file		
 			RSACrypto.saveToFile("keys/" + newUser + ".priv", privateMod, privateExp);
 			if(debug>=1){
