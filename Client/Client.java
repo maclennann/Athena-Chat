@@ -1041,7 +1041,7 @@ public class Client
 	 * Method sets the buddy status
 	 * @param status
 	 */
-	public static void setStats(int status) { 
+	public static void setStatus(int status) { 
 		away = status;
 	}
 
