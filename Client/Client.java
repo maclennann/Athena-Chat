@@ -209,8 +209,12 @@ public class Client
 			}
 			//Garbage collect
 			System.gc();
-		} catch( IOException ie ) { ie.printStackTrace(); } catch (NoSuchAlgorithmException e) {
+		} catch( IOException ie ) { 
+			ie.printStackTrace(); 
+			loginGUI.dispose();
+		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
+			loginGUI.dispose();
 			e.printStackTrace();
 		}
 	}
