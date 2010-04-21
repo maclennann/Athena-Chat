@@ -137,6 +137,7 @@ public class ClientApplet extends JFrame {
 	public boolean fontItalic;
 	public boolean fontUnderline;
 	public int activeTheme;
+	public boolean userStatusFlag = false;
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
@@ -497,7 +498,8 @@ public class ClientApplet extends JFrame {
 						// Create a tab for the conversation if it doesn't exist
 						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
 							makeTab(o.toString(), true);
-							FocusCurrentTextField();						
+							if(!(userStatusFlag))
+								FocusCurrentTextField();						
 						}
 						else
 						{
@@ -505,7 +507,8 @@ public class ClientApplet extends JFrame {
 							// exists
 							imTabbedPane.setSelectedIndex(imTabbedPane
 									.indexOfTab(o.toString()));
-							FocusCurrentTextField();
+							if(!(userStatusFlag))
+								FocusCurrentTextField();
 						}
 					}
 					else
@@ -523,12 +526,28 @@ public class ClientApplet extends JFrame {
 			public void actionPerformed(ActionEvent event){
 				if(statusBox.getSelectedItem().equals("Busy"))
 				{
-					Client.setAwayText(JOptionPane.showInputDialog("Please enter an auto-response message:"));
-					Client.setStatus(1);
+					String ans = JOptionPane.showInputDialog("Please enter an auto-response message:");
+					System.out.println("ANS: " + ans);
+					if(ans != null && ans.length() > 0)
+					{
+						Client.setAwayText(ans);
+						Client.setStatus(1);
+						setUserStatus(true);
+					}
+					else if (ans == null)
+					{
+						//If canceled, do nothing
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "Status message cannot be blank!\n\tPlease try again.", "Input Error", JOptionPane.ERROR_MESSAGE);
+						statusBox.setSelectedItem("Available");
+					}
 				}
 				else
 				{
 					Client.setStatus(0);
+					setUserStatus(false);
 				}
 			}
 		});
@@ -610,15 +629,15 @@ public class ClientApplet extends JFrame {
 		addAlertNotificationListener(imTabbedPane.indexOfTab(user));
 		// Focus the new tab if first tab or if textarea is empty
 		addTextFieldFocusListener(imTabbedPane.indexOfTab(user));
+		if(userStatusFlag)
+			disableTextPane(imTabbedPane.indexOfTab(user));
+		
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
-		//Component[] currentTabComponents = currentTab.getComponents();
-		//JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-		//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		//JTextPane currentTextPane = (JTextPane) currentScrollPane.getViewport().getComponent(0);
 		if(imTabbedPane.indexOfTab(user) == 0 || userCreated)
 		{
 			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
-			FocusCurrentTextField();
+			if(!(userStatusFlag))
+				FocusCurrentTextField();
 		}
 		else
 		{
@@ -627,10 +646,57 @@ public class ClientApplet extends JFrame {
 			JButton currentButton = (JButton) c.getComponent(1);
 			currentButton.setIcon(alertIcon);
 			imTabbedPane.setSelectedIndex(prevIndex);
-			FocusCurrentTextField();			
+			if(!(userStatusFlag))
+				FocusCurrentTextField();			
 		}
 		//Garbage collect!
 		System.gc();
+	}
+	
+	public void setUserStatus(boolean busy)
+	{
+		if(busy)
+		{
+			int tabCount = imTabbedPane.getTabCount();
+			for(int x = 0; x < tabCount; x++)
+			{
+				disableTextPane(x);
+			}
+			userStatusFlag = true;
+		}
+		else
+		{
+			int tabCount = imTabbedPane.getTabCount();
+			for(int x = 0; x < tabCount; x++)
+			{
+				enableTextPane(x);
+			}
+			userStatusFlag = false;
+		}
+	}
+	
+	public void disableTextPane(int index)
+	{
+		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
+		Component[] currentTabComponents = currentTab.getComponents();
+		JTextPane textFieldToFocus = (JTextPane) currentTabComponents[1];
+		textFieldToFocus.setEnabled(false);
+		textFieldToFocus.setFont(new Font("Arial", Font.ITALIC, 14));
+		textFieldToFocus.setBackground(Color.gray);
+		textFieldToFocus.setForeground(Color.black);
+		textFieldToFocus.setText("Change user status to [Available] to resume communication...");
+	}
+	
+	public void enableTextPane(int index)
+	{
+		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
+		Component[] currentTabComponents = currentTab.getComponents();
+		JTextPane textFieldToFocus = (JTextPane) currentTabComponents[1];
+		textFieldToFocus.setEnabled(true);
+		textFieldToFocus.setFont(new Font("Arial", Font.PLAIN, 14));
+		textFieldToFocus.setBackground(Color.white);
+		textFieldToFocus.setForeground(Color.black);
+		textFieldToFocus.setText("");
 	}
 	
 	public void setSystemTrayIcon(boolean activated) throws AWTException
@@ -706,7 +772,6 @@ public class ClientApplet extends JFrame {
 				imTabbedPane.setSelectedIndex(x);
 				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				currentTabComponents = currentTab.getComponents();
-				//currentTextField = (JTextComponent) currentTabComponents[1];
 				currentTextField = (JTextPane) currentTabComponents[1];
 				SpellChecker.register(currentTextField, true, true, true);
 			}
@@ -721,7 +786,6 @@ public class ClientApplet extends JFrame {
 				imTabbedPane.setSelectedIndex(x);
 				currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				currentTabComponents = currentTab.getComponents();
-				//currentTextField = (JTextComponent) currentTabComponents[1];
 				currentTextField = (JTextPane) currentTabComponents[1];
 				SpellChecker.unregister(currentTextField);
 			}
@@ -768,7 +832,6 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
-		//JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
 		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		currentTextField.addKeyListener(new KeyListener() {
 		public void keyPressed(KeyEvent e) {
@@ -823,7 +886,6 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
-		//JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
 		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		KeyListener[] fieldListeners =  currentTextField.getKeyListeners();
 		if (fieldListeners != null)
@@ -836,7 +898,6 @@ public class ClientApplet extends JFrame {
 	{
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
 		Component[] currentTabComponents = currentTab.getComponents();
-		//JTextComponent currentTextField = (JTextComponent) currentTabComponents[1];
 		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		currentTextField.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
@@ -1039,7 +1100,6 @@ public class ClientApplet extends JFrame {
 		      JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				Component[] currentTabComponents = currentTab.getComponents();
 				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-				//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
 				JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 		      uniqueIDHash.remove(currentTextPane.getDocument());
 		      
