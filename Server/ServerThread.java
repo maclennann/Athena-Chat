@@ -160,14 +160,14 @@ public class ServerThread extends Thread
 			try { 
 			System.out.println("REMVONG FUCKING USAIGNER: "+realUsername);
 			server.removeConnection( c2ssocket, c2csocket,realUsername );
-			serverDin = new DataInputStream( c2ssocket.getInputStream() );
-			clientDin = new DataInputStream( c2csocket.getInputStream() );
-			serverDout = new DataOutputStream( c2ssocket.getOutputStream());
-			clientDout = new DataOutputStream( c2csocket.getOutputStream());
-			serverDin.close();
-			serverDout.close();
-			clientDin.close();
-			clientDout.close();
+			//serverDin = new DataInputStream( c2ssocket.getInputStream() );
+			//clientDin = new DataInputStream( c2csocket.getInputStream() );
+			//serverDout = new DataOutputStream( c2ssocket.getOutputStream());
+			//clientDout = new DataOutputStream( c2csocket.getOutputStream());
+			//serverDin.close();
+			//serverDout.close();
+			//clientDin.close();
+			//clientDout.close();
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
