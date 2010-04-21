@@ -495,7 +495,7 @@ public class Client
 				print.moveToEnd();
 				//If we are away send the user our away message
 				if(away == 1) {
-					processMessage("Auto reply from user: " + awayText);
+					processMessage(fromUserDecrypted,"Auto reply from user: " + awayText);
 				}
 				
 				if(decryptedMessage.equalsIgnoreCase("lmao")){
@@ -538,6 +538,94 @@ public class Client
 	public static void processMessage( String message ) throws BadLocationException {	
 		//Get user to send message to from active tab
 		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+		//Get the JPanel in the active tab
+		print = (MapTextArea)clientResource.tabPanels.get(toUser);
+		if(debug>=1)System.out.println("JPANEL : " + print.toString());
+
+		//See if the user is logged in. If yes, send it. If no, error.
+		if (debug>=1) System.out.println("USERNAME: " + username);
+		if(username.equals("null")){
+			print.setHeaderColor(new Color(130, 0, 0));
+			print.writeToTextArea("Error: You are not connected!\n");
+			print.moveToEnd();
+			print.clearTextField();}
+		else{
+			//Print the message locally
+			print.setHeaderColor(new Color(0, 130, 0));
+			print.writeToTextArea(username+": ");
+			print.setTextColor(Color.black);
+			print.writeToTextArea(message+"\n");
+
+			//Send the message
+			try{
+				if(message.length() > 245){
+					double messageNumbers = (double)message.length()/245;
+					double messageNumbersInt = Math.ceil(messageNumbers);
+					if(debug>=1)System.out.println("MessageLength: "+message.length()+"\nMessageLength/245: "+messageNumbers+"\nCeiling of that: "+messageNumbersInt);
+					String[] messageChunks = new String[(int)messageNumbersInt];
+					for(int i=0;i<messageChunks.length;i++){
+						int begin=i*245;
+						int end = begin+245;
+						if(end>message.length()){
+							end = message.length()-1;
+						}
+						messageChunks[i] = message.substring(begin,end);
+
+						//Grab the other user's public key from file
+						RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
+						//Encrypt the toUser with the Server's public key and send it to the server
+
+						//Encrypt the message with the toUser's public key and send it to the server
+						BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(messageChunks[i], toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+						c2sdout.writeUTF(encryptServerPublic(toUser));
+						c2sdout.writeUTF(encryptServerPublic(username));
+						c2sdout.writeUTF(messageCipher.toString());
+						//Hash the Message for the digital signature
+						//String hashedMessage = ClientLogin.computeHash(message);
+
+						// Append own message to IM window
+						print.moveToEnd();
+						// Clear out text input field
+						print.clearTextField();
+					}
+
+				}else{
+
+
+					//Grab the other user's public key from file
+					RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
+					//Encrypt the message with the toUser's public key and send it to the server
+					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(message, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+					c2sdout.writeUTF(encryptServerPublic(toUser));
+					c2sdout.writeUTF(encryptServerPublic(username));
+					c2sdout.writeUTF(messageCipher.toString());
+					//Hash the Message for the digital signature
+					//String hashedMessage = ClientLogin.computeHash(message);
+					//Send the server the digital signature (Hash of the message encrypted with UserA's private key
+					//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+
+					// Append own message to IM window
+					print.moveToEnd();
+					// Clear out text input field
+					print.clearTextField();
+				}
+				//TADA
+			} catch( IOException ie ) { 
+				if(debug>=1)System.out.println(ie);
+				print.setHeaderColor(new Color(130, 0, 0));
+				print.writeToTextArea("Error: You are not connfected!\n");
+				print.moveToEnd();
+				print.clearTextField();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}System.gc();
+	}
+	
+	public static void processMessage( String usertoreply, String message ) throws BadLocationException {	
+		//Get user to send message to from active tab
+		toUser = usertoreply;
 		//Get the JPanel in the active tab
 		print = (MapTextArea)clientResource.tabPanels.get(toUser);
 		if(debug>=1)System.out.println("JPANEL : " + print.toString());
