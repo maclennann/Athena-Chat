@@ -489,7 +489,8 @@ public class Client
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
 				print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130))); 
-				print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
+				//print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
+				parseMarkdown(decryptedMessage,print);
 				print.moveToEnd();
 				//If we are away send the user our away message
 				if(away == 1) {
@@ -528,6 +529,79 @@ public class Client
 		}
 	}
 
+	
+	
+	public static void parseMarkdown(String mesg, MapTextArea print){
+		String message = mesg;
+		int bold=0;
+		int italic=0;
+		int x=0;
+		int changed=0;
+		char current=' ';
+		char previous=' ';
+		char next=' ';
+		for(x=0;x<message.length();x++){
+			current = message.charAt(x);
+			if(x>0)	previous = message.charAt(x-1);
+			if(x!=message.length()-1) next = message.charAt(x+1);
+			
+			if(current=='*'){
+				if(previous=='\\'){
+					try{
+					print.writeToTextArea(String.valueOf(current), print.getTextFont());
+					}catch(Exception e){e.printStackTrace();}
+					
+				}
+				else if(next=='*'){
+					if(bold==1){
+						bold=0;
+						changed=1;
+						//System.out.print("</b>");
+					}
+					else{
+						bold=1;
+						changed=1;
+						//System.out.print("<b>");
+					}
+					x++;
+				}
+				else{
+					if(italic==1){
+						italic=0;
+						changed=1;
+						//System.out.print("</i>");
+					}
+					else{
+						italic=1;
+						changed=1;
+						//System.out.print("<i>");
+					}
+				}
+			}
+			else{
+				if(changed==1){
+					boolean b = (bold != 0);
+					boolean i = (italic != 0);
+					print.setTextFont(b, i);
+					changed = 0;
+				}
+				if(current=='\\' && next=='*'){}
+				else{
+					try{
+					print.writeToTextArea(String.valueOf(current), print.getTextFont());
+					}catch(Exception e){e.printStackTrace();}
+				}
+			}
+		}
+		try{
+					print.writeToTextArea("\n", print.getTextFont());
+					}catch(Exception e){e.printStackTrace();}
+	}
+	
+	
+	
+	
+	
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
 	/** This method takes the message the user types and will get it ready to send
@@ -549,8 +623,8 @@ public class Client
 		else{
 			//Print the message locally
 			print.writeToTextArea(username+": ", print.getSetHeaderFont(new Color(0, 130, 0)));
-			print.writeToTextArea(message+"\n", print.getTextFont());
-
+			//print.writeToTextArea(message+"\n", print.getTextFont());
+			parseMarkdown(message,print);
 			//Send the message
 			try{
 				if(message.length() > 245){

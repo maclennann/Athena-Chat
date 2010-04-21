@@ -316,7 +316,7 @@ public class ClientApplet extends JFrame {
 		Border contactListBorderBB = BorderFactory.createCompoundBorder(contactListBorderAA, threeColor);
 		Border contactListBorderCC = BorderFactory.createCompoundBorder(contactListBorderBB, oneColor);
 		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderCC, Client.username + "'s Contact List", TitledBorder.CENTER,
-											TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
+		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
 
 		// TODO Add ActionListeners to the images to bring up the add/remove
@@ -1277,6 +1277,12 @@ class MapTextArea extends JFrame {
 		StyleConstants.setForeground(miniKeyWord, foreColor);
 		StyleConstants.setBackground(miniKeyWord, backColor);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
+	}
+	
+	public void setTextFont(boolean isBold, boolean isItalic)
+	{
+		StyleConstants.setBold(miniKeyWord, isBold);
+		StyleConstants.setItalic(miniKeyWord, isItalic);
 	}
 
 	// Set the text area color
