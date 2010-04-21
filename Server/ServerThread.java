@@ -418,7 +418,7 @@ public class ServerThread extends Thread
 		//TODO make this dynamic
 		String[] buddyListLines;
 		// TODO Auto-generated method stub
-		sendSystemMessage(username, "Access Granted. Send me the username.");
+		//sendSystemMessage(username, "Access Granted. Send me the username.");
 		System.out.println("Should be begin: " + decryptServerPrivate(serverDin.readUTF()));
 		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(serverDin.readUTF())))];
 		System.out.println("Buddylist lines: "  + buddyListLines.length);
