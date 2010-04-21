@@ -172,14 +172,6 @@ public class Client
 									Client.recvMesg(c2cdin);
 								}
 							}});
-				listeningProcedureClientToServer = new Thread(
-						new Runnable() {
-							public void run() {								
-								//While we are connected to the server, receive messages
-								while(connected ==1) {
-									Client.recvMesg(c2sdin);
-								}
-							}});
 				//Instantiate Buddy List
 				instantiateBuddyList();	
 
@@ -277,6 +269,10 @@ public class Client
 				System.out.println("GET BUDDY LIST FROM SERVER");
 				receiveBuddyListFromServer();
 			}
+		}
+		//Buddy list is empty so grab it from the server
+		else if (hashOfLocalBuddyList.equals("d41d8cd98f00b204e9800998ecf8427e")) { 
+			receiveBuddyListFromServer();
 		}
 		else { 
 			if(debug>=1)System.out.println("Hashes match!");
