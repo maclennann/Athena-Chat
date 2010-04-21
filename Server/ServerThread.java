@@ -221,7 +221,7 @@ public class ServerThread extends Thread
 
 		} catch (IOException e) {
 			//Something broke. Disconnect the user.
-			//e.printStackTrace();
+			if(debug==2)e.printStackTrace();
 			isAlive=0;
 		}
 	}
