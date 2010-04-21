@@ -253,7 +253,7 @@ public class Client
 		if(debug==2)System.out.println("Hash of local: " + hashOfLocalBuddyList + "\nHash of remote buddylist: " + remoteVals[0]);
 
 		//Now let's compare this hash with the hash on the server
-		if(!(hashOfLocalBuddyList.equals(remoteVals[0]))) { 
+		if((!(hashOfLocalBuddyList.equals(remoteVals[0]))) && (!(hashOfLocalBuddyList.equals("d41d8cd98f00b204e9800998ecf8427e")))) { 
 			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
 			if(localBuddyListModDate > remoteBuddyListModDate) {
 				//Send buddylist to server!
