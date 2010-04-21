@@ -1131,11 +1131,11 @@ class MapTextArea extends JFrame {
 					try {
 						Client.processMessage(myTP.getText());
 						myTP.getDocument().remove(0, myTP.getText().length());
-						e.consume();
 					} catch (BadLocationException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+				e.consume();
 			}
 
 			public void keyReleased(KeyEvent e) {
