@@ -15,11 +15,12 @@ public class MarkdownTest{
 			if(x!=message.length()-1) next = message.charAt(x+1);
 			
 			if(current=='*'){
-				if(x>0){
 				if(previous=='\\'){
 					//do nothing
-				}}
-				if(next=='*'){
+					System.out.print(current);
+					
+				}
+				else if(next=='*'){
 					if(bold==1){
 						bold=0;
 						System.out.print("</b>");
@@ -42,7 +43,8 @@ public class MarkdownTest{
 				}
 			}
 			else{
-				System.out.print(current);
+				if(current=='\\' && next=='*'){}
+				else System.out.print(current);
 			}
 		}
 	}
