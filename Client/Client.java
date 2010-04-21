@@ -701,7 +701,7 @@ public class Client
 			out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
 
 			for(int i = 0; i < buddyList.length;i++){
-				encryptedUsername = new BigInteger(buddyList[i].concat(","));
+				encryptedUsername = new BigInteger(buddyList[i]);
 				out.write(encryptedUsername + "\n");
 			}
 			out.close();
