@@ -127,11 +127,11 @@ public class ServerThread extends Thread
 				String loginOutcome = login(username, password);
 				if (debug>=1)System.out.println(loginOutcome);
 
-				/*//Maps username to socket after user logs in
+				//Maps username to socket after user logs in
 				server.mapUserServerSocket(username, c2ssocket);	
 				server.mapUserClientSocket(username, c2csocket);
 				server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
-				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));	*/		
+				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));		
 				
 			}
 			if(username.equals("Interupt")) {
@@ -472,11 +472,11 @@ public class ServerThread extends Thread
 			System.out.println("(Offline)\n");
 			} 
 			
-			//Maps username to socket after user logs in
+			/*//Maps username to socket after user logs in
 			server.mapUserServerSocket(username, c2ssocket);	
 			server.mapUserClientSocket(username, c2csocket);
 			server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
-			server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));
+			server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));*/
 		} catch ( Exception e ) { 
 			e.printStackTrace();
 		} 
