@@ -680,6 +680,38 @@ public class Client
 		}
 	}
 
+	/**
+	 * This method writes the buddy list to file
+	 * @param buddyList String array of the lines of the buddy list
+	 */
+	static void writeBuddyListToFile(String[] buddyList, boolean flag){
+		BigInteger encryptedUsername;
+		BufferedWriter out;
+		File newFile = new File("users/" + username + "/buddylist.csv");
+		try{
+			if(!(newFile.exists())) { 
+				boolean success = new File("users/" + username).mkdirs();
+				if(success) { 
+					newFile.createNewFile();
+				}
+				else { 
+					newFile.createNewFile();
+				}
+			}
+			out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
+
+			for(int i = 0; i < buddyList.length;i++){
+				encryptedUsername = new BigInteger(buddyList[i].concat(","));
+				out.write(encryptedUsername + "\n");
+			}
+			out.close();
+		}catch(Exception e)
+		{
+			if(debug>=1)System.out.println("ERROR WRITING BUDDYLIST");
+			if(debug==2)e.printStackTrace();
+		}
+	}
+	
 	public static void receivePrivateKeyFromServer() throws IOException {
 		systemMessage("007");
 		//Receive ack message
