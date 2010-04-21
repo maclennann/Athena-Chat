@@ -82,7 +82,7 @@ public class ClientPreferences extends JPanel {
 
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
-	public JButton generalLabel = new JButton("Test", new ImageIcon("../images/generalPref.png"));
+	public JButton generalLabel = new JButton("System", new ImageIcon("../images/generalPref.png"));
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
 	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
 	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
@@ -106,7 +106,10 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components for the Formatting Menu Panel
 	public JButton formattingLabel = new JButton("Font Format", new ImageIcon("../images/fontPref.png"));
-	public JComboBox selectFontComboBox;
+	public JLabel selectFontLabel = new JLabel("Font Type:");
+	public JLabel fontSizeLabel = new JLabel("Font Size:");
+	public JLabel generalFontLabel = new JLabel("Font Style:");
+	public JComboBox selectFontComboBox, fontSizeComboBox;
 	public JCheckBox setBoldCheckBox = new JCheckBox("Bold");
 	public JCheckBox setItalicsCheckBox = new JCheckBox("Italics");
 	public JCheckBox setUnderlineCheckBox = new JCheckBox("Underlined");
@@ -114,10 +117,12 @@ public class ClientPreferences extends JPanel {
 	public boolean setBoldFlag = false;
 	public boolean setItalicsFlag = false;
 	public boolean setUnderlineFlag = false;
+	public boolean setSizeFlag = false;
 	public boolean selectFontVal;
 	public boolean setBoldVal;
 	public boolean setItalicsVal;
 	public boolean setUnderlineVal;
+	public int setSizeVal;
 	
 	//Define components for the Theme Menu Panel
 	public JButton themeLabel = new JButton("Appearance", new ImageIcon("../images/themePref.png"));
@@ -145,6 +150,8 @@ public class ClientPreferences extends JPanel {
 			allFontNames[a] = allFonts[a].getFontName();
 		}
 		selectFontComboBox = new JComboBox(allFontNames);
+		fontSizeComboBox = new JComboBox(new String[] {"8", "10", "12", "14", 
+											"16", "18", "20", "22", "24", "26", "28", "36", "48"});
 		
 		//Initialize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
@@ -183,7 +190,7 @@ public class ClientPreferences extends JPanel {
 				try {
 					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
 					setNotificationSettings(enableSoundsFlag, enableSoundsVal);
-					setFormattingSettings(selectFontFlag, setBoldFlag, setItalicsFlag, setUnderlineFlag);
+					setFormattingSettings(selectFontFlag, setBoldFlag, setItalicsFlag, setUnderlineFlag, setSizeFlag);
 					writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -329,20 +336,37 @@ public class ClientPreferences extends JPanel {
 		formattingPanel.setBounds(140,15,300,300);
 		formattingPanel.setVisible(false);
 		
-		selectFontComboBox.setBounds(50,35, 200, 30);
-		setBoldCheckBox.setBounds(50,95,100,25);
-		setItalicsCheckBox.setBounds(50,135,100,25);
-		setUnderlineCheckBox.setBounds(50,175,100,25);
+		selectFontComboBox.setBounds(50, 55, 200, 30);
+		fontSizeComboBox.setBounds(192, 115, 50, 30);
+		setBoldCheckBox.setBounds(50,125,100,30);
+		setItalicsCheckBox.setBounds(50,155,100,30);
+		setUnderlineCheckBox.setBounds(50,185,100,30);
+		selectFontLabel.setBounds(50, 30, 100, 20);
+		fontSizeLabel.setBounds(190, 95, 100, 20);
+		generalFontLabel.setBounds(50, 95, 100, 20);
 		
 		formattingPanel.add(selectFontComboBox);
 		formattingPanel.add(setBoldCheckBox);
 		formattingPanel.add(setItalicsCheckBox);
 		formattingPanel.add(setUnderlineCheckBox);
+		formattingPanel.add(fontSizeComboBox);
+		formattingPanel.add(selectFontLabel);
+		formattingPanel.add(fontSizeLabel);
+		formattingPanel.add(generalFontLabel);
 		
 		selectFontComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
+					apply.setEnabled(true);
 					String fontToSet = selectFontComboBox.getSelectedItem().toString();
 					System.out.println("Retrieved font style: " + fontToSet);
+				}
+			});
+		
+		fontSizeComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+					apply.setEnabled(true);
+					int fontSizeToSet = Integer.parseInt(fontSizeComboBox.getSelectedItem().toString());
+					System.out.println("Retrieved font size: " + fontSizeToSet);
 				}
 			});
 		
@@ -645,51 +669,14 @@ public class ClientPreferences extends JPanel {
 		}
 	}
 	
-	private void setFormattingSettings(boolean setFontFlag, boolean setBoldFlag, boolean setItalicsFlag, boolean setUnderlineFlag)
+	private void setFormattingSettings(boolean setFontFlag, boolean setBoldFlag, boolean setItalicsFlag,
+										boolean setUnderlineFlag, boolean setSizeFlag)
 	{
-		if (setFontFlag)
+		if (setFontFlag || setBoldFlag || setItalicsFlag || setUnderlineFlag || setSizeFlag)
 		{
-			if(!(selectFontVal))
-			{
-				//Client.setEnableSounds(false);
-			}
-			if(selectFontVal)
-			{
-				//Client.setEnableSounds(true);
-			}
-		}
-		if (setBoldFlag)
-		{
-			if(!(setBoldVal))
-			{
-				//Client.setEnableSounds(false);
-			}
-			if(setBoldVal)
-			{
-				//Client.setEnableSounds(true);
-			}
-		}
-		if (setItalicsFlag)
-		{
-			if(!(setItalicsVal))
-			{
-				//Client.setEnableSounds(false);
-			}
-			if(setItalicsVal)
-			{
-				//Client.setEnableSounds(true);
-			}
-		}
-		if (setUnderlineFlag)
-		{
-			if(!(setUnderlineVal))
-			{
-				//Client.setEnableSounds(false);
-			}
-			if(setUnderlineVal)
-			{
-				//Client.setEnableSounds(true);
-			}
+			
+			Client.print.setTextFont(setBoldVal, setItalicsVal, setUnderlineVal,
+										Color.black, Color.white, setSizeVal);
 		}
 	}
 	

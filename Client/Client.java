@@ -420,8 +420,8 @@ public class Client
 			if(fromUserDecrypted.equals("UnavailableUser")){
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				print = (MapTextArea)clientResource.tabPanels.get(decryptedMessage);
-				print.writeToTextArea(fromUserDecrypted+": ");
-				print.writeToTextArea(decryptedMessage+"\n");
+				print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(Color.red));
+				print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
 				return;
 			}
 
@@ -488,10 +488,10 @@ public class Client
 				
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
-				print.setHeaderColor(new Color(0, 0, 130));
-				print.writeToTextArea(fromUserDecrypted+": "); 
-				print.setTextColor(Color.black);
-				print.writeToTextArea(decryptedMessage+"\n");
+				//print.setHeaderColor(new Color(0, 0, 130));
+				print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130))); 
+				//print.setTextColor(Color.black);
+				print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
 				print.moveToEnd();
 				//If we are away send the user our away message
 				if(away == 1) {
@@ -545,16 +545,16 @@ public class Client
 		//See if the user is logged in. If yes, send it. If no, error.
 		if (debug>=1) System.out.println("USERNAME: " + username);
 		if(username.equals("null")){
-			print.setHeaderColor(new Color(130, 0, 0));
-			print.writeToTextArea("Error: You are not connected!\n");
+			//print.setHeaderColor(new Color(130, 0, 0));
+			print.writeToTextArea("Error: You are not connected!\n", print.getSetHeaderFont(new Color(130, 0, 0)));
 			print.moveToEnd();
 			print.clearTextField();}
 		else{
 			//Print the message locally
-			print.setHeaderColor(new Color(0, 130, 0));
-			print.writeToTextArea(username+": ");
-			print.setTextColor(Color.black);
-			print.writeToTextArea(message+"\n");
+			//print.setHeaderColor(new Color(0, 130, 0));
+			print.writeToTextArea(username+": ", print.getSetHeaderFont(new Color(0, 130, 0)));
+			//print.setTextColor(Color.black);
+			print.writeToTextArea(message+"\n", print.getTextFont());
 
 			//Send the message
 			try{
@@ -591,7 +591,6 @@ public class Client
 
 				}else{
 
-
 					//Grab the other user's public key from file
 					RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 					//Encrypt the message with the toUser's public key and send it to the server
@@ -612,8 +611,8 @@ public class Client
 				//TADA
 			} catch( IOException ie ) { 
 				if(debug>=1)System.out.println(ie);
-				print.setHeaderColor(new Color(130, 0, 0));
-				print.writeToTextArea("Error: You are not connfected!\n");
+				//print.setHeaderColor(new Color(130, 0, 0));
+				print.writeToTextArea("Error: You are not connfected!\n", print.getTextFont());
 				print.moveToEnd();
 				print.clearTextField();
 			} catch (Exception e) {

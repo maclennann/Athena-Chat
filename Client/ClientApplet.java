@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.swing.text.Document;
 import javax.swing.border.Border;
@@ -328,8 +329,8 @@ public class ClientApplet extends JFrame {
 		
 		addContactLabel.setVisible(true);
 		removeContactLabel.setVisible(true);
-		addContactLabel.setBounds(610, 490, 50, 50);
-		removeContactLabel.setBounds(700, 490, 50, 50);
+		addContactLabel.setBounds(630, 490, 50, 50);
+		removeContactLabel.setBounds(720, 490, 50, 50);
 		
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
@@ -1175,10 +1176,9 @@ class MapTextArea extends JFrame {
 
 		//Create the styled text area and the scroll pane around it
 		StyledEditorKit kit = new StyledEditorKit();
-		HTMLEditorKit htmlKit = new HTMLEditorKit();
 		myJEP = new JEditorPane();
 		myJEP.setEditable(false);
-		myJEP.setEditorKit(htmlKit);
+		myJEP.setEditorKit(kit);
         // enable the spell checking on the text component with all features
 	
 
@@ -1189,10 +1189,10 @@ class MapTextArea extends JFrame {
 		myJPanel.add(mySP);
 
 		//Create the text pane
-		//StyledEditorKit miniKit = new StyledEditorKit();
+		StyledEditorKit miniKit = new StyledEditorKit();
 		myTP = new JTextPane();
 		myTP.setBounds(10,440,560,50);
-		//myTP.setEditorKit(miniKit);
+		myTP.setEditorKit(miniKit);
 		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
 		
 		myJPanel.add(myTP);
@@ -1257,12 +1257,32 @@ class MapTextArea extends JFrame {
 	public JPanel getJPanel() {
 		return myJPanel;
 	}
+	
+	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine, Color foreColor, Color backColor, int ftSize)
+	{
+		StyleConstants.setBold(miniKeyWord, isBold);
+		StyleConstants.setItalic(miniKeyWord, isItalic);
+		StyleConstants.setUnderline(miniKeyWord, isULine);
+		StyleConstants.setForeground(miniKeyWord, foreColor);
+		StyleConstants.setBackground(miniKeyWord, backColor);
+		StyleConstants.setFontSize(miniKeyWord, ftSize);
+	}
 
-	// Set the text color (does nothing)
-	public void setHeaderColor(Color color) {
-		StyleConstants.setForeground(keyWord, color);
+	// Set the text area color
+	public SimpleAttributeSet getSetHeaderFont(Color color) {
 		StyleConstants.setBold(keyWord, true);
+		StyleConstants.setItalic(keyWord, false);
+		StyleConstants.setUnderline(keyWord, false);
+		StyleConstants.setForeground(keyWord, color);
+		StyleConstants.setBackground(keyWord, Color.white);
 		StyleConstants.setFontSize(keyWord, 14);
+		StyleConstants.setFontFamily(keyWord, "serif");
+		return keyWord;
+	}
+	
+	public SimpleAttributeSet getTextFont()
+	{
+		return miniKeyWord;
 	}
 	
 	public void setTextColor(Color color)
@@ -1270,12 +1290,13 @@ class MapTextArea extends JFrame {
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBold(keyWord, false);
 		StyleConstants.setFontSize(keyWord, 12);
+		StyleConstants.setFontFamily(keyWord, "Times");
 	}
 
 	// Write a string to the text area
-	public void writeToTextArea(String message) throws BadLocationException {
-		myJEP.setFont(new Font("Times New Roman", Font.BOLD, 14));
-		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, keyWord);
+	public void writeToTextArea(String message, SimpleAttributeSet attributes) throws BadLocationException {
+		//myJEP.setFont(new Font("Arial", Font.PLAIN, 12);
+		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, attributes);
 	}
 
 	// Move the cursor to the end of the ScrollPane
