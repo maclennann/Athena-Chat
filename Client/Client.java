@@ -814,7 +814,7 @@ public class Client
 	public static boolean sendBuddyListToServer() throws IOException {
 		String[] buddylistArray = returnBuddyListArray(true);
 		systemMessage("006");
-		System.out.println("Ack message received from server" + decryptServerPublic(c2sdin.readUTF()));	        
+			        
 		int numLines = buddylistArray.length;
 
 		//Send Aegis the begin message so it knows that this is beginning of the file
