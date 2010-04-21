@@ -29,6 +29,7 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -57,6 +58,7 @@ import java.util.Enumeration;
 import javax.swing.text.Document;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
@@ -1106,9 +1108,12 @@ class MapTextArea extends JFrame {
 		myJPanel.add(mySP);
 
 		//Create the text pane
+		StyledEditorKit miniKit = new StyledEditorKit();
 		myTP = new JTextPane();
 		myTP.setBounds(10,440,560,50);
+		myTP.setEditorKit(miniKit);
 		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
+		
 		myJPanel.add(myTP);
 		
 		uniqueIDHash.put(myJEP.getDocument(), myJPanel);
@@ -1119,12 +1124,13 @@ class MapTextArea extends JFrame {
 		
 		username = user;
 
-		myTP.addKeyListener(new KeyListener() {
+		myTP.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER && (!(myTP.getText().equals(""))))
 					try {
 						Client.processMessage(myTP.getText());
 						myTP.getDocument().remove(0, myTP.getText().length());
+						e.consume();
 					} catch (BadLocationException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -1132,7 +1138,7 @@ class MapTextArea extends JFrame {
 			}
 
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub		
+				// TODO Auto-generated method stub
 			}
 
 			public void keyTyped(KeyEvent e) {
@@ -1175,7 +1181,7 @@ class MapTextArea extends JFrame {
 	public void setHeaderColor(Color color) {
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBold(keyWord, true);
-		StyleConstants.setFontSize(keyWord, 16);
+		StyleConstants.setFontSize(keyWord, 14);
 	}
 	
 	public void setTextColor(Color color)
@@ -1187,11 +1193,8 @@ class MapTextArea extends JFrame {
 
 	// Write a string to the text area
 	public void writeToTextArea(String message) throws BadLocationException {
-		//myTA.append(message);
-		System.out.println("# of ATTS: " + keyWord.getAttributeCount());
-		System.out.println(keyWord.toString());
+		myJEP.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, keyWord);
-		System.out.println("DEFAULT: " + myJEP.getDocument().getDefaultRootElement());
 	}
 
 	// Move the cursor to the end of the ScrollPane
