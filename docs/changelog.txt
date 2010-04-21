@@ -1,5 +1,15 @@
 ChangeLog: 
 
+4/20/2010:
+	## Implemented dual-socket connection
+		@@ Allows for more stable communication with the server
+		@@ Simplifies data flow
+	## Fixed logout hash table bug with static username
+	## Made user accounts entirely portable
+		@@ Pulls down private, public keys, and buddylist with their pubkeys
+	## Implemented jeditorpane and jtextarea
+		@@ Implemented fonts in editorpane
+
 4/18/2010:
 	## Visual Notifications on each tab!!!!
 	## All tabs close cleanly (better memory management)
