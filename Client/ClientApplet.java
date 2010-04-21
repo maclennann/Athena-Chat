@@ -52,7 +52,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Random;
 import java.util.Enumeration;
 
 import javax.swing.text.Document;
@@ -80,11 +79,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.Element;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
@@ -529,6 +524,7 @@ public class ClientApplet extends JFrame {
 		lockIconLabel.setIcon(lockIcon);
 		lockIconLabel.setVisible(true);
 		lockIconLabel.setBounds(148, 10, 580, 537);
+		
 		// Generate panel by adding appropriate components
 		panel = new JPanel();
 		panel.setLayout(null);
@@ -720,9 +716,9 @@ public class ClientApplet extends JFrame {
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 		Component[] currentTabComponents = currentTab.getComponents();
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-		//JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
-		JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
-		currentTextPane.getDocument().addDocumentListener(new DocumentListener() {
+		JEditorPane currentEditorPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
+		System.out.println("Alert listener on: " + currentEditorPane.toString());
+		currentEditorPane.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
 				JPanel currentTab = uniqueIDHash.get(e.getDocument());
 				int currentTabIndex = imTabbedPane.indexOfComponent(currentTab);
@@ -1013,7 +1009,6 @@ public class ClientApplet extends JFrame {
 		  
 		  public void actionPerformed(ActionEvent e) {
 		    int i = pane.indexOfTabComponent(this);
-		    int zz = 0;
 		    if (i != -1) {
 			  String userToRemove = pane.getTitleAt(i);
 		      pane.remove(i);
@@ -1075,7 +1070,6 @@ class MapTextArea extends JFrame {
 	public JTextPane myTP;
 	public JTextArea myTA;
 	public JTextField myTF;
-	//public AttributeSet attr;
 	SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
 	// The index of the tab this lives in
@@ -1097,11 +1091,7 @@ class MapTextArea extends JFrame {
 		myJPanel = new JPanel();
 		myJPanel.setLayout(null);
 
-		//Create the text area and the scroll pane around it
-		//myTA = new JTextArea();
-		//myTA.setEditable(false);
-		//myTA.setLineWrap(true);
-		//myTA.setWrapStyleWord(true);
+		//Create the styled text area and the scroll pane around it
 		StyledEditorKit kit = new StyledEditorKit();
 		myJEP = new JEditorPane();
 		myJEP.setEditable(false);
@@ -1109,40 +1099,25 @@ class MapTextArea extends JFrame {
         // enable the spell checking on the text component with all features
 	
 
-
-		//JScrollPane mySP = new JScrollPane(myTA);
 		JScrollPane mySP = new JScrollPane(myJEP);
 		mySP.setBounds(10,10,559,420);
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		mySP.setOpaque(true);    
 		myJPanel.add(mySP);
 
-		//Create the text field
-		//myTF = new JTextField();
-		//myTF.setBounds(10,469,560,30);
-		//myJPanel.add(myTF);
-		
+		//Create the text pane
 		myTP = new JTextPane();
 		myTP.setBounds(10,440,560,50);
 		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
 		myJPanel.add(myTP);
 		
-		uniqueIDHash.put(myTP.getDocument(), myJPanel);
+		uniqueIDHash.put(myJEP.getDocument(), myJPanel);
 
 		//Register the spell checker in the text field
 		if (spellCheckFlag)
 			SpellChecker.register(myTP, true, true, true);
 		
 		username = user;
-
-		//Add an actionListener to the text field to send messages
-		/*myTF.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				if(!(myTF.getText().equals(""))) { 
-				Client.processMessage(myTF.getText());
-				}
-			}
-		});*/
 
 		myTP.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
@@ -1167,8 +1142,7 @@ class MapTextArea extends JFrame {
 		System.out.println("Listener added to tab!");
 		
 		//Set font to Arial
-		Font font = new Font("Arial",Font.PLAIN,14);
-		//myTA.setFont(font);
+		Font font = new Font("Arial",Font.PLAIN,12);
 		myTP.setFont(font);
 	}
 
@@ -1198,9 +1172,17 @@ class MapTextArea extends JFrame {
 	}
 
 	// Set the text color (does nothing)
-	public void setTextColor(Color color) {
+	public void setHeaderColor(Color color) {
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBold(keyWord, true);
+		StyleConstants.setFontSize(keyWord, 16);
+	}
+	
+	public void setTextColor(Color color)
+	{
+		StyleConstants.setForeground(keyWord, color);
+		StyleConstants.setBold(keyWord, false);
+		StyleConstants.setFontSize(keyWord, 12);
 	}
 
 	// Write a string to the text area

@@ -481,7 +481,7 @@ public class Client
 
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
-				print.setTextColor(new Color(0, 0, 130));
+				print.setHeaderColor(new Color(0, 0, 130));
 				print.writeToTextArea(fromUserDecrypted+": "); 
 				print.setTextColor(Color.black);
 				print.writeToTextArea(decryptedMessage+"\n");
@@ -523,13 +523,13 @@ public class Client
 		//See if the user is logged in. If yes, send it. If no, error.
 		if (debug>=1) System.out.println("USERNAME: " + username);
 		if(username.equals("null")){
-			print.setTextColor(new Color(130, 0, 0));
+			print.setHeaderColor(new Color(130, 0, 0));
 			print.writeToTextArea("Error: You are not connected!\n");
 			print.moveToEnd();
 			print.clearTextField();}
 		else{
 			//Print the message locally
-			print.setTextColor(new Color(0, 130, 0));
+			print.setHeaderColor(new Color(0, 130, 0));
 			print.writeToTextArea(username+": ");
 			print.setTextColor(Color.black);
 			print.writeToTextArea(message+"\n");
@@ -590,7 +590,7 @@ public class Client
 				//TADA
 			} catch( IOException ie ) { 
 				if(debug>=1)System.out.println(ie);
-				print.setTextColor(new Color(130, 0, 0));
+				print.setHeaderColor(new Color(130, 0, 0));
 				print.writeToTextArea("Error: You are not connfected!\n");
 				print.moveToEnd();
 				print.clearTextField();
