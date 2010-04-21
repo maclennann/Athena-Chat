@@ -263,18 +263,18 @@ public class Server
 	}
 
 	//Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
-	void removeConnection( Socket servsock, Socket clientsock, String username ) {
+	void removeConnection( Socket servsock, Socket clientsock, String uname ) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
 		synchronized( clientOutputStreams ) {
 			// Debug text
-			System.out.println( "User Disconnected: "+username+"\n\n" );
+			System.out.println( "User Disconnected: "+uname+"\n\n" );
 
 			// Remove thread's entries from hashtables
 			serverOutputStreams.remove( servsock );
 			clientOutputStreams.remove( clientsock);
-			userToServerSocket.remove(username);
-			userToClientSocket.remove(username);
+			userToServerSocket.remove(uname);
+			userToClientSocket.remove(uname);
 			
 			// Make sure the socket is closed
 			try {
@@ -282,7 +282,7 @@ public class Server
 				clientsock.close();
 				
 				//Sending User Log off message after we close the socket
-				sendToAll("ServerLogOff",username);
+				sendToAll("ServerLogOff",uname);
 			} catch( IOException ie ) {
 				System.out.println( "Error closing "+servsock );
 				ie.printStackTrace();

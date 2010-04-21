@@ -156,6 +156,7 @@ public class ServerThread extends Thread
 		}finally {
 			//Socket is closed, remove it from the list
 			try { 
+			System.out.println("REMVONG FUCKING USAIGNER: "+realUsername);
 			server.removeConnection( c2ssocket, c2csocket,realUsername );
 			serverDin = new DataInputStream( c2ssocket.getInputStream() );
 			clientDin = new DataInputStream( c2csocket.getInputStream() );
