@@ -196,7 +196,7 @@ public class ClientApplet extends JFrame {
 		imContentFrame.setSize(813, 610);
 		imContentFrame.setResizable(false);
 		imContentFrame.setLocation(width-(width/2)-407,height-(height/2)-305);
-
+		imContentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
 		// Create the file menu.
 		file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);

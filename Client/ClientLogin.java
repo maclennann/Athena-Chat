@@ -85,7 +85,7 @@ public class ClientLogin extends JFrame {
 		//Initialize Login window
 		login = new JFrame("Athena");
 		login.setLocation(width/2-100,height/2-150);
-		
+		login.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
 		login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		login.setSize(200,300);
 		login.setResizable(false);
