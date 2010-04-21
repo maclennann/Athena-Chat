@@ -108,8 +108,9 @@ public class ClientApplet extends JFrame {
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
 	public JMenuItem disconnect, exit, preferences;
-	public JPanel panel; // still need this?
+	public JPanel panel;
 	public JFrame imContentFrame, buddyListFrame;
+	public JComboBox statusBox = new JComboBox(new String[] {"Available", "Busy"});
 	public JTabbedPane imTabbedPane = new JTabbedPane();
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
 	public BufferedImage addUserIcon;
@@ -260,14 +261,14 @@ public class ClientApplet extends JFrame {
 			}
 		});
 
-		// ActionListener to make the exit menu item exit
+		// ActionListener to show Preferences window
 		preferences.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				new ClientPreferences();
 			}
 		});
 		
-		// ActionListener to make the exit menu item exit
+		// ActionListener to show About Athena window
 		about.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try{
@@ -278,7 +279,7 @@ public class ClientApplet extends JFrame {
 			}
 		});
 		
-		// ActionListener to make the exit menu item exit
+		// ActionListener to open browser link to Athena website
 		web.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try{
@@ -289,12 +290,9 @@ public class ClientApplet extends JFrame {
 			}
 		});
 
-		// Why is this commented out?
-		// frame.setJMenuBar(menuBar);
-
 		// Adds the contact list to a scroll pane
 		JScrollPane contactList = new JScrollPane(userBox);
-		contactList.setBounds(600, 2, 195, 485);
+		contactList.setBounds(600, 2, 195, 450);
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, twoColor);
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
@@ -304,7 +302,7 @@ public class ClientApplet extends JFrame {
 		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderCC, Client.username + "'s Contact List", TitledBorder.CENTER,
 											TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
-		// Adds the Icons to Pane
+
 		// TODO Add ActionListeners to the images to bring up the add/remove
 		// user windows
 
@@ -516,6 +514,8 @@ public class ClientApplet extends JFrame {
 				}
 			}
 		};
+		
+		statusBox.setBounds(602, 452, 191, 25);
 
 		// Add the mouseListener to the contact list
 		userBox.addMouseListener(mouseListener);
@@ -533,6 +533,7 @@ public class ClientApplet extends JFrame {
 		panel.add(contactList);
 		panel.add(addContactLabel);
 		panel.add(removeContactLabel);
+		panel.add(statusBox);
 		panel.add(lockIconLabel);
 		panel.add(imTabbedPane);
 

@@ -414,7 +414,7 @@ public class Client
 			byte[] messageBytes = (new BigInteger(encryptedMessage)).toByteArray();
 
 			if(debug>=1)System.out.println("FROMUSER: " + fromUserDecrypted);
-			//If the message is an unavailabe user response		
+			//If the message is an unavailable user response		
 			if(fromUserDecrypted.equals("UnavailableUser")){
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				print = (MapTextArea)clientResource.tabPanels.get(decryptedMessage);
