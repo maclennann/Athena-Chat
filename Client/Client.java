@@ -502,9 +502,20 @@ public class Client
 					print.writeToTextArea(decryptedMessage+"\n");
 					print.moveToEnd();
 				}
-
+				
+				if(decryptedMessage.equalsIgnoreCase("lmao")){
+					if(getEnableSounds())
+					{
+						// If enabled, open an input stream  to the audio file.
+						InputStream in = new FileInputStream("sounds/lmaoMesg.wav");
+						// Create an AudioStream object from the input stream.
+						AudioStream as = new AudioStream(in);         
+						// Use the static class member "player" from class AudioPlayer to play
+						AudioPlayer.player.start(as);
+					}
+				}
 				// If enabled, open an input stream  to the audio file.
-				if(getEnableSounds())
+				else if(getEnableSounds())
 				{
 					InputStream in = new FileInputStream("sounds/recvMesg.wav");
 					// Create an AudioStream object from the input stream.
