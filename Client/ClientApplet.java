@@ -298,7 +298,8 @@ public class ClientApplet extends JFrame {
 		web.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try{
-					Runtime.getRuntime().exec("C:\\Program Files\\Internet Explorer\\iexplore.exe http://athenachat.org");
+					String url = "http://athenachat.org";
+					java.awt.Desktop.getDesktop().browse(java.net.URI.create(url)); 
 				}catch(IOException e){
 					e.printStackTrace();
 				}
