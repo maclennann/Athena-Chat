@@ -152,6 +152,7 @@ public class ServerThread extends Thread
 			e.printStackTrace();
 		}finally {
 			//Socket is closed, remove it from the list
+			try { 
 			serverDin = new DataInputStream( c2ssocket.getInputStream() );
 			clientDin = new DataInputStream( c2csocket.getInputStream() );
 			serverDout = new DataOutputStream( c2ssocket.getOutputStream());
@@ -160,6 +161,9 @@ public class ServerThread extends Thread
 			serverDout.close();
 			clientDin.close();
 			clientDout.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			server.removeConnection( c2ssocket, c2csocket,username );
 		}
 	}
