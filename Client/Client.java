@@ -791,7 +791,7 @@ public class Client
 			buddyListLines[y] = decryptServerPublic(c2sdin.readUTF());
 			if(debug==2)System.out.println("Decrypted buddylist lines: " + buddyListLines[y]);
 		}
-		writeBuddyListToFile(buddyListLines);
+		writeBuddyListToFile(buddyListLines, true);
 		if(debug>=1)System.out.println("Successfully wrote Buddylist to file");
 
 	}
