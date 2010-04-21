@@ -496,11 +496,6 @@ public class Client
 				//If we are away send the user our away message
 				if(away == 1) {
 					processMessage("Auto reply from user: " + awayText);
-					print.setHeaderColor(new Color(0, 0, 130));
-					print.writeToTextArea(fromUserDecrypted+": "); 
-					print.setTextColor(Color.black);
-					print.writeToTextArea(decryptedMessage+"\n");
-					print.moveToEnd();
 				}
 				
 				if(decryptedMessage.equalsIgnoreCase("lmao")){
@@ -1017,7 +1012,7 @@ public class Client
 			if(!(newFile2.exists())) { 
 				newFile2.createNewFile();
 			}
-			BufferedReader in = new BufferedReader(new FileReader("./users/" + username + "/buddylist.csv")); 
+			BufferedReader in = new BufferedReader(new FileReader("users/" + username + "/buddylist.csv")); 
 			int x=0;
 			String raw;
 			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
