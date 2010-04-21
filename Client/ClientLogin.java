@@ -31,7 +31,7 @@ import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import java.awt.Dimension;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -72,9 +72,20 @@ public class ClientLogin extends JFrame {
 
 	//Constructor | Here's where the fun begins
 	ClientLogin() throws AWTException { 
+	
+		// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		int width = (int)scrnsize.getWidth();
+		int height = (int)scrnsize.getHeight();
+		
 		logo.setIcon(logoicon);
 		//Initialize Login window
 		login = new JFrame("Athena");
+		login.setLocation(width/2-100,height/2-150);
+		
 		login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		login.setSize(200,300);
 		login.setResizable(false);
