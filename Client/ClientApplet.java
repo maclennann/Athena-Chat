@@ -159,6 +159,15 @@ public class ClientApplet extends JFrame {
 
 		// Initialize chat window
 		
+		// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		int width = (int)scrnsize.getWidth();
+		int height = (int)scrnsize.getHeight();
+		
+		
 		//Load preference settings
 		Object[] settingsArray = loadSavedPreferences();
 		setCurrentSettingsArray(settingsArray);
@@ -186,6 +195,7 @@ public class ClientApplet extends JFrame {
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		imContentFrame.setSize(813, 610);
 		imContentFrame.setResizable(false);
+		imContentFrame.setLocation(width-(width/2)-407,height-(height/2)-305);
 
 		// Create the file menu.
 		file = new JMenu("File");
