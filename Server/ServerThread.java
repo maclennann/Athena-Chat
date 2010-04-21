@@ -145,7 +145,7 @@ public class ServerThread extends Thread
 				}
 				
 			}
-			server.removeConnection( c2ssocket, c2csocket,username );
+			
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
 		} catch (Exception e) {
@@ -154,6 +154,7 @@ public class ServerThread extends Thread
 		}finally {
 			//Socket is closed, remove it from the list
 			try { 
+			server.removeConnection( c2ssocket, c2csocket,username );
 			serverDin = new DataInputStream( c2ssocket.getInputStream() );
 			clientDin = new DataInputStream( c2csocket.getInputStream() );
 			serverDout = new DataOutputStream( c2ssocket.getOutputStream());
