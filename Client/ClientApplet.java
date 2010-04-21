@@ -693,6 +693,7 @@ public class ClientApplet extends JFrame {
 		Component[] currentTabComponents = currentTab.getComponents();
 		JTextPane textFieldToFocus = (JTextPane) currentTabComponents[1];
 		textFieldToFocus.setEnabled(true);
+		textFieldToFocus.setEditable(true);
 		textFieldToFocus.setFont(new Font("Arial", Font.PLAIN, 14));
 		textFieldToFocus.setBackground(Color.white);
 		textFieldToFocus.setForeground(Color.black);
@@ -1210,11 +1211,11 @@ class MapTextArea extends JFrame {
 					try {
 						Client.processMessage(myTP.getText());
 						myTP.getDocument().remove(0, myTP.getText().length());
+						e.consume();
 					} catch (BadLocationException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				e.consume();
 			}
 
 			public void keyReleased(KeyEvent e) {
