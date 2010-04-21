@@ -536,6 +536,7 @@ public class Client
 		String message = mesg;
 		int bold=0;
 		int italic=0;
+		int underline=0;
 		int x=0;
 		int changed=0;
 		char current=' ';
@@ -579,11 +580,26 @@ public class Client
 					}
 				}
 			}
+			else if(current=='_'){
+				if(previous=='\\'){
+					try{
+						print.writeToTextArea(String.valueOf(current), print.getTextFont());
+					}catch(Exception e){e.printStackTrace();
+				}
+				}
+				else{
+					if(underline==1){
+						underline=0;
+					}else underline=1;
+					changed=1;
+				}
+			}					
 			else{
 				if(changed==1){
 					boolean b = (bold != 0);
 					boolean i = (italic != 0);
-					print.setTextFont(b, i);
+					boolean u = (underline != 0);
+					print.setTextFont(b, i, u);
 					changed = 0;
 				}
 				if(current=='\\' && next=='*'){}
@@ -597,7 +613,7 @@ public class Client
 		try{
 			print.writeToTextArea("\n", print.getTextFont());
 		}catch(Exception e){e.printStackTrace();}
-		print.setTextFont(false,false);
+		print.setTextFont(false,false,false);
 	}
 	
 	

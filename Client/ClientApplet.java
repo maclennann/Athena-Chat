@@ -1279,10 +1279,11 @@ class MapTextArea extends JFrame {
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
 	}
 	
-	public void setTextFont(boolean isBold, boolean isItalic)
+	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine)
 	{
 		StyleConstants.setBold(miniKeyWord, isBold);
 		StyleConstants.setItalic(miniKeyWord, isItalic);
+		StyleConstants.setUnderline(miniKeyWord, isULine);
 	}
 
 	// Set the text area color
