@@ -60,19 +60,19 @@ public class Client
 
 	//Global username variable
 	public static String username="null";
-
-	//Splash Screen
-	static ClientSplash screen;
+	
+	//Global status variable
+	public static int away = 0;
 
 	//Recipient for message
 	private static String toUser;
+	
+	//Away message test
+	public static String awayText;
 
 	//Client's GUI
 	public static ClientApplet clientResource;
 	public static ClientLogin loginGUI;
-
-	//TODO: Make otherUsers array read from buddylist.xml
-	//DONE 3/30/2010
 
 	// The socket connecting us to the server
 	public static Socket c2ssocket;
@@ -485,7 +485,7 @@ public class Client
 				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
-
+				
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
 				print.setHeaderColor(new Color(0, 0, 130));
@@ -493,6 +493,15 @@ public class Client
 				print.setTextColor(Color.black);
 				print.writeToTextArea(decryptedMessage+"\n");
 				print.moveToEnd();
+				//If we are away send the user our away message
+				if(away == 1) {
+					processMessage("Auto reply from user: " + awayText);
+					print.setHeaderColor(new Color(0, 0, 130));
+					print.writeToTextArea(fromUserDecrypted+": "); 
+					print.setTextColor(Color.black);
+					print.writeToTextArea(decryptedMessage+"\n");
+					print.moveToEnd();
+				}
 
 				// If enabled, open an input stream  to the audio file.
 				if(getEnableSounds())
@@ -1009,6 +1018,13 @@ public class Client
 			}
 			return usernames;
 		}
+	}
+	/**
+	 * Method sets the away message text
+	 * @param toAwayText
+	 */
+	public static void setAwayText(String toAwayText) {
+		awayText = toAwayText;
 	}
 
 	//Use this method if Contact with Aegis is needed
