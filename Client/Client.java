@@ -1095,15 +1095,16 @@ public class Client
 	 */
 	public static void disconnect() { 
 		try{
-			c2ssocket.close();
-			c2csocket.close();
 			c2sdout.close();
 			c2cdout.close();
 			c2sdin.close();
 			c2cdin.close();
+			c2ssocket.close();
+			c2csocket.close();
 			connected=0;
 			clientResource.setVisible(false);
 		}catch(Exception e){
+			System.out.println("HAII");
 			e.printStackTrace();
 		}
 	}
