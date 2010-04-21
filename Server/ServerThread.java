@@ -67,6 +67,7 @@ public class ServerThread extends Thread
 
 	//Define Global Variable Username / Password
 	private static String username;
+	private static String realUsername;
 	private String password;
 
 	//Our current socket
@@ -95,6 +96,7 @@ public class ServerThread extends Thread
 	//This runs when the thread starts. It controls everything.
 	public void run() {
 		try {
+		
 			//Create a datainputstream on the current socket to accept data from the client
 			serverDin = new DataInputStream( c2ssocket.getInputStream() );
 			clientDin = new DataInputStream( c2csocket.getInputStream() );
@@ -107,7 +109,7 @@ public class ServerThread extends Thread
 			//Decrypt the username
 			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent());
 			
-			
+			realUsername = username;
 			if(debug>=1)System.out.println("Decrypted Username: "+username);
 			
 			//Interupt means they want to create a new user
@@ -154,7 +156,7 @@ public class ServerThread extends Thread
 		}finally {
 			//Socket is closed, remove it from the list
 			try { 
-			server.removeConnection( c2ssocket, c2csocket,username );
+			server.removeConnection( c2ssocket, c2csocket,realUsername );
 			serverDin = new DataInputStream( c2ssocket.getInputStream() );
 			clientDin = new DataInputStream( c2csocket.getInputStream() );
 			serverDout = new DataOutputStream( c2ssocket.getOutputStream());
