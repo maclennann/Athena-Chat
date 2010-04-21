@@ -594,8 +594,9 @@ public class Client
 			}
 		}
 		try{
-					print.writeToTextArea("\n", print.getTextFont());
-					}catch(Exception e){e.printStackTrace();}
+			print.writeToTextArea("\n", print.getTextFont());
+		}catch(Exception e){e.printStackTrace();}
+		print.setTextFont(false,false);
 	}
 	
 	
