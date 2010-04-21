@@ -527,7 +527,6 @@ public class ClientApplet extends JFrame {
 				if(statusBox.getSelectedItem().equals("Busy"))
 				{
 					String ans = JOptionPane.showInputDialog("Please enter an auto-response message:");
-					System.out.println("ANS: " + ans);
 					if(ans != null && ans.length() > 0)
 					{
 						Client.setAwayText(ans);
@@ -537,6 +536,7 @@ public class ClientApplet extends JFrame {
 					else if (ans == null)
 					{
 						//If canceled, do nothing
+						statusBox.setSelectedItem("Available");
 					}
 					else
 					{
