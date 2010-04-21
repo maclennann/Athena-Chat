@@ -1037,6 +1037,13 @@ public class Client
 	public static void setAwayText(String toAwayText) {
 		awayText = toAwayText;
 	}
+	/**
+	 * Method sets the buddy status
+	 * @param status
+	 */
+	public static void setStats(int status) { 
+		away = status;
+	}
 
 	//Use this method if Contact with Aegis is needed
 	/**
