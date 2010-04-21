@@ -285,6 +285,11 @@ public class Client
 		//Check entire buddylist and fill hashtable with user online statuses
 		for (int i=0; i < usernames.length; i++) { 
 			if(debug==1)System.out.println("Current Buddy To Check: " + usernames[i]);
+			//Check to see if the user's public key is there
+			File pubKey = new File("users/" + username + "/keys/" + usernames[i] + ".pub");
+			if(!(pubKey.exists())) { 
+				getUsersPublicKeyFromAegis(usernames[i]);
+			}
 			checkUserStatus(usernames[i]);
 		}
 		//Counter
