@@ -584,8 +584,7 @@ public class Client
 				if(previous=='\\'){
 					try{
 						print.writeToTextArea(String.valueOf(current), print.getTextFont());
-					}catch(Exception e){e.printStackTrace();
-				}
+					}catch(Exception e){e.printStackTrace();}
 				}
 				else{
 					if(underline==1){
@@ -603,6 +602,7 @@ public class Client
 					changed = 0;
 				}
 				if(current=='\\' && next=='*'){}
+				if(current=='\\' && next=='_'){}
 				else{
 					try{
 					print.writeToTextArea(String.valueOf(current), print.getTextFont());
