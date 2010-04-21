@@ -143,8 +143,9 @@ public class ServerThread extends Thread
 					//Take in messages from this thread's client and route them to another client
 					routeMessage(serverDin,clientDin);
 				}
+				
 			}
-
+			server.removeConnection( c2ssocket, c2csocket,username );
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
 		} catch (Exception e) {
@@ -164,7 +165,7 @@ public class ServerThread extends Thread
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
-			server.removeConnection( c2ssocket, c2csocket,username );
+			
 		}
 	}
 
