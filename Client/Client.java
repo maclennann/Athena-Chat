@@ -256,10 +256,9 @@ public class Client
 		if((!(hashOfLocalBuddyList.equals(remoteVals[0])))) {
 			long localBuddyListModDate = returnLocalModDateOfBuddyList(username);
 		
-			if(!(hashOfLocalBuddyList.equals("d41d8cd98f00b204e9800998ecf8427e"))){
+			if((hashOfLocalBuddyList.equals("d41d8cd98f00b204e9800998ecf8427e"))){
 				receiveBuddyListFromServer();
-			}
-			
+			}			
 			else if(localBuddyListModDate > remoteBuddyListModDate) {
 				//Send buddylist to server!
 				System.out.println("SEND BUDDY LIST TO SERVER");
