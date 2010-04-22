@@ -272,10 +272,14 @@ public class ServerThread extends Thread
 	private void receiveBugReport(){
 		if(debug==1)System.out.println("Receiving bug report stacktrace");
 		if(debug==1)System.out.println("Receiving bug report comments");
-		String trace = decryptServerPrivate(serverDin.readUTF());
-		String comments = decryptServerPrivate(serverDin.readUTF());
+		String trace = "";
+		String comments = "";
+		try{
+			trace = decryptServerPrivate(serverDin.readUTF());
+			comments = decryptServerPrivate(serverDin.readUTF());
+		}catch(Exception e){e.printStackTrace();}
 		
-		System.out.println("Bug report received from "+realUsername+":");
+		System.out.println("Bug report received from "+realUsername+": " + comments);
 		System.out.println("Stacktrace follows:"+trace);
 	}
 	
