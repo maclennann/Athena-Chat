@@ -125,7 +125,8 @@ public class ClientLogin extends JFrame {
 		username.setBounds(50,130,100,25);
 		passwordLabel.setBounds(50,155,100,25);
 		password.setBounds(50,180,100,25);
-		registerJLabel.setBounds(55,210,90,25);
+		registerJLabel.setBounds(10,210,170,25);
+		registerJLabel.setHorizontalAlignment(JLabel.CENTER);
 		connect.setBounds(105,235,75,30);
 		cancel.setBounds(10,235,75,30);
 		logo.setBounds(60,10,100,100);
