@@ -20,6 +20,7 @@ public class ClientLoginFailed extends JFrame {
 	public JLabel failedPasswordJLabel = new JLabel("Password");
 	public DrawingPanel failedLoginDrawingPanel;
 	public JButton closeThis = new JButton("OK");
+	public JButton forgotPassword = new JButton("Reset Password");
 	
 	ClientLoginFailed() {
 		loginFailed = new JFrame("Athena Chat Application");
@@ -29,10 +30,12 @@ public class ClientLoginFailed extends JFrame {
 		
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
-		failedLoginDrawingPanel.setBounds(140,75,100,100);
+		failedLoginDrawingPanel.setBounds(140,60,100,100);
 		
-		closeThis.setBounds(160,185,60,25);
+		closeThis.setBounds(80,185,60,25);
+		forgotPassword.setBounds(180,185,150,25);
 		contentPane.add(closeThis);
+		contentPane.add(forgotPassword);
 		failedPasswordJLabel.setBounds(15,15,400,25);
 		failedPasswordJLabel.setText("Sorry, your login credentials were not correct. Please try again!");
 		contentPane.add(failedPasswordJLabel);
@@ -75,7 +78,18 @@ public class ClientLoginFailed extends JFrame {
 				}
 			}
 		});
-		
+			forgotPassword.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent event){
+					//ClientAddUser testOfWindow = new ClientAddUser();
+					try {
+					ClientResetPassword passReset = new ClientResetPassword();
+					loginFailed.dispose();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		loginFailed.setVisible(true);
 		closeThis.requestFocusInWindow();
@@ -94,6 +108,7 @@ public class ClientLoginFailed extends JFrame {
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
 		failedLoginDrawingPanel.setBounds(140,75,100,100);
 		contentPane.add(failedLoginDrawingPanel);
+		contentPane.add(forgotPassword);
 		}
 		else{
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/happyface.png");
