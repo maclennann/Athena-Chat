@@ -670,7 +670,7 @@ public class ServerThread extends Thread
 			if(debug==1)System.out.print("Found user.. Continuing...");
 			foundSocket = (Socket) server.userToClientSocket.get(toUser);
 			if(debug==1)System.out.print("Found Socket: " + foundSocket);
-		} else { sendMessage(fromUser, "UnavailableUser", toUser); return; } 
+		} else { sendMessage(fromUser, "UnavailableUser", encryptServerPrivate(toUser)); return; } 
 
 		//Find the outputstream associated with toUser's socket
 		//We send data through this outputstream to send the message
@@ -678,7 +678,7 @@ public class ServerThread extends Thread
 		//This should not fail
 		if (server.clientOutputStreams.containsKey(foundSocket)) { 
 			clientDout = (DataOutputStream) server.clientOutputStreams.get(foundSocket);
-		} else { sendMessage(fromUser, "MissingSocket", toUser); return; }
+		} else { sendMessage(fromUser, "MissingSocket", encryptServerPrivate(toUser)); return; }
 
 		//Send the message, and the user it is from
 		try {
