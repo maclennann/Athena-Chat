@@ -233,7 +233,7 @@ public class ClientApplet extends JFrame {
 
 		// Create the encryption menu.
 		encryption = new JMenu("Encryption");
-		encryption.setMnemonic(KeyEvent.VK_E);
+		encryption.setMnemonic(KeyEvent.VK_C);
 		menuBar.add(encryption);
 		
 		// Create the view menu
@@ -578,7 +578,7 @@ public class ClientApplet extends JFrame {
 		imTabbedPane.setBounds(10, 10, 580, 537);
 		lockIconLabel.setIcon(lockIcon);
 		lockIconLabel.setVisible(true);
-		lockIconLabel.setBounds(148, 10, 580, 537);
+		lockIconLabel.setBounds(490, 400, 104, 150);
 		
 		// Generate panel by adding appropriate components
 		panel = new JPanel();
