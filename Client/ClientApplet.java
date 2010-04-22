@@ -126,7 +126,9 @@ public class ClientApplet extends JFrame {
 	public Border contactListBorder;
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	public ImageIcon logoIcon = new ImageIcon("../images/logo.png");
+	public ImageIcon logoIconBig = new ImageIcon("../images/logobig.png");
 	static public JLabel lockIconLabel = new JLabel();
+	static public JLabel logoIconLabel = new JLabel();
 	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
 	public int sessionTabCount = 0;
 	public boolean enableSystemTray;
@@ -418,14 +420,16 @@ public class ClientApplet extends JFrame {
 						final JComboBox listOfUsersJComboBox = new JComboBox();
 						final JButton removeJButton, cancelJButton;
 						removeJButton = new JButton("Remove");
+						removeWindow.setResizable(false);
+						removeWindow.setLocationRelativeTo(imContentFrame);
 						cancelJButton = new JButton("Done");
 						
 						contentPane.setLayout(null);
 						
-						removeWindow.setSize(200,200);	
-						listOfUsersJComboBox.setBounds(45,40,100,25);
-						removeJButton.setBounds(45,75,100,25);
-						cancelJButton.setBounds(45,115,100,25);
+						removeWindow.setSize(150,155);	
+						listOfUsersJComboBox.setBounds(20,20,100,25);
+						removeJButton.setBounds(20,60,100,25);
+						cancelJButton.setBounds(20,95,100,25);
 					
 						for(int x=0; x<usernames.length;x++) listOfUsersJComboBox.addItem(usernames[x]);
 						
@@ -579,6 +583,9 @@ public class ClientApplet extends JFrame {
 		lockIconLabel.setIcon(lockIcon);
 		lockIconLabel.setVisible(true);
 		lockIconLabel.setBounds(490, 400, 104, 150);
+		logoIconLabel.setIcon(logoIconBig);
+		logoIconLabel.setVisible(true);
+		logoIconLabel.setBounds(200,100,305,300);
 		
 		// Generate panel by adding appropriate components
 		panel = new JPanel();
@@ -588,6 +595,7 @@ public class ClientApplet extends JFrame {
 		panel.add(removeContactLabel);
 		panel.add(statusBox);
 		panel.add(lockIconLabel);
+		panel.add(logoIconLabel);
 		panel.add(imTabbedPane);
 
 		// Initialize window frame
