@@ -724,7 +724,7 @@ public class Client
 		else{
 			//Print the message locally
 			print.writeToTextArea(username+": ", print.getSetHeaderFont(new Color(0, 130, 0)));
-			print.writeToTextArea(message+"\n", print.getTextFont());
+			parseMarkdown(message,print);
 
 			//Send the message
 			try{
