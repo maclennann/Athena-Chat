@@ -532,7 +532,7 @@ public class Client
 		}
 		catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
-			sendBugReport(getStackTraceAsString(ie));
+			//ndBugReport(getStackTraceAsString(ie));
 			if(debug>=1)ie.printStackTrace();
 			connected=0; 
 		} catch (Exception e) {
@@ -562,7 +562,7 @@ public class Client
 				if(previous=='\\'){
 					try{
 					print.writeToTextArea(String.valueOf(current), print.getTextFont());
-					}catch(Exception e){e.printStackTrace();}
+					}catch(Exception e){sendBugReport(getStackTraceAsString(e));e.printStackTrace();}
 					
 				}
 				else if(next=='*'){
