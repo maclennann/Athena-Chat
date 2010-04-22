@@ -633,6 +633,7 @@ public class ClientApplet extends JFrame {
 	// Make a tab for a conversation
 	public void makeTab(String user, boolean userCreated) {
 		lockIconLabel.setVisible(false);
+		logoIconLabel.setVisible(false);
 		int prevIndex = 0;
 		// Create a hash table mapping a user name to the JPanel in a tab
 		tabPanels.put(user, new MapTextArea(user, enableSpellCheck, uniqueIDHash));
@@ -1132,6 +1133,7 @@ public class ClientApplet extends JFrame {
 		      }
 			  if(imTabbedPane.getTabCount() ==0){
 				ClientApplet.lockIconLabel.setVisible(true);
+				ClientApplet.logoIconLabel.setVisible(true);
 				}
 			  System.gc();
 		    }
