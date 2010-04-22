@@ -782,7 +782,7 @@ public class Client
 				//TADA
 			} catch( IOException ie ) { 
 				if(debug>=1)System.out.println(ie);
-				print.writeToTextArea("Error: You are not connfected!\n", print.getSetHeaderFont(new Color(130, 0, 0)));
+				print.writeToTextArea("Error: You probably don't have the user's public key. Please add them to your list!\n", print.getSetHeaderFont(new Color(130, 0, 0)));
 				print.moveToEnd();
 				print.clearTextField();
 			} catch (Exception e) {
