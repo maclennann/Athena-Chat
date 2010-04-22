@@ -1,12 +1,4 @@
 BOTH:
-	## Encryption!!!
-		@@ Generate a key pair for the server that we can integrate into the client
-			!! Done 04/08/2010 - NM
-		@@ Research KDC protocols
-			!! Done 04/08/2010 - NM
-		@@ Use D-H for session keys? Is there a better option?
-		@@ Revamp database to deal with hashed keys and things
-			!! Done 04/08/2010 - NM
 	## Make the code many many times more efficient
 	## CREATE JAVADOC Comments
 	## SECURE the code. We have EVERYTHING as public.
@@ -14,28 +6,17 @@ BOTH:
 	## Password reset
 		@@ Decrypt all relevant info with old password, and re-encrypt with new password
 		@@ Probably doesn't make a new keypair at the same time
-	## Private key and buddylist (encrypted) backups on the server
-	## Store/check/verify hashes and datemodified times of all critical data (keys, buddylists)
-		@@ Latest version get's propagated.
+	## There should be an item in the help menu that allows users to submit a bug report from within the program
+		@@ Should we be keeping a logfile of debug output that can be sent along with it?
 
 CLIENT:
-	## Hash password before sending it to the server. --COMPLETE AT SOME POINT
-	## Notifications of messages
-	## Swing window for putting in username and password 
-		!! Done 02/25/2010 - Anon
-		@@ Can they save their password?
-	## Swing window for various preferences -- IN PROCESS 3/1/2010
-		@@ What preferences (aside from theme)? 
-			!! Timestamp option?
-	## BUDDYLIST
-		@@ CSV storage for alias along with username
-			!! Done 04/08/2010 - NM
-		@@ Do we encrypt buddylist? With what? What information is stored in it?
-			!! Done 04/08/2010 - NM
-	## Buddylist should update dynamically on buddy login. 
-			!! Done 02/25/2010 - Anon
-		@@ Already does for signoff. Copy that code. 
+	## The scrollbar is partially cut off by the buddylist jpanel on the mac
+		@@ I'm sure different window managers and themes look different. try to find a balance.
+	## Clicking on any JEditorPane should focus the JTextArea in that tab
+		@@ For imprecise clickers like Spiegel
+	## Make sure everything looks good in different WM with different themes.
+		@@ Nothing will be perfect. Find a balance.
+	
 
 SERVER:
 	## Create a thread to route messages, free up the console for an admin interface
-	## Create more eventcodes to/from the Server for special functions

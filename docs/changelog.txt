@@ -1,5 +1,14 @@
 ChangeLog: 
 
+04/21/2010:
+	## Wrote and implemented a "markdown-lite" parser
+		@@ Users are able to send bolded, italicized, and underlined text
+	## Centered new windows on creation
+		@@ I was tired of dragging them out of corners
+	## Added a real taskbar icon
+		@@ The default java one was really ugly
+	## Bugfixes left over from yesterday
+
 4/20/2010:
 	## Implemented dual-socket connection
 		@@ Allows for more stable communication with the server

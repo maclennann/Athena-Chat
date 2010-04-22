@@ -125,6 +125,7 @@ public class ClientApplet extends JFrame {
 	public Border threeColor = BorderFactory.createLineBorder(new Color(150, 190, 255)); //Sky blue
 	public Border contactListBorder;
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
+	public ImageIcon logoIcon = new ImageIcon("../images/logo.png");
 	static public JLabel lockIconLabel = new JLabel();
 	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
 	public int sessionTabCount = 0;
@@ -158,6 +159,10 @@ public class ClientApplet extends JFrame {
 	ClientApplet() {
 
 		// Initialize chat window
+		UIManager.put("OptionPane.informationIcon",logoIcon);
+		UIManager.put("OptionPane.errorIcon",logoIcon);
+		UIManager.put("OptionPane.questionIcon",logoIcon);
+		UIManager.put("OptionPane.warningIcon",logoIcon);
 		
 		// Get the default toolkit
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
