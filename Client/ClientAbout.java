@@ -65,6 +65,7 @@ public class ClientAbout extends JFrame {
 		aboutWindow.setSize(200,300);
 		aboutWindow.setResizable(false);
 		contentPane.setLayout(null);
+		aboutWindow.setLocationRelativeTo(ClientApplet.imContentFrame);
 
 		//Adjust font sizes
 		cancel.setFont(new Font("Dialog", 1, 10));

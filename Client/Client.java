@@ -39,7 +39,8 @@ import java.util.Enumeration;
 import java.security.MessageDigest;
 import java.security.DigestInputStream;
 import java.security.NoSuchAlgorithmException;
-
+import java.io.StringWriter;
+import java.io.PrintWriter;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
@@ -184,6 +185,7 @@ public class Client
 						try {
 							receivePrivateKeyFromServer();
 						} catch (IOException e) {
+							sendBugReport(getStackTraceAsString(e));
 							e.printStackTrace();
 						}
 
@@ -192,6 +194,7 @@ public class Client
 						try {
 							receivePrivateKeyFromServer();
 						} catch (IOException e) {
+							sendBugReport(getStackTraceAsString(e));
 							e.printStackTrace();
 						}
 
@@ -212,10 +215,12 @@ public class Client
 			//Garbage collect
 			System.gc();
 		} catch( IOException ie ) { 
+			sendBugReport(getStackTraceAsString(ie));
 			ie.printStackTrace(); 
 			loginGUI.dispose();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
+			sendBugReport(getStackTraceAsString(e));
 			loginGUI.dispose();
 			e.printStackTrace();
 		}
@@ -246,7 +251,7 @@ public class Client
 			//Read in server's public key for encryption of headers
 			serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
 			System.gc();
-		} catch( IOException ie ) { if(debug==1)System.out.println( ie ); }
+		} catch( IOException ie ) { sendBugReport(getStackTraceAsString(ie)); }
 	}
 
 	// Startup method to initiate the buddy list
@@ -316,8 +321,10 @@ public class Client
 					clientResource.newBuddyListItems(currentE);						
 				}
 			} catch (java.util.NoSuchElementException ie) {
+			sendBugReport(getStackTraceAsString(ie));
 				ie.printStackTrace();
 			} catch (Exception eix) {
+			sendBugReport(getStackTraceAsString(eix));
 				eix.printStackTrace();
 			} 
 		}
@@ -364,6 +371,7 @@ public class Client
 			if(debug>=1)System.out.println("SENT SERVER FLAG 001");
 
 		} catch (Exception e) { 
+			sendBugReport(getStackTraceAsString(e));
 			if(debug>=1)System.out.println(e);
 		}	
 	}
@@ -391,6 +399,7 @@ public class Client
 			if(debug>=1)System.out.println("SENT SERVER FLAG 003");
 
 		} catch (Exception e) { 
+			sendBugReport(getStackTraceAsString(e));
 			if(debug==1)System.out.println(e);
 		}	
 	}
@@ -523,9 +532,11 @@ public class Client
 		}
 		catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
+			sendBugReport(getStackTraceAsString(ie));
 			if(debug>=1)ie.printStackTrace();
 			connected=0; 
 		} catch (Exception e) {
+			sendBugReport(getStackTraceAsString(e));
 			if(debug>=1)e.printStackTrace();
 		}
 	}
@@ -612,7 +623,10 @@ public class Client
 		}
 		try{
 			print.writeToTextArea("\n", print.getTextFont());
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){
+			sendBugReport(getStackTraceAsString(e));
+			e.printStackTrace();
+		}
 		print.setTextFont(false,false,false);
 	}
 	
@@ -698,10 +712,11 @@ public class Client
 				//TADA
 			} catch( IOException ie ) { 
 				if(debug>=1)System.out.println(ie);
-				print.writeToTextArea("Error: You are not connfected!\n", print.getTextFont());
+				print.writeToTextArea("Error: You probably don't have the user's public key!\n", print.getTextFont());
 				print.moveToEnd();
 				print.clearTextField();
 			} catch (Exception e) {
+				sendBugReport(getStackTraceAsString(e));
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -786,6 +801,7 @@ public class Client
 				print.moveToEnd();
 				print.clearTextField();
 			} catch (Exception e) {
+				sendBugReport(getStackTraceAsString(e));
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -835,6 +851,7 @@ public class Client
 			}
 		}
 		catch (IOException e) {
+			sendBugReport(getStackTraceAsString(e));
 			e.printStackTrace();
 		} 
 	} 
@@ -866,6 +883,7 @@ public class Client
 			out.close();
 		}catch(Exception e)
 		{
+			sendBugReport(getStackTraceAsString(e));
 			if(debug>=1)System.out.println("ERROR WRITING BUDDYLIST");
 			if(debug==2)e.printStackTrace();
 		}
@@ -898,6 +916,7 @@ public class Client
 			out.close();
 		}catch(Exception e)
 		{
+			sendBugReport(getStackTraceAsString(e));
 			if(debug>=1)System.out.println("ERROR WRITING BUDDYLIST");
 			if(debug==2)e.printStackTrace();
 		}
@@ -1302,6 +1321,7 @@ public class Client
 			return remoteValues;
 
 		}catch (Exception e)  {
+			sendBugReport(getStackTraceAsString(e));
 			e.printStackTrace();
 			return null;
 		} 
@@ -1362,4 +1382,30 @@ public class Client
 		loginGUI = new ClientLogin();
 
 	}
+	
+	public static void sendBugReport(String stackTrace){
+		int toSend = JOptionPane.showConfirmDialog(null, "Sorry, it looks like something went wrong.\nWould you like to submit this as a bug report?", "File a Bug Report?", JOptionPane.YES_NO_OPTION);
+		if(toSend == JOptionPane.YES_OPTION){
+			String comments = JOptionPane.showInputDialog("Optional: Any comments about this bug (what were you doing when this happened)?");
+			if(comments.equals("")){
+				comments = "No comment entered";
+			}
+			
+			systemMessage("8");
+			try{
+			c2sdout.writeUTF(stackTrace);
+			c2sdout.writeUTF(comments);
+			}catch(Exception e){e.printStackTrace();}
+		}
+	}
+	
+	
+
+	public static String getStackTraceAsString(Exception e) {
+		StringWriter stackTrace = new StringWriter();
+		e.printStackTrace(new PrintWriter(stackTrace));
+		return stackTrace.toString();
+	}
+
+
 }

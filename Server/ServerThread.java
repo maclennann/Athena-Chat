@@ -237,34 +237,48 @@ public class ServerThread extends Thread
 		}
 		break;
 		case 001: 
-			System.out.println("Event code received. negotiateClientStatus() run.");
+			if(debug==1)System.out.println("Event code received. negotiateClientStatus() run.");
 			negotiateClientStatus();
 			//System.out.println("Event code received. negotiateClientStatus() run.");
 			break;
-		case 002: System.out.println("Event code received. senToAll() run.");
+		case 002: if(debug==1)System.out.println("Event code received. senToAll() run.");
 		server.sendToAll("ServerLogOn", username);
 		break;
-		case 003: System.out.println("Event code received. negotiateClientStatus(\"Checkuserstatus\") run.");
+		case 003: if(debug==1)System.out.println("Event code received. negotiateClientStatus(\"Checkuserstatus\") run.");
 		negotiateClientStatus("CheckUserStatus");
 		break;
-		case 004: System.out.println("Event code received. publicKeyRequest() run.");
+		case 004: if(debug==1)System.out.println("Event code received. publicKeyRequest() run.");
 		publicKeyRequest();
 		break;
-		case 005: System.out.println("Event code received. returnBuddyListHash() run.");
+		case 005: if(debug==1)System.out.println("Event code received. returnBuddyListHash() run.");
 		returnBuddyListHash();
 		break;
-		case 006: System.out.println("Event code received. receiveBuddyListfromClient() run.");
+		case 006: if(debug==1)System.out.println("Event code received. receiveBuddyListfromClient() run.");
 		recieveBuddyListFromClient();
 		break;
-		case 007: System.out.println("Event code received. sendPrivateKeyToClients() run.");
+		case 007: if(debug==1)System.out.println("Event code received. sendPrivateKeyToClients() run.");
 		sendPrivateKeyToClient();
 		break;
-		case 8: System.out.println("Event code received. sendBuddyListToClient() run.");
+		case 8: if(debug==1)System.out.println("Event code received. sendBuddyListToClient() run.");
 		sendBuddyListToClient();
+		break;
+		case 9: if(debug==1)System.out.println("Event code received. receiveBugReport() run.");
+		receiveBugReport();
 		break;
 		default: return;
 		}
 	}
+	
+	private void receiveBugReport(){
+		if(debug==1)System.out.println("Receiving bug report stacktrace");
+		if(debug==1)System.out.println("Receiving bug report comments");
+		String trace = decryptServerPrivate(serverDin.readUTF());
+		String comments = decryptServerPrivate(serverDin.readUTF());
+		
+		System.out.println("Bug report received from "+realUsername+":");
+		System.out.println("Stacktrace follows:"+trace);
+	}
+	
 	private boolean sendBuddyListToClient() throws IOException {
 		// TODO Auto-generated method stub
 		String[] buddyListArray = returnBuddyListArray(true);
