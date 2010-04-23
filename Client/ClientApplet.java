@@ -1113,7 +1113,7 @@ public class ClientApplet extends JFrame {
 		    btClose.addActionListener(this);
 		    btClose.setToolTipText("Close Tab");
 		    pane.setTabComponentAt(index, this);
-		    
+		    btClose.setBorder(null);
 		    btClose.addMouseListener(this);
 		  }
 		  
