@@ -284,7 +284,8 @@ public class ClientResetPassword extends JPanel {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.	
+		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.
+		System.out.println("sent 11");
 		Client.systemMessage("11");
 
 
@@ -292,6 +293,8 @@ public class ClientResetPassword extends JPanel {
 		//Send Aegis the goods
 		try {
 			dout.writeUTF(Client.encryptServerPublic(userToReset));
+			System.out.println("sent username " + userToReset);
+			
 			return (Client.decryptServerPublic(din.readUTF()));
 			//Client.disconnect();
 		} catch (IOException e) {

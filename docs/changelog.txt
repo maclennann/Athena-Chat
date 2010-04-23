@@ -1,5 +1,16 @@
 ChangeLog: 
 
+04/23/2010:
+	## Implemented secret question and secret answer on signup
+	## Implemented most of reset password with secret answer
+	## Implemented automatic bug report submit on certain exceptions
+	## Implemented manual bug report feature request from help menu
+	## Better controls on client side for new user
+	## Auto-copy from JEditorPane on highlight
+	## Refocus from editorpane to textarea
+	## New biglogo courtesy of Greg
+	## Lots of aesthetic changes
+
 04/21/2010:
 	## Wrote and implemented a "markdown-lite" parser
 		@@ Users are able to send bolded, italicized, and underlined text
