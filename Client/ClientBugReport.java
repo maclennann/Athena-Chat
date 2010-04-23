@@ -74,7 +74,8 @@ public class ClientBugReport extends JPanel {
 		submitBugJFrame= new JFrame("Submit Bug Report");
 		submitBugJFrame.setSize(500,550);
 		submitBugJFrame.setResizable(false);
-
+		submitBugJFrame.setLocationRelativeTo(ClientApplet.imContentFrame);
+		
 		//Create the content Pane
 		contentPane = new JPanel();
 		contentPane.setLayout(null);
@@ -90,24 +91,24 @@ public class ClientBugReport extends JPanel {
 		//Username Input
 		descriptionJTextField = new JTextField();
 		descriptionJLabel.setBounds(15,20,100,25);
-		descriptionJTextField.setBounds(15,40,450,25);
+		descriptionJTextField.setBounds(15,40,470,25);
 
 		recreationJLabel.setBounds(15,80,400,25);
 		recreationJTextArea = new JTextArea();
 		JScrollPane recreationSP = new JScrollPane(recreationJTextArea);
-		recreationSP.setBounds(15,100,450,100);
+		recreationSP.setBounds(15,100,470,100);
 		recreationSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		expectedJLabel.setBounds(15,210,400,25);
 		expectedJTextArea = new JTextArea();
 		JScrollPane expectedSP = new JScrollPane(expectedJTextArea);
-		expectedSP.setBounds(15,230,450,100);
+		expectedSP.setBounds(15,230,470,100);
 		expectedSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		actualJLabel.setBounds(15,340,400,25);
 		actualJTextArea = new JTextArea();
 		JScrollPane actualSP = new JScrollPane(actualJTextArea);
-		actualSP.setBounds(15,360,450,100);
+		actualSP.setBounds(15,360,470,100);
 		actualSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		//Secret answer nput
 		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?

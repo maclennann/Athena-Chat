@@ -74,6 +74,7 @@ public class ClientResetPassword extends JPanel {
 		resetPasswordJFrame.setSize(430,250);
 		resetPasswordJFrame.setResizable(false);
 		resetPasswordJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
+		resetPasswordJFrame.setLocationRelativeTo(Client.loginGUI);
 		//Create the content Pane
 		contentPane = new JPanel();
 		contentPane.setLayout(null);

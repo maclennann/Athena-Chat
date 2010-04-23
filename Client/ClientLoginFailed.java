@@ -27,6 +27,7 @@ public class ClientLoginFailed extends JFrame {
 		loginFailed.setSize(400,250);
 		loginFailed.setResizable(false);
 		contentPane.setLayout(null);
+		loginFailed.setLocationRelativeTo(Client.loginGUI);
 		
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
