@@ -1,4 +1,7 @@
 ChangeLog: 
+4/23/2010: 
+	## Implemented new logic in the Adduser window. 
+		@@ It now displays more efficient and understandable messages upon typing in the TextFields
 
 04/21/2010:
 	## Wrote and implemented a "markdown-lite" parser
