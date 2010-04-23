@@ -285,7 +285,7 @@ public class ClientResetPassword extends JPanel {
 			e1.printStackTrace();
 		}
 		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.	
-		Client.systemMessage("10");
+		Client.systemMessage("11");
 
 
 
