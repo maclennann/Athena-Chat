@@ -533,7 +533,8 @@ public class Client
 		catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
 			//ndBugReport(getStackTraceAsString(ie));
-			if(debug>=1)ie.printStackTrace();
+			//They probably just disconnected, get this off of my screen
+			//if(debug>=2)ie.printStackTrace();
 			connected=0; 
 		} catch (Exception e) {
 			sendBugReport(getStackTraceAsString(e));

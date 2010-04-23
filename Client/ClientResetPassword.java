@@ -21,7 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-
+import java.awt.Toolkit;
 
 /**
  * 
@@ -69,7 +69,7 @@ public class ClientResetPassword extends JPanel {
 		resetPasswordJFrame= new JFrame("Reset Password");
 		resetPasswordJFrame.setSize(430,200);
 		resetPasswordJFrame.setResizable(false);
-
+		resetPasswordJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
 		//Create the content Pane
 		contentPane = new JPanel();
 		contentPane.setLayout(null);
