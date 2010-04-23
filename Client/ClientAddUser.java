@@ -46,11 +46,13 @@ public class ClientAddUser extends JPanel {
 	public JLabel emailAddressJLabel = new JLabel("Email address:");
 	public JLabel confirmEmailAddressJLabel = new JLabel("Confirm Email:");
 	public JLabel emailMatchesJLabel = new JLabel();
-	public JLabel emailMessageJLabel = new JLabel("You must enter a valid email address.");
+	public JLabel emailMessageJLabel = new JLabel("Email is a required field.");
 	public JLabel userNameJLabel = new JLabel("Username:");
+	public JLabel userNameGreaterJLabel = new JLabel();
+	public JLabel userNameMessageJLabel = new JLabel();
 	public JLabel passwordJLabel = new JLabel("Password:");
 	public JLabel confirmPasswordJLabel = new JLabel("Confirm Password:");
-	public JLabel passwordMessageJLabel = new JLabel("Password must be more than 5 characters.");
+	public JLabel passwordMessageJLabel = new JLabel("Password is a required field.");
 	public JLabel passwordMatchesJLabel = new JLabel();
 	public JLabel secretQuestionJLabel = new JLabel("Secret Question: ");
 	public JLabel secretAnswerJLabel = new JLabel("Secret Answer: ");
@@ -84,7 +86,7 @@ public class ClientAddUser extends JPanel {
 	ClientAddUser() {
 		//Create the Main Frame
 		addUserJFrame= new JFrame("User Registration");
-		addUserJFrame.setSize(310,500);
+		addUserJFrame.setSize(310,550);
 		addUserJFrame.setResizable(false);
 		addUserJFrame.setLocationRelativeTo(Client.loginGUI);
 		
@@ -126,6 +128,13 @@ public class ClientAddUser extends JPanel {
 		userNameJTextField = new JTextField();
 		userNameJLabel.setBounds(15,185,100,25);
 		userNameJTextField.setBounds(130,185,120,25);
+		userNameGreaterJLabel.setBounds(260,185,25,25);
+		userNameGreaterJLabel.setIcon(redX);
+		userNameMessageJLabel.setBounds(15,435,300,25);
+		userNameMessageJLabel.setText("Username is a requied field.");
+		userNameMessageJLabel.setForeground(Color.RED);
+		userNameGreaterJLabel.setIcon(redX);
+		
 
 		//Password Input
 		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
@@ -151,8 +160,8 @@ public class ClientAddUser extends JPanel {
 		passwordMessageJLabel.setForeground(Color.RED);
 
 		//Confirm and Cancel JButtons
-		confirmJButton.setBounds(35,440,100,25);
-		cancelJButton.setBounds(160,440,100,25);
+		confirmJButton.setBounds(35,480,100,25);
+		cancelJButton.setBounds(160,480,100,25);
 		confirmJButton.setEnabled(false);
 
 		//ActionListener to make the connect menu item connect
@@ -323,7 +332,16 @@ public class ClientAddUser extends JPanel {
 					passwordMessageJLabel.setText("Your Password is valid.");
 					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
-
+				} else if (passwordOne.length() == 0 || passwordTwo.length() == 0) { 
+					passwordMatchesJLabel.setIcon(redX);	
+					passwordMessageJLabel.setText("Password is a required field.");
+					passwordMessageJLabel.setForeground(Color.RED);
+					confirmJButton.setEnabled(false);
+				}else if ((passwordOne.length() >= 6 && passwordTwo.length() >= 6) && (!(passwordOne.equals(passwordTwo)))) {
+					passwordMatchesJLabel.setIcon(redX);	
+					passwordMessageJLabel.setText("Passwords don't match!");
+					passwordMessageJLabel.setForeground(Color.RED);
+					confirmJButton.setEnabled(false);
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
 					passwordMessageJLabel.setText("Password must be more than 5 characters.");
@@ -344,6 +362,16 @@ public class ClientAddUser extends JPanel {
 					passwordMessageJLabel.setText("Your Password is valid.");
 					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
+				} else if (passwordOne.length() == 0 || passwordTwo.length() == 0) { 
+					passwordMatchesJLabel.setIcon(redX);	
+					passwordMessageJLabel.setText("Password is a required field.");
+					passwordMessageJLabel.setForeground(Color.RED);
+					confirmJButton.setEnabled(false);
+				}else if ((passwordOne.length() >= 6 && passwordTwo.length() >= 6) && (!(passwordOne.equals(passwordTwo)))) {
+					passwordMatchesJLabel.setIcon(redX);	
+					passwordMessageJLabel.setText("Passwords don't match!");
+					passwordMessageJLabel.setForeground(Color.RED);
+					confirmJButton.setEnabled(false);
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
 					passwordMessageJLabel.setText("Password must be more than 5 characters.");
@@ -352,7 +380,58 @@ public class ClientAddUser extends JPanel {
 				}
 			}
 		});
+		
 
+		userNameJTextField.addKeyListener(new KeyListener() {			
+			@Override
+			public void keyTyped(KeyEvent e) {
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(userNameJTextField.getText().length() > 25 || userNameJTextField.getText().length() == 0) { 
+					if(userNameJTextField.getText().length() == 0) { 
+						userNameMessageJLabel.setText("Username is a required field.");
+					}
+					else {
+						userNameMessageJLabel.setText("Username must be less than 26 characters.");
+					}					
+					userNameMessageJLabel.setForeground(Color.RED);
+					userNameGreaterJLabel.setIcon(redX);
+					confirmJButton.setEnabled(false);
+
+				} else { 
+					userNameMessageJLabel.setText("Username is valid.");
+					userNameMessageJLabel.setForeground(goGreen);
+					userNameGreaterJLabel.setIcon(greenCheck);
+					confirmJButton.setEnabled(true);
+				}			
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(userNameJTextField.getText().length() > 25 || userNameJTextField.getText().length() == 0) { 
+					if(userNameJTextField.getText().length() == 0) { 
+						userNameMessageJLabel.setText("Username is a required field.");
+					}
+					else {
+						userNameMessageJLabel.setText("Username must be less than 26 characters.");
+					}		
+					userNameMessageJLabel.setText("Username must be less than 26 characters.");
+					userNameMessageJLabel.setForeground(Color.RED);
+					userNameGreaterJLabel.setIcon(redX);
+					confirmJButton.setEnabled(false);
+
+				} else { 
+					userNameMessageJLabel.setText("Username is valid.");
+					userNameMessageJLabel.setForeground(goGreen);
+					userNameGreaterJLabel.setIcon(greenCheck);
+					confirmJButton.setEnabled(true);
+				}	
+				}
+		});
+		
 		confirmpasswordJPasswordField.addKeyListener(new KeyListener() {			
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -370,12 +449,22 @@ public class ClientAddUser extends JPanel {
 					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
 
+				} else if (passwordOne.length() == 0 || passwordTwo.length() == 0) { 
+					passwordMatchesJLabel.setIcon(redX);	
+					passwordMessageJLabel.setText("Password is a required field.");
+					passwordMessageJLabel.setForeground(Color.RED);
+					confirmJButton.setEnabled(false);
+				} else if ((passwordOne.length() >= 6 && passwordTwo.length() >= 6) && (!(passwordOne.equals(passwordTwo)))) {
+				passwordMatchesJLabel.setIcon(redX);	
+				passwordMessageJLabel.setText("Passwords don't match!");
+				passwordMessageJLabel.setForeground(Color.RED);
+				confirmJButton.setEnabled(false);
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
 					passwordMessageJLabel.setText("Password must be more than 5 characters.");
 					passwordMessageJLabel.setForeground(Color.RED);
 					confirmJButton.setEnabled(false);
-				}			
+				}
 			}
 
 			@Override
@@ -388,7 +477,16 @@ public class ClientAddUser extends JPanel {
 					passwordMessageJLabel.setText("Your Password is valid.");
 					passwordMessageJLabel.setForeground(goGreen);
 					confirmJButton.setEnabled(true);
-
+				} else if (passwordOne.length() == 0 || passwordTwo.length() == 0) { 
+					passwordMatchesJLabel.setIcon(redX);	
+					passwordMessageJLabel.setText("Password is a required field.");
+					passwordMessageJLabel.setForeground(Color.RED);
+					confirmJButton.setEnabled(false);
+				}else if ((passwordOne.length() >= 6 && passwordTwo.length() >= 6) && (!(passwordOne.equals(passwordTwo)))) {
+					passwordMatchesJLabel.setIcon(redX);	
+					passwordMessageJLabel.setText("Passwords don't match!");
+					passwordMessageJLabel.setForeground(Color.RED);
+					confirmJButton.setEnabled(false);
 				} else { 
 					passwordMatchesJLabel.setIcon(redX);	
 					passwordMessageJLabel.setText("Password must be more than 5 characters.");
@@ -422,6 +520,8 @@ public class ClientAddUser extends JPanel {
 		contentPane.add(secretQuestionJTextField);
 		contentPane.add(secretAnswerJLabel);
 		contentPane.add(secretAnswerJTextField);
+		contentPane.add(userNameGreaterJLabel);
+		contentPane.add(userNameMessageJLabel);
 		
 		//Make sure we can see damn thing
 		contentPane.setVisible(true);
