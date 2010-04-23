@@ -121,9 +121,8 @@ public class ClientApplet extends JFrame {
 	public Border buttonBorder = BorderFactory.createRaisedBevelBorder();
 	public Border blackline = BorderFactory.createLineBorder(Color.gray);
 	public Border oneColor = BorderFactory.createLineBorder(Color.black);
-	public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
-	//public Border threeColor = BorderFactory.createLineBorder(new Color(150, 190, 255)); //Sky blue
-	public Border threeColor = BorderFactory.createLineBorder(new Color(218,165,32)); //Sky blue
+	//public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
+	public Border threeColor = BorderFactory.createLineBorder(new Color(218, 165, 32)); //Goldenrod
 	public Border contactListBorder;
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	public ImageIcon logoIcon = new ImageIcon("../images/logo.png");
