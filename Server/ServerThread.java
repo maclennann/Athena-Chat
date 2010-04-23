@@ -616,6 +616,10 @@ public class ServerThread extends Thread
 			String emailAddress = decryptServerPrivate(serverDin.readUTF());			
 			String newUser = decryptServerPrivate(serverDin.readUTF());
 			String newPassword = decryptServerPrivate(serverDin.readUTF());
+			
+			//TODO These have to go into the database for later recall
+			String secretQuestion = decryptServerPrivate(serverDin.readUTF());
+			String secretAnswer = decryptServerPrivate(serverDin.readUTF());
 
 			//Turn the public key components into BigIntegers for use
 			BigInteger publicMod = new BigInteger(publicModString);

@@ -52,11 +52,17 @@ public class ClientAddUser extends JPanel {
 	public JLabel confirmPasswordJLabel = new JLabel("Confirm Password:");
 	public JLabel passwordMessageJLabel = new JLabel("Password must be more than 5 characters.");
 	public JLabel passwordMatchesJLabel = new JLabel();
+	public JLabel secretQuestionJLabel = new JLabel("Secret Question: ");
+	public JLabel secretAnswerJLabel = new JLabel("Secret Answer: ");
+	
 	public JTextField firstNameJTextField;
 	public JTextField lastNameJTextField;
 	public JTextField emailAddressJTextField;
 	public JTextField confirmEmailAddresJTextField;
 	public JTextField userNameJTextField;
+	public JTextField secretQuestionJTextField;
+	public JTextField secretAnswerJTextField;
+	
 	public JPasswordField passwordJPasswordField;
 	public JPasswordField confirmpasswordJPasswordField;
 	public JButton confirmJButton = new JButton("Confirm");
@@ -78,9 +84,10 @@ public class ClientAddUser extends JPanel {
 	ClientAddUser() {
 		//Create the Main Frame
 		addUserJFrame= new JFrame("User Registration");
-		addUserJFrame.setSize(310,420);
+		addUserJFrame.setSize(310,500);
 		addUserJFrame.setResizable(false);
-
+		addUserJFrame.setLocationRelativeTo(Client.loginGUI);
+		
 		//Create the content Pane
 		contentPane = new JPanel();
 		contentPane.setLayout(null);
@@ -112,7 +119,7 @@ public class ClientAddUser extends JPanel {
 		confirmEmailAddresJTextField.setBounds(130,145,120,25);
 		emailMatchesJLabel.setBounds(260,145,25,25);
 		emailMatchesJLabel.setIcon(redX);
-		emailMessageJLabel.setBounds(15,290,300,25);
+		emailMessageJLabel.setBounds(15,385,300,25);
 		emailMessageJLabel.setForeground(Color.RED);
 
 		//Username Input
@@ -125,6 +132,14 @@ public class ClientAddUser extends JPanel {
 		passwordJPasswordField = new JPasswordField();
 		passwordJLabel.setBounds(15,225,100,25);
 		passwordJPasswordField.setBounds(130,225,120,25);
+		
+		secretQuestionJLabel.setBounds(15,305,100,25);
+		secretQuestionJTextField = new JTextField();
+		secretQuestionJTextField.setBounds(130,305,120,25);
+		
+		secretAnswerJLabel.setBounds(15,345,100,25);
+		secretAnswerJTextField = new JTextField();
+		secretAnswerJTextField.setBounds(130,345,120,25);
 
 		//Confirm Password Input
 		confirmpasswordJPasswordField = new JPasswordField();
@@ -132,12 +147,12 @@ public class ClientAddUser extends JPanel {
 		confirmpasswordJPasswordField.setBounds(130,265,120,25);
 		passwordMatchesJLabel.setBounds(260,265,25,25);
 		passwordMatchesJLabel.setIcon(redX);
-		passwordMessageJLabel.setBounds(15,310,400,25);
+		passwordMessageJLabel.setBounds(15,410,400,25);
 		passwordMessageJLabel.setForeground(Color.RED);
 
 		//Confirm and Cancel JButtons
-		confirmJButton.setBounds(35,345,100,25);
-		cancelJButton.setBounds(160,345,100,25);
+		confirmJButton.setBounds(35,440,100,25);
+		cancelJButton.setBounds(160,440,100,25);
 		confirmJButton.setEnabled(false);
 
 		//ActionListener to make the connect menu item connect
@@ -155,7 +170,7 @@ public class ClientAddUser extends JPanel {
 										
 					//Hash the password
 					password = ClientLogin.computeHash(new String(passwordJPasswordField.getPassword()));
-
+					String secAns = ClientLogin.computeHash(secretAnswerJTextField.getText());
 					//Generate the public and private keypair
 					RSACrypto.generateRSAKeyPair();
 					pub = RSACrypto.getPublicKey();
@@ -196,7 +211,7 @@ public class ClientAddUser extends JPanel {
 
 					//System.out.println(firstNameJTextField.getText() + lastNameJTextField.getText() + emailAddressJTextField.getText() + userNameJTextField.getText() + password);
 					//Send the information to Aegis
-					sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password);
+					sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password, secretQuestionJTextField.getText(),secAns);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -403,7 +418,11 @@ public class ClientAddUser extends JPanel {
 		contentPane.add(cancelJButton);
 		contentPane.add(emailMessageJLabel);
 		contentPane.add(passwordMessageJLabel);
-
+		contentPane.add(secretQuestionJLabel);
+		contentPane.add(secretQuestionJTextField);
+		contentPane.add(secretAnswerJLabel);
+		contentPane.add(secretAnswerJTextField);
+		
 		//Make sure we can see damn thing
 		contentPane.setVisible(true);
 		contentPane.setBorder(generalTitledBorder);
@@ -414,7 +433,7 @@ public class ClientAddUser extends JPanel {
 	}
 
 	//This Method will send all of the information over to Aegis for input into the database
-	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password) { 
+	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password, String secretQuestion, String secretAnswer) { 
 
 		//Get a connection
 		Client.connect();
@@ -448,6 +467,7 @@ public class ClientAddUser extends JPanel {
 			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPublic(emailAddress,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			BigInteger userNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(userName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
 			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			
 
 			//Send the server the pieces of our public key to be assembled at the other end
 			//TODO These should be encrypted along with everything else
@@ -475,7 +495,8 @@ public class ClientAddUser extends JPanel {
 			dout.writeUTF(emailAddressCipher.toString());
 			dout.writeUTF(userNameCipher.toString());
 			dout.writeUTF(passwordCipher.toString());
-
+			dout.writeUTF(Client.encryptServerPublic(secretQuestion));
+			dout.writeUTF(Client.encryptServerPublic(secretAnswer));
 
 			//Grab the result
 			String result = din.readUTF();
