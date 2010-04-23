@@ -2,12 +2,12 @@ BOTH:
 	## Make the code many many times more efficient
 	## CREATE JAVADOC Comments
 	## SECURE the code. We have EVERYTHING as public.
+	## Allow users to generate new keypairs
 	## Secret Question/Answer for forgotten password
+		@@ Create a new keypair
 	## Password reset
 		@@ Decrypt all relevant info with old password, and re-encrypt with new password
 		@@ Probably doesn't make a new keypair at the same time
-	## There should be an item in the help menu that allows users to submit a bug report from within the program
-		@@ Should we be keeping a logfile of debug output that can be sent along with it?
 
 CLIENT:
 	## The scrollbar is partially cut off by the buddylist jpanel on the mac

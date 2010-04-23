@@ -52,7 +52,11 @@ public class ClientResetPassword extends JPanel {
 	public JButton clearJButton = new JButton("Clear");
 	public ImageIcon redX = new ImageIcon("../images/redX.png");
 	public ImageIcon greenCheck = new ImageIcon("../images/greenCheck.png");
-
+	public JLabel newPasswordJLabel = new JLabel("New Password: ");
+	public JLabel newPasswordConfirmJLabel = new JLabel("Confirm:");
+	public JPasswordField newPasswordJPasswordField = new JPasswordField();
+	public JPasswordField newPasswordConfirmJPasswordField = new JPasswordField();
+	
 	public Border blackline;
 	public TitledBorder generalTitledBorder;
 	public RSAPublicKeySpec pub;
@@ -67,7 +71,7 @@ public class ClientResetPassword extends JPanel {
 	ClientResetPassword() {
 		//Create the Main Frame
 		resetPasswordJFrame= new JFrame("Reset Password");
-		resetPasswordJFrame.setSize(430,200);
+		resetPasswordJFrame.setSize(430,250);
 		resetPasswordJFrame.setResizable(false);
 		resetPasswordJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
 		//Create the content Pane
@@ -82,26 +86,31 @@ public class ClientResetPassword extends JPanel {
 
 		//Username Input
 		userNameJTextField = new JTextField();
-		userNameJLabel.setBounds(15,30,100,25);
-		userNameJTextField.setBounds(130,30,150,25);
+		userNameJLabel.setBounds(15,20,100,25);
+		userNameJTextField.setBounds(130,20,150,25);
 
 		//Secret answer nput
 		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		secretQuestionJTextField = new JTextField();
 		secretQuestionJTextField.setEditable(false);
-		secretQuestionJTextField.setBounds(130,65,280,25);
-		secretQuestionJLabel.setBounds(15,65,120,25);
+		secretQuestionJTextField.setBounds(130,55,280,25);
+		secretQuestionJLabel.setBounds(15,55,120,25);
 		secretAnswerJTextField = new JTextField();
-		secretAnswerJLabel.setBounds(15,100,100,25);
-		secretAnswerJTextField.setBounds(130,100,280,25);
+		secretAnswerJLabel.setBounds(15,90,100,25);
+		secretAnswerJTextField.setBounds(130,90,280,25);
 		secretAnswerJTextField.setEditable(false);
-
-
+		newPasswordJLabel.setBounds(15,125,100,25);
+		newPasswordJPasswordField.setBounds(130,125,280,25);
+		newPasswordConfirmJLabel.setBounds(15,160,100,25);
+		newPasswordConfirmJPasswordField.setBounds(130,160,280,25);
+		newPasswordJPasswordField.setEditable(false);
+		newPasswordConfirmJPasswordField.setEditable(false);
+		
 		//Confirm and Cancel JButtons
-		confirmJButton.setBounds(200,140,100,25);
-		getQuestJButton.setBounds(290,30,120,25);
-		cancelJButton.setBounds(310,140,100,25);
-		clearJButton.setBounds(10,140,100,25);
+		confirmJButton.setBounds(200,190,100,25);
+		getQuestJButton.setBounds(290,20,120,25);
+		cancelJButton.setBounds(310,190,100,25);
+		clearJButton.setBounds(10,190,100,25);
 		confirmJButton.setEnabled(false);
 		getQuestJButton.setEnabled(true);
 
@@ -115,6 +124,10 @@ public class ClientResetPassword extends JPanel {
 					userNameJTextField.setText("");
 					secretAnswerJTextField.setText("");
 					secretAnswerJTextField.setEditable(false);
+					newPasswordJPasswordField.setEditable(false);
+					newPasswordConfirmJPasswordField.setEditable(false);
+					newPasswordConfirmJPasswordField.setText("");
+					newPasswordJPasswordField.setText("");
 				}
 		});
 		
@@ -129,6 +142,8 @@ public class ClientResetPassword extends JPanel {
 					userNameJTextField.setEditable(false);
 					secretQuestionJTextField.setText("Who is your daddy and what does he do?");
 					secretAnswerJTextField.setEditable(true);
+					newPasswordConfirmJPasswordField.setEditable(true);
+					newPasswordJPasswordField.setEditable(true);
 				}
 			}
 		});
@@ -221,6 +236,10 @@ public class ClientResetPassword extends JPanel {
 		contentPane.add(secretQuestionJTextField);
 		contentPane.add(confirmJButton);
 		contentPane.add(clearJButton);
+		contentPane.add(newPasswordJLabel);
+		contentPane.add(newPasswordJPasswordField);
+		contentPane.add(newPasswordConfirmJLabel);
+		contentPane.add(newPasswordConfirmJPasswordField);
 
 		//Make sure we can see damn thing
 		contentPane.setVisible(true);
