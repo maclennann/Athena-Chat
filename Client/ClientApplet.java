@@ -335,8 +335,6 @@ public class ClientApplet extends JFrame {
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, twoColor);
-		//Border contactListBorderBB = BorderFactory.createCompoundBorder(contactListBorderAA, threeColor);
-		//Border contactListBorderCC = BorderFactory.createCompoundBorder(contactListBorderAA, oneColor);
 		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Client.username + "'s Contact List", TitledBorder.CENTER,
 		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
@@ -620,7 +618,7 @@ public class ClientApplet extends JFrame {
 
 	}
 	
-	private void FocusCurrentTextField()
+	public void FocusCurrentTextField()
 	{
 		//Set default icon
 		Icon closeIcon = new ImageIcon("../images/close_button.png");
@@ -886,9 +884,8 @@ public class ClientApplet extends JFrame {
 				imTabbedPane.remove(currentTab);
 					Component[] currentTabComponents = currentTab.getComponents();
 					JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
-					JTextArea currentTextArea = (JTextArea) currentScrollPane.getViewport().getComponent(0);
 					JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
-			      uniqueIDHash.remove(currentTextArea.getDocument());
+			      uniqueIDHash.remove(currentTextPane.getDocument());
 			      
 			      for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
 			      {
@@ -1220,7 +1217,40 @@ class MapTextArea extends JFrame {
 		myJEP = new JEditorPane();
 		myJEP.setEditable(false);
 		myJEP.setEditorKit(kit);
-        // enable the spell checking on the text component with all features
+        
+		myJEP.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				Client.clientResource.FocusCurrentTextField();
+			}
+			
+		});
 	
 
 		JScrollPane mySP = new JScrollPane(myJEP);
@@ -1243,6 +1273,7 @@ class MapTextArea extends JFrame {
 		//Register the spell checker in the text field
 		if (spellCheckFlag)
 			SpellChecker.register(myTP, true, true, true);
+		
 		
 		username = user;
 
