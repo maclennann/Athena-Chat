@@ -639,6 +639,8 @@ public class ServerThread extends Thread
 				System.out.println("Email Address: "+emailAddress);
 				System.out.println("User Name: "+newUser);
 				System.out.println("Password Hash: "+newPassword);
+				System.out.println("Secret Question: "+secretQuestion);
+				System.out.println("Secret Answer Hash: "+secretAnswer);
 			}
 			
 			stmt = con.createStatement();
@@ -667,7 +669,7 @@ public class ServerThread extends Thread
 				RSACrypto.saveToFile("keys/"+newUser+".pub",publicMod,publicExp);
 
 				//Grab the users new password
-				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "')";
+				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password, secretq, secreta) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "', '" + secretQuestion + "', '" + secretAnswer +"')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 				
