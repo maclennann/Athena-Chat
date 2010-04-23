@@ -257,6 +257,10 @@ public class ClientApplet extends JFrame {
 		web.setMnemonic(KeyEvent.VK_W);
 		help.add(web);
 		
+		JMenuItem bugReport = new JMenuItem("Report a bug!");
+		web.setMnemonic(KeyEvent.VK_R);
+		help.add(bugReport);
+		
 		// TODO Add items to the encryption menu
 
 		// ActionListener to make the disconnect menu item disconnect
@@ -296,6 +300,17 @@ public class ClientApplet extends JFrame {
 				try{
 					new ClientAbout();
 				} catch(AWTException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		// ActionListener to show About Athena window
+		bugReport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				try{
+					new ClientBugReport();
+				} catch(Exception e) {
 					e.printStackTrace();
 				}
 			}

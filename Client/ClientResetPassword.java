@@ -37,7 +37,6 @@ public class ClientResetPassword extends JPanel {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4233506965211815944L;
 	//Define components
 	public JFrame resetPasswordJFrame;
 	public JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
@@ -50,6 +49,7 @@ public class ClientResetPassword extends JPanel {
 	public JButton getQuestJButton = new JButton("Get Question");
 	public JButton confirmJButton = new JButton("Confirm");
 	public JButton cancelJButton = new JButton("Cancel");
+	public JButton clearJButton = new JButton("Clear");
 	public ImageIcon redX = new ImageIcon("../images/redX.png");
 	public ImageIcon greenCheck = new ImageIcon("../images/greenCheck.png");
 
@@ -101,9 +101,23 @@ public class ClientResetPassword extends JPanel {
 		confirmJButton.setBounds(200,140,100,25);
 		getQuestJButton.setBounds(290,30,120,25);
 		cancelJButton.setBounds(310,140,100,25);
+		clearJButton.setBounds(10,140,100,25);
 		confirmJButton.setEnabled(false);
 		getQuestJButton.setEnabled(true);
 
+		
+		clearJButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event){
+					confirmJButton.setEnabled(false);
+					getQuestJButton.setEnabled(true);
+					userNameJTextField.setEditable(true);
+					secretQuestionJTextField.setText("");
+					userNameJTextField.setText("");
+					secretAnswerJTextField.setText("");
+					secretAnswerJTextField.setEditable(false);
+				}
+		});
+		
 		
 		getQuestJButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
@@ -206,7 +220,7 @@ public class ClientResetPassword extends JPanel {
 		contentPane.add(secretQuestionJLabel);
 		contentPane.add(secretQuestionJTextField);
 		contentPane.add(confirmJButton);
-
+		contentPane.add(clearJButton);
 
 		//Make sure we can see damn thing
 		contentPane.setVisible(true);

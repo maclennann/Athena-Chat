@@ -265,6 +265,9 @@ public class ServerThread extends Thread
 		case 9: if(debug==1)System.out.println("Event code received. receiveBugReport() run.");
 		receiveBugReport();
 		break;
+		case 10: if(debug==1)System.out.println("Event code received. receiveBugReport(flag) run.");
+		receiveBugReport(true);
+		break;
 		default: return;
 		}
 	}
@@ -281,6 +284,28 @@ public class ServerThread extends Thread
 		
 		System.out.println("Bug report received from "+realUsername+": " + comments);
 		System.out.println("Stacktrace follows:"+trace);
+	}
+	
+		private void receiveBugReport(boolean flag){
+		if(debug==1)System.out.println("Receiving bug report/feature request");
+
+		String title = "";
+		String recreate = "";
+		String expected = "";
+		String actual = "";
+		try{
+			title = decryptServerPrivate(serverDin.readUTF());
+			recreate = decryptServerPrivate(serverDin.readUTF());
+			expected = decryptServerPrivate(serverDin.readUTF());
+			actual = decryptServerPrivate(serverDin.readUTF());
+		}catch(Exception e){e.printStackTrace();}
+		System.out.println("BEGIN BUG REPORT");
+		System.out.println("Bug report received from "+realUsername+": ");
+		System.out.println("Brief Description: "+title);
+		System.out.println("Steps to recreate: "+recreate);
+		System.out.println("Expected Outcome: "+expected);
+		System.out.println("Actual Outcome: "+actual);
+		System.out.println("END OF REPORT");
 	}
 	
 	private boolean sendBuddyListToClient() throws IOException {
