@@ -268,12 +268,13 @@ public class ServerThread extends Thread
 		case 10: if(debug==1)System.out.println("Event code received. receiveBugReport(flag) run.");
 		receiveBugReport(true);
 		break;
-		case 11: if(debug==1)System.out.printlng("Event code received. resetPassword() run.");
+		case 11: if(debug==1)System.out.println("Event code received. resetPassword() run.");
 		default: return;
 		}
 	}
 	
 	private void resetPassword(){
+		try{
 		//Take in the username to find the secret question and answer for
 		String userToReset = decryptServerPrivate(serverDin.readUTF());
 		
@@ -299,6 +300,7 @@ public class ServerThread extends Thread
 			//Failure message
 			serverDout.writeUTF(encryptServerPrivate("0"));
 		}
+		}catch(Exception e){e.printStackTrace();}
 	}
 	
 	private void receiveBugReport(){
