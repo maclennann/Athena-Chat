@@ -122,7 +122,8 @@ public class ClientApplet extends JFrame {
 	public Border blackline = BorderFactory.createLineBorder(Color.gray);
 	public Border oneColor = BorderFactory.createLineBorder(Color.black);
 	public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
-	public Border threeColor = BorderFactory.createLineBorder(new Color(150, 190, 255)); //Sky blue
+	//public Border threeColor = BorderFactory.createLineBorder(new Color(150, 190, 255)); //Sky blue
+	public Border threeColor = BorderFactory.createLineBorder(new Color(218,165,32)); //Sky blue
 	public Border contactListBorder;
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	public ImageIcon logoIcon = new ImageIcon("../images/logo.png");
@@ -331,12 +332,12 @@ public class ClientApplet extends JFrame {
 		// Adds the contact list to a scroll pane
 		JScrollPane contactList = new JScrollPane(userBox);
 		contactList.setBounds(600, 2, 195, 450);
-		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, twoColor);
+		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
-		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, twoColor);
+		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, oneColor);
 		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Client.username + "'s Contact List", TitledBorder.CENTER,
-		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
+		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), Color.black);
 		contactList.setBorder(buddyBorder);
 
 		// TODO Add ActionListeners to the images to bring up the add/remove
@@ -881,12 +882,13 @@ public class ClientApplet extends JFrame {
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
 				JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
 				int tempIndex = imTabbedPane.getSelectedIndex();
+				String userToRemove = imTabbedPane.getTitleAt(tempIndex);
 				imTabbedPane.remove(currentTab);
 					Component[] currentTabComponents = currentTab.getComponents();
 					JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 					JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 			      uniqueIDHash.remove(currentTextPane.getDocument());
-			    tabPanels.remove(imTabbedPane.getTitleAt(tempIndex));
+			    tabPanels.remove(userToRemove);
 				
 				if(tempIndex > 0)
 				{
