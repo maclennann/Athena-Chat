@@ -10,6 +10,7 @@ ChangeLog:
 	## Refocus from editorpane to textarea
 	## New biglogo courtesy of Greg
 	## Lots of aesthetic changes
+	## Keep rollin, rollin, rollin, rollin, WHATTT!
 
 04/21/2010:
 	## Wrote and implemented a "markdown-lite" parser
