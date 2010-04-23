@@ -268,7 +268,36 @@ public class ServerThread extends Thread
 		case 10: if(debug==1)System.out.println("Event code received. receiveBugReport(flag) run.");
 		receiveBugReport(true);
 		break;
+		case 11: if(debug==1)System.out.printlng("Event code received. resetPassword() run.");
 		default: return;
+		}
+	}
+	
+	private void resetPassword(){
+		//Take in the username to find the secret question and answer for
+		String userToReset = decryptServerPrivate(serverDin.readUTF());
+		
+		//TODO Pull the secret question and secret answer hash from the DB
+		String secretQuestion;
+		String secretAnswer;
+		
+		//Send the secret question to the client for answering
+		serverDout.writeUTF(encryptServerPrivate(secretQuestion));
+		
+		//Read in the user's answer hash
+		String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
+		
+		//Read in the user's desired passwordchange
+		String newPassword = decryptServerPrivate(serverDin.readUTF());
+		
+		if(secretAnswerHash.equals(secretAnswer)){
+			//TODO insert newPassword into password field
+			
+			//Success message
+			serverDout.writeUTF(encryptServerPrivate("1"));
+		}else{
+			//Failure message
+			serverDout.writeUTF(encryptServerPrivate("0"));
 		}
 	}
 	
