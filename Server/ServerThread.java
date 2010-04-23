@@ -269,37 +269,71 @@ public class ServerThread extends Thread
 		receiveBugReport(true);
 		break;
 		case 11: if(debug==1)System.out.println("Event code received. resetPassword() run.");
+		resetPassword();
+		break;
 		default: return;
 		}
 	}
 	
 	private void resetPassword(){
 		try{
-		//Take in the username to find the secret question and answer for
-		String userToReset = decryptServerPrivate(serverDin.readUTF());
 		
-		//TODO Pull the secret question and secret answer hash from the DB
-		String secretQuestion = null;
-		String secretAnswer = null;
-		
-		//Send the secret question to the client for answering
-		serverDout.writeUTF(encryptServerPrivate(secretQuestion));
-		
-		//Read in the user's answer hash
-		String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
-		
-		//Read in the user's desired passwordchange
-		String newPassword = decryptServerPrivate(serverDin.readUTF());
-		
-		if(secretAnswerHash.equals(secretAnswer)){
-			//TODO insert newPassword into password field
+			//Use dbConnect() to connect to the database
+			Connection con = server.dbConnect();
 			
-			//Success message
-			serverDout.writeUTF(encryptServerPrivate("1"));
-		}else{
-			//Failure message
-			serverDout.writeUTF(encryptServerPrivate("0"));
-		}
+			//Take in the username to find the secret question and answer for
+			String userToReset = decryptServerPrivate(serverDin.readUTF());
+			
+			//TODO Pull the secret question and secret answer hash from the DB
+			String secretQuestion = null;
+			String secretAnswer = null;
+			
+			//Create a statement and resultset for the query
+			Statement stmt;
+			Statement insertSTMT;
+			ResultSet rs = null; 
+			
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + userToReset + "'");
+			
+			if(rs.next()){
+				secretQuestion = rs.getString("secretq");
+				secretAnswer = rs.getString("secreta");
+			}else{
+				secretQuestion = "Invalid Username";
+			}
+			
+			//Send the secret question to the client for answering
+			serverDout.writeUTF(encryptServerPrivate(secretQuestion));
+			
+			//Read in the user's answer hash
+			String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
+			
+			//Read in the user's desired passwordchange
+			String newPassword = decryptServerPrivate(serverDin.readUTF());
+			
+			if(secretAnswerHash.equals(secretAnswer)){
+				//TODO insert newPassword into password field
+				String insertString = "UPDATE Users SET password='" + newPassword + "' WHERE username = '" + userToReset + "'";
+				insertSTMT = con.createStatement();
+				insertSTMT.executeUpdate(insertString);
+				
+				//Close Connections
+				//stmt.close();
+				insertSTMT.close();
+				//con.close();
+				
+				//Success message
+				serverDout.writeUTF(encryptServerPrivate("1"));
+			}else{
+				//Failure message
+				serverDout.writeUTF(encryptServerPrivate("0"));
+			}
+			
+			//Close Connections
+			stmt.close();
+			//insertSTMT.close();
+			con.close();
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
