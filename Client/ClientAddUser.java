@@ -170,7 +170,7 @@ public class ClientAddUser extends JPanel {
 										
 					//Hash the password
 					password = ClientLogin.computeHash(new String(passwordJPasswordField.getPassword()));
-					String secAns = ClientLogin.computeHash(secretAnswerJTextField.getText());
+					String secAns = ClientLogin.computeHash(secretAnswerJTextField.getText().toUpperCase());
 					//Generate the public and private keypair
 					RSACrypto.generateRSAKeyPair();
 					pub = RSACrypto.getPublicKey();
