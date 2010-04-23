@@ -294,8 +294,8 @@ public class ClientResetPassword extends JPanel {
 		try {
 			dout.writeUTF(Client.encryptServerPublic(userToReset));
 			System.out.println("sent username " + userToReset);
-			
-			return (Client.decryptServerPublic(din.readUTF()));
+			String question = Client.decryptServerPublic(din.readUTF());
+			return (question);
 			//Client.disconnect();
 		} catch (IOException e) {
 		e.printStackTrace();

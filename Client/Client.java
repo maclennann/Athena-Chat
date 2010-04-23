@@ -1019,8 +1019,14 @@ public class Client
 		systemMessage("004");
 		c2sdout.writeUTF(encryptServerPublic(usernameToFind));
 		modOfBuddy = new BigInteger(c2sdin.readUTF());
-		expOfBuddy = new BigInteger(c2sdin.readUTF());
-		writeBuddysPubKeyToFile(usernameToFind,modOfBuddy,expOfBuddy);
+		System.out.println("MODOFBUDDY: "+modOfBuddy.toString());
+		if(modOfBuddy.toString().equals("-1")){
+			JOptionPane.showMessageDialog(null,"Cannot find user's public key.\nMake sure you typed their username correctly and try again.","Error Retrieving Key",JOptionPane.ERROR_MESSAGE);
+		}
+		else{
+			expOfBuddy = new BigInteger(c2sdin.readUTF());
+			writeBuddysPubKeyToFile(usernameToFind,modOfBuddy,expOfBuddy);
+		}
 
 	}
 	/**

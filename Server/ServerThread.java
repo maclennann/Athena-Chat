@@ -934,8 +934,8 @@ public class ServerThread extends Thread
 				if(debug>=1)System.out.println("Exponent Returned\n");
 
 			} else { 
-				BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-				serverDout.writeUTF(keyNotFoundCipher.toString() );
+				//BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				serverDout.writeUTF("-1" );
 				if(debug>=1)System.out.println("User does not have a keyfile with us");
 			} }catch(Exception e){e.printStackTrace();}
 	}
