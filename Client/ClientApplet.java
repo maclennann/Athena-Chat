@@ -886,14 +886,7 @@ public class ClientApplet extends JFrame {
 					JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 					JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 			      uniqueIDHash.remove(currentTextPane.getDocument());
-			      
-			      for(Enumeration e1 = tabPanels.keys(), e2 = tabPanels.elements(); zz < tabPanels.size(); zz++)
-			      {
-			    	  String tempUser = e1.nextElement().toString();
-			    	  String tempTab = e2.nextElement().toString();
-			    	  if (tempTab.equals(currentTab))
-			    		  tabPanels.remove(tempUser);
-			      }
+			    tabPanels.remove(imTabbedPane.getTitleAt(tempIndex));
 				
 				if(tempIndex > 0)
 				{
@@ -1247,6 +1240,7 @@ class MapTextArea extends JFrame {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				// TODO Auto-generated method stub
+				myJEP.copy();
 				Client.clientResource.FocusCurrentTextField();
 			}
 			
