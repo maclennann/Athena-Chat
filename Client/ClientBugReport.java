@@ -43,8 +43,8 @@ public class ClientBugReport extends JPanel {
 	//Define components
 	public JFrame submitBugJFrame;
 	public JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
-	public JLabel descriptionJLabel = new JLabel("Brief Description:");
-	public JLabel recreationJLabel = new JLabel("How can we recreate this bug?");
+	public JLabel descriptionJLabel = new JLabel("* Brief Description:");
+	public JLabel recreationJLabel = new JLabel("* How can we recreate this bug?");
 	public JLabel expectedJLabel = new JLabel("What did you expect to happen?");
 	public JLabel actualJLabel = new JLabel("What actually happened?");
 	
@@ -71,7 +71,7 @@ public class ClientBugReport extends JPanel {
 
 	ClientBugReport() {
 		//Create the Main Frame
-		submitBugJFrame= new JFrame("Submit Bug Report");
+		submitBugJFrame= new JFrame("Submit Bug Report/Feature Request");
 		submitBugJFrame.setSize(500,550);
 		submitBugJFrame.setResizable(false);
 		submitBugJFrame.setLocationRelativeTo(ClientApplet.imContentFrame);
@@ -86,11 +86,11 @@ public class ClientBugReport extends JPanel {
 		//Initalize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
 		generalTitledBorder = BorderFactory.createTitledBorder(
-				blackline, "Submit a Bug Report");
+				blackline, "Submit a Bug Report/Feature Request");
 
 		//Username Input
 		descriptionJTextField = new JTextField();
-		descriptionJLabel.setBounds(15,20,100,25);
+		descriptionJLabel.setBounds(15,20,150,25);
 		descriptionJTextField.setBounds(15,40,470,25);
 
 		recreationJLabel.setBounds(15,80,400,25);
@@ -137,9 +137,13 @@ public class ClientBugReport extends JPanel {
 		//ActionListener to make the connect menu item connect
 		confirmJButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
+					if(!(descriptionJTextField.getText().equals("")) && !(recreationJTextArea.getText().equals(""))){
 					sendInfoToAegis(descriptionJTextField.getText(),recreationJTextArea.getText(),expectedJTextArea.getText(),actualJTextArea.getText());
 					JOptionPane.showMessageDialog(null,"Thank you for submitting this report. It has been added to our database","Thanks!",JOptionPane.INFORMATION_MESSAGE);
 					submitBugJFrame.dispose();
+					
+					}else JOptionPane.showMessageDialog(null,"Please fill in all required fields.","Error!",JOptionPane.ERROR_MESSAGE);
+					
 			}
 		});
 
