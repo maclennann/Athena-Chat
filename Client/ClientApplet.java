@@ -335,9 +335,9 @@ public class ClientApplet extends JFrame {
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, twoColor);
-		Border contactListBorderBB = BorderFactory.createCompoundBorder(contactListBorderAA, threeColor);
-		Border contactListBorderCC = BorderFactory.createCompoundBorder(contactListBorderBB, oneColor);
-		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderCC, Client.username + "'s Contact List", TitledBorder.CENTER,
+		//Border contactListBorderBB = BorderFactory.createCompoundBorder(contactListBorderAA, threeColor);
+		//Border contactListBorderCC = BorderFactory.createCompoundBorder(contactListBorderAA, oneColor);
+		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Client.username + "'s Contact List", TitledBorder.CENTER,
 		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
 
