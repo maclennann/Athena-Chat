@@ -279,8 +279,8 @@ public class ServerThread extends Thread
 		String userToReset = decryptServerPrivate(serverDin.readUTF());
 		
 		//TODO Pull the secret question and secret answer hash from the DB
-		String secretQuestion;
-		String secretAnswer;
+		String secretQuestion = null;
+		String secretAnswer = null;
 		
 		//Send the secret question to the client for answering
 		serverDout.writeUTF(encryptServerPrivate(secretQuestion));
