@@ -34,7 +34,7 @@ public class HephHacks {
 		Scanner in = new Scanner(System.in);
 		//Display a menu
 		//TODO Add more features!
-		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam x number of anonymous connections\n3. Spam x number of authenticated connections.\n4. Exit");
+		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n4. Exit");
 		System.out.print("Choice: ");
 		int answer = in.nextInt();
 		
@@ -85,7 +85,55 @@ public class HephHacks {
 				e.printStackTrace();
 			}
 		break;
-		case 4: System.exit(0);
+		case 4:
+			try {
+				clearScreen("Spam Server Commands",13);
+				//System.out.println("Beginning authenticated session spam.");
+				
+				//Disregard previous CR
+				in.nextLine();
+				
+				//Read in username and password to spam
+				System.out.print("\nEnter Authentication Username: ");
+				String username = in.nextLine();
+				clearScreen("Spam Server Commands",14);
+				System.out.print("Enter Authentication Password: ");
+				String password = in.nextLine();
+				clearScreen("Spam Server Commands",14);
+				//Spam with provided credentials
+				SpamMesg(username,password,false);
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		case 5:
+			try {
+				clearScreen("Spam User Messages",13);
+				//System.out.println("Beginning authenticated session spam.");
+				
+				//Disregard previous CR
+				in.nextLine();
+				
+				//Read in username and password to spam
+				System.out.print("\nEnter Authentication Username: ");
+				String username = in.nextLine();
+				clearScreen("Spam User Messages",14);
+				System.out.print("Enter Authentication Password: ");
+				String password = in.nextLine();
+				clearScreen("Spam User Messages",14);
+				//Spam with provided credentials
+				SpamMesg(username,password,true);
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		case 6: System.exit(0);
 		break;
 		}
 	}
@@ -168,6 +216,87 @@ public class HephHacks {
 		//clearScreen("Test Completed Successfully!",0);
 		menu();
 	}
+	
+	
+	
+	private static void SpamMesg(String user, String pass,boolean flag) throws UnknownHostException, IOException {
+		String hashedPassword="";
+		//System.out.println("Username: "+user+"\nPassword: "+pass);
+		try{
+			hashedPassword = computeHash(pass);
+		}catch (Exception e){ e.printStackTrace();}
+		Socket clientSocket;
+		Socket serverSocket;
+		DataInputStream spamIn;
+		DataOutputStream spamOut;
+		String result;
+		String userReply;
+		RSAPublicKeySpec serverPublic = RSACrypto.readPubKeyFromFile("Aegis.pub");
+		int passed=0, fail=0;
+		
+		// TODO Auto-generated method stub
+		Scanner in = new Scanner(System.in);
+		System.out.print("EHow many messages would you like to send? ");
+		int x = in.nextInt();
+		System.out.println("\nBeginning authentications. Please wait...");
+		try{
+			serverSocket = new Socket(serverIP, 7777 );
+			clientSocket = new Socket(serverIP, 7778 );
+								
+			//Bind the datastreams to the socket in order to send/receive spam
+			spamIn = new DataInputStream( serverSocket.getInputStream() );
+			spamOut = new DataOutputStream( serverSocket.getOutputStream() );
+
+			spamOut.writeUTF(encryptServerPublic(user,serverPublic)); //Sending Username
+			spamOut.writeUTF(encryptServerPublic(hashedPassword,serverPublic)); //Sending Password
+			result = decryptServerPublic(spamIn.readUTF(),serverPublic); //Read in the result
+			
+			if(result.equals("Success")){
+				System.out.println("Connection established\nContinuing...");
+				if(flag){
+					userReply = user;
+					for(int m=1;m<=x;m++){
+						spamOut.writeUTF(encryptServerPublic(userReply,serverPublic));
+						spamOut.writeUTF(encryptServerPublic(userReply,serverPublic));
+						spamOut.writeUTF("here be dragons");
+						spamIn.readUTF();
+						if(spamIn.readUTF().equals("here be dragons")) passed++;
+						else fail++;
+					}
+				}else{
+					for(int m=1;m<=x;m++){
+						spamOut.writeUTF(encryptServerPublic("Aegis",serverPublic));
+						spamOut.writeUTF(encryptServerPublic(user,serverPublic));
+						spamOut.writeUTF(encryptServerPublic("here be dragons",serverPublic));
+						passed++;
+					}
+				}
+			}
+				
+			//Close things
+			spamOut.close();
+			spamIn.close();
+			serverSocket.close();
+			clientSocket.close();
+				
+		} catch(Exception e){
+			//System.out.println("\nIt looks like you took down the server!");
+		}
+		clearScreen("Test Completed Successfully!",7);
+		System.out.println("\nMessages sent. Report follows:");
+		System.out.println("Success: "+passed+"\nFailure: "+fail+"\nTotal: "+x);
+		if(x!=0) System.out.println("Drop rate: "+fail/x);
+		else System.out.println("Drop rate: none");
+		System.out.print("\nTest complete. Press a key to go back to the menu.");
+		in.nextLine();
+		in.nextLine();
+		//clearScreen("Test Completed Successfully!",0);
+		menu();
+	}
+	
+	
+	
+	
 
 	private static void Dos() throws InterruptedException, IOException {
 		// TODO Auto-generated method stub

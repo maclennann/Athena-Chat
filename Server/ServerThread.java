@@ -213,7 +213,14 @@ public class ServerThread extends Thread
 				return;
 			}//Is the message someone trying to create an account?
 			if (toUserDecrypted.equals("Interupt")) {
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
+					
+				try{
+					int code = Integer.parseInt(decryptServerPrivate(messageEncrypted));
+				
+					systemMessageListener(code);
+				} catch(NumberFormatException e){
+					System.out.println("Message is NOT an eventcode. Continuing...");
+				}
 				return;
 			}//Is this a normal message to another client
 			else { 
