@@ -30,11 +30,11 @@ public class HephHacks {
 	}
 	
 	public static void menu(){
-		clearScreen("Strike while the iron is hot!",9);
+		clearScreen("Strike while the iron is hot!",7);
 		Scanner in = new Scanner(System.in);
 		//Display a menu
 		//TODO Add more features!
-		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n4. Exit");
+		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n6. Exit");
 		System.out.print("Choice: ");
 		int answer = in.nextInt();
 		
@@ -191,7 +191,7 @@ public class HephHacks {
 				spamOut.writeUTF(encryptServerPublic(hashedPassword,serverPublic)); //Sending Password
 				result = decryptServerPublic(spamIn.readUTF(),serverPublic); //Read in the result
 				//System.out.print("Attempt "+y+": ");
-				System.out.println(result);
+				//System.out.println(result);
 				if(result.equals("Success")) passed++;
 				else fail++;
 				
@@ -229,6 +229,7 @@ public class HephHacks {
 		Socket serverSocket;
 		DataInputStream spamIn;
 		DataOutputStream spamOut;
+		DataInputStream mesgSpamIn;
 		String result;
 		String userReply;
 		RSAPublicKeySpec serverPublic = RSACrypto.readPubKeyFromFile("Aegis.pub");
@@ -236,7 +237,7 @@ public class HephHacks {
 		
 		// TODO Auto-generated method stub
 		Scanner in = new Scanner(System.in);
-		System.out.print("EHow many messages would you like to send? ");
+		System.out.print("How many messages would you like to send? ");
 		int x = in.nextInt();
 		System.out.println("\nBeginning authentications. Please wait...");
 		try{
@@ -246,7 +247,7 @@ public class HephHacks {
 			//Bind the datastreams to the socket in order to send/receive spam
 			spamIn = new DataInputStream( serverSocket.getInputStream() );
 			spamOut = new DataOutputStream( serverSocket.getOutputStream() );
-
+			mesgSpamIn = new DataInputStream( clientSocket.getInputStream() );
 			spamOut.writeUTF(encryptServerPublic(user,serverPublic)); //Sending Username
 			spamOut.writeUTF(encryptServerPublic(hashedPassword,serverPublic)); //Sending Password
 			result = decryptServerPublic(spamIn.readUTF(),serverPublic); //Read in the result
@@ -259,8 +260,9 @@ public class HephHacks {
 						spamOut.writeUTF(encryptServerPublic(userReply,serverPublic));
 						spamOut.writeUTF(encryptServerPublic(userReply,serverPublic));
 						spamOut.writeUTF("here be dragons");
-						spamIn.readUTF();
-						if(spamIn.readUTF().equals("here be dragons")) passed++;
+						mesgSpamIn.readUTF();
+						//System.out.println("Read Response");
+						if(mesgSpamIn.readUTF().equals("here be dragons")) passed++;
 						else fail++;
 					}
 				}else{
