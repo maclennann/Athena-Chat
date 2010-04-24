@@ -277,7 +277,7 @@ public class ServerThread extends Thread
 	
 	private void resetPassword(){
 		try{
-		
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream()); 
 			//Use dbConnect() to connect to the database
 			Connection con = server.dbConnect();
 			
