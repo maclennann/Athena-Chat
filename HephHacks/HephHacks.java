@@ -13,20 +13,24 @@ import java.security.MessageDigest;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class hax {
+public class HephHacks {
 	//Display welcome message
-	hax() { 
-	}
+	//hax() { 
+	//}
+	static String serverIP="";
 	
 	public static void main(String[] args) throws AWTException {
-		
+		Scanner in = new Scanner(System.in);
 		//Send the welcome message
-		System.out.println("Welcome to the swordfish stress testing program for Athena...");
+		//System.out.println("Welcome to the swordfish stress testing program for Athena...");
+		clearScreen("Strike while the iron is hot!",14);
+		System.out.print("Enter the IP of the Aegis server: ");
+		serverIP = in.nextLine();
 		menu();
 	}
 	
 	public static void menu(){
-		clearScreen();
+		clearScreen("Strike while the iron is hot!",9);
 		Scanner in = new Scanner(System.in);
 		//Display a menu
 		//TODO Add more features!
@@ -58,8 +62,8 @@ public class hax {
 		break;
 		case 3: //Spam an authenticated session
 			try {
-				clearScreen();
-				System.out.println("Beginning authenticated session spam.");
+				clearScreen("Spam Authenticated Session",13);
+				//System.out.println("Beginning authenticated session spam.");
 				
 				//Disregard previous CR
 				in.nextLine();
@@ -67,9 +71,10 @@ public class hax {
 				//Read in username and password to spam
 				System.out.print("\nEnter Authentication Username: ");
 				String username = in.nextLine();
-				System.out.print("Enter Autentication Password: ");
+				clearScreen("Spam Authenticated Session",14);
+				System.out.print("Enter Authentication Password: ");
 				String password = in.nextLine();
-				
+				clearScreen("Spam Authenticated Session",14);
 				//Spam with provided credentials
 				SpamX(username,password);
 			} catch (UnknownHostException e) {
@@ -87,21 +92,22 @@ public class hax {
 
 	private static void SpamX() throws UnknownHostException, IOException {
 		// TODO Auto-generated method stub
+		clearScreen("Spam Anonymous Sessions",14);
 		Scanner in = new Scanner(System.in);
-		System.out.println("Enter how many times you would like to fake a connection with Aegis.");
+		System.out.print("How many anonymous connections would you like to create?");
 		int x = in.nextInt();
 		
-		for(int y=0; y<=x; y++) { 
-		Socket serverSocket = new Socket("10.1.10.49", 7777 );
-		Socket clientSocket = new Socket("10.1.10.49", 7778 );
-		clientSocket.close();
-		serverSocket.close();
+		for(int y=1; y<=x; y++) { 
+			Socket serverSocket = new Socket(serverIP, 7777 );
+			Socket clientSocket = new Socket(serverIP, 7778 );
+			clientSocket.close();
+			serverSocket.close();
 		}
-		
-		System.out.println("Anonymous sessions created.\nPress a key to continue...");
+		clearScreen("Test Completed Successfully!",12);
+		System.out.println(x+ " Anonymous sessions created successfully.\nPress a key to continue...");
 		in.nextLine();
 		in.nextLine();
-		clearScreen();
+		//clearScreen(false,0);
 		menu();
 	}
 	
@@ -126,8 +132,8 @@ public class hax {
 		System.out.println("\nBeginning authentications. Please wait...");
 		for(int y=1; y<=x; y++) { 
 			try{
-				serverSocket = new Socket("10.1.10.49", 7777 );
-				clientSocket = new Socket("10.1.10.49", 7778 );
+				serverSocket = new Socket(serverIP, 7777 );
+				clientSocket = new Socket(serverIP, 7778 );
 								
 				//Bind the datastreams to the socket in order to send/receive spam
 				spamIn = new DataInputStream( serverSocket.getInputStream() );
@@ -148,22 +154,24 @@ public class hax {
 				clientSocket.close();
 				
 			} catch(Exception e){
-				System.out.println("\nIt looks like you took down the server!");
+				//System.out.println("\nIt looks like you took down the server!");
 			}
-		}	
+		}
+		clearScreen("Test Completed Successfully!",7);
 		System.out.println("\nAuthentications sent. Report follows:");
 		System.out.println("Success: "+passed+"\nFailure: "+fail+"\nTotal: "+x);
-		System.out.println("Drop rate: "+fail/x);
-		System.out.println("\nTest complete. Press a key to go back to the menu.");
+		if(x!=0) System.out.println("Drop rate: "+fail/x);
+		else System.out.println("Drop rate: none");
+		System.out.print("\nTest complete. Press a key to go back to the menu.");
 		in.nextLine();
 		in.nextLine();
-		clearScreen();
+		//clearScreen("Test Completed Successfully!",0);
 		menu();
 	}
 
 	private static void Dos() throws InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		InetAddress address = InetAddress.getByName("10.1.10.49");
+		InetAddress address = InetAddress.getByName(serverIP);
 		Scanner in = new Scanner(System.in);
 		System.out.println("Will commence DoS in 5 seconds...");
 		//Sleep for 5
@@ -174,7 +182,7 @@ public class hax {
 		System.out.println("DoS complete.\nPress a key to continue...");
 		in.nextLine();
 		in.nextLine();
-		clearScreen();
+		clearScreen("Test Completed Successfully!",0);
 		menu();
 	}
 	
@@ -185,17 +193,20 @@ public class hax {
 	
 	
 	//Utility methods (help us hack)
-	public static void clearScreen(){
+	public static void clearScreen(String message, int lines){
 		for(int g=0;g<25;g++){
 			System.out.println("");
 		}
 		System.out.println(" _      _");
+		System.out.println("| |    | |EPHAESTUS'");
+		System.out.println("| |____| |");
+		System.out.println("| ______ |ACKING");
 		System.out.println("| |    | |");
-		System.out.println("| |____| |EPHAESTUS");
-		System.out.println("| ______ |");
-		System.out.println("| |    | |ACKING");
-		System.out.println("|_|    |_|");
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println("|_|    |_|ELPERS");
+		System.out.println("   by OlympuSoft");
+		System.out.println("\n\n"+message);
+		for(int r=1;r<=lines;r++) System.out.print("\n");
+		
 	}
 	
 	public static String encryptServerPublic(String plaintext, RSAPublicKeySpec key) { 
