@@ -305,19 +305,22 @@ public class ServerThread extends Thread
 			
 			//Send the secret question to the client for answering
 			serverDout.writeUTF(encryptServerPrivate(secretQuestion));
+			System.out.println("SENT Question: "+secretQuestion);
 			
 			//Read in the user's answer hash
 			String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
+			System.out.println("READ Answer: "+secretAnswerHash);
 			
 			//Read in the user's desired passwordchange
 			String newPassword = decryptServerPrivate(serverDin.readUTF());
 			
 			if(secretAnswerHash.equals(secretAnswer)){
+				System.out.println("HASHES MATCH");
 				//TODO insert newPassword into password field
 				String insertString = "UPDATE Users SET password='" + newPassword + "' WHERE username = '" + userToReset + "'";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
-				
+				System.out.println("PASSWORDCHANGED");
 				//Close Connections
 				//stmt.close();
 				insertSTMT.close();
@@ -326,6 +329,7 @@ public class ServerThread extends Thread
 				//Success message
 				serverDout.writeUTF(encryptServerPrivate("1"));
 			}else{
+				System.out.println("HASH MISMATCH. ABORT");
 				//Failure message
 				serverDout.writeUTF(encryptServerPrivate("0"));
 			}
