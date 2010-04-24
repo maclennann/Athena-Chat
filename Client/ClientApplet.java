@@ -87,6 +87,7 @@ import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLEditorKit;
 
@@ -1333,7 +1334,8 @@ class MapTextArea extends JFrame {
 		StyleConstants.setForeground(miniKeyWord, foreColor);
 		StyleConstants.setBackground(miniKeyWord, backColor);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
-		
+		StyledDocument doc = myTP.getStyledDocument();
+		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
 	}
 	
 	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine)
