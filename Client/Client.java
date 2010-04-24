@@ -44,6 +44,7 @@ import java.io.PrintWriter;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.MutableAttributeSet;
 
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
@@ -561,6 +562,7 @@ public class Client
 		char current=' ';
 		char previous=' ';
 		char next=' ';
+		MutableAttributeSet currentAttr = print.getTextFont();
 		for(x=0;x<message.length();x++){
 			current = message.charAt(x);
 			if(x>0)	previous = message.charAt(x-1);
@@ -635,7 +637,7 @@ public class Client
 			sendBugReport(getStackTraceAsString(e));
 			e.printStackTrace();
 		}
-		print.setTextFont(false,false,false);
+		print.setTextFont(currentAttr);
 	}
 	
 	

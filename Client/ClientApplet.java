@@ -85,6 +85,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -141,6 +142,7 @@ public class ClientApplet extends JFrame {
 	public boolean fontBold;
 	public boolean fontItalic;
 	public boolean fontUnderline;
+	public int fontSize;
 	public int activeTheme;
 	public boolean userStatusFlag = false;
 
@@ -157,7 +159,7 @@ public class ClientApplet extends JFrame {
 		listModel.removeElement(offlineUser);
 	}
 
-	public static Object[] currentSettings = new Object[10];
+	public static Object[] currentSettings = new Object[11];
 	
 	ClientApplet() {
 
@@ -197,7 +199,8 @@ public class ClientApplet extends JFrame {
 		fontBold = Boolean.parseBoolean(settingsArray[6].toString());
 		fontItalic = Boolean.parseBoolean(settingsArray[7].toString());
 		fontUnderline = Boolean.parseBoolean(settingsArray[8].toString());
-		activeTheme = Integer.parseInt(settingsArray[9].toString());
+		fontSize = Integer.parseInt(settingsArray[9].toString());
+		activeTheme = Integer.parseInt(settingsArray[10].toString());
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1054,6 +1057,10 @@ public class ClientApplet extends JFrame {
 					temp = inPref.readLine().substring(14);
 					settingsArray[arrayCount] = temp;
 					arrayCount++;
+					//Get fontSize (int)
+					temp = inPref.readLine().substring(9);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
 				}
 				if(line.equals("[THEME]"))
 				{
@@ -1163,7 +1170,32 @@ public class ClientApplet extends JFrame {
 			// TODO Auto-generated method stub
 			
 		}
-		}
+	}
+	
+	public String getLoadedFontFace()
+	{
+		return fontFace;
+	}
+	
+	public boolean getLoadedBold()
+	{
+		return fontBold;
+	}
+	
+	public boolean getLoadedItalic()
+	{
+		return fontItalic;
+	}
+	
+	public boolean getLoadedUnderline()
+	{
+		return fontUnderline;
+	}
+	
+	public int getLoadedFontSize()
+	{
+		return fontSize;
+	}
 	// End of class ClientApplet
 }
 
@@ -1185,8 +1217,10 @@ class MapTextArea extends JFrame {
 	public JTextPane myTP;
 	public JTextArea myTA;
 	public JTextField myTF;
-	SimpleAttributeSet keyWord = new SimpleAttributeSet();
-	SimpleAttributeSet miniKeyWord = new SimpleAttributeSet();
+	boolean isBold, isItalic, isUnderline;
+	int fontSize;
+	MutableAttributeSet keyWord = new SimpleAttributeSet();
+	MutableAttributeSet miniKeyWord = new SimpleAttributeSet();
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
@@ -1296,9 +1330,10 @@ class MapTextArea extends JFrame {
 		});
 		System.out.println("Listener added to tab!");
 		
-		//Set default font to Arial
-		Font font = new Font("Arial",Font.PLAIN,12);
-		myTP.setFont(font);
+		//Set default font settings to new text pane
+		setLoadedFont();
+		StyledDocument doc = myTP.getStyledDocument();
+		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
 	}
 
 	// Set the user name associated with the tab
@@ -1326,16 +1361,29 @@ class MapTextArea extends JFrame {
 		return myJPanel;
 	}
 	
-	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine, Color foreColor, Color backColor, int ftSize)
+	public void setTextFont(String fontFace, boolean isBold, boolean isItalic, boolean isULine, int ftSize)
 	{
+		miniKeyWord = myTP.getInputAttributes();
+		myTP.setFont(new Font(fontFace, Font.PLAIN, 12));
 		StyleConstants.setBold(miniKeyWord, isBold);
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
-		StyleConstants.setForeground(miniKeyWord, foreColor);
-		StyleConstants.setBackground(miniKeyWord, backColor);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
+		StyleConstants.setFontFamily(miniKeyWord, fontFace);
 		StyledDocument doc = myTP.getStyledDocument();
-		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+	}
+	
+	public void setLoadedFont()
+	{
+		myTP.setFont(new Font(Client.clientResource.getLoadedFontFace(), Font.PLAIN, 12));
+		StyleConstants.setBold(miniKeyWord, Client.clientResource.getLoadedBold());
+		StyleConstants.setItalic(miniKeyWord, Client.clientResource.getLoadedItalic());
+		StyleConstants.setUnderline(miniKeyWord, Client.clientResource.getLoadedUnderline());
+		StyleConstants.setForeground(miniKeyWord, Color.black);
+		StyleConstants.setBackground(miniKeyWord, Color.white);
+		StyleConstants.setFontSize(miniKeyWord, Client.clientResource.getLoadedFontSize());
+		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.getLoadedFontFace());
 	}
 	
 	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine)
@@ -1346,18 +1394,23 @@ class MapTextArea extends JFrame {
 	}
 
 	// Set the text area color
-	public SimpleAttributeSet getSetHeaderFont(Color color) {
+	public MutableAttributeSet getSetHeaderFont(Color color) {
 		StyleConstants.setBold(keyWord, true);
 		StyleConstants.setItalic(keyWord, false);
 		StyleConstants.setUnderline(keyWord, false);
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBackground(keyWord, Color.white);
 		StyleConstants.setFontSize(keyWord, 14);
-		StyleConstants.setFontFamily(keyWord, "serif");
+		StyleConstants.setFontFamily(keyWord, Client.clientResource.getLoadedFontFace());
 		return keyWord;
 	}
 	
-	public SimpleAttributeSet getTextFont()
+	public void setTextFont(MutableAttributeSet currentAttr)
+	{
+		miniKeyWord = currentAttr;
+	}
+	
+	public MutableAttributeSet getTextFont()
 	{
 		return miniKeyWord;
 	}
@@ -1371,7 +1424,7 @@ class MapTextArea extends JFrame {
 	}
 
 	// Write a string to the text area
-	public void writeToTextArea(String message, SimpleAttributeSet attributes) throws BadLocationException {
+	public void writeToTextArea(String message, MutableAttributeSet attributes) throws BadLocationException {
 		//myJEP.setFont(new Font("Arial", Font.PLAIN, 12);
 		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, attributes);
 	}

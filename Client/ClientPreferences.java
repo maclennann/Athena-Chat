@@ -63,10 +63,18 @@ public class ClientPreferences extends JPanel {
 	boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
 	boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 	boolean enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
+	int setEncryptionType = Integer.parseInt(settingsArray[4].toString());
+	String setFontFace = settingsArray[5].toString();
+	boolean enableBold = Boolean.parseBoolean(settingsArray[6].toString());
+	boolean enableItalic = Boolean.parseBoolean(settingsArray[7].toString());
+	boolean enableUnderline = Boolean.parseBoolean(settingsArray[8].toString());
+	int setFontSize = Integer.parseInt(settingsArray[9].toString());
+	
 	
 	//Define components
 	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	Font[] allFonts = ge.getAllFonts();
+	String[] allFonts = ge.getAvailableFontFamilyNames();
+	//Font[] allFonts = ge.getAllFonts();
 	public String[] themeList = {"javax.swing.plaf.metal.MetalLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel","com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.mac.MacLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
 	
 	public JFrame preferences;
@@ -86,18 +94,18 @@ public class ClientPreferences extends JPanel {
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
 	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
 	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
-	public boolean systemTrayVal;
-	public boolean allowESCVal;
-	public boolean enableSCVal;
-	public boolean systemTrayFlag = false;
-	public boolean allowESCFlag = false;
-	public boolean enableSpellCheckFlag = false;
+	boolean systemTrayVal;
+	boolean allowESCVal;
+	boolean enableSCVal;
+	boolean systemTrayFlag = false;
+	boolean allowESCFlag = false;
+	boolean enableSpellCheckFlag = false;
 	
 	//Define components for the Notifications Menu Panel
 	public JButton notificationsLabel = new JButton("Notifications", new ImageIcon("../images/notificationsPref.png"));
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable Sounds", enableSounds);
-	public boolean enableSoundsVal;
-	public boolean enableSoundsFlag = false;
+	boolean enableSoundsVal;
+	boolean enableSoundsFlag = false;
 
 	//Define components for the Encryption Menu Panel
 	public JButton encryptionLabel = new JButton("Encryption", new ImageIcon("../images/encryptionPref.png"));
@@ -110,19 +118,19 @@ public class ClientPreferences extends JPanel {
 	public JLabel fontSizeLabel = new JLabel("Font Size:");
 	public JLabel generalFontLabel = new JLabel("Font Style:");
 	public JComboBox selectFontComboBox, fontSizeComboBox;
-	public JCheckBox setBoldCheckBox = new JCheckBox("Bold");
-	public JCheckBox setItalicsCheckBox = new JCheckBox("Italics");
-	public JCheckBox setUnderlineCheckBox = new JCheckBox("Underlined");
-	public boolean selectFontFlag = false;
-	public boolean setBoldFlag = false;
-	public boolean setItalicsFlag = false;
-	public boolean setUnderlineFlag = false;
-	public boolean setSizeFlag = false;
-	public boolean selectFontVal;
-	public boolean setBoldVal;
-	public boolean setItalicsVal;
-	public boolean setUnderlineVal;
-	public int setSizeVal;
+	public JCheckBox setBoldCheckBox = new JCheckBox("Bold", enableBold);
+	public JCheckBox setItalicsCheckBox = new JCheckBox("Italics", enableItalic);
+	public JCheckBox setUnderlineCheckBox = new JCheckBox("Underlined", enableUnderline);
+	boolean setFontFaceFlag = false;
+	boolean setBoldFlag = false;
+	boolean setItalicsFlag = false;
+	boolean setUnderlineFlag = false;
+	boolean setSizeFlag = false;
+	String setFontFaceVal;
+	boolean setBoldVal;
+	boolean setItalicsVal;
+	boolean setUnderlineVal;
+	int setSizeVal;
 	
 	//Define components for the Theme Menu Panel
 	public JButton themeLabel = new JButton("Appearance", new ImageIcon("../images/themePref.png"));
@@ -148,11 +156,13 @@ public class ClientPreferences extends JPanel {
 		String[] allFontNames = new String[500];
 		for(int a = 0; a < allFonts.length; a++)
 		{
-			allFontNames[a] = allFonts[a].getFontName();
+			allFontNames[a] = allFonts[a];
 		}
 		selectFontComboBox = new JComboBox(allFontNames);
-		fontSizeComboBox = new JComboBox(new String[] {"8", "10", "12", "14", 
-											"16", "18", "20", "22", "24", "26", "28", "36", "48"});
+		selectFontComboBox.setSelectedItem(setFontFace);
+		
+		fontSizeComboBox = new JComboBox(new String[] {"8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48"});
+		fontSizeComboBox.setSelectedItem(Integer.toString(setFontSize));
 		
 		//Initialize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
@@ -191,7 +201,8 @@ public class ClientPreferences extends JPanel {
 				try {
 					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
 					setNotificationSettings(enableSoundsFlag, enableSoundsVal);
-					setFormattingSettings(selectFontFlag, setBoldFlag, setItalicsFlag, setUnderlineFlag, setSizeFlag);
+					setFormattingSettings(setFontFaceFlag, setBoldFlag, setItalicsFlag, setUnderlineFlag, setSizeFlag,
+											setFontFaceVal, setBoldVal, setItalicsVal, setUnderlineVal, setSizeVal);
 					writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -358,17 +369,21 @@ public class ClientPreferences extends JPanel {
 		selectFontComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
 					apply.setEnabled(true);
-					String fontToSet = selectFontComboBox.getSelectedItem().toString();
-					System.out.println("Retrieved font style: " + fontToSet);
+					setFontFaceVal = selectFontComboBox.getSelectedItem().toString();
+					System.out.println("Retrieved font style: " + setFontFaceVal);
+					settingsToWrite[5] = setFontFaceVal;
+					setFontFaceFlag = true;
+					
+					
 				}
 			});
 		
 		fontSizeComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
 					apply.setEnabled(true);
-					int fontSizeToSet = Integer.parseInt(fontSizeComboBox.getSelectedItem().toString());
-					System.out.println("Retrieved font size: " + fontSizeToSet);
-					setSizeVal = fontSizeToSet;
+					setSizeVal = Integer.parseInt(fontSizeComboBox.getSelectedItem().toString());
+					System.out.println("Retrieved font size: " + setSizeVal);
+					settingsToWrite[9] = setSizeVal;
 					setSizeFlag = true;
 				}
 			});
@@ -408,11 +423,6 @@ public class ClientPreferences extends JPanel {
 				setUnderlineFlag = true;
 			}
 		});
-		//This settings array update will go in check box action listeners when implemented as seen above in general settings
-		//settingsToWrite[6] = "false";
-		//settingsToWrite[7] = "false";
-		//settingsToWrite[8] = "false";
-		//settingsToWrite[9] = "false";
 		/*************************************************/	
 		
 		//Theme Menu Selection
@@ -672,14 +682,13 @@ public class ClientPreferences extends JPanel {
 		}
 	}
 	
-	private void setFormattingSettings(boolean setFontFlag, boolean setBoldFlag, boolean setItalicsFlag,
-										boolean setUnderlineFlag, boolean setSizeFlag)
+	private void setFormattingSettings(boolean setFontFaceFlag, boolean setBoldFlag, boolean setItalicsFlag, boolean setUnderlineFlag, boolean setSizeFlag,
+										String setFontFaceVal, boolean setBoldVal, boolean setItalicsVal, boolean setUnderlineVal, int setSizeVal)
 	{
-		if (setFontFlag || setBoldFlag || setItalicsFlag || setUnderlineFlag || setSizeFlag)
+		if (setFontFaceFlag || setBoldFlag || setItalicsFlag || setUnderlineFlag || setSizeFlag)
 		{
 			
-			Client.print.setTextFont(setBoldVal, setItalicsVal, setUnderlineVal,
-										Color.black, Color.white, setSizeVal);
+			Client.print.setTextFont(setFontFaceVal, setBoldVal, setItalicsVal, setUnderlineVal, setSizeVal);
 		}
 	}
 	
@@ -731,13 +740,15 @@ public class ClientPreferences extends JPanel {
 			outPref.newLine();
 			outPref.write("fontUnderline=" + settingsToWrite[8]);
 			outPref.newLine();
+			outPref.write("fontSize=" + settingsToWrite[9]);
+			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
 			
 			//Write theme settings
 			outPref.write("[THEME]");
 			outPref.newLine();
-			outPref.write("activeTheme=" + settingsToWrite[9]);
+			outPref.write("activeTheme=" + settingsToWrite[10]);
 			
 			outPref.close();
 			
