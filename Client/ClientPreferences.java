@@ -368,6 +368,8 @@ public class ClientPreferences extends JPanel {
 					apply.setEnabled(true);
 					int fontSizeToSet = Integer.parseInt(fontSizeComboBox.getSelectedItem().toString());
 					System.out.println("Retrieved font size: " + fontSizeToSet);
+					setSizeVal = fontSizeToSet;
+					setSizeFlag = true;
 				}
 			});
 		

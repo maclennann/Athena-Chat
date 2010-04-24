@@ -1333,6 +1333,7 @@ class MapTextArea extends JFrame {
 		StyleConstants.setForeground(miniKeyWord, foreColor);
 		StyleConstants.setBackground(miniKeyWord, backColor);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
+		
 	}
 	
 	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine)
