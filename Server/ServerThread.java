@@ -320,6 +320,14 @@ public class ServerThread extends Thread
 				String insertString = "UPDATE Users SET password='" + newPassword + "' WHERE username = '" + userToReset + "'";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
+				
+				if(server.authentication.containsKey(userToReset)){
+					server.authentication.remove(userToReset);
+					server.authentication.put(userToReset,newPassword);
+				}
+				else{
+					server.authentication.put(userToReset,newPassword);
+				}
 				System.out.println("PASSWORDCHANGED");
 				//Close Connections
 				//stmt.close();
