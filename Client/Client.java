@@ -58,7 +58,10 @@ public class Client
 
 	//Print debug messages?
 	public static final int debug=2;
-
+	
+	//public static String serverIP = "10.1.10.49";
+	public static String serverIP = "71.232.78.143";
+	
 	//Global username variable
 	public static String username="null";
 	
@@ -118,12 +121,13 @@ public class Client
 			try{
 				//Connect to auth server at defined port over socket
 				//This socket is for client -> server coms
-				c2ssocket = new Socket( "71.232.78.143", 7777 );
+				c2ssocket = new Socket( serverIP, 7777 );
 				//This socket is for client -> client coms
-				c2csocket = new Socket("71.232.78.143", 7778 );
+				c2csocket = new Socket(serverIP, 7778 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
+				loginGUI = new ClientLogin();
 				return;
 			}
 
@@ -156,9 +160,11 @@ public class Client
 			c2sdout.writeUTF(encryptServerPublic(hashedPassword)); //Sending Password
 			String result = decryptServerPublic(c2sdin.readUTF()); //Read in the result
 
-			if(debug==1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
+			if(debug>=1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
 			if(result.equals("Failed")) { 
+				disconnect();
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
+				return;
 			}
 			else { 
 				connected=1;
@@ -234,8 +240,8 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				c2ssocket = new Socket( "71.232.78.143", 7777 );
-				c2csocket = new Socket( "71.232.78.143", 7778 );
+				c2ssocket = new Socket( serverIP, 7777 );
+				c2csocket = new Socket( serverIP, 7778 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
