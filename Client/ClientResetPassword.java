@@ -154,19 +154,23 @@ public class ClientResetPassword extends JPanel {
 		confirmJButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
 			try{
+				System.out.println("Confirm Clicked!");
 				//String password;
 				if(secretAnswerJTextField.getText().equals("")){
 					JOptionPane.showMessageDialog(null,"Please enter a secret answer","Error",JOptionPane.ERROR_MESSAGE);
 				}
 				else{
-						if(newPasswordJPasswordField.getPassword().toString().equals(newPasswordConfirmJPasswordField.getPassword().toString())){
-							int yes = changePassword(ClientLogin.computeHash(secretAnswerJTextField.getText().toUpperCase()), ClientLogin.computeHash(newPasswordJPasswordField.getPassword().toString()));
+						String pass1 = new String(newPasswordJPasswordField.getPassword());
+						String pass2 = new String(newPasswordConfirmJPasswordField.getPassword());
+						if(pass1.equals(pass2)){
+							System.out.println("Initiating password change");
+							int yes = changePassword(ClientLogin.computeHash(secretAnswerJTextField.getText().toUpperCase()), ClientLogin.computeHash(pass1));
 							if(yes == 1){
 								JOptionPane.showMessageDialog(null,"You've successfully reset your password.","Success!",JOptionPane.INFORMATION_MESSAGE);
 							}else{
 								JOptionPane.showMessageDialog(null,"Please try again.","Error!",JOptionPane.ERROR_MESSAGE);
 							}
-						}
+						}else{System.out.println("Password mismatcH");}
 					}
 					
 				}catch(Exception e){e.printStackTrace();}
@@ -311,9 +315,12 @@ public class ClientResetPassword extends JPanel {
 			DataInputStream din = Client.returnDIN();
 			
 			dout.writeUTF(Client.encryptServerPublic(answerHash));
+			System.out.println("Sent answerhash");
 			dout.writeUTF(Client.encryptServerPublic(passwordHash));
+			System.out.println("Sent passwordhahh");
 			String success = Client.decryptServerPublic(din.readUTF());
-			Client.disconnect();
+			System.out.println("Result: "+success);
+			//Client.disconnect();
 			return Integer.parseInt(success);
 			
 		}catch(Exception e){e.printStackTrace();Client.disconnect();return 0;}
