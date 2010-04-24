@@ -209,7 +209,13 @@ public class ServerThread extends Thread
 			if (toUserDecrypted.equals("Aegis")) { 
 				if(debug>=1)System.out.print("Server eventcode detected! ");
 				if(debug>=1)System.out.println(decryptServerPrivate(messageEncrypted));
-				systemMessageListener(Integer.parseInt(decryptServerPrivate(messageEncrypted)));
+				try{
+					int code = Integer.parseInt(decryptServerPrivate(messageEncrypted));
+				
+					systemMessageListener(code);
+				} catch(NumberFormatException e){
+					System.out.println("Message is NOT an eventcode. Ignoring...");
+				}
 				return;
 			}//Is the message someone trying to create an account?
 			if (toUserDecrypted.equals("Interupt")) {
