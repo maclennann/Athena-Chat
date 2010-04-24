@@ -67,7 +67,7 @@ public class ServerThread extends Thread
 
 	//Define Global Variable Username / Password
 	private static String username;
-	private String realUsername;
+	private String realUsername="";
 	private String password;
 
 	//Our current socket
@@ -159,7 +159,11 @@ public class ServerThread extends Thread
 			//Socket is closed, remove it from the list
 			try { 
 			System.out.println("REMVONG FUCKING USAIGNER: "+realUsername);
+<<<<<<< HEAD:Server/ServerThread.java
 			if(realUsername.equals("null")) server.removeConnection(c2ssocket,c2csocket);
+=======
+			if(realUsername.equals("")) server.removeConnection(c2ssocket,c2csocket);
+>>>>>>> e830b83ab0dcd9c3d5cc59f904147e18853d3bbf:Server/ServerThread.java
 			else server.removeConnection( c2ssocket, c2csocket,realUsername );
 			//serverDin = new DataInputStream( c2ssocket.getInputStream() );
 			//clientDin = new DataInputStream( c2csocket.getInputStream() );
