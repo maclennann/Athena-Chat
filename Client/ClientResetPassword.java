@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import java.awt.Toolkit;
+import java.awt.AWTException;
 
 /**
  * 
@@ -115,7 +117,20 @@ public class ClientResetPassword extends JPanel {
 		confirmJButton.setEnabled(false);
 		getQuestJButton.setEnabled(true);
 
-		
+		resetPasswordJFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(WindowEvent winEvt) {
+		        try {
+					//Client.loginGUI.dispose();
+					ClientLogin loginGUI = new ClientLogin();
+					resetPasswordJFrame.dispose();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+			
+		    }
+		);	
 		clearJButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
 					confirmJButton.setEnabled(false);
@@ -238,6 +253,9 @@ public class ClientResetPassword extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try{
+					new ClientLogin();
+				}catch(Exception ie){ie.printStackTrace();}
 				// TODO Auto-generated method stub
 				resetPasswordJFrame.dispose();
 			} 

@@ -156,9 +156,11 @@ public class Client
 			c2sdout.writeUTF(encryptServerPublic(hashedPassword)); //Sending Password
 			String result = decryptServerPublic(c2sdin.readUTF()); //Read in the result
 
-			if(debug==1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
+			if(debug>=1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
 			if(result.equals("Failed")) { 
+				disconnect();
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
+				return;
 			}
 			else { 
 				connected=1;
