@@ -169,6 +169,7 @@ public class Client
 						new Runnable() {
 							public void run() {								
 								//While we are connected to the server, receive messages
+								if(c2cdin == null) connected = 0;
 								while(connected ==1) {
 									Client.recvMesg(c2cdin);
 								}
@@ -204,7 +205,7 @@ public class Client
 				usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 			}
 			//Start the thread
-			listeningProcedureClientToClient.start();
+			if(listeningProcedureClientToClient != null)listeningProcedureClientToClient.start();
 			//listeningProcedureClientToServer.start();
 			
 			//Check to see if the user's public key is there
@@ -1359,14 +1360,16 @@ public class Client
 	 */
 	public static void disconnect() { 
 		try{
-			c2sdout.close();
-			c2cdout.close();
-			c2sdin.close();
-			c2cdin.close();
+			if(c2sdout != null)	c2sdout.close();
+			if(c2cdout != null)	c2cdout.close();
+			if(c2sdin != null)	c2sdin.close();
+			if(c2cdin != null)	c2cdin.close();
 			c2ssocket.close();
 			c2csocket.close();
 			connected=0;
-			clientResource.setVisible(false);
+			if(clientResource != null){
+				clientResource.setVisible(false);
+			}
 		}catch(Exception e){
 			System.out.println("HAII");
 			e.printStackTrace();

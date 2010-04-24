@@ -35,7 +35,7 @@ public class HephHacks {
 		String clean="r";
 		//Display a menu
 		//TODO Add more features!
-		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n6. Exit");
+		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n6. Spam user creation (db stress test)\n7. Spam Bug Submissions (db stress test) 6. Exit");
 		System.out.print("Choice: ");
 		int answer = in.nextInt();
 		
@@ -212,7 +212,7 @@ public class HephHacks {
 				result = decryptServerPublic(spamIn.readUTF(),serverPublic); //Read in the result
 				//System.out.print("Attempt "+y+": ");
 				//System.out.println(result);
-				if(result.equals("Success")) passed++;
+				if(result.equals("Success") || result.equals("Failed")) passed++;
 				else fail++;
 				
 				//Close things
@@ -230,7 +230,10 @@ public class HephHacks {
 		clearScreen("Test Completed Successfully!",7);
 		System.out.println("\nAuthentications sent. Report follows:");
 		System.out.println("Success: "+passed+"\nFailure: "+fail+"\nTotal: "+x);
-		if(x!=0) System.out.println("Drop rate: "+fail/x);
+		if(x!=0){
+			double drop = (double)fail / x;
+			System.out.println("Drop rate: "+drop);
+		}
 		else System.out.println("Drop rate: none");
 		System.out.print("\nTest complete. Press a key to go back to the menu.");
 		in.nextLine();
