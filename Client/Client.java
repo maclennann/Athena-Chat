@@ -118,9 +118,9 @@ public class Client
 			try{
 				//Connect to auth server at defined port over socket
 				//This socket is for client -> server coms
-				c2ssocket = new Socket( "71.234.132.9", 7777 );
+				c2ssocket = new Socket( "71.232.78.143", 7777 );
 				//This socket is for client -> client coms
-				c2csocket = new Socket("71.234.132.9", 7778 );
+				c2csocket = new Socket("71.232.78.143", 7778 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -233,8 +233,8 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				c2ssocket = new Socket( "71.234.132.9", 7777 );
-				c2csocket = new Socket( "71.234.132.9", 7778 );
+				c2ssocket = new Socket( "71.232.78.143", 7777 );
+				c2csocket = new Socket( "71.232.78.143", 7778 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
