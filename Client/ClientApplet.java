@@ -109,6 +109,7 @@ public class ClientApplet extends JFrame {
 	public static Hashtable<String, String> fontFamilyTable = new Hashtable<String, String>();
 	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	public Font[] allFonts = ge.getAllFonts();
+	public boolean settingsLoaded = false;
 
 	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -1129,16 +1130,10 @@ public class ClientApplet extends JFrame {
 		  }
 		  
 		  public void mouseEntered(MouseEvent evt) {
-			//JButton currentButton = (JButton) this.getComponent(1);
-			//originalIcon = currentButton.getIcon();
-		    //     btClose.setIcon(closeIcon);
+
 		  }
 		  public void mouseExited(MouseEvent evt) {
-		      //if(originalIcon == alertIcon)
-		      //{
-		      //	  JButton currentButton = (JButton) this.getComponent(1);
-		      //      currentButton.setIcon(alertIcon);
-		      //  }
+
 		  }
 		  
 		  public void actionPerformed(ActionEvent e) {
@@ -1207,6 +1202,15 @@ public class ClientApplet extends JFrame {
 	public int getLoadedFontSize()
 	{
 		return fontSize;
+	}
+	
+	public void setNewFontToLoad(String newFontFace, boolean newBold, boolean newItalic, boolean newUnderline, int newSize)
+	{
+		fontFace = newFontFace;
+		fontBold = newBold;
+		fontItalic = newItalic;
+		fontUnderline = newUnderline;
+		fontSize = newSize;
 	}
 	// End of class ClientApplet
 }
@@ -1342,9 +1346,27 @@ class MapTextArea extends JFrame {
 		});
 		
 		//Set default font settings to new text pane
-		setLoadedFont();
-		StyledDocument doc = myTP.getStyledDocument();
-		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+		if(!(Client.clientResource.settingsLoaded))
+		{
+			System.out.println("Settings loaded from file, settingsLoaded = " + Client.clientResource.settingsLoaded);
+			setLoadedFont();
+			StyledDocument doc = myTP.getStyledDocument();
+			if(doc.getLength() > 0)
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+			else
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+		}
+		else
+		{
+			System.out.println("Settings already changed, settingsLoaded = " + Client.clientResource.settingsLoaded);
+			//Dont set default config font, get current font
+			setLoadedFont();
+			StyledDocument doc = myTP.getStyledDocument();
+			if(doc.getLength() > 0)
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+			else
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+		}
 	}
 
 	// Set the user name associated with the tab
@@ -1375,20 +1397,22 @@ class MapTextArea extends JFrame {
 	public void setTextFont(String fontFace, boolean isBold, boolean isItalic, boolean isULine, int ftSize)
 	{
 		miniKeyWord = myTP.getInputAttributes();
-		myTP.setFont(new Font(fontFace, Font.PLAIN, 12));
+		myTP.setFont(new Font(fontFace, Font.PLAIN, ftSize));
 		StyleConstants.setBold(miniKeyWord, isBold);
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
-		System.out.println("FONT FOUND: " + fontFace + "\t\t\tSETTING FAMILY TO: " + Client.clientResource.fontFamilyTable.size());
 		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(fontFace));
 		StyledDocument doc = myTP.getStyledDocument();
-		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+		if(doc.getLength() > 0)
+			doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+		else
+			doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
 	}
 	
 	public void setLoadedFont()
 	{
-		myTP.setFont(new Font(Client.clientResource.getLoadedFontFace(), Font.PLAIN, 12));
+		myTP.setFont(new Font(Client.clientResource.getLoadedFontFace(), Font.PLAIN, Client.clientResource.getLoadedFontSize()));
 		StyleConstants.setBold(miniKeyWord, Client.clientResource.getLoadedBold());
 		StyleConstants.setItalic(miniKeyWord, Client.clientResource.getLoadedItalic());
 		StyleConstants.setUnderline(miniKeyWord, Client.clientResource.getLoadedUnderline());
@@ -1437,7 +1461,6 @@ class MapTextArea extends JFrame {
 
 	// Write a string to the text area
 	public void writeToTextArea(String message, MutableAttributeSet attributes) throws BadLocationException {
-		//myJEP.setFont(new Font("Arial", Font.PLAIN, 12);
 		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, attributes);
 	}
 

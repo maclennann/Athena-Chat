@@ -690,8 +690,9 @@ public class ClientPreferences extends JPanel {
 	{
 		if (setFontFaceFlag || setBoldFlag || setItalicsFlag || setUnderlineFlag || setSizeFlag)
 		{
-			
+			Client.clientResource.settingsLoaded = true;
 			Client.print.setTextFont(setFontFaceVal, setBoldVal, setItalicsVal, setUnderlineVal, setSizeVal);
+			Client.clientResource.setNewFontToLoad(setFontFaceVal, setBoldVal, setItalicsVal, setUnderlineVal, setSizeVal);
 		}
 	}
 	
