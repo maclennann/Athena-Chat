@@ -19,6 +19,8 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Hashtable;
+
 import javax.swing.UIManager;
 import javax.swing.LookAndFeel;
 import javax.swing.BorderFactory;
@@ -73,8 +75,8 @@ public class ClientPreferences extends JPanel {
 	
 	//Define components
 	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	String[] allFonts = ge.getAvailableFontFamilyNames();
-	//Font[] allFonts = ge.getAllFonts();
+	//String[] allFontFamilies = ge.getAvailableFontFamilyNames();
+	Font[] allFonts = ge.getAllFonts();
 	public String[] themeList = {"javax.swing.plaf.metal.MetalLookAndFeel","com.sun.java.swing.plaf.windows.WindowsLookAndFeel","com.sun.java.swing.plaf.gtk.GTKLookAndFeel","com.sun.java.swing.plaf.mac.MacLookAndFeel","com.sun.java.swing.plaf.motif.MotifLookAndFeel","com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
 	
 	public JFrame preferences;
@@ -153,10 +155,12 @@ public class ClientPreferences extends JPanel {
 		preferences.setLocationRelativeTo(ClientApplet.imContentFrame);
 		preferences.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
 		//Retrieve all available font names and set font combo box
-		String[] allFontNames = new String[500];
+		String[] allFontNames = new String[allFonts.length];
+		//Client.clientResource.fontFamilyTable.clear();
 		for(int a = 0; a < allFonts.length; a++)
 		{
-			allFontNames[a] = allFonts[a];
+			allFontNames[a] = allFonts[a].getFontName();
+			//Client.clientResource.fontFamilyTable.put(allFonts[a].getFontName(), allFonts[a].getFamily());
 		}
 		selectFontComboBox = new JComboBox(allFontNames);
 		selectFontComboBox.setSelectedItem(setFontFace);
@@ -457,7 +461,7 @@ public class ClientPreferences extends JPanel {
 		//ActionListener to make the connect menu item connect
 		selectThemeComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
-			try{System.out.println("FUCK");
+			try{
 				UIManager.setLookAndFeel(selectThemeComboBox.getSelectedItem().toString());}catch(Exception e){e.printStackTrace();
 				SwingUtilities.updateComponentTreeUI(preferences);
 				preferences.pack();

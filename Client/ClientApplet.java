@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MenuItem;
@@ -105,6 +106,10 @@ public class ClientApplet extends JFrame {
 
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();
 	public Hashtable<Document, JPanel> uniqueIDHash = new Hashtable<Document, JPanel>();
+	public static Hashtable<String, String> fontFamilyTable = new Hashtable<String, String>();
+	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	//String[] allFontFamilies = ge.getAvailableFontFamilyNames();
+	Font[] allFonts = ge.getAllFonts();
 
 	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -177,6 +182,13 @@ public class ClientApplet extends JFrame {
 		int width = (int)scrnsize.getWidth();
 		int height = (int)scrnsize.getHeight();
 		
+		String[] allFontNames = new String[allFonts.length];
+		fontFamilyTable.clear();
+		for(int a = 0; a < allFonts.length; a++)
+		{
+			allFontNames[a] = allFonts[a].getFontName();
+			fontFamilyTable.put(allFonts[a].getFontName(), allFonts[a].getFamily());
+		}
 		
 		//Load preference settings
 		Object[] settingsArray = loadSavedPreferences();
@@ -1369,7 +1381,7 @@ class MapTextArea extends JFrame {
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
-		StyleConstants.setFontFamily(miniKeyWord, fontFace);
+		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(fontFace));
 		StyledDocument doc = myTP.getStyledDocument();
 		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
 	}
@@ -1383,7 +1395,7 @@ class MapTextArea extends JFrame {
 		StyleConstants.setForeground(miniKeyWord, Color.black);
 		StyleConstants.setBackground(miniKeyWord, Color.white);
 		StyleConstants.setFontSize(miniKeyWord, Client.clientResource.getLoadedFontSize());
-		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.getLoadedFontFace());
+		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(Client.clientResource.getLoadedFontFace()));
 	}
 	
 	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine)
@@ -1401,7 +1413,7 @@ class MapTextArea extends JFrame {
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBackground(keyWord, Color.white);
 		StyleConstants.setFontSize(keyWord, 14);
-		StyleConstants.setFontFamily(keyWord, Client.clientResource.getLoadedFontFace());
+		StyleConstants.setFontFamily(keyWord, Client.clientResource.fontFamilyTable.get(Client.clientResource.getLoadedFontFace()));
 		return keyWord;
 	}
 	
