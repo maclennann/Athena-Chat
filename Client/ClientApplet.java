@@ -249,16 +249,32 @@ public class ClientApplet extends JFrame {
 		preferences = new JMenuItem("Preferences");
 		preferences.setMnemonic(KeyEvent.VK_P);
 		edit.add(preferences);
+		
+		// Create button Edit -> Change Password
+		JMenuItem changePassword = new JMenuItem("Change Password");
+		edit.add(changePassword);
 
 		// Create the encryption menu.
 		encryption = new JMenu("Encryption");
 		encryption.setMnemonic(KeyEvent.VK_C);
 		menuBar.add(encryption);
 		
+		// Create button Encryption -> Export Key Pair
+		JMenuItem exportKey = new JMenuItem("Export Key Pair");
+		encryption.add(exportKey);
+		
 		// Create the view menu
 		view = new JMenu("View");
 		view.setMnemonic(KeyEvent.VK_V);
 		menuBar.add(view);
+		
+		// Create button View -> Offline users in contact list
+		JMenuItem offlineUsers = new JMenuItem("Offline Contacts in List");
+		view.add(offlineUsers);
+		
+		// Create button View -> Contact Aliases
+		JMenuItem contactAlias = new JMenuItem("Contact Aliases");
+		view.add(contactAlias);
 		
 		// Create the help menu
 		help = new JMenu("Help");
@@ -342,6 +358,30 @@ public class ClientApplet extends JFrame {
 				}catch(IOException e){
 					e.printStackTrace();
 				}
+			}
+		});
+		
+		changePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		exportKey.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		offlineUsers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		contactAlias.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
