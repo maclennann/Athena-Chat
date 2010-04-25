@@ -128,11 +128,11 @@ public class ClientPreferences extends JPanel {
 	boolean setItalicsFlag = false;
 	boolean setUnderlineFlag = false;
 	boolean setSizeFlag = false;
-	String setFontFaceVal;
-	boolean setBoldVal;
-	boolean setItalicsVal;
-	boolean setUnderlineVal;
-	int setSizeVal;
+	String setFontFaceVal = setFontFace;
+	boolean setBoldVal = enableBold;
+	boolean setItalicsVal = enableItalic;
+	boolean setUnderlineVal = enableUnderline;
+	int setSizeVal = setFontSize;
 	
 	//Define components for the Theme Menu Panel
 	public JButton themeLabel = new JButton("Appearance", new ImageIcon("../images/themePref.png"));
@@ -157,10 +157,9 @@ public class ClientPreferences extends JPanel {
 		//Retrieve all available font names and set font combo box
 		String[] allFontNames = new String[allFonts.length];
 		//Client.clientResource.fontFamilyTable.clear();
-		for(int a = 0; a < allFonts.length; a++)
+		for(int a = 0; a < Client.clientResource.allFonts.length; a++)
 		{
-			allFontNames[a] = allFonts[a].getFontName();
-			//Client.clientResource.fontFamilyTable.put(allFonts[a].getFontName(), allFonts[a].getFamily());
+			allFontNames[a] = Client.clientResource.allFonts[a].getFontName();
 		}
 		selectFontComboBox = new JComboBox(allFontNames);
 		selectFontComboBox.setSelectedItem(setFontFace);

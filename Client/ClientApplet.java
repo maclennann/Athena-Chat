@@ -108,8 +108,7 @@ public class ClientApplet extends JFrame {
 	public Hashtable<Document, JPanel> uniqueIDHash = new Hashtable<Document, JPanel>();
 	public static Hashtable<String, String> fontFamilyTable = new Hashtable<String, String>();
 	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	//String[] allFontFamilies = ge.getAvailableFontFamilyNames();
-	Font[] allFonts = ge.getAllFonts();
+	public Font[] allFonts = ge.getAllFonts();
 
 	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -188,6 +187,7 @@ public class ClientApplet extends JFrame {
 		{
 			allFontNames[a] = allFonts[a].getFontName();
 			fontFamilyTable.put(allFonts[a].getFontName(), allFonts[a].getFamily());
+			//System.out.println("FONT NAME: " + allFonts[a].getFontName() + "\t\tFONT FAMILY: " + allFonts[a].getFamily());
 		}
 		
 		//Load preference settings
@@ -1340,7 +1340,6 @@ class MapTextArea extends JFrame {
 				
 			}
 		});
-		System.out.println("Listener added to tab!");
 		
 		//Set default font settings to new text pane
 		setLoadedFont();
@@ -1381,6 +1380,7 @@ class MapTextArea extends JFrame {
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
+		System.out.println("FONT FOUND: " + fontFace + "\t\t\tSETTING FAMILY TO: " + Client.clientResource.fontFamilyTable.size());
 		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(fontFace));
 		StyledDocument doc = myTP.getStyledDocument();
 		doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
