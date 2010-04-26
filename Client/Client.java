@@ -464,7 +464,7 @@ public class Client
 						}
 					}
 					if((usernames[x].equals(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) { 
-						print.writeToTextArea(decryptedMessage + "has signed off.", print.getSetHeaderFont(Color.red));						
+						print.writeToTextArea(decryptedMessage + " has signed off.\n", print.getSetHeaderFont(Color.gray));						
 					}
 				}	
 				return;
@@ -492,7 +492,10 @@ public class Client
 								AudioPlayer.player.start(as);
 							}
 						}
-					}
+						if((usernames[x].equals(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) { 
+							print.writeToTextArea(decryptedMessage + " has signed on.\n", print.getSetHeaderFont(Color.gray));						
+						}
+					}					
 					return;	
 				}
 			}
