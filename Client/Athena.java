@@ -72,6 +72,7 @@ public class Athena
 	 */
 	private static final int debug=2; //Show debug messages?
 	private static String serverIP = "71.232.78.143"; //IP of the server
+	//private static String serverIP = "10.1.10.49"; //IP of server for Norm. Don't delete this agian.
 	private static int connected = 0; 	//If the client is connect to the server
 	private static int away = 0; //Is the user away?	
 	private static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password	
