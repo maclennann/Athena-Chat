@@ -34,7 +34,7 @@ import java.awt.Toolkit;
  * @author OlmypuSoft
  *
  */
-public class ClientBugReport extends JPanel {
+public class BugReportInterface extends JPanel {
 
 
 	/**
@@ -69,12 +69,12 @@ public class ClientBugReport extends JPanel {
 	private BigInteger privateExpBigInteger;
 	public Color goGreen = new Color(51,153,51);
 
-	ClientBugReport() {
+	BugReportInterface() {
 		//Create the Main Frame
 		submitBugJFrame= new JFrame("Submit Bug Report/Feature Request");
 		submitBugJFrame.setSize(500,550);
 		submitBugJFrame.setResizable(false);
-		submitBugJFrame.setLocationRelativeTo(ClientApplet.imContentFrame);
+		submitBugJFrame.setLocationRelativeTo(CommunicationInterface.imContentFrame);
 		
 		//Create the content Pane
 		contentPane = new JPanel();
@@ -185,16 +185,16 @@ public class ClientBugReport extends JPanel {
 		//Client.connect();
 
 		//Give me back my filet of DataOutputStream + DataInputStream
-		DataOutputStream dout = Client.returnDOUT();
+		DataOutputStream dout = Athena.returnDOUT();
 		//DataInputStream din = Client.returnDIN();
 
 
 		try {
-			Client.systemMessage("10");
-			dout.writeUTF(Client.encryptServerPublic(titles));
-			dout.writeUTF(Client.encryptServerPublic(recreates));
-			dout.writeUTF(Client.encryptServerPublic(expecteds));
-			dout.writeUTF(Client.encryptServerPublic(actuals));
+			Athena.systemMessage("10");
+			dout.writeUTF(Athena.encryptServerPublic(titles));
+			dout.writeUTF(Athena.encryptServerPublic(recreates));
+			dout.writeUTF(Athena.encryptServerPublic(expecteds));
+			dout.writeUTF(Athena.encryptServerPublic(actuals));
 			//Close the connection
 			//dout.close();
 			//Client.disconnect();

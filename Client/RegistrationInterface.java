@@ -31,7 +31,7 @@ import javax.swing.border.TitledBorder;
  * @author OlmypuSoft
  *
  */
-public class ClientAddUser extends JPanel {
+public class RegistrationInterface extends JPanel {
 
 
 	/**
@@ -83,12 +83,12 @@ public class ClientAddUser extends JPanel {
 	private BigInteger privateModBigInteger;
 	private BigInteger privateExpBigInteger;
 	public Color goGreen = new Color(51,153,51);
-	ClientAddUser() {
+	RegistrationInterface() {
 		//Create the Main Frame
 		addUserJFrame= new JFrame("User Registration");
 		addUserJFrame.setSize(310,550);
 		addUserJFrame.setResizable(false);
-		addUserJFrame.setLocationRelativeTo(Client.loginGUI);
+		addUserJFrame.setLocationRelativeTo(Athena.loginGUI);
 		
 		//Create the content Pane
 		contentPane = new JPanel();
@@ -178,8 +178,8 @@ public class ClientAddUser extends JPanel {
 					DESCrypto descrypto = new DESCrypto(passwordJPasswordField.getPassword().toString(),saltUser);
 										
 					//Hash the password
-					password = ClientLogin.computeHash(new String(passwordJPasswordField.getPassword()));
-					String secAns = ClientLogin.computeHash(secretAnswerJTextField.getText().toUpperCase());
+					password = AuthenticationInterface.computeHash(new String(passwordJPasswordField.getPassword()));
+					String secAns = AuthenticationInterface.computeHash(secretAnswerJTextField.getText().toUpperCase());
 					//Generate the public and private keypair
 					RSACrypto.generateRSAKeyPair();
 					pub = RSACrypto.getPublicKey();
@@ -536,24 +536,24 @@ public class ClientAddUser extends JPanel {
 	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password, String secretQuestion, String secretAnswer) { 
 
 		//Get a connection
-		Client.connect();
+		Athena.connect();
 
 		//Give me back my filet of DataOutputStream + DataInputStream
-		DataOutputStream dout = Client.returnDOUT();
-		DataInputStream din = Client.returnDIN();
+		DataOutputStream dout = Athena.returnDOUT();
+		DataInputStream din = Athena.returnDIN();
 
 
 		try {
 			//Tell the server we're not going to log in
 			//Maybe we should try encrypting this first!
 			//dout.writeUTF("Interupt");
-			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic((new String("Interupt")),Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent())).toString());
+			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic((new String("Interupt")),Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent())).toString());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.	
-		Client.systemMessage("000");
+		Athena.systemMessage("000");
 
 
 
@@ -562,11 +562,11 @@ public class ClientAddUser extends JPanel {
 			//Encrypt information to send to Aegis. Turn them into BigIntegers so we can move them
 			//TODO These should be encrypted with Aegis' public key
 			//DONE
-			BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(firstName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger lastNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(lastName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPublic(emailAddress,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger userNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(userName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+			BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(firstName,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
+			BigInteger lastNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(lastName,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
+			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPublic(emailAddress,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
+			BigInteger userNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(userName,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
+			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
 			
 
 			//Send the server the pieces of our public key to be assembled at the other end
@@ -595,27 +595,27 @@ public class ClientAddUser extends JPanel {
 			dout.writeUTF(emailAddressCipher.toString());
 			dout.writeUTF(userNameCipher.toString());
 			dout.writeUTF(passwordCipher.toString());
-			dout.writeUTF(Client.encryptServerPublic(secretQuestion));
-			dout.writeUTF(Client.encryptServerPublic(secretAnswer));
+			dout.writeUTF(Athena.encryptServerPublic(secretQuestion));
+			dout.writeUTF(Athena.encryptServerPublic(secretAnswer));
 
 			//Grab the result
 			String result = din.readUTF();
 			byte[] resultBytes = (new BigInteger(result)).toByteArray();
-			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
+			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent());
 			if(resultDecrypted.equals("Username has been sucessfully created.")) {
-				ClientLoginFailed successfulUserRegistration = new ClientLoginFailed(resultDecrypted,true);
+				LoginFailedInterface successfulUserRegistration = new LoginFailedInterface(resultDecrypted,true);
 				addUserJFrame.dispose();
 				//Garbage collect!
 				System.gc();
 			}
 			else { 
-				ClientLoginFailed failureUserRegistration = new ClientLoginFailed(resultDecrypted,false);
+				LoginFailedInterface failureUserRegistration = new LoginFailedInterface(resultDecrypted,false);
 				//Garbage collect!
 				System.gc();
 			}
 			//Close the connection
 			dout.close();
-			Client.disconnect();
+			Athena.disconnect();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

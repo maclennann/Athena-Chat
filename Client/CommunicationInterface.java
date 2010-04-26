@@ -97,7 +97,7 @@ import com.inet.jortho.SpellChecker;
 
 //Client swing window.
 //TODO: Rename it to something else. It's not an applet
-public class ClientApplet extends JFrame {
+public class CommunicationInterface extends JFrame {
 	/**
 	 * 
 	 */
@@ -166,7 +166,7 @@ public class ClientApplet extends JFrame {
 
 	public static Object[] currentSettings = new Object[11];
 	
-	ClientApplet() {
+	CommunicationInterface() {
 
 		// Initialize chat window
 		UIManager.put("OptionPane.informationIcon",logoIcon);
@@ -206,7 +206,7 @@ public class ClientApplet extends JFrame {
 		enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 		setSpellCheck(enableSpellCheck);
 		enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
-		Client.setEnableSounds(enableSounds);
+		Athena.setEnableSounds(enableSounds);
 		encryptionType = Integer.parseInt(settingsArray[4].toString());
 		fontFace = settingsArray[5].toString();
 		fontBold = Boolean.parseBoolean(settingsArray[6].toString());
@@ -215,7 +215,7 @@ public class ClientApplet extends JFrame {
 		fontSize = Integer.parseInt(settingsArray[9].toString());
 		activeTheme = Integer.parseInt(settingsArray[10].toString());
 		//This is the main frame for the IMs
-		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
+		imContentFrame = new JFrame("Athena Chat Application - " + Athena.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		imContentFrame.setSize(813, 610);
 		imContentFrame.setResizable(false);
@@ -301,11 +301,11 @@ public class ClientApplet extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				// Clear the Buddy list when disconnected
 				listModel.clear();
-				Client.disconnect();
+				Athena.disconnect();
 				//Get rid of this window and open a new Login Window
 				imContentFrame.dispose();
 				try {
-					new ClientLogin();
+					new AuthenticationInterface();
 				} catch (AWTException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -316,14 +316,14 @@ public class ClientApplet extends JFrame {
 		// ActionListener to make the exit menu item exit
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				Client.exit();
+				Athena.exit();
 			}
 		});
 
 		// ActionListener to show Preferences window
 		preferences.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				new ClientPreferences();
+				new PreferencesInterface();
 			}
 		});
 		
@@ -331,7 +331,7 @@ public class ClientApplet extends JFrame {
 		about.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try{
-					new ClientAbout();
+					new AboutInterface();
 				} catch(AWTException e) {
 					e.printStackTrace();
 				}
@@ -342,7 +342,7 @@ public class ClientApplet extends JFrame {
 		bugReport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try{
-					new ClientBugReport();
+					new BugReportInterface();
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
@@ -392,7 +392,7 @@ public class ClientApplet extends JFrame {
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, oneColor);
-		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Client.username + "'s Contact List", TitledBorder.CENTER,
+		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
 		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), Color.black);
 		contactList.setBorder(buddyBorder);
 
@@ -436,8 +436,8 @@ public class ClientApplet extends JFrame {
 				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
 				try {
 					if(usernameToAdd != null){
-						Client.buddyList(usernameToAdd);
-						Client.instantiateBuddyList(usernameToAdd);
+						Athena.buddyList(usernameToAdd);
+						Athena.instantiateBuddyList(usernameToAdd);
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -453,7 +453,7 @@ public class ClientApplet extends JFrame {
 				
 				try {				
 					JList theList = (JList) userBox;
-					String[] usernames = Client.returnBuddyListArray();
+					String[] usernames = Athena.returnBuddyListArray();
 					
 					// Find out what was double-clicked
 					int index = theList.getSelectedIndex();
@@ -474,7 +474,7 @@ public class ClientApplet extends JFrame {
 
 							// Print the array back to the file (will overwrite the
 							// previous file
-							Client.writeBuddyListToFile(usernames);
+							Athena.writeBuddyListToFile(usernames);
 
 						}
 						else
@@ -514,7 +514,7 @@ public class ClientApplet extends JFrame {
 						removeJButton.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent event){
 								try {
-									String[] usernames = Client.returnBuddyListArray();
+									String[] usernames = Athena.returnBuddyListArray();
 									
 									Object o = listOfUsersJComboBox.getSelectedItem();
 									ArrayList<String> list = new ArrayList<String>(Arrays
@@ -525,7 +525,7 @@ public class ClientApplet extends JFrame {
 
 									// Print the array back to the file (will overwrite the
 									// previous file
-									Client.writeBuddyListToFile(usernames);
+									Athena.writeBuddyListToFile(usernames);
 									listOfUsersJComboBox.removeItemAt(listOfUsersJComboBox.getSelectedIndex());
 									if(listOfUsersJComboBox.getItemCount() == 0)
 										removeJButton.setEnabled(false);								
@@ -620,8 +620,8 @@ public class ClientApplet extends JFrame {
 					String ans = JOptionPane.showInputDialog("Please enter an auto-response message:");
 					if(ans != null && ans.length() > 0)
 					{
-						Client.setAwayText(ans);
-						Client.setStatus(1);
+						Athena.setAwayText(ans);
+						Athena.setStatus(1);
 						setUserStatus(true);
 					}
 					else if (ans == null)
@@ -637,7 +637,7 @@ public class ClientApplet extends JFrame {
 				}
 				else
 				{
-					Client.setStatus(0);
+					Athena.setStatus(0);
 					setUserStatus(false);
 				}
 			}
@@ -965,8 +965,8 @@ public class ClientApplet extends JFrame {
 					}
 				}
 				if(imTabbedPane.getTabCount() ==0){
-				ClientApplet.lockIconLabel.setVisible(true);
-				ClientApplet.logoIconLabel.setVisible(true);
+				CommunicationInterface.lockIconLabel.setVisible(true);
+				CommunicationInterface.logoIconLabel.setVisible(true);
 			}
 			}
 		}
@@ -1022,9 +1022,9 @@ public class ClientApplet extends JFrame {
 		String temp = null;
 		try {
 			
-			File newPrefFile = new File("users/" + Client.username + "/athena.conf");
+			File newPrefFile = new File("users/" + Athena.username + "/athena.conf");
 			if(!(newPrefFile.exists())) { 
-				boolean success = new File("users/" + Client.username + "/").mkdirs();
+				boolean success = new File("users/" + Athena.username + "/").mkdirs();
 				if(success) {
 					if(debug==1)System.out.println("File Not Found! Copying...");
 					File oldFile = new File("users/Aegis/athena.conf");
@@ -1058,7 +1058,7 @@ public class ClientApplet extends JFrame {
 					}
 				}
 			}
-			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + Client.username + "/athena.conf"));
+			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + Athena.username + "/athena.conf"));
 			while((line = inPref.readLine()) != null)
 			{
 				if(line.equals("[GENERAL]"))
@@ -1197,8 +1197,8 @@ public class ClientApplet extends JFrame {
 		      
 		    }
 			if(imTabbedPane.getTabCount() ==0){
-				ClientApplet.lockIconLabel.setVisible(true);
-				ClientApplet.logoIconLabel.setVisible(true);
+				CommunicationInterface.lockIconLabel.setVisible(true);
+				CommunicationInterface.logoIconLabel.setVisible(true);
 			}
 			  System.gc();
 		    }
@@ -1337,7 +1337,7 @@ class MapTextArea extends JFrame {
 			public void mouseReleased(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 				myJEP.copy();
-				Client.clientResource.FocusCurrentTextField();
+				Athena.clientResource.FocusCurrentTextField();
 			}
 			
 		});
@@ -1371,7 +1371,7 @@ class MapTextArea extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER && (!(myTP.getText().equals(""))))
 					try {
-						Client.processMessage(myTP.getText());
+						Athena.processMessage(myTP.getText());
 						myTP.getDocument().remove(0, myTP.getText().length());
 						e.consume();
 					} catch (BadLocationException e1) {
@@ -1390,9 +1390,9 @@ class MapTextArea extends JFrame {
 		});
 		
 		//Set default font settings to new text pane
-		if(!(Client.clientResource.settingsLoaded))
+		if(!(Athena.clientResource.settingsLoaded))
 		{
-			System.out.println("Settings loaded from file, settingsLoaded = " + Client.clientResource.settingsLoaded);
+			System.out.println("Settings loaded from file, settingsLoaded = " + Athena.clientResource.settingsLoaded);
 			setLoadedFont();
 			StyledDocument doc = myTP.getStyledDocument();
 			if(doc.getLength() > 0)
@@ -1402,7 +1402,7 @@ class MapTextArea extends JFrame {
 		}
 		else
 		{
-			System.out.println("Settings already changed, settingsLoaded = " + Client.clientResource.settingsLoaded);
+			System.out.println("Settings already changed, settingsLoaded = " + Athena.clientResource.settingsLoaded);
 			//Dont set default config font, get current font
 			setLoadedFont();
 			StyledDocument doc = myTP.getStyledDocument();
@@ -1446,7 +1446,7 @@ class MapTextArea extends JFrame {
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
-		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(fontFace));
+		StyleConstants.setFontFamily(miniKeyWord, Athena.clientResource.fontFamilyTable.get(fontFace));
 		StyledDocument doc = myTP.getStyledDocument();
 		if(doc.getLength() > 0)
 			doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
@@ -1456,14 +1456,14 @@ class MapTextArea extends JFrame {
 	
 	public void setLoadedFont()
 	{
-		myTP.setFont(new Font(Client.clientResource.getLoadedFontFace(), Font.PLAIN, Client.clientResource.getLoadedFontSize()));
-		StyleConstants.setBold(miniKeyWord, Client.clientResource.getLoadedBold());
-		StyleConstants.setItalic(miniKeyWord, Client.clientResource.getLoadedItalic());
-		StyleConstants.setUnderline(miniKeyWord, Client.clientResource.getLoadedUnderline());
+		myTP.setFont(new Font(Athena.clientResource.getLoadedFontFace(), Font.PLAIN, Athena.clientResource.getLoadedFontSize()));
+		StyleConstants.setBold(miniKeyWord, Athena.clientResource.getLoadedBold());
+		StyleConstants.setItalic(miniKeyWord, Athena.clientResource.getLoadedItalic());
+		StyleConstants.setUnderline(miniKeyWord, Athena.clientResource.getLoadedUnderline());
 		StyleConstants.setForeground(miniKeyWord, Color.black);
 		StyleConstants.setBackground(miniKeyWord, Color.white);
-		StyleConstants.setFontSize(miniKeyWord, Client.clientResource.getLoadedFontSize());
-		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(Client.clientResource.getLoadedFontFace()));
+		StyleConstants.setFontSize(miniKeyWord, Athena.clientResource.getLoadedFontSize());
+		StyleConstants.setFontFamily(miniKeyWord, Athena.clientResource.fontFamilyTable.get(Athena.clientResource.getLoadedFontFace()));
 	}
 	
 	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine)
@@ -1481,7 +1481,7 @@ class MapTextArea extends JFrame {
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBackground(keyWord, Color.white);
 		StyleConstants.setFontSize(keyWord, 14);
-		StyleConstants.setFontFamily(keyWord, Client.clientResource.fontFamilyTable.get(Client.clientResource.getLoadedFontFace()));
+		StyleConstants.setFontFamily(keyWord, Athena.clientResource.fontFamilyTable.get(Athena.clientResource.getLoadedFontFace()));
 		return keyWord;
 	}
 	

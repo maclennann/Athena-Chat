@@ -42,7 +42,7 @@ import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import sun.misc.BASE64Encoder;
 
-public class ClientLogin extends JFrame { 
+public class AuthenticationInterface extends JFrame { 
 
 	/**
 	 * 
@@ -68,10 +68,10 @@ public class ClientLogin extends JFrame {
 	//Define an icon for the system tray icon
 	public TrayIcon trayIcon;
 
-	public static ClientApplet clientResource;
+	public static CommunicationInterface clientResource;
 
 	//Constructor | Here's where the fun begins
-	ClientLogin() throws AWTException { 
+	AuthenticationInterface() throws AWTException { 
 	
 		// Get the default toolkit
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -137,7 +137,7 @@ public class ClientLogin extends JFrame {
 		//ActionListener to make the connect menu item connect
 		registerJLabel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
-				ClientAddUser testOfWindow = new ClientAddUser();
+				RegistrationInterface testOfWindow = new RegistrationInterface();
 				testOfWindow.setVisible(true);
 			}
 		});
@@ -148,10 +148,10 @@ public class ClientLogin extends JFrame {
 				//Ya'll like some hash?
 				try {
 
-					Client.setUsername(username.getText());
+					Athena.setUsername(username.getText());
 					String passwordToHash = new String(password.getPassword());
 					String hashedPassword = computeHash(passwordToHash).toString();
-					Client.connect(username.getText(), hashedPassword);
+					Athena.connect(username.getText(), hashedPassword);
 					login.dispose();
 					System.gc();
 				} catch (Exception e) {
@@ -169,12 +169,12 @@ public class ClientLogin extends JFrame {
 				//Ya'll like some hash?
 				try {
 					
-					Client.setUsername(username.getText());
+					Athena.setUsername(username.getText());
 					String uname = username.getText();
 					String passwordToHash = new String(password.getPassword());
 					if(!uname.equals("") || !passwordToHash.equals("")){
 						String hashedPassword = computeHash(passwordToHash).toString();
-						Client.connect(username.getText(), hashedPassword);
+						Athena.connect(username.getText(), hashedPassword);
 						login.setVisible(false);
 						System.gc();}
 					else{
@@ -195,12 +195,12 @@ public class ClientLogin extends JFrame {
 				//Ya'll like some hash?
 				try {
 					
-					Client.setUsername(username.getText());
+					Athena.setUsername(username.getText());
 					String uname = username.getText();
 					String passwordToHash = new String(password.getPassword());
 					if(!uname.equals("") || !passwordToHash.equals("")){
 						String hashedPassword = computeHash(passwordToHash).toString();
-						Client.connect(username.getText(), hashedPassword);
+						Athena.connect(username.getText(), hashedPassword);
 						login.setVisible(false);
 						System.gc();}
 					else{

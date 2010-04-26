@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 
-public class ClientLoginFailed extends JFrame { 
+public class LoginFailedInterface extends JFrame { 
 	/**
 	 * 
 	 */
@@ -22,12 +22,12 @@ public class ClientLoginFailed extends JFrame {
 	public JButton closeThis = new JButton("OK");
 	public JButton forgotPassword = new JButton("Reset Password");
 	
-	ClientLoginFailed() {
+	LoginFailedInterface() {
 		loginFailed = new JFrame("Athena Chat Application");
 		loginFailed.setSize(400,250);
 		loginFailed.setResizable(false);
 		contentPane.setLayout(null);
-		loginFailed.setLocationRelativeTo(Client.loginGUI);
+		loginFailed.setLocationRelativeTo(Athena.loginGUI);
 		
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
@@ -46,7 +46,7 @@ public class ClientLoginFailed extends JFrame {
 		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(WindowEvent winEvt) {
 		        try {
-					ClientLogin loginGUI = new ClientLogin();
+					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
 					// TODO Auto-generated catch block
@@ -71,7 +71,7 @@ public class ClientLoginFailed extends JFrame {
 				public void actionPerformed(ActionEvent event){
 					//ClientAddUser testOfWindow = new ClientAddUser();
 					try {
-					ClientLogin loginGUI = new ClientLogin();
+					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
 					// TODO Auto-generated catch block
@@ -83,7 +83,7 @@ public class ClientLoginFailed extends JFrame {
 				public void actionPerformed(ActionEvent event){
 					//ClientAddUser testOfWindow = new ClientAddUser();
 					try {
-					ClientResetPassword passReset = new ClientResetPassword();
+					ResetPasswordInterface passReset = new ResetPasswordInterface();
 					loginFailed.dispose();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -96,7 +96,7 @@ public class ClientLoginFailed extends JFrame {
 		closeThis.requestFocusInWindow();
 	}
 	
-	ClientLoginFailed(String messageToDisplay, boolean status) {
+	LoginFailedInterface(String messageToDisplay, boolean status) {
 		loginFailed = new JFrame("Athena Chat Application");
 		loginFailed.setSize(400,250);
 		loginFailed.setResizable(false);
@@ -128,8 +128,8 @@ public class ClientLoginFailed extends JFrame {
 		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(WindowEvent winEvt) {
 		        try {
-					Client.loginGUI.dispose();
-					ClientLogin loginGUI = new ClientLogin();
+					Athena.loginGUI.dispose();
+					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
 					// TODO Auto-generated catch block

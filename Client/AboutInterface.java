@@ -41,7 +41,7 @@ import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import sun.misc.BASE64Encoder;
 
-public class ClientAbout extends JFrame { 
+public class AboutInterface extends JFrame { 
 
 	/**
 	 * 
@@ -56,7 +56,7 @@ public class ClientAbout extends JFrame {
 	JLabel logo = new JLabel(); 
 
 	//Constructor | Here's where the fun begins
-	ClientAbout() throws AWTException { 
+	AboutInterface() throws AWTException { 
 		logo.setIcon(logoicon);
 		
 		//Initialize aboutWindow window
@@ -65,7 +65,7 @@ public class ClientAbout extends JFrame {
 		aboutWindow.setSize(200,300);
 		aboutWindow.setResizable(false);
 		contentPane.setLayout(null);
-		aboutWindow.setLocationRelativeTo(ClientApplet.imContentFrame);
+		aboutWindow.setLocationRelativeTo(CommunicationInterface.imContentFrame);
 
 		//Adjust font sizes
 		cancel.setFont(new Font("Dialog", 1, 10));

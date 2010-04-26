@@ -33,7 +33,7 @@ import java.awt.AWTException;
  * @author OlmypuSoft
  *
  */
-public class ClientResetPassword extends JPanel {
+public class ResetPasswordInterface extends JPanel {
 
 
 	/**
@@ -70,13 +70,13 @@ public class ClientResetPassword extends JPanel {
 	private BigInteger privateModBigInteger;
 	private BigInteger privateExpBigInteger;
 	public Color goGreen = new Color(51,153,51);
-	ClientResetPassword() {
+	ResetPasswordInterface() {
 		//Create the Main Frame
 		resetPasswordJFrame= new JFrame("Reset Password");
 		resetPasswordJFrame.setSize(430,250);
 		resetPasswordJFrame.setResizable(false);
 		resetPasswordJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
-		resetPasswordJFrame.setLocationRelativeTo(Client.loginGUI);
+		resetPasswordJFrame.setLocationRelativeTo(Athena.loginGUI);
 		//Create the content Pane
 		contentPane = new JPanel();
 		contentPane.setLayout(null);
@@ -121,7 +121,7 @@ public class ClientResetPassword extends JPanel {
 		    public void windowClosing(WindowEvent winEvt) {
 		        try {
 					//Client.loginGUI.dispose();
-					ClientLogin loginGUI = new ClientLogin();
+					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					resetPasswordJFrame.dispose();
 				} catch (AWTException e) {
 					// TODO Auto-generated catch block
@@ -179,7 +179,7 @@ public class ClientResetPassword extends JPanel {
 						String pass2 = new String(newPasswordConfirmJPasswordField.getPassword());
 						if(pass1.equals(pass2)){
 							System.out.println("Initiating password change");
-							int yes = changePassword(ClientLogin.computeHash(secretAnswerJTextField.getText().toUpperCase()), ClientLogin.computeHash(pass1));
+							int yes = changePassword(AuthenticationInterface.computeHash(secretAnswerJTextField.getText().toUpperCase()), AuthenticationInterface.computeHash(pass1));
 							if(yes == 1){
 								JOptionPane.showMessageDialog(null,"You've successfully reset your password.","Success!",JOptionPane.INFORMATION_MESSAGE);
 							}else{
@@ -254,7 +254,7 @@ public class ClientResetPassword extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try{
-					new ClientLogin();
+					new AuthenticationInterface();
 				}catch(Exception ie){ie.printStackTrace();}
 				// TODO Auto-generated method stub
 				resetPasswordJFrame.dispose();
@@ -290,33 +290,33 @@ public class ClientResetPassword extends JPanel {
 	public String getQuestion(String userToReset) { 
 
 		//Get a connection
-		Client.connect();
+		Athena.connect();
 
 		//Give me back my filet of DataOutputStream + DataInputStream
-		DataOutputStream dout = Client.returnDOUT();
-		DataInputStream din = Client.returnDIN();
+		DataOutputStream dout = Athena.returnDOUT();
+		DataInputStream din = Athena.returnDIN();
 
 
 		try {
 			//Tell the server we're not going to log in
 			//Maybe we should try encrypting this first!
 			//dout.writeUTF("Interupt");
-			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic((new String("Interupt")),Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent())).toString());
+			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic((new String("Interupt")),Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent())).toString());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.
 		System.out.println("sent 11");
-		Client.systemMessage("11");
+		Athena.systemMessage("11");
 
 
 
 		//Send Aegis the goods
 		try {
-			dout.writeUTF(Client.encryptServerPublic(userToReset));
+			dout.writeUTF(Athena.encryptServerPublic(userToReset));
 			System.out.println("sent username " + userToReset);
-			String question = Client.decryptServerPublic(din.readUTF());
+			String question = Athena.decryptServerPublic(din.readUTF());
 			return (question);
 			//Client.disconnect();
 		} catch (IOException e) {
@@ -329,19 +329,19 @@ public class ClientResetPassword extends JPanel {
 	
 	public int changePassword(String answerHash, String passwordHash){
 		try{
-			DataOutputStream dout = Client.returnDOUT();
-			DataInputStream din = Client.returnDIN();
+			DataOutputStream dout = Athena.returnDOUT();
+			DataInputStream din = Athena.returnDIN();
 			
-			dout.writeUTF(Client.encryptServerPublic(answerHash));
+			dout.writeUTF(Athena.encryptServerPublic(answerHash));
 			System.out.println("Sent answerhash");
-			dout.writeUTF(Client.encryptServerPublic(passwordHash));
+			dout.writeUTF(Athena.encryptServerPublic(passwordHash));
 			System.out.println("Sent passwordhahh");
-			String success = Client.decryptServerPublic(din.readUTF());
+			String success = Athena.decryptServerPublic(din.readUTF());
 			System.out.println("Result: "+success);
 			//Client.disconnect();
 			return Integer.parseInt(success);
 			
-		}catch(Exception e){e.printStackTrace();Client.disconnect();return 0;}
+		}catch(Exception e){e.printStackTrace();Athena.disconnect();return 0;}
 	}
 
 }

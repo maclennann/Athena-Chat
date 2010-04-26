@@ -52,68 +52,57 @@ import sun.security.util.BigInt;
 
 
 
-public class Client
+public class Athena
 {
-	//DESCrypto object for cryptography of local files
-	static DESCrypto descrypto;
-
-	//Print debug messages?
-	public static final int debug=2;
+	/* Begin public variables 
+	 * 
+	 */
+	public static String username="null"; //Global username variable
+	public static RSAPublicKeySpec serverPublic; //Servers public key
+	//End public variables
 	
-	//public static String serverIP = "10.1.10.49";
-	public static String serverIP = "71.232.78.143";
+	/* Begin protected variables
+	 * 
+	 */ 
+	protected static CommunicationInterface clientResource; //Accessor objects for referencing objects in another class
+	protected static AuthenticationInterface loginGUI;		
+	protected static MapTextArea print; //Temporary object for the JPanel in a tab	
+	//End protected variables
 	
-	//Global username variable
-	public static String username="null";
-	
-	//Global status variable
-	public static int away = 0;
-
-	//Recipient for message
-	private static String toUser;
-	
-	//Away message test
-	public static String awayText;
-
-	//Client's GUI
-	public static ClientApplet clientResource;
-	public static ClientLogin loginGUI;
-
-	// The socket connecting us to the server
-	public static Socket c2ssocket;
-	public static Socket c2csocket;
-
-	// The datastreams we use to move data through the socket
-	private static DataOutputStream c2sdout;
-	private static DataInputStream c2sdin;
-	private static DataOutputStream c2cdout;
-	private static DataInputStream c2cdin;
-
-	//Temporary object for the JPanel in a tab
-	static MapTextArea print;
-
-	//Thread that will be used to listen for incoming messages
-	static Thread listeningProcedureClientToClient;
-	static Thread listeningProcedureClientToServer;
-	
-	//Username to check
-	static String usernameToCheck;
-	static String checkUserBuddy;
+	/* Begin private variables
+	 * 
+	 */
+	private static final int debug=2; //Show debug messages?
+	private static String serverIP = "71.232.78.143"; //IP of the server
+	private static int away = 0; //Is the user away?	
+	private static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password	
+	private static String toUser; //Recipient for message	
+	public static String awayText; //Away message text	
+	private static Socket c2ssocket; // The socket connecting us to the server for client communication
+	private static Socket c2csocket; // The socket connecting us to the server for server communication
+	private static DataOutputStream c2sdout; // Client to Server DataOutputStream
+	private static DataInputStream c2sdin; //Client to Server DataInputStream
+	private static DataOutputStream c2cdout; //Client to Client DataOutputStream
+	private static DataInputStream c2cdin; //Clien to Client DataInputStream
+	private static Thread listeningProcedureClientToClient; //Thread that will be used to listen for incoming messages
+	private static String usernameToCheck; //The variable that wer
+	private static String checkUserBuddy;
 
 	//Flag to control sound notifications
-	public static boolean enableSounds;
+	private static boolean enableSounds;
 
 	//If the client is connect to the server
-	static int connected = 0;
+	private static int connected = 0;
 
-	public static String userNameToCheck = null;
-	public static String publicKeyToFind = null;
-	public static BigInteger modOfBuddy = null;
-	public static BigInteger expOfBuddy = null;
+	private static String userNameToCheck = null;
+	private static String publicKeyToFind = null;
+	private static BigInteger modOfBuddy = null;
+	private static BigInteger expOfBuddy = null;
 
 	//Aegis' public key
-	static RSAPublicKeySpec serverPublic;
+	
 	public static RSAPrivateKeySpec usersPrivate;
+	
 	// Method to connect the user
 	public static void connect(String user_name, String hashedPassword) throws InterruptedException, AWTException, Exception { 
 		//Try to connect with and authenticate to the socket
@@ -128,7 +117,7 @@ public class Client
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
-				loginGUI = new ClientLogin();
+				loginGUI = new AuthenticationInterface();
 				return;
 			}
 
@@ -164,13 +153,13 @@ public class Client
 			if(debug>=1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
 			if(result.equals("Failed")) { 
 				disconnect();
-				ClientLoginFailed loginFailed = new ClientLoginFailed();
+				LoginFailedInterface loginFailed = new LoginFailedInterface();
 				return;
 			}
 			else { 
 				connected=1;
 
-				clientResource = new ClientApplet();
+				clientResource = new CommunicationInterface();
 				//Thread created to listen for messages coming in from the server
 				listeningProcedureClientToClient = new Thread(
 						new Runnable() {
@@ -178,7 +167,7 @@ public class Client
 								//While we are connected to the server, receive messages
 								if(c2cdin == null) connected = 0;
 								while(connected ==1) {
-									Client.recvMesg(c2cdin);
+									Athena.recvMesg(c2cdin);
 								}
 							}});
 				//Instantiate Buddy List
@@ -1097,7 +1086,7 @@ public class Client
 	 * @return cipherText The encrypted String
 	 */
 	public static String encryptServerPublic(String plaintext) { 
-		BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
+		BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
 		return cipherText.toString();
 	}
 
@@ -1110,7 +1099,7 @@ public class Client
 		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
 		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
 		//Decrypt the byte[], returns a String
-		return RSACrypto.rsaDecryptPublic(cipherBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
+		return RSACrypto.rsaDecryptPublic(cipherBytes,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent());
 	}
 	/**
 	 * This method returns a string array of the lines from the buddylist
@@ -1404,7 +1393,7 @@ public class Client
 	 * @throws AWTException
 	 */
 	public static void main(String[] args) throws AWTException {
-		loginGUI = new ClientLogin();
+		loginGUI = new AuthenticationInterface();
 
 	}
 	
