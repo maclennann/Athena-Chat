@@ -44,6 +44,7 @@ import java.io.PrintWriter;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.MutableAttributeSet;
 
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
@@ -58,7 +59,10 @@ public class Client
 
 	//Print debug messages?
 	public static final int debug=2;
-
+	
+	//public static String serverIP = "10.1.10.49";
+	public static String serverIP = "71.232.78.143";
+	
 	//Global username variable
 	public static String username="null";
 	
@@ -118,12 +122,13 @@ public class Client
 			try{
 				//Connect to auth server at defined port over socket
 				//This socket is for client -> server coms
-				c2ssocket = new Socket( "71.234.132.9", 7777 );
+				c2ssocket = new Socket( serverIP, 7777 );
 				//This socket is for client -> client coms
-				c2csocket = new Socket("71.234.132.9", 7778 );
+				c2csocket = new Socket(serverIP, 7778 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
+				loginGUI = new ClientLogin();
 				return;
 			}
 
@@ -156,9 +161,11 @@ public class Client
 			c2sdout.writeUTF(encryptServerPublic(hashedPassword)); //Sending Password
 			String result = decryptServerPublic(c2sdin.readUTF()); //Read in the result
 
-			if(debug==1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
+			if(debug>=1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
 			if(result.equals("Failed")) { 
+				disconnect();
 				ClientLoginFailed loginFailed = new ClientLoginFailed();
+				return;
 			}
 			else { 
 				connected=1;
@@ -169,6 +176,7 @@ public class Client
 						new Runnable() {
 							public void run() {								
 								//While we are connected to the server, receive messages
+								if(c2cdin == null) connected = 0;
 								while(connected ==1) {
 									Client.recvMesg(c2cdin);
 								}
@@ -204,7 +212,7 @@ public class Client
 				usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 			}
 			//Start the thread
-			listeningProcedureClientToClient.start();
+			if(listeningProcedureClientToClient != null)listeningProcedureClientToClient.start();
 			//listeningProcedureClientToServer.start();
 			
 			//Check to see if the user's public key is there
@@ -233,8 +241,8 @@ public class Client
 		try {
 			try{
 				//Connect to auth server at defined port over socket
-				c2ssocket = new Socket( "71.234.132.9", 7777 );
-				c2csocket = new Socket( "71.234.132.9", 7778 );
+				c2ssocket = new Socket( serverIP, 7777 );
+				c2csocket = new Socket( serverIP, 7778 );
 			}catch (Exception e){ 
 				//We can't connect to the server at the specified port for some reason
 				JOptionPane.showMessageDialog(null,"Could not connect to the server.\nPlease check your Internet connection.\n\n","Connection Error",JOptionPane.ERROR_MESSAGE);
@@ -554,6 +562,7 @@ public class Client
 		char current=' ';
 		char previous=' ';
 		char next=' ';
+		MutableAttributeSet currentAttr = print.getTextFont();
 		for(x=0;x<message.length();x++){
 			current = message.charAt(x);
 			if(x>0)	previous = message.charAt(x-1);
@@ -628,7 +637,7 @@ public class Client
 			sendBugReport(getStackTraceAsString(e));
 			e.printStackTrace();
 		}
-		print.setTextFont(false,false,false);
+		print.setTextFont(currentAttr);
 	}
 	
 	
@@ -1019,8 +1028,14 @@ public class Client
 		systemMessage("004");
 		c2sdout.writeUTF(encryptServerPublic(usernameToFind));
 		modOfBuddy = new BigInteger(c2sdin.readUTF());
-		expOfBuddy = new BigInteger(c2sdin.readUTF());
-		writeBuddysPubKeyToFile(usernameToFind,modOfBuddy,expOfBuddy);
+		System.out.println("MODOFBUDDY: "+modOfBuddy.toString());
+		if(modOfBuddy.toString().equals("-1")){
+			JOptionPane.showMessageDialog(null,"Cannot find user's public key.\nMake sure you typed their username correctly and try again.","Error Retrieving Key",JOptionPane.ERROR_MESSAGE);
+		}
+		else{
+			expOfBuddy = new BigInteger(c2sdin.readUTF());
+			writeBuddysPubKeyToFile(usernameToFind,modOfBuddy,expOfBuddy);
+		}
 
 	}
 	/**
@@ -1353,14 +1368,16 @@ public class Client
 	 */
 	public static void disconnect() { 
 		try{
-			c2sdout.close();
-			c2cdout.close();
-			c2sdin.close();
-			c2cdin.close();
+			if(c2sdout != null)	c2sdout.close();
+			if(c2cdout != null)	c2cdout.close();
+			if(c2sdin != null)	c2sdin.close();
+			if(c2cdin != null)	c2cdin.close();
 			c2ssocket.close();
 			c2csocket.close();
 			connected=0;
-			clientResource.setVisible(false);
+			if(clientResource != null){
+				clientResource.setVisible(false);
+			}
 		}catch(Exception e){
 			System.out.println("HAII");
 			e.printStackTrace();

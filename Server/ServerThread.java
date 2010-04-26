@@ -67,7 +67,7 @@ public class ServerThread extends Thread
 
 	//Define Global Variable Username / Password
 	private static String username;
-	private String realUsername;
+	private String realUsername="";
 	private String password;
 
 	//Our current socket
@@ -159,7 +159,10 @@ public class ServerThread extends Thread
 			//Socket is closed, remove it from the list
 			try { 
 			System.out.println("REMVONG FUCKING USAIGNER: "+realUsername);
-			server.removeConnection( c2ssocket, c2csocket,realUsername );
+
+			if(realUsername==null) server.removeConnection(c2ssocket,c2csocket);
+
+			else server.removeConnection( c2ssocket, c2csocket,realUsername );
 			//serverDin = new DataInputStream( c2ssocket.getInputStream() );
 			//clientDin = new DataInputStream( c2csocket.getInputStream() );
 			//serverDout = new DataOutputStream( c2ssocket.getOutputStream());
@@ -206,11 +209,24 @@ public class ServerThread extends Thread
 			if (toUserDecrypted.equals("Aegis")) { 
 				if(debug>=1)System.out.print("Server eventcode detected! ");
 				if(debug>=1)System.out.println(decryptServerPrivate(messageEncrypted));
-				systemMessageListener(Integer.parseInt(decryptServerPrivate(messageEncrypted)));
+				try{
+					int code = Integer.parseInt(decryptServerPrivate(messageEncrypted));
+				
+					systemMessageListener(code);
+				} catch(NumberFormatException e){
+					System.out.println("Message is NOT an eventcode. Ignoring...");
+				}
 				return;
 			}//Is the message someone trying to create an account?
 			if (toUserDecrypted.equals("Interupt")) {
-				systemMessageListener(Integer.parseInt(RSACrypto.rsaDecryptPrivate(new BigInteger(messageEncrypted).toByteArray(), serverPrivate.getModulus(), serverPrivate.getPrivateExponent())));
+					
+				try{
+					int code = Integer.parseInt(decryptServerPrivate(messageEncrypted));
+				
+					systemMessageListener(code);
+				} catch(NumberFormatException e){
+					System.out.println("Message is NOT an eventcode. Continuing...");
+				}
 				return;
 			}//Is this a normal message to another client
 			else { 
@@ -269,37 +285,83 @@ public class ServerThread extends Thread
 		receiveBugReport(true);
 		break;
 		case 11: if(debug==1)System.out.println("Event code received. resetPassword() run.");
+		resetPassword();
+		break;
 		default: return;
 		}
 	}
 	
 	private void resetPassword(){
 		try{
-		//Take in the username to find the secret question and answer for
-		String userToReset = decryptServerPrivate(serverDin.readUTF());
-		
-		//TODO Pull the secret question and secret answer hash from the DB
-		String secretQuestion = null;
-		String secretAnswer = null;
-		
-		//Send the secret question to the client for answering
-		serverDout.writeUTF(encryptServerPrivate(secretQuestion));
-		
-		//Read in the user's answer hash
-		String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
-		
-		//Read in the user's desired passwordchange
-		String newPassword = decryptServerPrivate(serverDin.readUTF());
-		
-		if(secretAnswerHash.equals(secretAnswer)){
-			//TODO insert newPassword into password field
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream()); 
+			//Use dbConnect() to connect to the database
+			Connection con = server.dbConnect();
 			
-			//Success message
-			serverDout.writeUTF(encryptServerPrivate("1"));
-		}else{
-			//Failure message
-			serverDout.writeUTF(encryptServerPrivate("0"));
-		}
+			//Take in the username to find the secret question and answer for
+			String userToReset = decryptServerPrivate(serverDin.readUTF());
+			
+			//TODO Pull the secret question and secret answer hash from the DB
+			String secretQuestion = null;
+			String secretAnswer = null;
+			
+			//Create a statement and resultset for the query
+			Statement stmt;
+			Statement insertSTMT;
+			ResultSet rs = null; 
+			
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + userToReset + "'");
+			
+			if(rs.next()){
+				secretQuestion = rs.getString("secretq");
+				secretAnswer = rs.getString("secreta");
+			}else{
+				secretQuestion = "Invalid Username";
+			}
+			
+			//Send the secret question to the client for answering
+			serverDout.writeUTF(encryptServerPrivate(secretQuestion));
+			System.out.println("SENT Question: "+secretQuestion);
+			
+			//Read in the user's answer hash
+			String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
+			System.out.println("READ Answer: "+secretAnswerHash);
+			
+			//Read in the user's desired passwordchange
+			String newPassword = decryptServerPrivate(serverDin.readUTF());
+			
+			if(secretAnswerHash.equals(secretAnswer)){
+				System.out.println("HASHES MATCH");
+				//TODO insert newPassword into password field
+				String insertString = "UPDATE Users SET password='" + newPassword + "' WHERE username = '" + userToReset + "'";
+				insertSTMT = con.createStatement();
+				insertSTMT.executeUpdate(insertString);
+				
+				if(server.authentication.containsKey(userToReset)){
+					server.authentication.remove(userToReset);
+					server.authentication.put(userToReset,newPassword);
+				}
+				else{
+					server.authentication.put(userToReset,newPassword);
+				}
+				System.out.println("PASSWORDCHANGED");
+				//Close Connections
+				//stmt.close();
+				insertSTMT.close();
+				//con.close();
+				
+				//Success message
+				serverDout.writeUTF(encryptServerPrivate("1"));
+			}else{
+				System.out.println("HASH MISMATCH. ABORT");
+				//Failure message
+				serverDout.writeUTF(encryptServerPrivate("0"));
+			}
+			
+			//Close Connections
+			stmt.close();
+			//insertSTMT.close();
+			con.close();
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
@@ -900,8 +962,8 @@ public class ServerThread extends Thread
 				if(debug>=1)System.out.println("Exponent Returned\n");
 
 			} else { 
-				BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-				serverDout.writeUTF(keyNotFoundCipher.toString() );
+				//BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
+				serverDout.writeUTF("-1" );
 				if(debug>=1)System.out.println("User does not have a keyfile with us");
 			} }catch(Exception e){e.printStackTrace();}
 	}

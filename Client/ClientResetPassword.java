@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import java.awt.Toolkit;
+import java.awt.AWTException;
 
 /**
  * 
@@ -115,7 +117,20 @@ public class ClientResetPassword extends JPanel {
 		confirmJButton.setEnabled(false);
 		getQuestJButton.setEnabled(true);
 
-		
+		resetPasswordJFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(WindowEvent winEvt) {
+		        try {
+					//Client.loginGUI.dispose();
+					ClientLogin loginGUI = new ClientLogin();
+					resetPasswordJFrame.dispose();
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+			
+		    }
+		);	
 		clearJButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
 					confirmJButton.setEnabled(false);
@@ -141,7 +156,8 @@ public class ClientResetPassword extends JPanel {
 					confirmJButton.setEnabled(true);
 					getQuestJButton.setEnabled(false);
 					userNameJTextField.setEditable(false);
-					secretQuestionJTextField.setText("Who is your daddy and what does he do?");
+					
+					secretQuestionJTextField.setText(getQuestion(userNameJTextField.getText()));
 					secretAnswerJTextField.setEditable(true);
 					newPasswordConfirmJPasswordField.setEditable(true);
 					newPasswordJPasswordField.setEditable(true);
@@ -152,11 +168,27 @@ public class ClientResetPassword extends JPanel {
 		//ActionListener to make the connect menu item connect
 		confirmJButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event){
+			try{
+				System.out.println("Confirm Clicked!");
 				//String password;
 				if(secretAnswerJTextField.getText().equals("")){
-					JOptionPane.showMessageDialog(null,"Please enter a secret answer","Error",JOptionPane.ERROR_MESSAGE);}
+					JOptionPane.showMessageDialog(null,"Please enter a secret answer","Error",JOptionPane.ERROR_MESSAGE);
+				}
 				else{
-				JOptionPane.showMessageDialog(null,"You've successfully reset your password.","Success!",JOptionPane.INFORMATION_MESSAGE);}
+						String pass1 = new String(newPasswordJPasswordField.getPassword());
+						String pass2 = new String(newPasswordConfirmJPasswordField.getPassword());
+						if(pass1.equals(pass2)){
+							System.out.println("Initiating password change");
+							int yes = changePassword(ClientLogin.computeHash(secretAnswerJTextField.getText().toUpperCase()), ClientLogin.computeHash(pass1));
+							if(yes == 1){
+								JOptionPane.showMessageDialog(null,"You've successfully reset your password.","Success!",JOptionPane.INFORMATION_MESSAGE);
+							}else{
+								JOptionPane.showMessageDialog(null,"Please try again.","Error!",JOptionPane.ERROR_MESSAGE);
+							}
+						}else{System.out.println("Password mismatcH");}
+					}
+					
+				}catch(Exception e){e.printStackTrace();}
 					/*
 					//Create the DESCrypto object for buddylist and preferences cryptography
 					String saltUser;
@@ -221,6 +253,9 @@ public class ClientResetPassword extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try{
+					new ClientLogin();
+				}catch(Exception ie){ie.printStackTrace();}
 				// TODO Auto-generated method stub
 				resetPasswordJFrame.dispose();
 			} 
@@ -252,7 +287,7 @@ public class ClientResetPassword extends JPanel {
 	}
 
 	//This Method will send all of the information over to Aegis for input into the database
-	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password) { 
+	public String getQuestion(String userToReset) { 
 
 		//Get a connection
 		Client.connect();
@@ -271,72 +306,42 @@ public class ClientResetPassword extends JPanel {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.	
-		Client.systemMessage("000");
+		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.
+		System.out.println("sent 11");
+		Client.systemMessage("11");
 
 
 
 		//Send Aegis the goods
 		try {
-			//Encrypt information to send to Aegis. Turn them into BigIntegers so we can move them
-			//TODO These should be encrypted with Aegis' public key
-			//DONE
-			BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(firstName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger lastNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(lastName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPublic(emailAddress,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger userNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(userName,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-			BigInteger passwordCipher = new BigInteger(RSACrypto.rsaEncryptPublic(password,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent()));
-
-			//Send the server the pieces of our public key to be assembled at the other end
-			//TODO These should be encrypted along with everything else
-			//For this test the server needs these numbers to decrypt things
-			dout.writeUTF(publicMod.toString());
-			dout.writeUTF(publicExp.toString());
-			
-			//Send the server the pieces of our encrypted private key to write to a file
-			dout.writeUTF(privateModBigInteger.toString());
-			dout.writeUTF(privateExpBigInteger.toString());
-			
-			//Create the DESCrypto object for the private key sync
-			String saltUser;
-			if(userName.length()>=8){
-				saltUser = userName.substring(0,8);
-			}else saltUser = userName;
-			DESCrypto descrypto = new DESCrypto(password,saltUser);
-
-			//Turn the encrypted data into numbers for
-			//BigInteger firstNameNumber = new BigInteger(firstNameCipher);
-
-			//Send encrypted data to Aegis
-			dout.writeUTF(firstNameCipher.toString());
-			dout.writeUTF(lastNameCipher.toString());
-			dout.writeUTF(emailAddressCipher.toString());
-			dout.writeUTF(userNameCipher.toString());
-			dout.writeUTF(passwordCipher.toString());
-
-
-			//Grab the result
-			String result = din.readUTF();
-			byte[] resultBytes = (new BigInteger(result)).toByteArray();
-			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Client.serverPublic.getModulus(),Client.serverPublic.getPublicExponent());
-			if(resultDecrypted.equals("Username has been sucessfully created.")) {
-				ClientLoginFailed successfulUserRegistration = new ClientLoginFailed(resultDecrypted,true);
-				resetPasswordJFrame.dispose();
-				//Garbage collect!
-				System.gc();
-			}
-			else { 
-				ClientLoginFailed failureUserRegistration = new ClientLoginFailed(resultDecrypted,false);
-				//Garbage collect!
-				System.gc();
-			}
-			//Close the connection
-			dout.close();
-			Client.disconnect();
+			dout.writeUTF(Client.encryptServerPublic(userToReset));
+			System.out.println("sent username " + userToReset);
+			String question = Client.decryptServerPublic(din.readUTF());
+			return (question);
+			//Client.disconnect();
 		} catch (IOException e) {
-			e.printStackTrace();
+		e.printStackTrace();
+			return null;
+			
 		}
 
+	}
+	
+	public int changePassword(String answerHash, String passwordHash){
+		try{
+			DataOutputStream dout = Client.returnDOUT();
+			DataInputStream din = Client.returnDIN();
+			
+			dout.writeUTF(Client.encryptServerPublic(answerHash));
+			System.out.println("Sent answerhash");
+			dout.writeUTF(Client.encryptServerPublic(passwordHash));
+			System.out.println("Sent passwordhahh");
+			String success = Client.decryptServerPublic(din.readUTF());
+			System.out.println("Result: "+success);
+			//Client.disconnect();
+			return Integer.parseInt(success);
+			
+		}catch(Exception e){e.printStackTrace();Client.disconnect();return 0;}
 	}
 
 }

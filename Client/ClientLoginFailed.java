@@ -128,6 +128,7 @@ public class ClientLoginFailed extends JFrame {
 		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(WindowEvent winEvt) {
 		        try {
+					Client.loginGUI.dispose();
 					ClientLogin loginGUI = new ClientLogin();
 					loginFailed.dispose();
 				} catch (AWTException e) {

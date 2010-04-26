@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MenuItem;
@@ -85,8 +86,10 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLEditorKit;
 
@@ -103,6 +106,10 @@ public class ClientApplet extends JFrame {
 
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();
 	public Hashtable<Document, JPanel> uniqueIDHash = new Hashtable<Document, JPanel>();
+	public static Hashtable<String, String> fontFamilyTable = new Hashtable<String, String>();
+	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	public Font[] allFonts = ge.getAllFonts();
+	public boolean settingsLoaded = false;
 
 	// Define the listModel for the JList
 	DefaultListModel listModel = new DefaultListModel();
@@ -121,9 +128,8 @@ public class ClientApplet extends JFrame {
 	public Border buttonBorder = BorderFactory.createRaisedBevelBorder();
 	public Border blackline = BorderFactory.createLineBorder(Color.gray);
 	public Border oneColor = BorderFactory.createLineBorder(Color.black);
-	public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
-	//public Border threeColor = BorderFactory.createLineBorder(new Color(150, 190, 255)); //Sky blue
-	public Border threeColor = BorderFactory.createLineBorder(new Color(218,165,32)); //Sky blue
+	//public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
+	public Border threeColor = BorderFactory.createLineBorder(new Color(218, 165, 32)); //Goldenrod
 	public Border contactListBorder;
 	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
 	public ImageIcon logoIcon = new ImageIcon("../images/logo.png");
@@ -141,6 +147,7 @@ public class ClientApplet extends JFrame {
 	public boolean fontBold;
 	public boolean fontItalic;
 	public boolean fontUnderline;
+	public int fontSize;
 	public int activeTheme;
 	public boolean userStatusFlag = false;
 
@@ -157,7 +164,7 @@ public class ClientApplet extends JFrame {
 		listModel.removeElement(offlineUser);
 	}
 
-	public static Object[] currentSettings = new Object[10];
+	public static Object[] currentSettings = new Object[11];
 	
 	ClientApplet() {
 
@@ -175,6 +182,14 @@ public class ClientApplet extends JFrame {
 		int width = (int)scrnsize.getWidth();
 		int height = (int)scrnsize.getHeight();
 		
+		String[] allFontNames = new String[allFonts.length];
+		fontFamilyTable.clear();
+		for(int a = 0; a < allFonts.length; a++)
+		{
+			allFontNames[a] = allFonts[a].getFontName();
+			fontFamilyTable.put(allFonts[a].getFontName(), allFonts[a].getFamily());
+			//System.out.println("FONT NAME: " + allFonts[a].getFontName() + "\t\tFONT FAMILY: " + allFonts[a].getFamily());
+		}
 		
 		//Load preference settings
 		Object[] settingsArray = loadSavedPreferences();
@@ -197,7 +212,8 @@ public class ClientApplet extends JFrame {
 		fontBold = Boolean.parseBoolean(settingsArray[6].toString());
 		fontItalic = Boolean.parseBoolean(settingsArray[7].toString());
 		fontUnderline = Boolean.parseBoolean(settingsArray[8].toString());
-		activeTheme = Integer.parseInt(settingsArray[9].toString());
+		fontSize = Integer.parseInt(settingsArray[9].toString());
+		activeTheme = Integer.parseInt(settingsArray[10].toString());
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Client.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -233,16 +249,32 @@ public class ClientApplet extends JFrame {
 		preferences = new JMenuItem("Preferences");
 		preferences.setMnemonic(KeyEvent.VK_P);
 		edit.add(preferences);
+		
+		// Create button Edit -> Change Password
+		JMenuItem changePassword = new JMenuItem("Change Password");
+		edit.add(changePassword);
 
 		// Create the encryption menu.
 		encryption = new JMenu("Encryption");
 		encryption.setMnemonic(KeyEvent.VK_C);
 		menuBar.add(encryption);
 		
+		// Create button Encryption -> Export Key Pair
+		JMenuItem exportKey = new JMenuItem("Export Key Pair");
+		encryption.add(exportKey);
+		
 		// Create the view menu
 		view = new JMenu("View");
 		view.setMnemonic(KeyEvent.VK_V);
 		menuBar.add(view);
+		
+		// Create button View -> Offline users in contact list
+		JMenuItem offlineUsers = new JMenuItem("Offline Contacts in List");
+		view.add(offlineUsers);
+		
+		// Create button View -> Contact Aliases
+		JMenuItem contactAlias = new JMenuItem("Contact Aliases");
+		view.add(contactAlias);
 		
 		// Create the help menu
 		help = new JMenu("Help");
@@ -326,6 +358,30 @@ public class ClientApplet extends JFrame {
 				}catch(IOException e){
 					e.printStackTrace();
 				}
+			}
+		});
+		
+		changePassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		exportKey.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		offlineUsers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		contactAlias.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
@@ -1054,6 +1110,10 @@ public class ClientApplet extends JFrame {
 					temp = inPref.readLine().substring(14);
 					settingsArray[arrayCount] = temp;
 					arrayCount++;
+					//Get fontSize (int)
+					temp = inPref.readLine().substring(9);
+					settingsArray[arrayCount] = temp;
+					arrayCount++;
 				}
 				if(line.equals("[THEME]"))
 				{
@@ -1110,16 +1170,10 @@ public class ClientApplet extends JFrame {
 		  }
 		  
 		  public void mouseEntered(MouseEvent evt) {
-			//JButton currentButton = (JButton) this.getComponent(1);
-			//originalIcon = currentButton.getIcon();
-		    //     btClose.setIcon(closeIcon);
+
 		  }
 		  public void mouseExited(MouseEvent evt) {
-		      //if(originalIcon == alertIcon)
-		      //{
-		      //	  JButton currentButton = (JButton) this.getComponent(1);
-		      //      currentButton.setIcon(alertIcon);
-		      //  }
+
 		  }
 		  
 		  public void actionPerformed(ActionEvent e) {
@@ -1163,7 +1217,41 @@ public class ClientApplet extends JFrame {
 			// TODO Auto-generated method stub
 			
 		}
-		}
+	}
+	
+	public String getLoadedFontFace()
+	{
+		return fontFace;
+	}
+	
+	public boolean getLoadedBold()
+	{
+		return fontBold;
+	}
+	
+	public boolean getLoadedItalic()
+	{
+		return fontItalic;
+	}
+	
+	public boolean getLoadedUnderline()
+	{
+		return fontUnderline;
+	}
+	
+	public int getLoadedFontSize()
+	{
+		return fontSize;
+	}
+	
+	public void setNewFontToLoad(String newFontFace, boolean newBold, boolean newItalic, boolean newUnderline, int newSize)
+	{
+		fontFace = newFontFace;
+		fontBold = newBold;
+		fontItalic = newItalic;
+		fontUnderline = newUnderline;
+		fontSize = newSize;
+	}
 	// End of class ClientApplet
 }
 
@@ -1185,8 +1273,10 @@ class MapTextArea extends JFrame {
 	public JTextPane myTP;
 	public JTextArea myTA;
 	public JTextField myTF;
-	SimpleAttributeSet keyWord = new SimpleAttributeSet();
-	SimpleAttributeSet miniKeyWord = new SimpleAttributeSet();
+	boolean isBold, isItalic, isUnderline;
+	int fontSize;
+	MutableAttributeSet keyWord = new SimpleAttributeSet();
+	MutableAttributeSet miniKeyWord = new SimpleAttributeSet();
 
 	// The index of the tab this lives in
 	int tabIndex = -1;
@@ -1294,11 +1384,29 @@ class MapTextArea extends JFrame {
 				
 			}
 		});
-		System.out.println("Listener added to tab!");
 		
-		//Set default font to Arial
-		Font font = new Font("Arial",Font.PLAIN,12);
-		myTP.setFont(font);
+		//Set default font settings to new text pane
+		if(!(Client.clientResource.settingsLoaded))
+		{
+			System.out.println("Settings loaded from file, settingsLoaded = " + Client.clientResource.settingsLoaded);
+			setLoadedFont();
+			StyledDocument doc = myTP.getStyledDocument();
+			if(doc.getLength() > 0)
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+			else
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+		}
+		else
+		{
+			System.out.println("Settings already changed, settingsLoaded = " + Client.clientResource.settingsLoaded);
+			//Dont set default config font, get current font
+			setLoadedFont();
+			StyledDocument doc = myTP.getStyledDocument();
+			if(doc.getLength() > 0)
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+			else
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+		}
 	}
 
 	// Set the user name associated with the tab
@@ -1326,14 +1434,32 @@ class MapTextArea extends JFrame {
 		return myJPanel;
 	}
 	
-	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine, Color foreColor, Color backColor, int ftSize)
+	public void setTextFont(String fontFace, boolean isBold, boolean isItalic, boolean isULine, int ftSize)
 	{
+		miniKeyWord = myTP.getInputAttributes();
+		myTP.setFont(new Font(fontFace, Font.PLAIN, ftSize));
 		StyleConstants.setBold(miniKeyWord, isBold);
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
-		StyleConstants.setForeground(miniKeyWord, foreColor);
-		StyleConstants.setBackground(miniKeyWord, backColor);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
+		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(fontFace));
+		StyledDocument doc = myTP.getStyledDocument();
+		if(doc.getLength() > 0)
+			doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+		else
+			doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+	}
+	
+	public void setLoadedFont()
+	{
+		myTP.setFont(new Font(Client.clientResource.getLoadedFontFace(), Font.PLAIN, Client.clientResource.getLoadedFontSize()));
+		StyleConstants.setBold(miniKeyWord, Client.clientResource.getLoadedBold());
+		StyleConstants.setItalic(miniKeyWord, Client.clientResource.getLoadedItalic());
+		StyleConstants.setUnderline(miniKeyWord, Client.clientResource.getLoadedUnderline());
+		StyleConstants.setForeground(miniKeyWord, Color.black);
+		StyleConstants.setBackground(miniKeyWord, Color.white);
+		StyleConstants.setFontSize(miniKeyWord, Client.clientResource.getLoadedFontSize());
+		StyleConstants.setFontFamily(miniKeyWord, Client.clientResource.fontFamilyTable.get(Client.clientResource.getLoadedFontFace()));
 	}
 	
 	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine)
@@ -1344,18 +1470,23 @@ class MapTextArea extends JFrame {
 	}
 
 	// Set the text area color
-	public SimpleAttributeSet getSetHeaderFont(Color color) {
+	public MutableAttributeSet getSetHeaderFont(Color color) {
 		StyleConstants.setBold(keyWord, true);
 		StyleConstants.setItalic(keyWord, false);
 		StyleConstants.setUnderline(keyWord, false);
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBackground(keyWord, Color.white);
 		StyleConstants.setFontSize(keyWord, 14);
-		StyleConstants.setFontFamily(keyWord, "serif");
+		StyleConstants.setFontFamily(keyWord, Client.clientResource.fontFamilyTable.get(Client.clientResource.getLoadedFontFace()));
 		return keyWord;
 	}
 	
-	public SimpleAttributeSet getTextFont()
+	public void setTextFont(MutableAttributeSet currentAttr)
+	{
+		miniKeyWord = currentAttr;
+	}
+	
+	public MutableAttributeSet getTextFont()
 	{
 		return miniKeyWord;
 	}
@@ -1369,8 +1500,7 @@ class MapTextArea extends JFrame {
 	}
 
 	// Write a string to the text area
-	public void writeToTextArea(String message, SimpleAttributeSet attributes) throws BadLocationException {
-		//myJEP.setFont(new Font("Arial", Font.PLAIN, 12);
+	public void writeToTextArea(String message, MutableAttributeSet attributes) throws BadLocationException {
 		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, attributes);
 	}
 
