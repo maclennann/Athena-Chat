@@ -964,8 +964,12 @@ public class ClientApplet extends JFrame {
 						FocusCurrentTextField();											
 					}
 				}
-				}
+				if(imTabbedPane.getTabCount() ==0){
+				ClientApplet.lockIconLabel.setVisible(true);
+				ClientApplet.logoIconLabel.setVisible(true);
 			}
+			}
+		}
 		public void keyTyped(KeyEvent e) {
 		}
 		});
@@ -1191,11 +1195,11 @@ public class ClientApplet extends JFrame {
 				JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 		      uniqueIDHash.remove(currentTextPane.getDocument());
 		      
-		      }
-			  if(imTabbedPane.getTabCount() ==0){
+		    }
+			if(imTabbedPane.getTabCount() ==0){
 				ClientApplet.lockIconLabel.setVisible(true);
 				ClientApplet.logoIconLabel.setVisible(true);
-				}
+			}
 			  System.gc();
 		    }
 		  }

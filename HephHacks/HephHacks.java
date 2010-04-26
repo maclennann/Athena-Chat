@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import sun.misc.BASE64Encoder;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.NoSuchElementException;
 import java.security.MessageDigest;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,12 +31,12 @@ public class HephHacks {
 	}
 	
 	public static void menu(){
-		clearScreen("Strike while the iron is hot!",7);
+		clearScreen("Strike while the iron is hot!",4);
 		Scanner in = new Scanner(System.in);
 		String clean="r";
 		//Display a menu
 		//TODO Add more features!
-		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n6. Spam user creation (db stress test)\n7. Spam Bug Submissions (db stress test) 6. Exit");
+		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n6. Spam user creation (db stress test)\n7. Spam Bug Submissions (db stress test)\n8. Attempt message spoofing\n9. Exit");
 		System.out.print("Choice: ");
 		int answer = in.nextInt();
 		
@@ -119,7 +120,7 @@ public class HephHacks {
 				String password = in.nextLine();
 				clearScreen("Spam Server Commands",14);
 				//Spam with provided credentials
-				SpamMesg(username,password,false);
+				SpamMesg(username,password,username,false);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -127,6 +128,7 @@ public class HephHacks {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		break;
 		case 5:
 			try {
 				clearScreen("Spam User Messages",13);
@@ -143,7 +145,7 @@ public class HephHacks {
 				String password = in.nextLine();
 				clearScreen("Spam User Messages",14);
 				//Spam with provided credentials
-				SpamMesg(username,password,true);
+				SpamMesg(username,password,username,true);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -151,8 +153,36 @@ public class HephHacks {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		case 6: System.exit(0);
 		break;
+		case 8:
+			try {
+				clearScreen("Attempt to Spoof User Messages",13);
+				//System.out.println("Beginning authenticated session spam.");
+				
+				//Disregard previous CR
+				in.nextLine();
+				
+				//Read in username and password to spam
+				System.out.print("\nEnter Authentication Username: ");
+				String username = in.nextLine();
+				clearScreen("Attempt to Spoof User Messages",14);
+				System.out.print("Enter Authentication Password: ");
+				String password = in.nextLine();
+				clearScreen("Attempt to Spoof User Messages",14);
+				System.out.print("Who will these messages be from?");
+				String fromUser = in.nextLine();
+				//Spam with provided credentials
+				SpamMesg(username,password,fromUser,true);
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		case 9: System.exit(0);
+		break;
+		default: menu();
 		}
 	}
 
@@ -244,7 +274,7 @@ public class HephHacks {
 	
 	
 	
-	private static void SpamMesg(String user, String pass,boolean flag) throws UnknownHostException, IOException {
+	private static void SpamMesg(String user, String pass,String fromUser,boolean flag) throws UnknownHostException, IOException {
 		String hashedPassword="";
 		//System.out.println("Username: "+user+"\nPassword: "+pass);
 		try{
@@ -256,7 +286,8 @@ public class HephHacks {
 		DataOutputStream spamOut;
 		DataInputStream mesgSpamIn;
 		String result;
-		String userReply;
+		String userReply = fromUser;
+		String messageReply = "";
 		RSAPublicKeySpec serverPublic = RSACrypto.readPubKeyFromFile("Aegis.pub");
 		int passed=0, fail=0;
 		
@@ -282,10 +313,10 @@ public class HephHacks {
 				if(flag){
 					userReply = user;
 					for(int m=1;m<=x;m++){
-						spamOut.writeUTF(encryptServerPublic(userReply,serverPublic));
+						spamOut.writeUTF(encryptServerPublic(user,serverPublic));
 						spamOut.writeUTF(encryptServerPublic(userReply,serverPublic));
 						spamOut.writeUTF("here be dragons");
-						mesgSpamIn.readUTF();
+						messageReply = decryptServerPublic(mesgSpamIn.readUTF(),serverPublic);
 						//System.out.println("Read Response");
 						if(mesgSpamIn.readUTF().equals("here be dragons")) passed++;
 						else fail++;
@@ -311,6 +342,7 @@ public class HephHacks {
 		}
 		clearScreen("Test Completed Successfully!",7);
 		System.out.println("\nMessages sent. Report follows:");
+		System.out.println("Message received from: "+messageReply);
 		System.out.println("Success: "+passed+"\nFailure: "+fail+"\nTotal: "+x);
 		if(x!=0) System.out.println("Drop rate: "+fail/x);
 		else System.out.println("Drop rate: none");
