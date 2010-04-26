@@ -50,8 +50,6 @@ import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 import sun.security.util.BigInt;
 
-
-
 public class Athena
 {
 	/* Begin public variables 
@@ -74,6 +72,7 @@ public class Athena
 	 */
 	private static final int debug=2; //Show debug messages?
 	private static String serverIP = "71.232.78.143"; //IP of the server
+	private static int connected = 0; 	//If the client is connect to the server
 	private static int away = 0; //Is the user away?	
 	private static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password	
 	private static String toUser; //Recipient for message	
@@ -85,28 +84,20 @@ public class Athena
 	private static DataOutputStream c2cdout; //Client to Client DataOutputStream
 	private static DataInputStream c2cdin; //Clien to Client DataInputStream
 	private static Thread listeningProcedureClientToClient; //Thread that will be used to listen for incoming messages
-	private static String usernameToCheck; //The variable that wer
-	private static String checkUserBuddy;
-
-	//Flag to control sound notifications
-	private static boolean enableSounds;
-
-	//If the client is connect to the server
-	private static int connected = 0;
-
-	private static String userNameToCheck = null;
-	private static String publicKeyToFind = null;
+	private static boolean enableSounds; //Flag to control sound notifications
 	private static BigInteger modOfBuddy = null;
-	private static BigInteger expOfBuddy = null;
-
-	//Aegis' public key
+	private static BigInteger expOfBuddy = null;	
+	public static RSAPrivateKeySpec usersPrivate; //User's public key
+	//End private variables
 	
-	public static RSAPrivateKeySpec usersPrivate;
-	
-	// Method to connect the user
-	public static void connect(String user_name, String hashedPassword) throws InterruptedException, AWTException, Exception { 
+	/**
+	 * Method that connects the user with Aegis
+	 * @param usernameToConnect the username that is entered in the login window 
+	 * @param hashedPassword the hashed password that is entered in the logoin window
+	 */
+	public static void connect(String usernameToConnect, String hashedPassword) throws InterruptedException, AWTException, Exception { 
 		//Try to connect with and authenticate to the socket
-		username = user_name;
+		username = usernameToConnect;
 		try {
 			try{
 				//Connect to auth server at defined port over socket
@@ -150,15 +141,15 @@ public class Athena
 			c2sdout.writeUTF(encryptServerPublic(hashedPassword)); //Sending Password
 			String result = decryptServerPublic(c2sdin.readUTF()); //Read in the result
 
-			if(debug>=1)System.out.println("RESSULTTTT DECRYPTEDDDD: " + result);
+			if(debug>=1)System.out.println("Result: " + result);
 			if(result.equals("Failed")) { 
 				disconnect();
 				LoginFailedInterface loginFailed = new LoginFailedInterface();
 				return;
 			}
 			else { 
-				connected=1;
-
+				//We're connected
+				connected=1; 
 				clientResource = new CommunicationInterface();
 				//Thread created to listen for messages coming in from the server
 				listeningProcedureClientToClient = new Thread(
@@ -167,9 +158,15 @@ public class Athena
 								//While we are connected to the server, receive messages
 								if(c2cdin == null) connected = 0;
 								while(connected ==1) {
-									Athena.recvMesg(c2cdin);
+									Athena.recvMesg(c2cdin); //Listen for incomming messages from another client
 								}
 							}});
+				/* Begin start up sequence
+				 * 1. Find the status of the buddylist users
+				 * 2. Make sure the user's private key exists
+				 * 3. Start the listening thread
+				 * 4. See if the user's public key exists
+				 */
 				//Instantiate Buddy List
 				instantiateBuddyList();	
 
@@ -202,7 +199,6 @@ public class Athena
 			}
 			//Start the thread
 			if(listeningProcedureClientToClient != null)listeningProcedureClientToClient.start();
-			//listeningProcedureClientToServer.start();
 			
 			//Check to see if the user's public key is there
 			File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
@@ -216,14 +212,16 @@ public class Athena
 			ie.printStackTrace(); 
 			loginGUI.dispose();
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
 			sendBugReport(getStackTraceAsString(e));
 			loginGUI.dispose();
 			e.printStackTrace();
 		}
 	}
 
-	// Method to connect the user
+/** 
+ * Overloaded connect method for adding a user
+ * @overloaded 
+ */
 	public static void connect() { 
 
 		//Try to connect with and authenticate to the socket
@@ -251,7 +249,10 @@ public class Athena
 		} catch( IOException ie ) { sendBugReport(getStackTraceAsString(ie)); }
 	}
 
-	// Startup method to initiate the buddy list
+	/**
+	 * Method instantiate the buddy list
+	 * @throws Exception
+	 */
 	public static void instantiateBuddyList() throws Exception { 	
 		//First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
 		String hashOfLocalBuddyList = returnHashOfLocalBuddyList(username);
@@ -333,15 +334,15 @@ public class Athena
 	}
 
 
-	/*
+	/**
 	 * @Overloaded
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
 	 */
-	public static void instantiateBuddyList(String usernameToCheck) throws IOException {
+	public static void instantiateBuddyList(String usernameToInstantiate) throws IOException {
 
-		if(debug>=1)System.out.println("Current Buddy To Check: " + usernameToCheck);
-		checkUserStatus(usernameToCheck, "PauseThread!");
-		getUsersPublicKeyFromAegis(usernameToCheck);
+		if(debug>=1)System.out.println("Current Buddy To Check: " + usernameToInstantiate);
+		checkUserStatus(usernameToInstantiate, "PauseThread!");
+		getUsersPublicKeyFromAegis(usernameToInstantiate);
 	}
 
 	/**
@@ -350,7 +351,7 @@ public class Athena
 	 */
 	public static void checkUserStatus(String findUserName) {
 		try { 
-			if(debug==1)System.out.println("Checking availability for user: "+findUserName);
+			if(debug>=1)System.out.println("Checking availability for user: "+findUserName);
 			//Initalize Result
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
@@ -373,25 +374,23 @@ public class Athena
 		}	
 	}
 	/** This method checks to see on a one user basis if the inputted user is online
-	 * @param findUserName The user to check the status
+	 * @param usernameToCheck The user to check the status
 	 * @param checkStatusFlag Boolean flag to designate that the method is overloaded
 	 */
-	public static void checkUserStatus(String findUserName, String checkStatusFlag) {
+	public static void checkUserStatus(String usernameToCheck, String checkStatusFlag) {
 		try {
-			checkUserBuddy = findUserName;
-			//DataInputStream din = new DataInputStream(socket.getInputStream());
-			if(debug>=1)System.out.println("Checking availability for user: " + findUserName);
+			if(debug>=1)System.out.println("Checking availability for user: " + usernameToCheck);
 			//Initialize Result to -1
 			int result = -1;
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			systemMessage("003");
-			c2sdout.writeUTF(encryptServerPublic(findUserName));
+			c2sdout.writeUTF(encryptServerPublic(usernameToCheck));
 			System.out.println("Sent username");
 			result = Integer.parseInt(decryptServerPublic(c2sdin.readUTF()));
 			System.out.println("Got result");
-			clientResource.mapUserStatus(findUserName,result);
+			clientResource.mapUserStatus(usernameToCheck,result);
 			if(result==1){
-				clientResource.newBuddyListItems(findUserName);
+				clientResource.newBuddyListItems(usernameToCheck);
 			}
 			if(debug>=1)System.out.println("SENT SERVER FLAG 003");
 
@@ -401,7 +400,6 @@ public class Athena
 		}	
 	}
 
-	//When the client receives a message.
 	/** This method is run in a thread and will recieve and process an incoming message
 	 * @param din This DataInputStream is where the messages will come from
 	 */
@@ -1015,13 +1013,11 @@ public class Athena
 	 * @param usernameToFind
 	 * @throws IOException 
 	 */
-	public static void getUsersPublicKeyFromAegis(String usernameToFind) throws IOException {
-		usernameToCheck = usernameToFind;
-		if(debug>=1)System.out.println("Getting " + usernameToFind + "'s public key!");
-		publicKeyToFind = usernameToFind;
+	public static void getUsersPublicKeyFromAegis(String publicKeyToFind) throws IOException {
+		if(debug>=1)System.out.println("Getting " + publicKeyToFind + "'s public key!");
 		//Send Aegis event code 004 to let it know what we're doing
 		systemMessage("004");
-		c2sdout.writeUTF(encryptServerPublic(usernameToFind));
+		c2sdout.writeUTF(encryptServerPublic(publicKeyToFind));
 		modOfBuddy = new BigInteger(c2sdin.readUTF());
 		System.out.println("MODOFBUDDY: "+modOfBuddy.toString());
 		if(modOfBuddy.toString().equals("-1")){
@@ -1029,7 +1025,7 @@ public class Athena
 		}
 		else{
 			expOfBuddy = new BigInteger(c2sdin.readUTF());
-			writeBuddysPubKeyToFile(usernameToFind,modOfBuddy,expOfBuddy);
+			writeBuddysPubKeyToFile(publicKeyToFind,modOfBuddy,expOfBuddy);
 		}
 
 	}
@@ -1387,16 +1383,6 @@ public class Athena
 		System.exit(0);
 	}
 
-	/**
-	 * 
-	 * @param args
-	 * @throws AWTException
-	 */
-	public static void main(String[] args) throws AWTException {
-		loginGUI = new AuthenticationInterface();
-
-	}
-	
 	public static void sendBugReport(String stackTrace){
 		int toSend = JOptionPane.showConfirmDialog(null, "Sorry, it looks like something went wrong.\nWould you like to submit this as a bug report?", "File a Bug Report?", JOptionPane.YES_NO_OPTION);
 		if(toSend == JOptionPane.YES_OPTION){
@@ -1412,13 +1398,20 @@ public class Athena
 			}catch(Exception e){e.printStackTrace();}
 		}
 	}
-	
-	
-
 	public static String getStackTraceAsString(Exception e) {
 		StringWriter stackTrace = new StringWriter();
 		e.printStackTrace(new PrintWriter(stackTrace));
 		return stackTrace.toString();
+	}
+	
+	/**
+	 * 
+	 * @param args
+	 * @throws AWTException
+	 */
+	public static void main(String[] args) throws AWTException {
+		loginGUI = new AuthenticationInterface();
+
 	}
 
 
