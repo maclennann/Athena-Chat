@@ -51,8 +51,8 @@ public class Server
 	
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
-	private static dbUser = "";
-	private static dbPass = "";
+	private static String dbUser = "";
+	private static String dbPass = "";
 	
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
@@ -88,7 +88,7 @@ public class Server
 		//TODO: DB Server on LAN with auth server (maybe same computer) only accessable from auth server
 		//		of course, we need a real auth server first.
 		//TODO: Don't store DB location, username, or password in the source. Break it out into a conf file.
-		String url = "jdbc:mysql://localhost";
+		String url = "jdbc:mysql://localhost:3306/aegis";
 	
 		//Database username and password. shhhhh.
 		String un = dbUser; //Database Username
