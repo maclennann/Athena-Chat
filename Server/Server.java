@@ -51,6 +51,8 @@ public class Server
 	
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
+	private static dbUser = "";
+	private static dbPass = "";
 	
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
@@ -86,11 +88,11 @@ public class Server
 		//TODO: DB Server on LAN with auth server (maybe same computer) only accessable from auth server
 		//		of course, we need a real auth server first.
 		//TODO: Don't store DB location, username, or password in the source. Break it out into a conf file.
-		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
+		String url = "jdbc:mysql://localhost";
 	
 		//Database username and password. shhhhh.
-		String un = "db72292_athena"; //Database Username
-		String pw = "xZN?uhwx"; //Database Password
+		String un = dbUser; //Database Username
+		String pw = dbPass; //Database Password
 		
 		//Load the JDBC driver. Make sure the mysql jar is in your classpath!
 		try{
@@ -296,6 +298,8 @@ public class Server
 		*1. UpdateHashTable
 		*2. Listen for connections 
 		*3. The Universe collapses in on itself*/
+		dbUser = args[0];
+		dbPass = args[1];
 		
 		//Read all usernames and hashed passwords into hashtable from database
 		updateHashTable();
