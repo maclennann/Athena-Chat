@@ -547,7 +547,7 @@ public class Athena
 	}
 
 	
-	
+	//Parse messages for markdown commands before printing them
 	public static void parseMarkdown(String mesg, MapTextArea print){
 		String message = mesg;
 		int bold=0;
@@ -559,18 +559,25 @@ public class Athena
 		char previous=' ';
 		char next=' ';
 		MutableAttributeSet currentAttr = print.getTextFont();
+		
+		//Go through the message, character by character
 		for(x=0;x<message.length();x++){
 			current = message.charAt(x);
+			
+			//Only get the previous character if we aren't on the first iteration
 			if(x>0)	previous = message.charAt(x-1);
+			//Only get the next character if we aren't on the last
 			if(x!=message.length()-1) next = message.charAt(x+1);
 			
 			if(current=='*'){
 				if(previous=='\\'){
 					try{
+					//Print an escaped asterisk
 					print.writeToTextArea(String.valueOf(current), print.getTextFont());
 					}catch(Exception e){sendBugReport(getStackTraceAsString(e));e.printStackTrace();}
 					
 				}
+				//Or toggle bold/italic based on the number
 				else if(next=='*'){
 					if(bold==1){
 						bold=0;
@@ -597,6 +604,7 @@ public class Athena
 					}
 				}
 			}
+			//Check for underline commands
 			else if(current=='_'){
 				if(previous=='\\'){
 					try{
@@ -609,8 +617,10 @@ public class Athena
 					}else underline=1;
 					changed=1;
 				}
-			}					
+			}
+			//Otherwise just print text
 			else{
+				//update font if need be
 				if(changed==1){
 					boolean b = (bold != 0);
 					boolean i = (italic != 0);
@@ -618,8 +628,10 @@ public class Athena
 					print.setTextFont(b, i, u);
 					changed = 0;
 				}
+				//Don't print escape characters
 				if(current=='\\' && next=='*'){}
 				else if(current=='\\' && next=='_'){}
+				//Print text in current formatting
 				else{
 					try{
 					print.writeToTextArea(String.valueOf(current), print.getTextFont());
@@ -628,11 +640,13 @@ public class Athena
 			}
 		}
 		try{
+			//Newline after parsing the message
 			print.writeToTextArea("\n", print.getTextFont());
 		}catch(Exception e){
 			sendBugReport(getStackTraceAsString(e));
 			e.printStackTrace();
 		}
+		//Revert to default font
 		print.setTextFont(currentAttr);
 	}
 	
