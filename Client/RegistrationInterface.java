@@ -602,7 +602,7 @@ public class RegistrationInterface extends JPanel {
 			String result = din.readUTF();
 			byte[] resultBytes = (new BigInteger(result)).toByteArray();
 			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent());
-			if(resultDecrypted.equals("Username has been sucessfully created.")) {
+			if(resultDecrypted.equals("Account has been successfully created.")) {
 				LoginFailedInterface successfulUserRegistration = new LoginFailedInterface(resultDecrypted,true);
 				addUserJFrame.dispose();
 				//Garbage collect!

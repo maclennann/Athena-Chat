@@ -38,7 +38,7 @@ public class LoginFailedInterface extends JFrame {
 		contentPane.add(closeThis);
 		contentPane.add(forgotPassword);
 		failedPasswordJLabel.setBounds(15,15,400,25);
-		failedPasswordJLabel.setText("Sorry, your login credentials were not correct. Please try again!");
+		failedPasswordJLabel.setText("Sorry, your login credentials were not correct. Please try again.");
 		contentPane.add(failedPasswordJLabel);
 		contentPane.add(failedLoginDrawingPanel);
 		loginFailed.add(contentPane);

@@ -115,7 +115,7 @@ public class PreferencesInterface extends JPanel {
 	public JButton generateNewKeyPairJButton = new JButton("Generate");
 	
 	//Define components for the Formatting Menu Panel
-	public JButton formattingLabel = new JButton("Font Format", new ImageIcon("../images/fontPref.png"));
+	public JButton formattingLabel = new JButton("Formatting", new ImageIcon("../images/fontPref.png"));
 	public JLabel selectFontLabel = new JLabel("Font Type:");
 	public JLabel fontSizeLabel = new JLabel("Font Size:");
 	public JLabel generalFontLabel = new JLabel("Font Style:");
@@ -176,7 +176,7 @@ public class PreferencesInterface extends JPanel {
 		Border prefAltBorder = BorderFactory.createCompoundBorder(labelBorder, extraBorder);
 		Border prefBorder = BorderFactory.createCompoundBorder(blackBorder, labelBorder);
 		generalTitledBorder = BorderFactory.createTitledBorder(
-			       prefBorder, "General Options");
+			       prefBorder, "System Options");
 		encryptionTitledBorder = BorderFactory.createTitledBorder(
 					prefBorder, "Encryption Options");
 		formattingTitledBorder = BorderFactory.createTitledBorder(
@@ -184,7 +184,7 @@ public class PreferencesInterface extends JPanel {
 		notificationsTitledBorder = BorderFactory.createTitledBorder(
 					prefBorder, "Notification Options");
 		themeTitleBorder = BorderFactory.createTitledBorder(
-					prefBorder, "Theme Options");
+					prefBorder, "Appearance Options");
 		
 		//Size the default components
 		prefLabelPaneLeft.setBounds(15, 10, 100, 320);

@@ -463,7 +463,7 @@ public class CommunicationInterface extends JFrame {
 						// Get the buddy that was double-clicked
 						Object o = theList.getModel().getElementAt(index);						
 
-						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + o.toString(), "Confirm Removal", JOptionPane.YES_NO_OPTION);
+						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + o.toString() + "?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
 						if (ans == JOptionPane.YES_OPTION)
 						{
 							ArrayList<String> list = new ArrayList<String>(Arrays
