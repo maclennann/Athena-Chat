@@ -619,7 +619,7 @@ public class Athena
 					changed = 0;
 				}
 				if(current=='\\' && next=='*'){}
-				if(current=='\\' && next=='_'){}
+				else if(current=='\\' && next=='_'){}
 				else{
 					try{
 					print.writeToTextArea(String.valueOf(current), print.getTextFont());
