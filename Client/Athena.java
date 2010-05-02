@@ -482,7 +482,7 @@ public class Athena
 							}
 						}
 						if((usernames[x].equals(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) { 
-							print = (MapTextArea)clientResource.tabPanels.get(decyprtedMessage);
+							print = (MapTextArea)clientResource.tabPanels.get(decryptedMessage);
 							print.writeToTextArea(decryptedMessage + " has signed on.\n", print.getSetHeaderFont(Color.gray));						
 						}
 					}					
