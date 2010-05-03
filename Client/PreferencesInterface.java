@@ -92,7 +92,7 @@ public class PreferencesInterface extends JPanel {
 
 	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
-	public JButton generalLabel = new JButton("System", new ImageIcon("../images/generalPref.png"));
+	public JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
 	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
 	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
@@ -104,18 +104,18 @@ public class PreferencesInterface extends JPanel {
 	boolean enableSpellCheckFlag = false;
 	
 	//Define components for the Notifications Menu Panel
-	public JButton notificationsLabel = new JButton("Notifications", new ImageIcon("../images/notificationsPref.png"));
+	public JButton notificationsLabel = new JButton("Notifications", new ImageIcon("images/notificationsPref.png"));
 	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable Sounds", enableSounds);
 	boolean enableSoundsVal;
 	boolean enableSoundsFlag = false;
 
 	//Define components for the Encryption Menu Panel
-	public JButton encryptionLabel = new JButton("Encryption", new ImageIcon("../images/encryptionPref.png"));
+	public JButton encryptionLabel = new JButton("Encryption", new ImageIcon("images/encryptionPref.png"));
 	public JLabel generateNewKeyPairJLabel = new JLabel("Generate New Encryption Key Pair");
 	public JButton generateNewKeyPairJButton = new JButton("Generate");
 	
 	//Define components for the Formatting Menu Panel
-	public JButton formattingLabel = new JButton("Font Format", new ImageIcon("../images/fontPref.png"));
+	public JButton formattingLabel = new JButton("Formatting", new ImageIcon("images/fontPref.png"));
 	public JLabel selectFontLabel = new JLabel("Font Type:");
 	public JLabel fontSizeLabel = new JLabel("Font Size:");
 	public JLabel generalFontLabel = new JLabel("Font Style:");
@@ -135,7 +135,7 @@ public class PreferencesInterface extends JPanel {
 	int setSizeVal = setFontSize;
 	
 	//Define components for the Theme Menu Panel
-	public JButton themeLabel = new JButton("Appearance", new ImageIcon("../images/themePref.png"));
+	public JButton themeLabel = new JButton("Appearance", new ImageIcon("images/themePref.png"));
 	public JComboBox selectThemeComboBox = new JComboBox(themeList);
 	public JLabel selectThemeJLabel = new JLabel("Select Theme");
 	public JButton installNewThemeJButton = new JButton("Install");
@@ -153,7 +153,7 @@ public class PreferencesInterface extends JPanel {
 		preferences.setResizable(false);
 		contentPane.setLayout(null);
 		preferences.setLocationRelativeTo(CommunicationInterface.imContentFrame);
-		preferences.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
+		preferences.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		//Retrieve all available font names and set font combo box
 		String[] allFontNames = new String[allFonts.length];
 		//Client.clientResource.fontFamilyTable.clear();
@@ -176,7 +176,7 @@ public class PreferencesInterface extends JPanel {
 		Border prefAltBorder = BorderFactory.createCompoundBorder(labelBorder, extraBorder);
 		Border prefBorder = BorderFactory.createCompoundBorder(blackBorder, labelBorder);
 		generalTitledBorder = BorderFactory.createTitledBorder(
-			       prefBorder, "General Options");
+			       prefBorder, "System Options");
 		encryptionTitledBorder = BorderFactory.createTitledBorder(
 					prefBorder, "Encryption Options");
 		formattingTitledBorder = BorderFactory.createTitledBorder(
@@ -184,7 +184,7 @@ public class PreferencesInterface extends JPanel {
 		notificationsTitledBorder = BorderFactory.createTitledBorder(
 					prefBorder, "Notification Options");
 		themeTitleBorder = BorderFactory.createTitledBorder(
-					prefBorder, "Theme Options");
+					prefBorder, "Appearance Options");
 		
 		//Size the default components
 		prefLabelPaneLeft.setBounds(15, 10, 100, 320);

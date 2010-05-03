@@ -29,7 +29,7 @@ public class LoginFailedInterface extends JFrame {
 		contentPane.setLayout(null);
 		loginFailed.setLocationRelativeTo(Athena.loginGUI);
 		
-		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.png");
+		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
 		failedLoginDrawingPanel.setBounds(140,60,100,100);
 		
@@ -38,7 +38,7 @@ public class LoginFailedInterface extends JFrame {
 		contentPane.add(closeThis);
 		contentPane.add(forgotPassword);
 		failedPasswordJLabel.setBounds(15,15,400,25);
-		failedPasswordJLabel.setText("Sorry, your login credentials were not correct. Please try again!");
+		failedPasswordJLabel.setText("Sorry, your login credentials were not correct. Please try again.");
 		contentPane.add(failedPasswordJLabel);
 		contentPane.add(failedLoginDrawingPanel);
 		loginFailed.add(contentPane);
@@ -105,14 +105,14 @@ public class LoginFailedInterface extends JFrame {
 		//If status is true, that means it was a successful login so don't display the sad face.
 		//TODO Add a happy face
 		if(!(status)) {
-		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/sadFace.png");
+		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
 		failedLoginDrawingPanel.setBounds(140,75,100,100);
 		contentPane.add(failedLoginDrawingPanel);
 		contentPane.add(forgotPassword);
 		}
 		else{
-		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("../images/happyface.png");
+		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("images/happyface.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
 		failedLoginDrawingPanel.setBounds(140,75,100,100);
 		contentPane.add(failedLoginDrawingPanel);

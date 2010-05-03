@@ -60,7 +60,7 @@ public class AuthenticationInterface extends JFrame {
 	public JButton connect = new JButton("Connect");
 	public JButton cancel = new JButton("Cancel");
 
-	ImageIcon logoicon = new ImageIcon("../images/logo.png");
+	ImageIcon logoicon = new ImageIcon("images/logo.png");
 	JLabel logo = new JLabel(); 
 
 
@@ -85,7 +85,7 @@ public class AuthenticationInterface extends JFrame {
 		//Initialize Login window
 		login = new JFrame("Athena");
 		login.setLocation(width/2-100,height/2-150);
-		login.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
+		login.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		login.setSize(200,300);
 		login.setResizable(false);
@@ -94,7 +94,7 @@ public class AuthenticationInterface extends JFrame {
 		//Define the system tray icon
 		if (SystemTray.isSupported()) { 
 			SystemTray tray = SystemTray.getSystemTray();
-			Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+			Image trayImage = Toolkit.getDefaultToolkit().getImage("images/sysTray.gif");
 
 			ActionListener exitListener = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {

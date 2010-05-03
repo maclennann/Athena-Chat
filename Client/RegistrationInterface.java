@@ -69,8 +69,8 @@ public class RegistrationInterface extends JPanel {
 	public JPasswordField confirmpasswordJPasswordField;
 	public JButton confirmJButton = new JButton("Confirm");
 	public JButton cancelJButton = new JButton("Cancel");
-	public ImageIcon redX = new ImageIcon("../images/redX.png");
-	public ImageIcon greenCheck = new ImageIcon("../images/greenCheck.png");
+	public ImageIcon redX = new ImageIcon("images/redX.png");
+	public ImageIcon greenCheck = new ImageIcon("images/greenCheck.png");
 
 	public Border blackline;
 	public TitledBorder generalTitledBorder;
@@ -602,7 +602,7 @@ public class RegistrationInterface extends JPanel {
 			String result = din.readUTF();
 			byte[] resultBytes = (new BigInteger(result)).toByteArray();
 			String resultDecrypted = RSACrypto.rsaDecryptPublic(resultBytes,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent());
-			if(resultDecrypted.equals("Username has been sucessfully created.")) {
+			if(resultDecrypted.equals("Account has been successfully created.")) {
 				LoginFailedInterface successfulUserRegistration = new LoginFailedInterface(resultDecrypted,true);
 				addUserJFrame.dispose();
 				//Garbage collect!
