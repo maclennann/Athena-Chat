@@ -133,20 +133,19 @@ public class ServerThread extends Thread
 				server.mapUserServerSocket(username, c2ssocket);	
 				server.mapUserClientSocket(username, c2csocket);
 				server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
-				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));		
-				System.out.println("\n\n\n\nREAL USERNAME (POST HASHTABLE)::::: "+realUsername+"+\nUSERNAME:::::: "+username);
+				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));
 			}
 			if(username.equals("Interupt")) {
 				routeMessage(serverDin,clientDin);
 				//server.removeConnection(socket);				
 			} else { 
-			System.out.println("\n\n\n\nREAL USERNAME (PREMESSAGES)::::: "+realUsername+"+\nUSERNAME:::::: "+username);
+			
 				//Route around messages coming in from the client while they are connected
 				while (isAlive==1) {
 					//Take in messages from this thread's client and route them to another client
 					routeMessage(serverDin,clientDin);
 				}
-				System.out.println("\n\n\n\nREAL USERNAME (POSTMESSAGES::::: "+realUsername+"+\nUSERNAME:::::: "+username);
+				
 				
 			}
 			
@@ -158,7 +157,7 @@ public class ServerThread extends Thread
 		}finally {
 			//Socket is closed, remove it from the list
 			try { 
-			System.out.println("REMVONG FUCKING USAIGNER: "+realUsername);
+			System.out.println("REMOVING USERNAME: "+realUsername);
 
 			if(realUsername==null) server.removeConnection(c2ssocket,c2csocket);
 
@@ -944,7 +943,7 @@ public class ServerThread extends Thread
 			String findUser = decryptServerPrivate(serverDin.readUTF());
 			
 			//Print out the received username
-			if(debug>=1)System.out.println("Username received PUBLIC FUCKING KEY REQUEST: " + findUser);
+			if(debug>=1)System.out.println("Username received PUBLIC KEY REQUEST: " + findUser);
 
 
 			File newFile = new File("keys/" + findUser + ".pub");
