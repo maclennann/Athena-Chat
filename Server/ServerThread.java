@@ -408,7 +408,7 @@ public class ServerThread extends Thread
 		int numLines = buddyListArray.length;
 		if(debug>=1)System.out.println("numLines: " + numLines);
 		//Send Athena the begin message so it knows that this is the beginning of the file
-		serverDout.writeUTF(encryptServerPrivate("Begin"));
+		//serverDout.writeUTF(encryptServerPrivate("Begin"));
 		//Send Athena the number of lines we're sending
 		serverDout.writeUTF(encryptServerPrivate(new String(String.valueOf(numLines))));
 		//Send the lines of the file!
