@@ -131,9 +131,9 @@ public class CommunicationInterface extends JFrame {
 	//public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
 	public Border threeColor = BorderFactory.createLineBorder(new Color(218, 165, 32)); //Goldenrod
 	public Border contactListBorder;
-	public ImageIcon lockIcon = new ImageIcon("../images/lockicon.png");
-	public ImageIcon logoIcon = new ImageIcon("../images/logo.png");
-	public ImageIcon logoIconBig = new ImageIcon("../images/logobig.png");
+	public ImageIcon lockIcon = new ImageIcon("images/lockicon.png");
+	public ImageIcon logoIcon = new ImageIcon("images/logo.png");
+	public ImageIcon logoIconBig = new ImageIcon("images/logobig.png");
 	static public JLabel lockIconLabel = new JLabel();
 	static public JLabel logoIconLabel = new JLabel();
 	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
@@ -220,7 +220,7 @@ public class CommunicationInterface extends JFrame {
 		imContentFrame.setSize(813, 610);
 		imContentFrame.setResizable(false);
 		imContentFrame.setLocation(width-(width/2)-407,height-(height/2)-305);
-		imContentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
+		imContentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		// Create the file menu.
 		file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
@@ -399,8 +399,8 @@ public class CommunicationInterface extends JFrame {
 		// TODO Add ActionListeners to the images to bring up the add/remove
 		// user windows
 
-		JButton addContactLabel = new JButton(new ImageIcon("../images/addUser.png"));
-		JButton removeContactLabel = new JButton(new ImageIcon("../images/removeUser.png"));
+		JButton addContactLabel = new JButton(new ImageIcon("images/addUser.png"));
+		JButton removeContactLabel = new JButton(new ImageIcon("images/removeUser.png"));
 
 		addContactLabel.setFont(new Font("Arial", Font.BOLD, 10));
 		addContactLabel.setMargin(new Insets(1, 1, 1, 1));
@@ -678,7 +678,7 @@ public class CommunicationInterface extends JFrame {
 	public void FocusCurrentTextField()
 	{
 		//Set default icon
-		Icon closeIcon = new ImageIcon("../images/close_button.png");
+		Icon closeIcon = new ImageIcon("images/close_button.png");
 		CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.getSelectedIndex());
 		JButton currentButton = (JButton) c.getComponent(1);
 		currentButton.setIcon(closeIcon);
@@ -737,7 +737,7 @@ public class CommunicationInterface extends JFrame {
 		}
 		else
 		{
-			Icon alertIcon = new ImageIcon("../images/alert.png");
+			Icon alertIcon = new ImageIcon("images/alert.png");
 			CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.indexOfTab(user));
 			JButton currentButton = (JButton) c.getComponent(1);
 			currentButton.setIcon(alertIcon);
@@ -805,7 +805,7 @@ public class CommunicationInterface extends JFrame {
 		{
 			if(tlength == 0)
 			{
-				Image trayImage = Toolkit.getDefaultToolkit().getImage("../images/sysTray.gif");
+				Image trayImage = Toolkit.getDefaultToolkit().getImage("images/sysTray.gif");
 				ActionListener exitListener = new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(debug==1)System.out.println("Exiting...");
@@ -905,7 +905,7 @@ public class CommunicationInterface extends JFrame {
 				int currentTabIndex = imTabbedPane.indexOfComponent(currentTab);
 				if(currentTab != imTabbedPane.getSelectedComponent() && currentTabIndex != -1)
 				{
-					Icon alertIcon = new ImageIcon("../images/alert.png");
+					Icon alertIcon = new ImageIcon("images/alert.png");
 					CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(currentTabIndex);
 					JButton currentButton = (JButton) c.getComponent(1);
 					currentButton.setIcon(alertIcon);
@@ -995,7 +995,7 @@ public class CommunicationInterface extends JFrame {
 		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		currentTextField.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
-				Icon closeIcon = new ImageIcon("../images/close_button.png");
+				Icon closeIcon = new ImageIcon("images/close_button.png");
 				CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.getSelectedIndex());
 				JButton currentButton = (JButton) c.getComponent(1);
 				currentButton.setIcon(closeIcon);
@@ -1150,8 +1150,8 @@ public class CommunicationInterface extends JFrame {
 		//private static final long serialVersionUID = -6032110177913133517L;
 		private JTabbedPane pane;
 		public JButton btClose;
-	    Icon closeIcon = new ImageIcon("../images/close_button.png");
-	    Icon alertIcon = new ImageIcon("../images/alert.png");
+	    Icon closeIcon = new ImageIcon("images/close_button.png");
+	    Icon alertIcon = new ImageIcon("images/alert.png");
 	    int myIndex;
 	    Icon originalIcon;
 		  public CloseTabButton(JTabbedPane pane, int index) {

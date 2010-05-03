@@ -52,7 +52,7 @@ public class AboutInterface extends JFrame {
 	public JPanel contentPane = new JPanel();
 	public JLabel usernameLabel = new JLabel("Athena Chat Client v0.0.5b");
 	public JButton cancel = new JButton("OK");
-	ImageIcon logoicon = new ImageIcon("../images/splash.png");
+	ImageIcon logoicon = new ImageIcon("images/splash.png");
 	JLabel logo = new JLabel(); 
 
 	//Constructor | Here's where the fun begins

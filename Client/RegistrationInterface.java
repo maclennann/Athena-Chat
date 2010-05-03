@@ -69,8 +69,8 @@ public class RegistrationInterface extends JPanel {
 	public JPasswordField confirmpasswordJPasswordField;
 	public JButton confirmJButton = new JButton("Confirm");
 	public JButton cancelJButton = new JButton("Cancel");
-	public ImageIcon redX = new ImageIcon("../images/redX.png");
-	public ImageIcon greenCheck = new ImageIcon("../images/greenCheck.png");
+	public ImageIcon redX = new ImageIcon("images/redX.png");
+	public ImageIcon greenCheck = new ImageIcon("images/greenCheck.png");
 
 	public Border blackline;
 	public TitledBorder generalTitledBorder;

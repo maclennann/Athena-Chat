@@ -52,8 +52,8 @@ public class ResetPasswordInterface extends JPanel {
 	public JButton confirmJButton = new JButton("Confirm");
 	public JButton cancelJButton = new JButton("Cancel");
 	public JButton clearJButton = new JButton("Clear");
-	public ImageIcon redX = new ImageIcon("../images/redX.png");
-	public ImageIcon greenCheck = new ImageIcon("../images/greenCheck.png");
+	public ImageIcon redX = new ImageIcon("images/redX.png");
+	public ImageIcon greenCheck = new ImageIcon("images/greenCheck.png");
 	public JLabel newPasswordJLabel = new JLabel("New Password: ");
 	public JLabel newPasswordConfirmJLabel = new JLabel("Confirm:");
 	public JPasswordField newPasswordJPasswordField = new JPasswordField();
@@ -75,7 +75,7 @@ public class ResetPasswordInterface extends JPanel {
 		resetPasswordJFrame= new JFrame("Reset Password");
 		resetPasswordJFrame.setSize(430,250);
 		resetPasswordJFrame.setResizable(false);
-		resetPasswordJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
+		resetPasswordJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		resetPasswordJFrame.setLocationRelativeTo(Athena.loginGUI);
 		//Create the content Pane
 		contentPane = new JPanel();

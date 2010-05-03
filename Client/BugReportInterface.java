@@ -81,7 +81,7 @@ public class BugReportInterface extends JPanel {
 		contentPane.setLayout(null);
 		contentPane.setVisible(true);
 		
-		submitBugJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("../images/logosmall.png"));
+		submitBugJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		
 		//Initalize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
