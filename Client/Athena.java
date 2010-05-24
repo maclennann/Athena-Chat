@@ -71,7 +71,7 @@ public class Athena
 	 * 
 	 */
 	private static final int debug=0; //Show debug messages?
-	private static String serverIP = "71.234.132.9"; //IP of the server
+	private static String serverIP = "205.186.153.44"; //IP of the server
 	//private static String serverIP = "10.1.10.49"; //IP of server for Norm. Don't delete this agian.
 	private static int connected = 0; 	//If the client is connect to the server
 	private static int away = 0; //Is the user away?	
@@ -272,16 +272,16 @@ public class Athena
 			}			
 			else if(localBuddyListModDate > remoteBuddyListModDate) {
 				//Send buddylist to server!
-				System.out.println("SEND BUDDY LIST TO SERVER");
+				if (debug >= 1) System.out.println("SEND BUDDY LIST TO SERVER");
 				sendBuddyListToServer();
 			}
 			else if (localBuddyListModDate == remoteBuddyListModDate) { 
 				//DO NOTHING
-				System.out.println("DONE");
+				if (debug >= 1) System.out.println("DONE");
 			}
 			else { 
 				//Get buddylist from server
-				System.out.println("GET BUDDY LIST FROM SERVER");
+				if (debug >= 1) System.out.println("GET BUDDY LIST FROM SERVER");
 				receiveBuddyListFromServer();
 			}
 		}
