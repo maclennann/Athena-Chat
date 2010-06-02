@@ -1,4 +1,38 @@
 ChangeLog: 
+4/23/2010: 
+	## Implemented new logic in the Adduser window. 
+		@@ It now displays more efficient and understandable messages upon typing in the TextFields
+
+04/23/2010:
+	## Implemented secret question and secret answer on signup
+	## Implemented most of reset password with secret answer
+	## Implemented automatic bug report submit on certain exceptions
+	## Implemented manual bug report feature request from help menu
+	## Better controls on client side for new user
+	## Auto-copy from JEditorPane on highlight
+	## Refocus from editorpane to textarea
+	## New biglogo courtesy of Greg
+	## Lots of aesthetic changes
+	## Keep rollin, rollin, rollin, rollin, WHATTT!
+
+04/21/2010:
+	## Wrote and implemented a "markdown-lite" parser
+		@@ Users are able to send bolded, italicized, and underlined text
+	## Centered new windows on creation
+		@@ I was tired of dragging them out of corners
+	## Added a real taskbar icon
+		@@ The default java one was really ugly
+	## Bugfixes left over from yesterday
+
+4/20/2010:
+	## Implemented dual-socket connection
+		@@ Allows for more stable communication with the server
+		@@ Simplifies data flow
+	## Fixed logout hash table bug with static username
+	## Made user accounts entirely portable
+		@@ Pulls down private, public keys, and buddylist with their pubkeys
+	## Implemented jeditorpane and jtextarea
+		@@ Implemented fonts in editorpane
 
 4/18/2010:
 	## Visual Notifications on each tab!!!!

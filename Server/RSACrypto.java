@@ -208,6 +208,7 @@ public class RSACrypto {
 		}
 		catch(Exception e){
 			System.out.println("An error has occured in 'rsaEncryptPrivate'");
+			e.printStackTrace();
 		}return null;
 	}
 	//RSA decrypts cipherText using a private key create from mod and exp

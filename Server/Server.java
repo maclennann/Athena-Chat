@@ -42,7 +42,8 @@ public class Server
 	private int debug = 0;
 	
 	//This socket will accept new connection
-	private ServerSocket ss;
+	private ServerSocket c2ss;
+	private ServerSocket c2css;
 	
 	//This will be a table holding the usernames and hashed passwords pulled from the database
 	//See: updateHashTable()
@@ -50,6 +51,8 @@ public class Server
 	
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
+	private static String dbUser = "";
+	private static String dbPass = "";
 	
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
@@ -59,7 +62,10 @@ public class Server
 	private int isListening = 1;
 	
 	//A hashtable that keeps track of the outputStreams linked to each socket
-	public Hashtable<Socket, DataOutputStream> outputStreams = new Hashtable<Socket, DataOutputStream>();
+	public Hashtable<Socket, DataOutputStream> serverOutputStreams = new Hashtable<Socket, DataOutputStream>();
+	
+		//A hashtable that keeps track of the outputStreams linked to each socket
+	public Hashtable<Socket, DataOutputStream> clientOutputStreams = new Hashtable<Socket, DataOutputStream>();
 	
 	//The server's public and private RSA keys
 	public RSAPrivateKeySpec serverPriv;
@@ -67,7 +73,8 @@ public class Server
 	
 	//A hashtable mapping each user to a socket
 	//used to find which stream to use to send data to clients
-	public Hashtable<String, Socket> userToSocket = new Hashtable<String, Socket>();
+	public Hashtable<String, Socket> userToServerSocket = new Hashtable<String, Socket>();
+	public Hashtable<String, Socket> userToClientSocket = new Hashtable<String, Socket>();
 	
 	//Constructor. Starts listening on the defined port.
 	public Server( int port ) throws IOException {
@@ -81,11 +88,11 @@ public class Server
 		//TODO: DB Server on LAN with auth server (maybe same computer) only accessable from auth server
 		//		of course, we need a real auth server first.
 		//TODO: Don't store DB location, username, or password in the source. Break it out into a conf file.
-		String url = "jdbc:mysql://external-db.s72292.gridserver.com/db72292_athenaauth";
+		String url = "jdbc:mysql://localhost:3306/aegis";
 	
 		//Database username and password. shhhhh.
-		String un = "db72292_athena"; //Database Username
-		String pw = "xZN?uhwx"; //Database Password
+		String un = dbUser; //Database Username
+		String pw = dbPass; //Database Password
 		
 		//Load the JDBC driver. Make sure the mysql jar is in your classpath!
 		try{
@@ -142,15 +149,22 @@ public class Server
 
 	//Adds a user (and the socket he is on) to the hashtable for later reference
 	//Called after user authenticates
-	public void mapUserSocket(String username, Socket userSocket) { 
-		userToSocket.put(username, userSocket);
+	public void mapUserServerSocket(String username, Socket userSocket) { 
+		userToServerSocket.put(username, userSocket);
+	}
+	
+	//Adds a user (and the socket he is on) to the hashtable for later reference
+	//Called after user authenticates
+	public void mapUserClientSocket(String username, Socket userSocket) { 
+		userToClientSocket.put(username, userSocket);
 	}
 	
 	//Server listens for client connections, and passes them off to their own thread
 	private void listen( int port ) throws IOException {
 		// Create the ServerSocket
-		ss = new ServerSocket( port );
-
+		c2ss = new ServerSocket( port );
+		c2css = new ServerSocket(7778);
+		
 		//Fetch public and private keys so the threads can deal with encryption
 		serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
 		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
@@ -172,36 +186,52 @@ public class Server
 		while (true) {
 			//Accept a new connection on the serversocket
 			//Create a socket for it
-			Socket s = ss.accept();
-
+			Socket c2s = c2ss.accept();
+			Socket c2c = c2css.accept();
+			
 			//Debug text announcing a new connection
-			System.out.println( "Connection Established:\n "+s+"\n\n" );
+			System.out.println( "Server-to-Client Connection Established:\n "+c2s );
+			System.out.println( "Client-to-Client Connection Established:\n"+c2c);
 
 			//DataOuputStream to send data from the client's socket
-			DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
+			//TODO I don't think we need to do this here
+			//DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
 			
 			//Map the outputstream to the socket for later reference
-			outputStreams.put( s, dout );
+			//outputStreams.put( s, dout );
 			
 			//Handle the rest of the connection in the new thread
-			new ServerThread( this, s );
+			new ServerThread( this, c2s, c2c );
 		}
 	}
 	
 	
 	// Get an enumeration of all the OutputStreams.
-	Enumeration<DataOutputStream> getOutputStreams() {
-		return outputStreams.elements();
+	Enumeration<DataOutputStream> getServerOutputStreams() {
+		return serverOutputStreams.elements();
+	}
+	
+	// Get an enumeration of all the OutputStreams.
+	Enumeration<DataOutputStream> getClientOutputStreams() {
+		return clientOutputStreams.elements();
+	}
+	
+	public void addServerOutputStream(Socket servSoc, DataOutputStream dataOut){
+		serverOutputStreams.put(servSoc,dataOut);
+	}
+	
+	public void addClientOutputStream(Socket servSoc, DataOutputStream dataOut){
+		clientOutputStreams.put(servSoc,dataOut);
 	}
 	
 	// Send a message to all clients (utility routine)
-	void sendToAll(String eventCode, String message ) {
+	synchronized void sendToAll(String eventCode, String message ) {
 		//make sure the outputStreams hashtable is up-to-date
-		synchronized( outputStreams ) {
+		synchronized( clientOutputStreams ) {
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
 			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
 			//Get the outputStream for each socket and send message
-			for (Enumeration<?> e = getOutputStreams(); e.hasMoreElements(); ) {
+			for (Enumeration<?> e = getClientOutputStreams(); e.hasMoreElements(); ) {
 				DataOutputStream dout = (DataOutputStream)e.nextElement();
 				try{
 					dout.writeUTF(eventCodeCipher.toString());
@@ -212,46 +242,51 @@ public class Server
 	}
 	
 	//Just remove a socket (i.e. the user has failed to login)
-	void removeConnection( Socket s) {
+	void removeConnection( Socket servsock, Socket clientsock) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
-		synchronized( outputStreams ) {
+		synchronized( clientOutputStreams ) {
 			// Debug text
-			System.out.println( "Connection Terminated:\n"+s+"\n\n" );
+			System.out.println( "Connection Terminated:\n"+servsock+"\n\n" );
 
 			// Remove socket from our hashtable/list
-			outputStreams.remove( s );
+			clientOutputStreams.remove( clientsock );
+			serverOutputStreams.remove( servsock );
 
 			// Make sure it's closed
 			try {
-				s.close();
+				servsock.close();
+				clientsock.close();
 			} catch( IOException ie ) {
-				System.out.println( "Error closing "+s );
+				System.out.println( "Error closing "+servsock );
 				ie.printStackTrace();
 			}
 		}
 	}
 
 	//Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
-	void removeConnection( Socket s, String username ) {
+	void removeConnection( Socket servsock, Socket clientsock, String uname ) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
-		synchronized( outputStreams ) {
+		synchronized( clientOutputStreams ) {
 			// Debug text
-			System.out.println( "User Disconnected: "+username+"\n\n" );
+			System.out.println( "User Disconnected: "+uname+"\n\n" );
 
 			// Remove thread's entries from hashtables
-			outputStreams.remove( s );
-			userToSocket.remove(username);
+			serverOutputStreams.remove( servsock );
+			clientOutputStreams.remove( clientsock);
+			userToServerSocket.remove(uname);
+			userToClientSocket.remove(uname);
 			
 			// Make sure the socket is closed
 			try {
-				s.close();
+				servsock.close();
+				clientsock.close();
 				
 				//Sending User Log off message after we close the socket
-				sendToAll("ServerLogOff",username);
+				sendToAll("ServerLogOff",uname);
 			} catch( IOException ie ) {
-				System.out.println( "Error closing "+s );
+				System.out.println( "Error closing "+servsock );
 				ie.printStackTrace();
 			}
 		}
@@ -263,6 +298,8 @@ public class Server
 		*1. UpdateHashTable
 		*2. Listen for connections 
 		*3. The Universe collapses in on itself*/
+		dbUser = args[0];
+		dbPass = args[1];
 		
 		//Read all usernames and hashed passwords into hashtable from database
 		updateHashTable();

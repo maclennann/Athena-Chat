@@ -183,7 +183,8 @@ public class RSACrypto {
 			return plainText;
 		}
 		catch(Exception e){
-			return "SYSTEM ERROR: There was an issue decrypting the message. Please check that you have the public keyfile for the user.";
+			e.printStackTrace();
+			return "SYSTEM ERROR: There was an issue decrypting the message. Please check that you have the public keyfile for the user.";		
 			//System.out.println("An error has occured in 'rsaDecryptPublic'");
 		}//return null;
 	}
