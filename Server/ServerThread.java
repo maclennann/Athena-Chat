@@ -292,8 +292,9 @@ public class ServerThread extends Thread
 		try{
 			//Grab output stream for the user.
 			//TODO This probably isn't necessary
+			System.out.println("In the method.");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-			
+			System.out.println("Created the output stream which we shouldn't have to do.");
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
 			System.out.println("Connected to the database.");
