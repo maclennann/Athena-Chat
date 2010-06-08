@@ -651,7 +651,10 @@ public class Athena
 	}
 	
 	
-	
+	//Method for group chat
+	/** This method does something
+	 * 
+	 */
 	
 	
 	//Called from the actionListener on the tf textfield

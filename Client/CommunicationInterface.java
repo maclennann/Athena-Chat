@@ -118,7 +118,7 @@ public class CommunicationInterface extends JFrame {
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
-	public JMenuItem disconnect, exit, preferences;
+	public JMenuItem disconnect, exit, preferences, createChat;
 	public JPanel panel;
 	public static JFrame imContentFrame, buddyListFrame;
 	public JComboBox statusBox = new JComboBox(new String[] {"Available", "Busy"});
@@ -223,17 +223,23 @@ public class CommunicationInterface extends JFrame {
 		imContentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		// Create the file menu.
 		file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_F);
+		file.setMnemonic(KeyEvent.VK_F);		
+		
+		//Create button File -> Create Chat
+		createChat = new JMenuItem("Create Chat");
+		createChat.setMnemonic(KeyEvent.VK_C);
+		file.add(createChat);
 
 		// Create button File -> Disconnect
 		disconnect = new JMenuItem("Disconnect");
 		disconnect.setMnemonic(KeyEvent.VK_D);
 		file.add(disconnect);
-
+		
 		// Create button File -> Exit
 		exit = new JMenuItem("Exit");
 		exit.setMnemonic(KeyEvent.VK_X);
 		file.add(exit);
+
 
 		// Add the file menu to the menu bar
 		menuBar.add(file);
