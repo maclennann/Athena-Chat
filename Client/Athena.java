@@ -70,7 +70,7 @@ public class Athena
 	/* Begin private variables
 	 * 
 	 */
-	private static final int debug=0; //Show debug messages?
+	private static final int debug=1; //Show debug messages?
 	private static String serverIP = "205.186.153.44"; //IP of the server
 	//private static String serverIP = "10.1.10.49"; //IP of server for Norm. Don't delete this agian.
 	private static int connected = 0; 	//If the client is connect to the server
@@ -655,7 +655,23 @@ public class Athena
 	/** This method does something
 	 * 
 	 */
-	
+	public static void createChat() { 
+		//TODO Make this an actual window
+		String chatName = JOptionPane.showInputDialog("Input the name of the chat!");
+		try {
+		Athena.systemMessage("12");
+		
+		try {
+			c2sdout.writeUTF(encryptServerPublic(chatName));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		} catch (NullPointerException npe) { 
+			
+		}
+		//TODO Make a new tab to display the group chat window 
+	}
 	
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message

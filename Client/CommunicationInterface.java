@@ -307,20 +307,7 @@ public class CommunicationInterface extends JFrame {
 		// ActionListener to make the disconnect menu item disconnect
 		createChat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				//TODO Make this an actual window
-				String chatName = JOptionPane.showInputDialog("Input the name of the chat!");
-				Athena.systemMessage("12");
-				
-				//Retrieve dout from Athena
-				DataOutputStream c2sdout = Athena.returnDOUT();
-				//Send the chatname to Aegis
-				try {
-					c2sdout.writeUTF(chatName);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//TODO Make a new tab to display the group chat window 
+				Athena.createChat();
 			}
 		});
 
