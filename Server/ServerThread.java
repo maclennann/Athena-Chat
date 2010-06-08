@@ -300,6 +300,7 @@ public class ServerThread extends Thread
 			//Get the chat name from the user
 			String chatName = decryptServerPrivate(serverDin.readUTF());
 			
+			System.out.println("Took in the desired chat name.");
 			//Is the chatID a dupe?
 			int dupe = 0;
 			Statement stmt;
@@ -313,12 +314,13 @@ public class ServerThread extends Thread
 				byte seed[] = random.generateSeed(20);
 				random.setSeed(seed); 
 				randInt = random.nextInt(9999);
+				System.out.println("Generated random chat ID: "+randInt);
 				
 				//Get a list of existing chats
-				
 				stmt = con.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM allchats");
-
+				System.out.println("Got list of existing chats.");
+				
 				//Read chatIDs into array
 				while(rs.next()){
 					if (rs.getInt("chatid") == randInt){
@@ -332,7 +334,10 @@ public class ServerThread extends Thread
 			rs.close();
 			
 			//The chatID is not a duplicate. We can create the chat and add it to the DB
+			System.out.println("Generated number is not");
+			
 			stmt.executeUpdate("INSERT into allchats (chatid) values('" + randInt +"')");
+			System.out.println("Inserted into the database.");
 			
 			stmt.close();
 			con.close();
