@@ -296,7 +296,7 @@ public class ServerThread extends Thread
 			
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
-			
+			System.out.printlng("Connected to the database.");
 			//Get the chat name from the user
 			String chatName = decryptServerPrivate(serverDin.readUTF());
 			
