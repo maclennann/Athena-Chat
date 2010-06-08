@@ -42,6 +42,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,6 +93,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLEditorKit;
+import java.io.DataOutputStream;
 
 import com.inet.jortho.SpellChecker;	
 
@@ -301,6 +303,26 @@ public class CommunicationInterface extends JFrame {
 		help.add(bugReport);
 		
 		// TODO Add items to the encryption menu
+		
+		// ActionListener to make the disconnect menu item disconnect
+		createChat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				//TODO Make this an actual window
+				String chatName = JOptionPane.showInputDialog("Input the name of the chat!");
+				Athena.systemMessage("12");
+				
+				//Retrieve dout from Athena
+				DataOutputStream c2sdout = Athena.returnDOUT();
+				//Send the chatname to Aegis
+				try {
+					c2sdout.writeUTF(chatName);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//TODO Make a new tab to display the group chat window 
+			}
+		});
 
 		// ActionListener to make the disconnect menu item disconnect
 		disconnect.addActionListener(new ActionListener() {
