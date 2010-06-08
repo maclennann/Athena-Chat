@@ -284,6 +284,8 @@ public class ServerThread extends Thread
 		resetPassword();
 		break;
 		case 12: if(debug==1)System.out.println("Event code received. createChat() run.");
+		createChat();
+		break;
 		default: return;
 		}
 	}
