@@ -655,7 +655,23 @@ public class Athena
 	/** This method does something
 	 * 
 	 */
-	
+	public static void createChat() { 
+		//TODO Make this an actual window
+		String chatName = JOptionPane.showInputDialog("Input the name of the chat!");
+		try {
+		Athena.systemMessage("12");
+		
+		try {
+			c2sdout.writeUTF(chatName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		} catch (NullPointerException npe) { 
+			
+		}
+		//TODO Make a new tab to display the group chat window 
+	}
 	
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
