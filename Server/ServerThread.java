@@ -321,7 +321,7 @@ public class ServerThread extends Thread
 				
 				//Get a list of existing chats
 				stmt = con.createStatement();
-				rs = stmt.executeQuery("SELECT * FROM allchats");
+				rs = stmt.executeQuery("SELECT DISTINCT chatid FROM chats");
 				System.out.println("Got list of existing chats.");
 				
 				//Read chatIDs into array
