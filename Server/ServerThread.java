@@ -334,10 +334,14 @@ public class ServerThread extends Thread
 			rs.close();
 			
 			//The chatID is not a duplicate. We can create the chat and add it to the DB
-			System.out.println("Generated number is not");
+			System.out.println("Generated number is not a duplicate.");
 			
 			stmt.executeUpdate("INSERT into allchats (chatid) values('" + randInt +"')");
-			System.out.println("Inserted into the database.");
+			System.out.println("Inserted the chatid into the allchat table.");
+			
+			//Now insert the username and the chat id into the chat table
+			stmt.executeUpdate("INSERT into chat (username), (chatid) values ('" + username + ",' " + randInt + "')");
+			System.out.println("Inserted the username and chatid into the chat table.");
 			
 			stmt.close();
 			con.close();
