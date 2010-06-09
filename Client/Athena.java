@@ -661,6 +661,7 @@ public class Athena
 		try {
 		Athena.systemMessage("12");
 		
+		
 		try {
 			c2sdout.writeUTF(encryptServerPublic(chatName));
 		} catch (IOException e) {
