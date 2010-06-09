@@ -284,6 +284,8 @@ public class ServerThread extends Thread
 		resetPassword();
 		break;
 		case 12: if(debug==1)System.out.println("Event code received. createChat() run.");
+		createChat();
+		break;
 		default: return;
 		}
 	}
@@ -292,11 +294,12 @@ public class ServerThread extends Thread
 		try{
 			//Grab output stream for the user.
 			//TODO This probably isn't necessary
+			System.out.println("In the method.");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-			
+			System.out.println("Created the output stream which we shouldn't have to do.");
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
-			
+			System.out.println("Connected to the database.");
 			//Get the chat name from the user
 			String chatName = decryptServerPrivate(serverDin.readUTF());
 			
