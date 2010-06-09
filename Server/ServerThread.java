@@ -343,7 +343,7 @@ public class ServerThread extends Thread
 			System.out.println("Inserted the chatid into the allchat table.");
 			
 			//Now insert the username and the chat id into the chat table
-			stmt.executeUpdate("INSERT into chat (username, chatid) values('" + username + ",'" + randInt + "')");
+			stmt.executeUpdate("INSERT into chat (username, chatid) values('" + username + "','" + randInt + "')");
 			System.out.println("Inserted the username and chatid into the chat table.");
 			
 			stmt.close();
