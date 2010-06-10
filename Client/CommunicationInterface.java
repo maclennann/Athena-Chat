@@ -1180,7 +1180,7 @@ public class CommunicationInterface extends JFrame {
 		   }
 		   setEnabled(list.isEnabled());
 		   setFont(list.getFont());
-	         setOpaque(true);
+	       setOpaque(true);
 	         return this;
 	     }
 	 }
