@@ -82,6 +82,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -401,6 +402,7 @@ public class CommunicationInterface extends JFrame {
 		});
 
 		// Adds the contact list to a scroll pane
+		userBox.setCellRenderer(new MyCellRenderer());
 		JScrollPane contactList = new JScrollPane(userBox);
 		contactList.setBounds(600, 2, 195, 450);
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
@@ -476,7 +478,7 @@ public class CommunicationInterface extends JFrame {
 					if (index >= 0) {
 
 						// Get the buddy that was double-clicked
-						Object o = theList.getModel().getElementAt(index);						
+						Object o = theList.getModel().getElementAt(index);
 
 						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + o.toString() + "?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
 						if (ans == JOptionPane.YES_OPTION)
@@ -1156,7 +1158,33 @@ public class CommunicationInterface extends JFrame {
 	return settingsArray;
 	}
 
-	
+	class MyCellRenderer extends JLabel implements ListCellRenderer {
+	 
+	     public Component getListCellRendererComponent(
+	       JList list,
+	       Object value,            // value to display
+	       int index,               // cell index
+	       boolean isSelected,      // is the cell selected
+	       boolean cellHasFocus)    // the list and the cell have the focus
+	     {
+	         String s = value.toString();
+	         setText(s);
+	         setIcon(new ImageIcon("images/alert.png"));
+	   	   if (isSelected) {
+	             setBackground(list.getSelectionBackground());
+		       setForeground(list.getSelectionForeground());
+		   }
+	         else {
+		       setBackground(list.getBackground());
+		       setForeground(list.getForeground());
+		   }
+		   setEnabled(list.isEnabled());
+		   setFont(list.getFont());
+	         setOpaque(true);
+	         return this;
+	     }
+	 }
+
 	
 	class CloseTabButton extends JPanel implements ActionListener, MouseListener {
 		  /**
