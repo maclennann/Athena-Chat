@@ -1169,7 +1169,7 @@ public class CommunicationInterface extends JFrame {
 	     {
 	         String s = value.toString();
 	         setText(s);
-	         setIcon(new ImageIcon("images/alert.png"));
+	         setIcon(new ImageIcon("images/available.png"));
 	   	   if (isSelected) {
 	             setBackground(list.getSelectionBackground());
 		       setForeground(list.getSelectionForeground());
