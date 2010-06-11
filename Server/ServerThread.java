@@ -286,10 +286,24 @@ public class ServerThread extends Thread
 		case 12: if(debug==1)System.out.println("Event code received. createChat() run.");
 		createChat();
 		break;
+		case 13: if(debug==1)System.out.println("Event code received. requestSocketInfo() run.");
+		break;
 		default: return;
 		}
 	}
 	
+	private void requestSocketInfo(){
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			String userForSocket = decryptServerPrivate(serverDin.readUTF());
+			Socket foundSocket = (Socket) server.userToClientSocket.get(userForSocket);
+			String socketString = foundSocket.toString();
+			serverDout.writeUTF(encryptServerPrivate(socketString));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+		
 	private void createChat(){
 		try{
 			//Grab output stream for the user.
