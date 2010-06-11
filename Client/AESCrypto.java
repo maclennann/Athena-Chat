@@ -50,8 +50,10 @@ public class AESCrypto {
 		}
 	}
 	
-	public static byte[] cipherMessage(Cipher cipher, String message){
+	public static byte[] encryptMessage(SecretKeySpec skeySpec, String message){
 		try{
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 			return cipher.doFinal(message.getBytes());
 		}catch(Exception e){
 			e.printStackTrace();
@@ -59,8 +61,10 @@ public class AESCrypto {
 		}
 	}
 	
-	public static byte[] cipherMessage(Cipher cipher, byte[] message){
+	public static byte[] decryptMessage(SecretKeySpec skeySpec, byte[] message){
 		try{
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.DECRYPT_MODE, skeySpec);
 			return cipher.doFinal(message);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -76,18 +80,14 @@ public class AESCrypto {
 		
 		//Create the cipher
 		SecretKeySpec skeySpec = generateKey();
-		Cipher cipher = Cipher.getInstance("AES");
-		cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+		
 		
 		//Encrypt the message
-		byte[] encrypted = cipherMessage(cipher, message);
+		byte[] encrypted = encryptMessage(skeySpec, message);
 		System.out.println("Encrypted string: " + asHex(encrypted));
 
-		//Change the cipher to decrypt
-		cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-		
 		//Decrypt the message
-		byte[] original = cipherMessage(cipher, encrypted);
+		byte[] original = decryptMessage(skeySpec, encrypted);
 		String originalString = new String(original);
 		System.out.println("Decrypted string: " +
 		originalString + "\nDecrypted String in Hex: " + asHex(original));
