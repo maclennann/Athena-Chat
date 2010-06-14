@@ -525,6 +525,9 @@ public class Athena
 						AudioPlayer.player.start(as);
 					}
 				}
+				else if(decryptedMessage.equals("Incoming file transfer...")) { 
+					receiveFile();
+				}
 				// If enabled, open an input stream  to the audio file.
 				else if(getEnableSounds())
 				{
@@ -683,16 +686,28 @@ public class Athena
 	 * @throws IOException 
 	 */
 	public static void sendFile(File myFile) throws IOException {
+		
+		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+		
 		//Make sure the user is directly connected with the user he/she wants to send a file to
 		//if (directConnect == 1) { 
 			//TODO Send the file!!!!
 			//Grab the file size
 			int fileSize = (int) myFile.length();
-			//Send the other user the file size
-			c2sdout.writeInt(fileSize);
-			//Send the other user the file name
-			c2sdout.writeUTF(myFile.getName());
 			
+			//Use process message to initiate the file transfer
+			try {
+				processMessage("Incoming file transfer...");
+				//Now the other client knows that a file is coming, therefore call the recieveFile method
+				//Send the other user the file size
+				processMessage((String.valueOf(fileSize)));
+				//Send the other user the file name
+				processMessage(myFile.getName());
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
 			byte [] mybytearray  = new byte [(int)myFile.length()];
 		    FileInputStream fis = new FileInputStream(myFile);
 		    BufferedInputStream bis = new BufferedInputStream(fis);

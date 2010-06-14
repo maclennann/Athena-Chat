@@ -167,6 +167,8 @@ public class CommunicationInterface extends JFrame {
 	public void buddySignOff(String offlineUser) {
 		listModel.removeElement(offlineUser);
 	}
+	
+
 
 	public static Object[] currentSettings = new Object[11];
 	
@@ -325,8 +327,16 @@ public class CommunicationInterface extends JFrame {
 				final JFileChooser fc = new JFileChooser();
 				//Open the file chooser
 				int returnVal = fc.showOpenDialog(CommunicationInterface.this);
+				try {
+					Athena.sendFile(fc.getSelectedFile());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
+		
+
 
 
 		// ActionListener to make the disconnect menu item disconnect
