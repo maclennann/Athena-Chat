@@ -68,6 +68,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -121,7 +122,7 @@ public class CommunicationInterface extends JFrame {
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
-	public JMenuItem disconnect, exit, preferences, createChat;
+	public JMenuItem disconnect, exit, preferences, createChat, sendFile;
 	public JPanel panel;
 	public static JFrame imContentFrame, buddyListFrame;
 	public JComboBox statusBox = new JComboBox(new String[] {"Available", "Busy"});
@@ -166,6 +167,8 @@ public class CommunicationInterface extends JFrame {
 	public void buddySignOff(String offlineUser) {
 		listModel.removeElement(offlineUser);
 	}
+	
+
 
 	public static Object[] currentSettings = new Object[11];
 	
@@ -233,6 +236,11 @@ public class CommunicationInterface extends JFrame {
 		createChat.setMnemonic(KeyEvent.VK_C);
 		file.add(createChat);
 
+		//Create button File -> Send File
+		sendFile = new JMenuItem("Send File");
+		sendFile.setMnemonic(KeyEvent.VK_C);
+		file.add(sendFile);
+		
 		// Create button File -> Disconnect
 		disconnect = new JMenuItem("Disconnect");
 		disconnect.setMnemonic(KeyEvent.VK_D);
@@ -312,6 +320,25 @@ public class CommunicationInterface extends JFrame {
 				//Athena.createChat();
 			}
 		});
+		
+		// ActionListener to make the disconnect menu item disconnect
+		sendFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				//Create a file chooser
+				final JFileChooser fc = new JFileChooser();
+				//Open the file chooser
+				int returnVal = fc.showOpenDialog(CommunicationInterface.this);
+				try {
+					Athena.sendFile(fc.getSelectedFile());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+
+
 
 		// ActionListener to make the disconnect menu item disconnect
 		disconnect.addActionListener(new ActionListener() {
