@@ -47,6 +47,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.security.SecureRandom;
 
 import sun.misc.BASE64Encoder;
 import sun.security.util.BigInt;
@@ -162,14 +163,7 @@ public class ServerThread extends Thread
 			if(realUsername==null) server.removeConnection(c2ssocket,c2csocket);
 
 			else server.removeConnection( c2ssocket, c2csocket,realUsername );
-			//serverDin = new DataInputStream( c2ssocket.getInputStream() );
-			//clientDin = new DataInputStream( c2csocket.getInputStream() );
-			//serverDout = new DataOutputStream( c2ssocket.getOutputStream());
-			//clientDout = new DataOutputStream( c2csocket.getOutputStream());
-			//serverDin.close();
-			//serverDout.close();
-			//clientDin.close();
-			//clientDout.close();
+
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -232,7 +226,10 @@ public class ServerThread extends Thread
 				if(debug>=1)System.out.println("Routing normal message to: " + toUserDecrypted + "\nmessage from: " + fromUser);
 				if(debug==2)System.out.println("\nEncrypted message: "+messageEncrypted);
 				sendMessage(toUserDecrypted, fromUser, messageEncrypted);
+				
 			}
+			//Collect some garbage
+			System.gc();
 
 		} catch (IOException e) {
 			//Something broke. Disconnect the user.
@@ -286,8 +283,87 @@ public class ServerThread extends Thread
 		case 11: if(debug==1)System.out.println("Event code received. resetPassword() run.");
 		resetPassword();
 		break;
+		case 12: if(debug==1)System.out.println("Event code received. createChat() run.");
+		createChat();
+		break;
+		case 13: if(debug==1)System.out.println("Event code received. requestSocketInfo() run.");
+		break;
 		default: return;
 		}
+	}
+	
+	private void requestSocketInfo(){
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			String userForSocket = decryptServerPrivate(serverDin.readUTF());
+			Socket foundSocket = (Socket) server.userToClientSocket.get(userForSocket);
+			String socketString = foundSocket.toString();
+			serverDout.writeUTF(encryptServerPrivate(socketString));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+		
+	private void createChat(){
+		try{
+			//Grab output stream for the user.
+			//TODO This probably isn't necessary
+			System.out.println("In the method.");
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			System.out.println("Created the output stream which we shouldn't have to do.");
+			//Grab a connection to the database
+			Connection con = server.dbConnect();
+			System.out.println("Connected to the database.");
+			//Get the chat name from the user
+			String chatName = decryptServerPrivate(serverDin.readUTF());
+			
+			System.out.println("Took in the desired chat name.");
+			//Is the chatID a dupe?
+			int dupe = 0;
+			Statement stmt;
+			ResultSet rs = null;
+			int randInt=0;
+			
+			//Generate a unique, random number for the chat
+			do{
+				//Generate a random number for the chat
+				SecureRandom random = SecureRandom.getInstance("SHA1PRNG"); 
+				byte seed[] = random.generateSeed(20);
+				random.setSeed(seed); 
+				randInt = random.nextInt(9999);
+				System.out.println("Generated random chat ID: "+randInt);
+				
+				//Get a list of existing chats
+				stmt = con.createStatement();
+				rs = stmt.executeQuery("SELECT DISTINCT chatid FROM chats");
+				System.out.println("Got list of existing chats.");
+				
+				//Read chatIDs into array
+				while(rs.next()){
+					if (rs.getInt("chatid") == randInt){
+						dupe = 1;
+					}
+					else dupe = 0;
+				}
+			} while(dupe == 1);
+			
+			//Close the statement and result set
+			rs.close();
+			
+			//The chatID is not a duplicate. We can create the chat and add it to the DB
+			System.out.println("Generated number is not a duplicate.");
+			
+			stmt.executeUpdate("INSERT into allchats (chatid) values('" + randInt +"')");
+			System.out.println("Inserted the chatid into the allchat table.");
+			
+			//Now insert the username and the chat id into the chat table
+			stmt.executeUpdate("INSERT into chat (username, chatid) values('" + username + "','" + randInt + "')");
+			System.out.println("Inserted the username and chatid into the chat table.");
+			
+			stmt.close();
+			con.close();
+			
+		}catch(Exception e){e.printStackTrace();}
 	}
 	
 	private void resetPassword(){
@@ -317,6 +393,9 @@ public class ServerThread extends Thread
 			}else{
 				secretQuestion = "Invalid Username";
 			}
+			
+			//Close the resultset
+			rs.close();
 			
 			//Send the secret question to the client for answering
 			serverDout.writeUTF(encryptServerPrivate(secretQuestion));
@@ -747,6 +826,7 @@ public class ServerThread extends Thread
 				//Send status message that the username has already been taken.
 				BigInteger failedRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has already been taken, please try again.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(failedRegistrationResultBigInt.toString());
+				rs.close();
 				return false;
 			}
 			else { 
@@ -759,9 +839,9 @@ public class ServerThread extends Thread
 					return false;
 				}
 				RSACrypto.saveToFile("keys/"+newUser+".pub",publicMod,publicExp);
-
+				
 				//Grab the users new password
-				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password, secretq, secreta) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "', '" + secretQuestion + "', '" + secretAnswer +"')";
+				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password, secretq, secreta) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "', '" + secretQuestion.replace('\'','\\') + "', '" + secretAnswer +"')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 				
@@ -775,8 +855,10 @@ public class ServerThread extends Thread
 				stmt.close();
 				insertSTMT.close();
 				con.close();
+				rs.close();
 				return true;
 			}
+			
 		}catch (SQLException se) { 
 			//Inform of our failure
 			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));

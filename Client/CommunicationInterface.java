@@ -42,6 +42,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -67,6 +68,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -81,6 +83,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -92,6 +95,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLEditorKit;
+import java.io.DataOutputStream;
 
 import com.inet.jortho.SpellChecker;	
 
@@ -118,7 +122,7 @@ public class CommunicationInterface extends JFrame {
 	public JList userBox = new JList(listModel);
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
-	public JMenuItem disconnect, exit, preferences;
+	public JMenuItem disconnect, exit, preferences, createChat, sendFile;
 	public JPanel panel;
 	public static JFrame imContentFrame, buddyListFrame;
 	public JComboBox statusBox = new JComboBox(new String[] {"Available", "Busy"});
@@ -223,17 +227,28 @@ public class CommunicationInterface extends JFrame {
 		imContentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		// Create the file menu.
 		file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_F);
+		file.setMnemonic(KeyEvent.VK_F);		
+		
+		//Create button File -> Create Chat
+		createChat = new JMenuItem("Create Chat");
+		createChat.setMnemonic(KeyEvent.VK_C);
+		file.add(createChat);
 
+		//Create button File -> Send File
+		sendFile = new JMenuItem("Send File");
+		sendFile.setMnemonic(KeyEvent.VK_C);
+		file.add(sendFile);
+		
 		// Create button File -> Disconnect
 		disconnect = new JMenuItem("Disconnect");
 		disconnect.setMnemonic(KeyEvent.VK_D);
 		file.add(disconnect);
-
+		
 		// Create button File -> Exit
 		exit = new JMenuItem("Exit");
 		exit.setMnemonic(KeyEvent.VK_X);
 		file.add(exit);
+
 
 		// Add the file menu to the menu bar
 		menuBar.add(file);
@@ -295,6 +310,24 @@ public class CommunicationInterface extends JFrame {
 		help.add(bugReport);
 		
 		// TODO Add items to the encryption menu
+		
+		// ActionListener to make the disconnect menu item disconnect
+		createChat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				Athena.createChat();
+			}
+		});
+		
+		// ActionListener to make the disconnect menu item disconnect
+		sendFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				//Create a file chooser
+				final JFileChooser fc = new JFileChooser();
+				//Open the file chooser
+				int returnVal = fc.showOpenDialog(CommunicationInterface.this);
+			}
+		});
+
 
 		// ActionListener to make the disconnect menu item disconnect
 		disconnect.addActionListener(new ActionListener() {
@@ -386,6 +419,7 @@ public class CommunicationInterface extends JFrame {
 		});
 
 		// Adds the contact list to a scroll pane
+		userBox.setCellRenderer(new MyCellRenderer());
 		JScrollPane contactList = new JScrollPane(userBox);
 		contactList.setBounds(600, 2, 195, 450);
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
@@ -461,7 +495,7 @@ public class CommunicationInterface extends JFrame {
 					if (index >= 0) {
 
 						// Get the buddy that was double-clicked
-						Object o = theList.getModel().getElementAt(index);						
+						Object o = theList.getModel().getElementAt(index);
 
 						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + o.toString() + "?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
 						if (ans == JOptionPane.YES_OPTION)
@@ -1141,7 +1175,33 @@ public class CommunicationInterface extends JFrame {
 	return settingsArray;
 	}
 
-	
+	class MyCellRenderer extends JLabel implements ListCellRenderer {
+	 
+	     public Component getListCellRendererComponent(
+	       JList list,
+	       Object value,            // value to display
+	       int index,               // cell index
+	       boolean isSelected,      // is the cell selected
+	       boolean cellHasFocus)    // the list and the cell have the focus
+	     {
+	         String s = value.toString();
+	         setText(s);
+	         setIcon(new ImageIcon("images/available.png"));
+	   	   if (isSelected) {
+	             setBackground(list.getSelectionBackground());
+		       setForeground(list.getSelectionForeground());
+		   }
+	         else {
+		       setBackground(list.getBackground());
+		       setForeground(list.getForeground());
+		   }
+		   setEnabled(list.isEnabled());
+		   setFont(list.getFont());
+	       setOpaque(true);
+	         return this;
+	     }
+	 }
+
 	
 	class CloseTabButton extends JPanel implements ActionListener, MouseListener {
 		  /**

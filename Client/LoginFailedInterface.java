@@ -105,15 +105,15 @@ public class LoginFailedInterface extends JFrame {
 		//If status is true, that means it was a successful login so don't display the sad face.
 		//TODO Add a happy face
 		if(!(status)) {
-		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
-		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
+		Image generalPreferencesImage1 = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
+		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage1);	
 		failedLoginDrawingPanel.setBounds(140,75,100,100);
 		contentPane.add(failedLoginDrawingPanel);
 		contentPane.add(forgotPassword);
 		}
 		else{
-		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("images/happyface.png");
-		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
+		Image generalPreferencesImage2 = Toolkit.getDefaultToolkit().getImage("images/happyface.png");
+		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage2);	
 		failedLoginDrawingPanel.setBounds(140,75,100,100);
 		contentPane.add(failedLoginDrawingPanel);
 		}
