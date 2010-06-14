@@ -19,6 +19,7 @@ import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -26,11 +27,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
@@ -674,6 +677,66 @@ public class Athena
 		//TODO Make a new tab to display the group chat window 
 	}
 	
+	/**
+	 * This method sends the file to the other user (must initialize direct-connect first!) 
+	 * @param filename
+	 * @throws IOException 
+	 */
+	public static void sendFile(File myFile) throws IOException {
+		//Make sure the user is directly connected with the user he/she wants to send a file to
+		//if (directConnect == 1) { 
+			//TODO Send the file!!!!
+			//Grab the file size
+			int fileSize = (int) myFile.length();
+			//Send the other user the file size
+			c2sdout.writeInt(fileSize);
+			//Send the other user the file name
+			c2sdout.writeUTF(myFile.getName());
+			
+			byte [] mybytearray  = new byte [(int)myFile.length()];
+		    FileInputStream fis = new FileInputStream(myFile);
+		    BufferedInputStream bis = new BufferedInputStream(fis);
+		    bis.read(mybytearray,0,mybytearray.length);
+		    OutputStream os = c2ssocket.getOutputStream();
+		    System.out.println("Sending...");
+		    os.write(mybytearray,0,mybytearray.length);
+		    os.flush();
+
+		}
+	
+	/**
+	 * This method receives a file from a user (must initialize a direct-connect first!)
+	 * @throws IOException 
+	 * 
+	 */
+	public static void receiveFile() throws IOException {
+		//Grab the file size
+		int filesize = c2sdin.readInt();
+		//Grab the file name
+		String filename = c2sdin.readUTF();
+		
+	    byte [] mybytearray  = new byte [filesize];
+	    InputStream is = c2ssocket.getInputStream();
+	    FileOutputStream fos = new FileOutputStream(filename);
+	    BufferedOutputStream bos = new BufferedOutputStream(fos);
+	    int bytesRead = is.read(mybytearray,0,mybytearray.length);
+	    int current = bytesRead;
+	    //Reconstruct the file
+	    do {
+	        try {
+				bytesRead =
+				   is.read(mybytearray, current, (mybytearray.length-current));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        if(bytesRead >= 0) current += bytesRead;
+	     } while(bytesRead > -1);
+	    bos.write(mybytearray, 0 , current);
+	    bos.flush();
+
+
+	}
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
 	/** This method takes the message the user types and will get it ready to send
