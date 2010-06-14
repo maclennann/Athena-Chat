@@ -308,7 +308,8 @@ public class CommunicationInterface extends JFrame {
 		// ActionListener to make the disconnect menu item disconnect
 		createChat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				Athena.createChat();
+				createChatWindow();
+				//Athena.createChat();
 			}
 		});
 
@@ -409,6 +410,7 @@ public class CommunicationInterface extends JFrame {
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, oneColor);
+		contactListBorder = contactListBorderAA;
 		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
 		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), Color.black);
 		contactList.setBorder(buddyBorder);
@@ -1023,6 +1025,52 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 		
+	}
+	
+	public void createChatWindow()
+	{
+		JFrame chatWindow = new JFrame("Group Chat Initiation");
+		chatWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		chatWindow.setSize(700, 700);
+		
+		JPanel chatPanel = new JPanel();
+		chatPanel.setBounds(10, 10, 600, 600);
+		chatPanel.setLayout(null);
+		
+		JButton inviteButton = new JButton("Invite");
+		inviteButton.setForeground(Color.black);
+		inviteButton.setBackground(new Color(218, 165, 32));
+		inviteButton.setBounds(30, 310, 150, 30);
+		inviteButton.setBorder(buttonBorder);
+		
+		JButton removeButton = new JButton("Remove");
+		removeButton.setForeground(Color.white);
+		removeButton.setBackground(new Color(0, 0, 120));
+		removeButton.setBounds(200, 310, 150, 30);
+		removeButton.setBorder(buttonBorder);
+		
+		JScrollPane contactList = new JScrollPane(userBox);
+		contactList.setBounds(30, 50, 150, 250);
+		contactList.setBorder(contactListBorder);
+		
+		JScrollPane inviteList = new JScrollPane(new JList(new DefaultListModel()));
+		inviteList.setBounds(200, 50, 150, 250);
+		inviteList.setBorder(contactListBorder);
+		
+		JLabel contactsLabel = new JLabel("Available Contacts:");
+		contactsLabel.setBounds(40, 20, 150, 20);
+		JLabel inviteLabel = new JLabel("Contacts to Invite:");
+		inviteLabel.setBounds(210, 20, 150, 20);
+		
+		chatPanel.add(contactList);
+		chatPanel.add(inviteList);
+		chatPanel.add(contactsLabel);
+		chatPanel.add(inviteLabel);
+		chatPanel.add(inviteButton);
+		chatPanel.add(removeButton);
+		
+		chatWindow.add(chatPanel);
+		chatWindow.setVisible(true);
 	}
 
 	// Makes a new hash table with user's online status
