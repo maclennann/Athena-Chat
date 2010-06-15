@@ -122,6 +122,7 @@ public class CommunicationInterface extends JFrame {
 	// Components for the visual display of the chat windows
 	public JList userBox = new JList(contactListModel);
 	public JList inviteBox = new JList(inviteListModel);
+	public JList contactBox;
 	public String[] contactsToInvite = new String[100];
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
@@ -1061,13 +1062,14 @@ public class CommunicationInterface extends JFrame {
 	{
 		JFrame chatWindow = new JFrame("Group Chat Initiation");
 		chatWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		chatWindow.setSize(700, 700);
+		chatWindow.setSize(520, 520);
 		
 		JPanel chatPanel = new JPanel();
-		chatPanel.setBounds(10, 10, 600, 600);
+		chatPanel.setBounds(10, 10, 500, 500);
 		chatPanel.setLayout(null);
 		
-		JScrollPane contactList = new JScrollPane(userBox);
+		contactBox = new JList(contactListModel);
+		JScrollPane contactList = new JScrollPane(contactBox);
 		contactList.setBounds(30, 50, 150, 250);
 		contactList.setBorder(contactListBorder);
 		
