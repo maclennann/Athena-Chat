@@ -116,10 +116,17 @@ public class CommunicationInterface extends JFrame {
 	public boolean settingsLoaded = false;
 
 	// Define the listModel for the JList
-	DefaultListModel listModel = new DefaultListModel();
+	DefaultListModel contactListModel = new DefaultListModel();
+	DefaultListModel inviteListModel = new DefaultListModel();
 
 	// Components for the visual display of the chat windows
-	public JList userBox = new JList(listModel);
+	public JList userBox = new JList(contactListModel);
+	public JList inviteBox = new JList(inviteListModel);
+	public JList contactBox;
+	public JTextField chatNameField = new JTextField();
+	public JFrame chatWindow;
+	public JScrollPane contactList, chatList;
+	public String[] contactsToInvite = new String[100];
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
 	public JMenuItem disconnect, exit, preferences, createChat, sendFile;
@@ -131,10 +138,11 @@ public class CommunicationInterface extends JFrame {
 	public BufferedImage addUserIcon;
 	public Border buttonBorder = BorderFactory.createRaisedBevelBorder();
 	public Border blackline = BorderFactory.createLineBorder(Color.gray);
+	public Border whiteColor = BorderFactory.createLineBorder(Color.white);
 	public Border oneColor = BorderFactory.createLineBorder(Color.black);
-	//public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
+	public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
 	public Border threeColor = BorderFactory.createLineBorder(new Color(218, 165, 32)); //Goldenrod
-	public Border contactListBorder;
+	public Border contactListBorder, chatListBorder;
 	public ImageIcon lockIcon = new ImageIcon("images/lockicon.png");
 	public ImageIcon logoIcon = new ImageIcon("images/logo.png");
 	public ImageIcon logoIconBig = new ImageIcon("images/logobig.png");
@@ -157,16 +165,18 @@ public class CommunicationInterface extends JFrame {
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
-		if(listModel.indexOf(availableUser) == -1){
-			listModel.addElement(availableUser);
+		if(contactListModel.indexOf(availableUser) == -1){
+			contactListModel.addElement(availableUser);
 		}
 		
 	}
 
 	// Method to remove user from the JList who signs off
 	public void buddySignOff(String offlineUser) {
-		listModel.removeElement(offlineUser);
+		contactListModel.removeElement(offlineUser);
 	}
+	
+
 
 	public static Object[] currentSettings = new Object[11];
 	
@@ -314,7 +324,8 @@ public class CommunicationInterface extends JFrame {
 		// ActionListener to make the disconnect menu item disconnect
 		createChat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				Athena.createChat();
+				createChatWindow();
+				//Athena.createChat();
 			}
 		});
 		
@@ -325,15 +336,23 @@ public class CommunicationInterface extends JFrame {
 				final JFileChooser fc = new JFileChooser();
 				//Open the file chooser
 				int returnVal = fc.showOpenDialog(CommunicationInterface.this);
+				try {
+					Athena.sendFile(fc.getSelectedFile());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
+		
+
 
 
 		// ActionListener to make the disconnect menu item disconnect
 		disconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				// Clear the Buddy list when disconnected
-				listModel.clear();
+				contactListModel.clear();
 				Athena.disconnect();
 				//Get rid of this window and open a new Login Window
 				imContentFrame.dispose();
@@ -420,43 +439,62 @@ public class CommunicationInterface extends JFrame {
 
 		// Adds the contact list to a scroll pane
 		userBox.setCellRenderer(new MyCellRenderer());
-		JScrollPane contactList = new JScrollPane(userBox);
+		contactList = new JScrollPane(userBox);
+		chatList = new JScrollPane(inviteBox);
 		contactList.setBounds(600, 2, 195, 450);
+		chatList.setBounds(600, 2, 195, 450);
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
+		Border chatListBorderA = BorderFactory.createCompoundBorder(twoColor, twoColor);
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, oneColor);
+		Border chatListBorderB = BorderFactory.createCompoundBorder(chatListBorderA, whiteColor);
+		Border chatListBorderC = BorderFactory.createCompoundBorder(chatListBorderB, twoColor);
+		Border chatListBorderAA = BorderFactory.createCompoundBorder(chatListBorderC, twoColor);
+		contactListBorder = contactListBorderAA;
+		chatListBorder = chatListBorderAA;
 		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
 		TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), Color.black);
+		TitledBorder chatListBorder = BorderFactory.createTitledBorder(chatListBorderAA, "Group Chat List", TitledBorder.CENTER,
+				TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
+		chatList.setBorder(chatListBorder);
 
 		// TODO Add ActionListeners to the images to bring up the add/remove
 		// user windows
 
 		JButton addContactLabel = new JButton(new ImageIcon("images/addUser.png"));
 		JButton removeContactLabel = new JButton(new ImageIcon("images/removeUser.png"));
+		JButton homeListButton = new JButton(new ImageIcon("images/home-icon.png"));
 
-		addContactLabel.setFont(new Font("Arial", Font.BOLD, 10));
-		addContactLabel.setMargin(new Insets(1, 1, 1, 1));
-		addContactLabel.setForeground(Color.black);
 		addContactLabel.setBackground(new Color(240, 240, 240));
 		buttonBorder = BorderFactory.createCompoundBorder(buttonBorder, buttonBorder);
 		addContactLabel.setBorder(buttonBorder);
 		
-		removeContactLabel.setFont(new Font("Arial", Font.BOLD, 10));
-		removeContactLabel.setMargin(new Insets(1, 1, 1, 1));
-		removeContactLabel.setForeground(Color.black);
 		removeContactLabel.setBackground(new Color(240, 240, 240));
 		removeContactLabel.setBorder(buttonBorder);
 		
+		homeListButton.setBackground(new Color(240, 240, 240));
+		homeListButton.setBorder(buttonBorder);
+		
 		addContactLabel.setVisible(true);
 		removeContactLabel.setVisible(true);
-		addContactLabel.setBounds(630, 490, 50, 50);
-		removeContactLabel.setBounds(720, 490, 50, 50);
+		homeListButton.setVisible(true);
+		addContactLabel.setBounds(610, 490, 50, 50);
+		removeContactLabel.setBounds(670, 490, 50, 50);
+		homeListButton.setBounds(730, 490, 50, 50);
+		
+		homeListButton.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				{
+					contactList.setVisible(true);
+					chatList.setVisible(false);
+				}
+			}		
+		});
 		
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				//JList theList = (JList) mouseEvent.getSource();
 				if (imTabbedPane.getTabCount() > 0)
 				{
 					FocusCurrentTextField();
@@ -695,8 +733,12 @@ public class CommunicationInterface extends JFrame {
 		panel = new JPanel();
 		panel.setLayout(null);
 		panel.add(contactList);
+		contactList.setVisible(true);
+		panel.add(chatList);
+		chatList.setVisible(false);
 		panel.add(addContactLabel);
 		panel.add(removeContactLabel);
+		panel.add(homeListButton);
 		panel.add(statusBox);
 		panel.add(lockIconLabel);
 		panel.add(logoIconLabel);
@@ -765,6 +807,8 @@ public class CommunicationInterface extends JFrame {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
 		if(imTabbedPane.indexOfTab(user) == 0 || userCreated)
 		{
+			contactList.setVisible(true);
+			chatList.setVisible(false);
 			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(user));
 			if(!(userStatusFlag))
 				FocusCurrentTextField();
@@ -773,6 +817,56 @@ public class CommunicationInterface extends JFrame {
 		{
 			Icon alertIcon = new ImageIcon("images/alert.png");
 			CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.indexOfTab(user));
+			JButton currentButton = (JButton) c.getComponent(1);
+			currentButton.setIcon(alertIcon);
+			imTabbedPane.setSelectedIndex(prevIndex);
+			if(!(userStatusFlag))
+				FocusCurrentTextField();			
+		}
+		//Garbage collect!
+		System.gc();
+	}
+	
+	public void makeChatTab(String chatName, boolean userCreated) {
+		lockIconLabel.setVisible(false);
+		logoIconLabel.setVisible(false);
+		int prevIndex = 0;
+		// Create a hash table mapping a user name to the JPanel in a tab
+		tabPanels.put(chatName, new MapTextArea(chatName, enableSpellCheck, uniqueIDHash));
+		// Make a temporary object for that JPanel
+		MapTextArea temp = (MapTextArea) tabPanels.get(chatName);
+		// Actually pull the JPanel out
+		JPanel tempPanel = temp.getJPanel();
+		// Create a tab with that JPanel on it and add tab to ID hash table
+		if(imTabbedPane.getTabCount() > 0)
+			prevIndex = imTabbedPane.getSelectedIndex();
+		
+		imTabbedPane.addTab(chatName, null, tempPanel, chatName + " Tab");
+		// Add close button to tab
+		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(chatName));
+		//Add ESC Key listener
+		if(enableESCToClose)
+			addESCKeyListener(imTabbedPane.indexOfTab(chatName));
+		//Add alert notification listener
+		addAlertNotificationListener(imTabbedPane.indexOfTab(chatName));
+		// Focus the new tab if first tab or if textarea is empty
+		addChatTextFieldFocusListener(imTabbedPane.indexOfTab(chatName));
+		if(userStatusFlag)
+			disableTextPane(imTabbedPane.indexOfTab(chatName));
+		
+		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(chatName));
+		if(imTabbedPane.indexOfTab(chatName) == 0 || userCreated)
+		{
+			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(chatName));
+			contactList.setVisible(false);
+			chatList.setVisible(true);
+			if(!(userStatusFlag))
+				FocusCurrentTextField();
+		}
+		else
+		{
+			Icon alertIcon = new ImageIcon("images/alert.png");
+			CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.indexOfTab(chatName));
 			JButton currentButton = (JButton) c.getComponent(1);
 			currentButton.setIcon(alertIcon);
 			imTabbedPane.setSelectedIndex(prevIndex);
@@ -1039,7 +1133,179 @@ public class CommunicationInterface extends JFrame {
 				// Do nothing
 			}
 		});
+	}
+	
+	private void addChatTextFieldFocusListener(int index)
+	{
+		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
+		Component[] currentTabComponents = currentTab.getComponents();
+		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
+		currentTextField.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				contactList.setVisible(false);
+				chatList.setVisible(true);
+				Icon closeIcon = new ImageIcon("images/close_button.png");
+				CloseTabButton c = (CloseTabButton)imTabbedPane.getTabComponentAt(imTabbedPane.getSelectedIndex());
+				JButton currentButton = (JButton) c.getComponent(1);
+				currentButton.setIcon(closeIcon);
+			}
+			
+			public void focusLost(FocusEvent e) {
+				contactList.setVisible(true);
+				chatList.setVisible(false);
+			}
+		});
+	}
+	
+	public void createChatWindow()
+	{
+		chatWindow = new JFrame("Group Chat Initiation");
+		chatWindow.setSize(400, 480);
 		
+		JPanel chatPanel = new JPanel();
+		chatPanel.setBounds(10, 10, 400, 480);
+		chatPanel.setLayout(null);
+		
+		contactBox = new JList(contactListModel);
+		JScrollPane contactList = new JScrollPane(contactBox);
+		contactList.setBounds(30, 15, 150, 285);
+		TitledBorder chatBorder = BorderFactory.createTitledBorder(contactListBorder, "Available Contacts", TitledBorder.CENTER, TitledBorder.ABOVE_TOP);
+		contactList.setBorder(chatBorder);
+		
+		inviteListModel.removeAllElements();
+		JScrollPane inviteList = new JScrollPane(inviteBox);
+		inviteList.setBounds(200, 15, 150, 285);
+		TitledBorder inviteBorder = BorderFactory.createTitledBorder(contactListBorder, "Contacts To Invite", TitledBorder.CENTER, TitledBorder.ABOVE_TOP);
+		inviteList.setBorder(inviteBorder);
+		
+		JButton inviteButton = new JButton("Invite");
+		inviteButton.setForeground(Color.black);
+		inviteButton.setBackground(new Color(218, 165, 32));
+		inviteButton.setBounds(30, 310, 150, 30);
+		inviteButton.setBorder(buttonBorder);
+		inviteButton.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				try {				
+					JList theContactList = (JList) contactBox;
+					
+					// Get selected item
+					int index = theContactList.getSelectedIndex();
+
+					if (index >= 0) {
+						// Add selected item to invite list
+						if(inviteListModel.contains(contactListModel.getElementAt(index)))
+							JOptionPane.showMessageDialog(null, contactListModel.getElementAt(index).toString() +
+														" is already invited.", "Attention!", JOptionPane.ERROR_MESSAGE);
+						else
+							inviteListModel.addElement(contactListModel.getElementAt(index));
+					}
+					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
+					else
+					{
+						JOptionPane.showMessageDialog(null, "No contact selected for invite.", "Attention!", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		JButton removeButton = new JButton("Remove");
+		removeButton.setForeground(Color.white);
+		removeButton.setBackground(new Color(0, 0, 120));
+		removeButton.setBounds(200, 310, 150, 30);
+		removeButton.setBorder(buttonBorder);
+		removeButton.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				try {				
+					JList theInviteList = (JList) inviteBox;
+					
+					// Get selected item
+					int index = theInviteList.getSelectedIndex();
+
+					if (index >= 0) {
+						// Remove selected item
+						inviteListModel.removeElementAt(index);
+					}
+					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
+					else
+					{
+						JOptionPane.showMessageDialog(null, "No contact selected for removal.", "Attention!", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		JLabel chatNameLabel = new JLabel("Chat Room Name:");
+		chatNameLabel.setBounds(30,360, 105, 20);
+		
+		chatNameField.setBounds(135, 360, 215, 20);
+		chatNameField.setText("");
+		chatNameField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+			}
+
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+			}
+
+			public void keyTyped(KeyEvent e) {
+				if(chatNameField.getText().length() == 30)
+					e.consume();
+			}
+		});
+		
+		JButton createChatButton = new JButton("Create Chat");
+		createChatButton.setForeground(Color.black);
+		createChatButton.setBackground(new Color(218, 165, 32));
+		createChatButton.setBounds(30, 400, 150, 30);
+		createChatButton.setBorder(buttonBorder);
+		createChatButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if(inviteListModel.isEmpty())
+					JOptionPane.showMessageDialog(null, "No contacts selected for group chat.", "Attention!", JOptionPane.ERROR_MESSAGE);
+				else if(chatNameField.getText().trim().equals(""))
+				{
+					JOptionPane.showMessageDialog(null, "Please enter a chat room name.", "Attention!", JOptionPane.ERROR_MESSAGE);
+				}
+				else
+				{
+					makeChatTab(chatNameField.getText(), true);
+					TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
+							TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
+					chatList.setBorder(newChatListBorder);
+					chatWindow.dispose();
+					//Send messages to all elements in inviteListModel
+				}
+			}
+		});
+		
+		JButton cancelChatButton = new JButton("Cancel");
+		cancelChatButton.setForeground(Color.white);
+		cancelChatButton.setBackground(new Color(0, 0, 120));
+		cancelChatButton.setBounds(200, 400, 150, 30);
+		cancelChatButton.setBorder(buttonBorder);
+		cancelChatButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				chatWindow.dispose();
+			}
+		});
+		
+		chatPanel.add(contactList);
+		chatPanel.add(inviteList);
+		chatPanel.add(chatNameLabel);
+		chatPanel.add(inviteButton);
+		chatPanel.add(removeButton);
+		chatPanel.add(createChatButton);
+		chatPanel.add(cancelChatButton);
+		chatPanel.add(chatNameField);
+		
+		chatWindow.add(chatPanel);
+		chatWindow.setVisible(true);
 	}
 
 	// Makes a new hash table with user's online status
