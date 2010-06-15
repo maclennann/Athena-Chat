@@ -1061,7 +1061,7 @@ public class CommunicationInterface extends JFrame {
 	public void createChatWindow()
 	{
 		JFrame chatWindow = new JFrame("Group Chat Initiation");
-		chatWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//chatWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		chatWindow.setSize(520, 520);
 		
 		JPanel chatPanel = new JPanel();
@@ -1085,7 +1085,7 @@ public class CommunicationInterface extends JFrame {
 		inviteButton.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				try {				
-					JList theContactList = (JList) userBox;
+					JList theContactList = (JList) contactBox;
 					
 					// Get selected item
 					int index = theContactList.getSelectedIndex();
