@@ -489,6 +489,13 @@ public class Athena
 					return;	
 				}
 			}
+			//Pop up chat invite
+			if(fromUserDecrypted.equals("ChatInvite")) {
+				decryptedMessage = decryptServerPublic(encryptedMessage);
+				String[] chatName = decryptedMessage.split(".*,.*");
+				
+				JOptionPane.showMessageDialog(null, "You've been invited to join a group chat named, " + chatName[0] + " , by " + chatName[1] + ".");
+			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//Compare the digital signature to the hashed message to verify integrity of the message!
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivate.getModulus(),usersPrivate.getPrivateExponent());
