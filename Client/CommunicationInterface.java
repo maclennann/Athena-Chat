@@ -465,28 +465,36 @@ public class CommunicationInterface extends JFrame {
 
 		JButton addContactLabel = new JButton(new ImageIcon("images/addUser.png"));
 		JButton removeContactLabel = new JButton(new ImageIcon("images/removeUser.png"));
+		JButton homeListButton = new JButton(new ImageIcon("images/home-icon.png"));
 
-		addContactLabel.setFont(new Font("Arial", Font.BOLD, 10));
-		addContactLabel.setMargin(new Insets(1, 1, 1, 1));
-		addContactLabel.setForeground(Color.black);
 		addContactLabel.setBackground(new Color(240, 240, 240));
 		buttonBorder = BorderFactory.createCompoundBorder(buttonBorder, buttonBorder);
 		addContactLabel.setBorder(buttonBorder);
 		
-		removeContactLabel.setFont(new Font("Arial", Font.BOLD, 10));
-		removeContactLabel.setMargin(new Insets(1, 1, 1, 1));
-		removeContactLabel.setForeground(Color.black);
 		removeContactLabel.setBackground(new Color(240, 240, 240));
 		removeContactLabel.setBorder(buttonBorder);
 		
+		homeListButton.setBackground(new Color(240, 240, 240));
+		homeListButton.setBorder(buttonBorder);
+		
 		addContactLabel.setVisible(true);
 		removeContactLabel.setVisible(true);
-		addContactLabel.setBounds(630, 490, 50, 50);
-		removeContactLabel.setBounds(720, 490, 50, 50);
+		homeListButton.setVisible(true);
+		addContactLabel.setBounds(610, 490, 50, 50);
+		removeContactLabel.setBounds(670, 490, 50, 50);
+		homeListButton.setBounds(730, 490, 50, 50);
+		
+		homeListButton.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				{
+					contactList.setVisible(true);
+					chatList.setVisible(false);
+				}
+			}		
+		});
 		
 		imTabbedPane.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				//JList theList = (JList) mouseEvent.getSource();
 				if (imTabbedPane.getTabCount() > 0)
 				{
 					FocusCurrentTextField();
@@ -730,6 +738,7 @@ public class CommunicationInterface extends JFrame {
 		chatList.setVisible(false);
 		panel.add(addContactLabel);
 		panel.add(removeContactLabel);
+		panel.add(homeListButton);
 		panel.add(statusBox);
 		panel.add(lockIconLabel);
 		panel.add(logoIconLabel);
