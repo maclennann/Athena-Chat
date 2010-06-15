@@ -116,10 +116,13 @@ public class CommunicationInterface extends JFrame {
 	public boolean settingsLoaded = false;
 
 	// Define the listModel for the JList
-	DefaultListModel listModel = new DefaultListModel();
+	DefaultListModel contactListModel = new DefaultListModel();
+	DefaultListModel inviteListModel = new DefaultListModel();
 
 	// Components for the visual display of the chat windows
-	public JList userBox = new JList(listModel);
+	public JList userBox = new JList(contactListModel);
+	public JList inviteBox = new JList(inviteListModel);
+	public String[] contactsToInvite = new String[100];
 	public JMenuBar menuBar = new JMenuBar();
 	public JMenu file, edit, encryption, view, help;
 	public JMenuItem disconnect, exit, preferences, createChat, sendFile;
@@ -157,15 +160,15 @@ public class CommunicationInterface extends JFrame {
 
 	// Method to add users to the JList when they sign on
 	public void newBuddyListItems(String availableUser) {
-		if(listModel.indexOf(availableUser) == -1){
-			listModel.addElement(availableUser);
+		if(contactListModel.indexOf(availableUser) == -1){
+			contactListModel.addElement(availableUser);
 		}
 		
 	}
 
 	// Method to remove user from the JList who signs off
 	public void buddySignOff(String offlineUser) {
-		listModel.removeElement(offlineUser);
+		contactListModel.removeElement(offlineUser);
 	}
 	
 
@@ -344,7 +347,7 @@ public class CommunicationInterface extends JFrame {
 		disconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				// Clear the Buddy list when disconnected
-				listModel.clear();
+				contactListModel.clear();
 				Athena.disconnect();
 				//Get rid of this window and open a new Login Window
 				imContentFrame.dispose();
@@ -1064,25 +1067,75 @@ public class CommunicationInterface extends JFrame {
 		chatPanel.setBounds(10, 10, 600, 600);
 		chatPanel.setLayout(null);
 		
+		JScrollPane contactList = new JScrollPane(userBox);
+		contactList.setBounds(30, 50, 150, 250);
+		contactList.setBorder(contactListBorder);
+		
+		JScrollPane inviteList = new JScrollPane(inviteBox);
+		inviteList.setBounds(200, 50, 150, 250);
+		inviteList.setBorder(contactListBorder);
+		
 		JButton inviteButton = new JButton("Invite");
 		inviteButton.setForeground(Color.black);
 		inviteButton.setBackground(new Color(218, 165, 32));
 		inviteButton.setBounds(30, 310, 150, 30);
 		inviteButton.setBorder(buttonBorder);
+		inviteButton.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				try {				
+					JList theContactList = (JList) userBox;
+					
+					// Get selected item
+					int index = theContactList.getSelectedIndex();
+
+					if (index >= 0) {
+						// Add selected item to invite list
+						if(inviteListModel.contains(contactListModel.getElementAt(index)))
+							JOptionPane.showMessageDialog(null, contactListModel.getElementAt(index).toString() +
+														" is already invited.", "Attention!", JOptionPane.ERROR_MESSAGE);
+						else
+							inviteListModel.addElement(contactListModel.getElementAt(index));
+					}
+					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
+					else
+					{
+						JOptionPane.showMessageDialog(null, "No contact selected for invite.", "Attention!", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		JButton removeButton = new JButton("Remove");
 		removeButton.setForeground(Color.white);
 		removeButton.setBackground(new Color(0, 0, 120));
 		removeButton.setBounds(200, 310, 150, 30);
 		removeButton.setBorder(buttonBorder);
-		
-		JScrollPane contactList = new JScrollPane(userBox);
-		contactList.setBounds(30, 50, 150, 250);
-		contactList.setBorder(contactListBorder);
-		
-		JScrollPane inviteList = new JScrollPane(new JList(new DefaultListModel()));
-		inviteList.setBounds(200, 50, 150, 250);
-		inviteList.setBorder(contactListBorder);
+		removeButton.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				try {				
+					JList theInviteList = (JList) inviteBox;
+					
+					// Get selected item
+					int index = theInviteList.getSelectedIndex();
+
+					if (index >= 0) {
+						// Remove selected item
+						inviteListModel.removeElementAt(index);
+					}
+					//If there wasn't something selected, bring up a new window that will let them choose who they want to remove
+					else
+					{
+						JOptionPane.showMessageDialog(null, "No contact selected for removal.", "Attention!", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		JLabel contactsLabel = new JLabel("Available Contacts:");
 		contactsLabel.setBounds(40, 20, 150, 20);
