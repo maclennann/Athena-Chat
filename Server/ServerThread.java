@@ -66,7 +66,7 @@ public class ServerThread extends Thread
 	private static Server server;
 
 	//Define Global Variable Username / Password
-	private static String username;
+	private String username;
 	private String realUsername="";
 	private String password;
 
