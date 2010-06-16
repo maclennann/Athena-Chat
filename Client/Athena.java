@@ -1172,7 +1172,7 @@ public class Athena
 		String[] buddyListLines;
 
 		//Receive buddylist head(should be begin)
-		if(debug>=1)System.out.println("BuddyList header: " + decryptServerPublic(c2sdin.readUTF()));
+		//if(debug>=1)System.out.println("BuddyList header: " + decryptServerPublic(c2sdin.readUTF()));
 		//Parse out how many lines buddylist is
 		buddyListLines = new String[(Integer.parseInt(decryptServerPublic(c2sdin.readUTF())))];
 		for(int y=0; y<buddyListLines.length;y++) { 
