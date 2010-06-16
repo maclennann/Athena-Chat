@@ -1,4 +1,3 @@
-
 /****************************************************
  * Athena: Encrypted Messaging Application v.0.0.2
  * By: 	
@@ -254,41 +253,110 @@ public class ServerThread extends Thread
 			//System.out.println("Event code received. negotiateClientStatus() run.");
 			break;
 		case 002: if(debug==1)System.out.println("Event code received. senToAll() run.");
-		server.sendToAll("ServerLogOn", username);
-		break;
+			server.sendToAll("ServerLogOn", username);
+			break;
 		case 003: if(debug==1)System.out.println("Event code received. negotiateClientStatus(\"Checkuserstatus\") run.");
-		negotiateClientStatus("CheckUserStatus");
-		break;
+			negotiateClientStatus("CheckUserStatus");
+			break;
 		case 004: if(debug==1)System.out.println("Event code received. publicKeyRequest() run.");
-		publicKeyRequest();
-		break;
+			publicKeyRequest();
+			break;
 		case 005: if(debug==1)System.out.println("Event code received. returnBuddyListHash() run.");
-		returnBuddyListHash();
-		break;
+			returnBuddyListHash();
+			break;
 		case 006: if(debug==1)System.out.println("Event code received. receiveBuddyListfromClient() run.");
-		recieveBuddyListFromClient();
-		break;
+			recieveBuddyListFromClient();
+			break;
 		case 007: if(debug==1)System.out.println("Event code received. sendPrivateKeyToClients() run.");
-		sendPrivateKeyToClient();
-		break;
+			sendPrivateKeyToClient();
+			break;
 		case 8: if(debug==1)System.out.println("Event code received. sendBuddyListToClient() run.");
-		sendBuddyListToClient();
-		break;
+			sendBuddyListToClient();
+			break;
 		case 9: if(debug==1)System.out.println("Event code received. receiveBugReport() run.");
-		receiveBugReport();
-		break;
+			receiveBugReport();
+			break;
 		case 10: if(debug==1)System.out.println("Event code received. receiveBugReport(flag) run.");
-		receiveBugReport(true);
-		break;
+			receiveBugReport(true);
+			break;
 		case 11: if(debug==1)System.out.println("Event code received. resetPassword() run.");
-		resetPassword();
-		break;
+			resetPassword();
+			break;
 		case 12: if(debug==1)System.out.println("Event code received. createChat() run.");
-		createChat();
-		break;
+			createChat();
+			break;
 		case 13: if(debug==1)System.out.println("Event code received. requestSocketInfo() run.");
-		break;
+			requestSocketInfo();
+			break;
+		case 14: if(debug==1)System.out.println("Event code received. joinChat() run.");
+			joinChat();
+			break;
+		case 15: if(debug==1)System.out.println("Event code received. leaveChat() run.");
+			leaveChat();
+			break;
+		case 16: if(debug==1)System.out.println("Event code received. chatInvite() run.");
+			chatInvite();
+			break;
 		default: return;
+		}
+	}
+	
+	private void chatInvite(){
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			String chatName = decryptServerPrivate(serverDin.readUTF());
+			String inviteString = chatName+","+username+","+chatNum;
+			int inviteList = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			
+			for(int x=1;x<inviteList;x++){
+				sendMessage(decryptServerPrivate(serverDin.readUTF()),"ChatInvite",inviteString);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	private void leaveChat(){
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			System.out.println("User "+username+" is leaving chat number "+chatNum+"!!!!");
+			
+			//Grab a connection to the database
+			Connection con = server.dbConnect();
+			
+			Statement stmt;
+			
+			//Get a list of existing chats
+			stmt = con.createStatement();
+			int deleted = stmt.executeUpdate("DELETE FROM chat WHERE username='"+username+"' AND chatid='"+chatNum+"';");
+			
+			stmt.close();
+			con.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	private void joinChat(){
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			System.out.println("Joining user "+username+" to chat number "+chatNum+"!!!!!");
+			
+			//Grab a connection to the database
+			Connection con = server.dbConnect();
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("INSERT into chat (username,chatid) values('" + username +"','"+chatNum+"')");
+			System.out.println("Inserted the chatid into the allchat table.");
+			
+			stmt.close();
+			con.close();
+			
+		} catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	
@@ -335,7 +403,7 @@ public class ServerThread extends Thread
 				
 				//Get a list of existing chats
 				stmt = con.createStatement();
-				rs = stmt.executeQuery("SELECT DISTINCT chatid FROM chats");
+				rs = stmt.executeQuery("SELECT DISTINCT chatid FROM chat");
 				System.out.println("Got list of existing chats.");
 				
 				//Read chatIDs into array
@@ -353,7 +421,7 @@ public class ServerThread extends Thread
 			//The chatID is not a duplicate. We can create the chat and add it to the DB
 			System.out.println("Generated number is not a duplicate.");
 			
-			stmt.executeUpdate("INSERT into allchats (chatid) values('" + randInt +"')");
+			stmt.executeUpdate("INSERT into allchats (chatid,chatname) values('" + randInt +"','"+chatName+"')");
 			System.out.println("Inserted the chatid into the allchat table.");
 			
 			//Now insert the username and the chat id into the chat table
@@ -363,6 +431,7 @@ public class ServerThread extends Thread
 			stmt.close();
 			con.close();
 			
+			serverDout.writeUTF(encryptServerPrivate(String.valueOf(randInt)));
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
@@ -1049,4 +1118,3 @@ public class ServerThread extends Thread
 			} }catch(Exception e){e.printStackTrace();}
 	}
 }
-
