@@ -297,7 +297,7 @@ public class ServerThread extends Thread
 		case 16: if(debug==1)System.out.println("Event code received. chatInvite() run.");
 			chatInvite();
 			break;
-		case 17: if(debug==1)System.out.println("Event code received. chatTalk() run.);
+		case 17: if(debug==1)System.out.println("Event code received. chatTalk() run.");
 			chatTalk();
 			break;
 		default: return;
