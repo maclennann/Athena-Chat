@@ -682,8 +682,7 @@ public class Athena
 		//TODO Make this an actual window
 		try {
 		systemMessage("12");
-		
-		
+				
 		try {
 			c2sdout.writeUTF(encryptServerPublic(chatName));
 			int chatUID = Integer.parseInt(c2sdin.readUTF());
@@ -696,6 +695,21 @@ public class Athena
 			return -1;			
 		}
 		//TODO Make a new tab to display the group chat window 
+	}
+	
+	/**
+	 * @throws IOException 
+	 * 
+	 */
+	public static void inviteUsers(String[] inviteUsers, int myChatUID, String chatName) throws IOException {
+		//Send Aegis the information
+		c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
+		c2sdout.writeUTF(encryptServerPublic(chatName));
+		c2sdout.writeUTF(encryptServerPublic(String.valueOf(inviteUsers.length)));
+		for(int x=0;x<inviteUsers.length;x++) {
+			c2sdout.writeUTF(encryptServerPublic(inviteUsers[x]));
+		}
+		
 	}
 	/**
 	 * 

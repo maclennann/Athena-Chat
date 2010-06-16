@@ -1276,6 +1276,19 @@ public class CommunicationInterface extends JFrame {
 				{
 					//Run the createChat method in Athena, returns the chatUID
 					int chatUID = Athena.createChat(chatNameField.getText());
+					//Getting the list
+					String[] inviteUsers = new String[inviteListModel.size()];
+					for(int x=0;x<inviteListModel.size();x++) { 
+						inviteUsers[x] = (String)inviteListModel.getElementAt(x);
+					}
+					//Invite the other users
+					try {
+						Athena.inviteUsers(inviteUsers, chatUID, chatNameField.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 					makeChatTab(chatNameField.getText(), chatUID, true);
 					TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
 							TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
