@@ -512,6 +512,7 @@ public class Athena
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivate.getModulus(), usersPrivate.getPrivateExponent());
 				String[] chatInfo = decryptedMessage.split(",");
 				System.out.println("Session key: " + chatInfo[1]);
+				return;
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//Compare the digital signature to the hashed message to verify integrity of the message!
@@ -716,7 +717,7 @@ public class Athena
 		c2sdout.writeUTF(encryptServerPublic(String.valueOf(inviteUsers.length)));
 		if(debug>=1)System.out.println("Sent length " + inviteUsers.length);
 		for(int x=0;x<inviteUsers.length;x++) {
-			RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + inviteUsers[x] + "/keys/" + inviteUsers[x] + ".pub");
+			RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUsers[x] + ".pub");
 			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(chatSessionKey.toString(), toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 			c2sdout.writeUTF(myChatUID+","+messageCipher.toString());
 			if(debug>=1)System.out.println("Sent user " + inviteUsers[x]);
