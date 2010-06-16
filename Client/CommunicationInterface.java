@@ -630,7 +630,8 @@ public class CommunicationInterface extends JFrame {
 		// double-clicked
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
-				JList theList = (JList) mouseEvent.getSource();
+				//JList theList = (JList) mouseEvent.getSource();
+				JList theList = (JList) userBox;
 				Object o;
 				// If it was double-clicked
 				if (mouseEvent.getClickCount() == 1 && (!(theList.getModel().toString().equals("[]"))))
@@ -1491,6 +1492,7 @@ public class CommunicationInterface extends JFrame {
 		//private static final long serialVersionUID = -6032110177913133517L;
 		private JTabbedPane pane;
 		public JButton btClose;
+		public int chatUID = -1;
 	    Icon closeIcon = new ImageIcon("images/close_button.png");
 	    Icon alertIcon = new ImageIcon("images/alert.png");
 	    int myIndex;
@@ -1514,6 +1516,26 @@ public class CommunicationInterface extends JFrame {
 		    btClose.addMouseListener(this);
 		  }
 		  
+		  public CloseTabButton(JTabbedPane pane, int index, int currentChatUID) {
+			    this.pane = pane;
+			    myIndex = index;
+			    setOpaque(false);
+			    add(new JLabel(
+			        pane.getTitleAt(index),
+			        pane.getIconAt(index),
+			        JLabel.LEFT));
+			    btClose = new JButton(closeIcon);
+			    btClose.setPreferredSize(new Dimension(
+			        closeIcon.getIconWidth(), closeIcon.getIconHeight()));
+			    add(btClose);
+			    btClose.addActionListener(this);
+			    btClose.setToolTipText("Close Tab");
+			    pane.setTabComponentAt(index, this);
+			    btClose.setBorder(null);
+			    btClose.addMouseListener(this);
+			    chatUID = currentChatUID;
+			  }
+		  
 		  public void mouseEntered(MouseEvent evt) {
 
 		  }
@@ -1536,9 +1558,8 @@ public class CommunicationInterface extends JFrame {
 				JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 		      uniqueIDHash.remove(currentTextPane.getDocument());
 		      //Retrieve the mapTextArea, then see if the tab is a chat tab
-		      MapTextArea print = (MapTextArea)tabPanels.get(userToRemove);
-		      if(print.getIsChat()) {
-		    	  Athena.leaveChat(print.getChatUID());		    	  
+		      if(chatUID != -1) {
+		    	  Athena.leaveChat(chatUID);		    	  
 		      }
 		      
 		    }
@@ -1645,135 +1666,6 @@ class MapTextArea extends JFrame {
 		}
 
 
-		//Create the JPanel and put all of the components in it
-		myJPanel = new JPanel();
-		myJPanel.setLayout(null);
-
-		//Create the styled text area and the scroll pane around it
-		StyledEditorKit kit = new StyledEditorKit();
-		myJEP = new JEditorPane();
-		myJEP.setEditable(false);
-		myJEP.setEditorKit(kit);
-        
-		myJEP.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				myJEP.copy();
-				Athena.clientResource.FocusCurrentTextField();
-			}
-			
-		});
-	
-
-		JScrollPane mySP = new JScrollPane(myJEP);
-		mySP.setBounds(10,10,559,420);
-		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		mySP.setOpaque(true);    
-		myJPanel.add(mySP);
-
-		//Create the text pane
-		StyledEditorKit miniKit = new StyledEditorKit();
-		myTP = new JTextPane();
-		myTP.setBounds(10,440,560,50);
-		myTP.setEditorKit(miniKit);
-		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
-		
-		myJPanel.add(myTP);
-		
-		uniqueIDHash.put(myJEP.getDocument(), myJPanel);
-
-		//Register the spell checker in the text field
-		if (spellCheckFlag)
-			SpellChecker.register(myTP, true, true, true);
-		
-		
-		username = user;
-
-		myTP.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER && (!(myTP.getText().equals(""))))
-					try {
-						Athena.processMessage(myTP.getText());
-						myTP.getDocument().remove(0, myTP.getText().length());
-						e.consume();
-					} catch (BadLocationException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-			}
-
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			public void keyTyped(KeyEvent e) {
-				
-			}
-		});
-		
-		//Set default font settings to new text pane
-		if(!(Athena.clientResource.settingsLoaded))
-		{
-			System.out.println("Settings loaded from file, settingsLoaded = " + Athena.clientResource.settingsLoaded);
-			setLoadedFont();
-			StyledDocument doc = myTP.getStyledDocument();
-			if(doc.getLength() > 0)
-				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
-			else
-				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
-		}
-		else
-		{
-			System.out.println("Settings already changed, settingsLoaded = " + Athena.clientResource.settingsLoaded);
-			//Dont set default config font, get current font
-			setLoadedFont();
-			StyledDocument doc = myTP.getStyledDocument();
-			if(doc.getLength() > 0)
-				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
-			else
-				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
-		}
-	}
-	// Constructor
-	MapTextArea(String user, int myChatUID, boolean spellCheckFlag, Hashtable<Document, JPanel> uniqueIDHash) { 
-		isChat=true;
-		chatUID = myChatUID;
-		
-		 try {
-			//Register the dictionaries for the spell checker
-			 SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "en" );
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		
 		//Create the JPanel and put all of the components in it
 		myJPanel = new JPanel();
 		myJPanel.setLayout(null);
