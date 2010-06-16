@@ -503,8 +503,7 @@ public class Athena
 				if(toJoin == JOptionPane.YES_OPTION) {
 					//Send server a confirm message
 					systemMessage("14");
-					systemMessage(chatName[2]);
-					
+					c2sdout.writeUTF(encryptServerPublic(chatName[2]));
 					clientResource.makeChatTab(chatName[0], 11, true);
 				}
 				return;
