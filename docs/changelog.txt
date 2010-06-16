@@ -1,4 +1,14 @@
 ChangeLog: 
+6/16/2010:
+	## Fixed a logon bug
+	## Usernames show up when you join a chat
+		@@ Will be changed to relfect who is actually there (accepted invitation)
+	## Session key generation and transportation (AES)
+	## Chat invitations are sent and can be accepted/declined
+	## Added button to view contact list from chat tab
+	## Made username not static again
+		@@ srsly, i thought we'd already done that
+
 4/23/2010: 
 	## Implemented new logic in the Adduser window. 
 		@@ It now displays more efficient and understandable messages upon typing in the TextFields
