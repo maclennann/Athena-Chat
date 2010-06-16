@@ -351,6 +351,8 @@ public class ServerThread extends Thread
 	
 	private void joinChat(){
 		try{
+		
+			System.out.println("I'm trying to add username "+username+" to this chat, when "+realusername+"is the real user here.");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			System.out.println("Joining user "+username+" to chat number "+chatNum+"!!!!!");
