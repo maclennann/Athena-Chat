@@ -705,9 +705,13 @@ public class Athena
 		//Send Aegis the information
 		systemMessage("16");
 		c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
+		if(debug>=1)System.out.println("Sent chatUID " + myChatUID);
 		c2sdout.writeUTF(encryptServerPublic(chatName));
+		if(debug>=1)System.out.println("Sent chatName " + chatName);
 		c2sdout.writeUTF(encryptServerPublic(String.valueOf(inviteUsers.length)));
+		if(debug>=1)System.out.println("Sent length " + inviteUsers.length);
 		for(int x=0;x<inviteUsers.length;x++) {
+			if(debug>=1)System.out.println("Sent user " + inviteUsers[x]);
 			c2sdout.writeUTF(encryptServerPublic(inviteUsers[x]));
 		}
 		
