@@ -843,7 +843,7 @@ public class CommunicationInterface extends JFrame {
 		
 		imTabbedPane.addTab(chatName, null, tempPanel, chatName + " Tab");
 		// Add close button to tab
-		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(chatName));
+		new CloseTabButton(imTabbedPane, imTabbedPane.indexOfTab(chatName), chatUID);
 		//Add ESC Key listener
 		if(enableESCToClose)
 			addESCKeyListener(imTabbedPane.indexOfTab(chatName));
@@ -1562,14 +1562,21 @@ public class CommunicationInterface extends JFrame {
 				JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 		      uniqueIDHash.remove(currentTextPane.getDocument());
 		      //Retrieve the mapTextArea, then see if the tab is a chat tab
+                      System.out.println("ChatUID: " + chatUID);
 		      if(chatUID != -1) {
+                          System.out.println("Leaving chat!");
 		    	  Athena.leaveChat(chatUID);		    	  
 		      }
 		      
 		    }
-			if(imTabbedPane.getTabCount() ==0){
+                      if(imTabbedPane.getTabCount() ==0){
 				CommunicationInterface.lockIconLabel.setVisible(true);
 				CommunicationInterface.logoIconLabel.setVisible(true);
+                                        System.out.println("ChatUID: " + chatUID);
+		      if(chatUID != -1) {
+                          System.out.println("Leaving chat!");
+		    	  Athena.leaveChat(chatUID);
+		      }
 			}
 			  System.gc();
 		    }
