@@ -827,7 +827,7 @@ public class CommunicationInterface extends JFrame {
 		System.gc();
 	}
 	
-	public void makeChatTab(String chatName, boolean userCreated) {
+	public void makeChatTab(String chatName, int chatUID, boolean userCreated) {
 		lockIconLabel.setVisible(false);
 		logoIconLabel.setVisible(false);
 		int prevIndex = 0;
@@ -1274,7 +1274,22 @@ public class CommunicationInterface extends JFrame {
 				}
 				else
 				{
-					makeChatTab(chatNameField.getText(), true);
+					//Run the createChat method in Athena, returns the chatUID
+					int chatUID = Athena.createChat(chatNameField.getText());
+					//Getting the list
+					String[] inviteUsers = new String[inviteListModel.size()];
+					for(int x=0;x<inviteListModel.size();x++) { 
+						inviteUsers[x] = (String)inviteListModel.getElementAt(x);
+					}
+					//Invite the other users
+					try {
+						Athena.inviteUsers(inviteUsers, chatUID, chatNameField.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					makeChatTab(chatNameField.getText(), chatUID, true);
 					TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
 							TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 					chatList.setBorder(newChatListBorder);
@@ -1520,6 +1535,11 @@ public class CommunicationInterface extends JFrame {
 				JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 				JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 		      uniqueIDHash.remove(currentTextPane.getDocument());
+		      //Retrieve the mapTextArea, then see if the tab is a chat tab
+		      MapTextArea print = (MapTextArea)tabPanels.get(userToRemove);
+		      if(print.getIsChat()) {
+		    	  Athena.leaveChat(print.getChatUID());		    	  
+		      }
 		      
 		    }
 			if(imTabbedPane.getTabCount() ==0){
@@ -1593,6 +1613,8 @@ class MapTextArea extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 2557115166519071868L;
+	public int chatUID = -1;
+	boolean isChat = false;
 
 	// The user name associated with the tab
 	String username = null;
@@ -1738,6 +1760,135 @@ class MapTextArea extends JFrame {
 				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
 		}
 	}
+	// Constructor
+	MapTextArea(String user, int myChatUID, boolean spellCheckFlag, Hashtable<Document, JPanel> uniqueIDHash) { 
+		isChat=true;
+		chatUID = myChatUID;
+		
+		 try {
+			//Register the dictionaries for the spell checker
+			 SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "en" );
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		//Create the JPanel and put all of the components in it
+		myJPanel = new JPanel();
+		myJPanel.setLayout(null);
+
+		//Create the styled text area and the scroll pane around it
+		StyledEditorKit kit = new StyledEditorKit();
+		myJEP = new JEditorPane();
+		myJEP.setEditable(false);
+		myJEP.setEditorKit(kit);
+        
+		myJEP.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				myJEP.copy();
+				Athena.clientResource.FocusCurrentTextField();
+			}
+			
+		});
+	
+
+		JScrollPane mySP = new JScrollPane(myJEP);
+		mySP.setBounds(10,10,559,420);
+		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		mySP.setOpaque(true);    
+		myJPanel.add(mySP);
+
+		//Create the text pane
+		StyledEditorKit miniKit = new StyledEditorKit();
+		myTP = new JTextPane();
+		myTP.setBounds(10,440,560,50);
+		myTP.setEditorKit(miniKit);
+		myTP.setBorder(BorderFactory.createLoweredBevelBorder());
+		
+		myJPanel.add(myTP);
+		
+		uniqueIDHash.put(myJEP.getDocument(), myJPanel);
+
+		//Register the spell checker in the text field
+		if (spellCheckFlag)
+			SpellChecker.register(myTP, true, true, true);
+		
+		
+		username = user;
+
+		myTP.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER && (!(myTP.getText().equals(""))))
+					try {
+						Athena.processMessage(myTP.getText());
+						myTP.getDocument().remove(0, myTP.getText().length());
+						e.consume();
+					} catch (BadLocationException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+			}
+
+			public void keyTyped(KeyEvent e) {
+				
+			}
+		});
+		
+		//Set default font settings to new text pane
+		if(!(Athena.clientResource.settingsLoaded))
+		{
+			System.out.println("Settings loaded from file, settingsLoaded = " + Athena.clientResource.settingsLoaded);
+			setLoadedFont();
+			StyledDocument doc = myTP.getStyledDocument();
+			if(doc.getLength() > 0)
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+			else
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+		}
+		else
+		{
+			System.out.println("Settings already changed, settingsLoaded = " + Athena.clientResource.settingsLoaded);
+			//Dont set default config font, get current font
+			setLoadedFont();
+			StyledDocument doc = myTP.getStyledDocument();
+			if(doc.getLength() > 0)
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+			else
+				doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+		}
+	}
 
 	// Set the user name associated with the tab
 	public void setUserName(String user) {
@@ -1748,7 +1899,15 @@ class MapTextArea extends JFrame {
 	public String getUserName() {
 		return username;
 	}
-
+	
+	//Get the UID for the tab
+	public int getChatUID() {
+		return chatUID;
+	}
+	//Get the isChat flag
+	public boolean getIsChat() { 
+		return isChat;
+	}
 	// Set the index of the tab for this JPanel
 	public void setTabIndex(int index) {
 		tabIndex = index;
