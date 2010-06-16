@@ -325,7 +325,6 @@ public class CommunicationInterface extends JFrame {
 		createChat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				createChatWindow();
-				//Athena.createChat();
 			}
 		});
 		
@@ -860,6 +859,7 @@ public class CommunicationInterface extends JFrame {
 		{
 			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(chatName));
 			contactList.setVisible(false);
+			chatList.setViewportView(inviteBox);
 			chatList.setVisible(true);
 			if(!(userStatusFlag))
 				FocusCurrentTextField();
@@ -1197,6 +1197,11 @@ public class CommunicationInterface extends JFrame {
 						if(inviteListModel.contains(contactListModel.getElementAt(index)))
 							JOptionPane.showMessageDialog(null, contactListModel.getElementAt(index).toString() +
 														" is already invited.", "Attention!", JOptionPane.ERROR_MESSAGE);
+						else if(contactListModel.getElementAt(index).equals(Athena.username))
+						{
+							JOptionPane.showMessageDialog(null, "As chat creator, you are already\n included in the chat roster.",
+															"Attention!", JOptionPane.ERROR_MESSAGE);
+						}
 						else
 							inviteListModel.addElement(contactListModel.getElementAt(index));
 					}
@@ -1289,13 +1294,12 @@ public class CommunicationInterface extends JFrame {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
 					makeChatTab(chatNameField.getText(), chatUID, true);
 					TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
 							TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 					chatList.setBorder(newChatListBorder);
+					inviteListModel.addElement(Athena.username);
 					chatWindow.dispose();
-					//Send messages to all elements in inviteListModel
 				}
 			}
 		});
