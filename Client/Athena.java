@@ -703,6 +703,7 @@ public class Athena
 	 */
 	public static void inviteUsers(String[] inviteUsers, int myChatUID, String chatName) throws IOException {
 		//Send Aegis the information
+		systemMessage("16");
 		c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
 		c2sdout.writeUTF(encryptServerPublic(chatName));
 		c2sdout.writeUTF(encryptServerPublic(String.valueOf(inviteUsers.length)));
