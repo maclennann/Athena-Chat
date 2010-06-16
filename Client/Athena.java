@@ -721,8 +721,7 @@ public class Athena
 			RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUsers[x] + ".pub");
 			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(myChatUID+","+chatSessionKey.toString(), toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 			c2sdout.writeUTF(messageCipher.toString());
-			if(debug>=1)System.out.println("Sent user " + inviteUsers[x]);
-			
+			if(debug>=1)System.out.println("Sent user " + inviteUsers[x]);			
 		}
 
 	}
