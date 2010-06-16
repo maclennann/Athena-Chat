@@ -297,10 +297,19 @@ public class ServerThread extends Thread
 		case 16: if(debug==1)System.out.println("Event code received. chatInvite() run.");
 			chatInvite();
 			break;
+		case 17: if(debug==1)System.out.println("Event code received. chatTalk() run.);
+			chatTalk();
+			break;
 		default: return;
 		}
 	}
 	
+	private void chatTalk(){
+		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+		
+		int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+		String message = decryptServerPrivate(serverDin.readUTF());
+	}
 	private void chatInvite(){
 		try{
 			if(debug==1)System.out.println("In chatInvite()");
@@ -313,12 +322,15 @@ public class ServerThread extends Thread
 			String inviteString = chatName+","+username+","+chatNum;
 			if(debug==1)System.out.println("Constructed inviteString: "+inviteString);
 			int inviteList = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			String sessionKey = "";
 			if(debug==1)System.out.println("Inviting "+inviteList+" people");
 			String invitingUser="";
 			for(int x=0;x<inviteList;x++){
 				invitingUser = decryptServerPrivate(serverDin.readUTF());
+				sessionKey = serverDin.readUTF();
 				if(debug==1)System.out.println("Inviting user: "+invitingUser);
 				sendMessage(invitingUser,"ChatInvite",encryptServerPrivate(inviteString));
+				sendMessage(invitingUser,"SessionKey",sessionKey);
 				if(debug==1)System.out.println("Invited "+x+" people");
 			}
 		}catch(Exception e){
