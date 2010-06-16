@@ -44,6 +44,7 @@ import java.security.DigestInputStream;
 import java.security.NoSuchAlgorithmException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.util.Hashtable;
 import javax.swing.ImageIcon;
 import javax.crypto.spec.*;
 import javax.swing.JOptionPane;
@@ -94,6 +95,7 @@ public class Athena
 	private static BigInteger modOfBuddy = null;
 	private static BigInteger expOfBuddy = null;	
 	public static RSAPrivateKeySpec usersPrivate; //User's public key
+        private static Hashtable<Integer, SecretKeySpec> sessionKeys = new Hashtable<Integer, SecretKeySpec>();
 	//End private variables
 	
 	/**
@@ -511,6 +513,9 @@ public class Athena
 			else if(fromUserDecrypted.equals("SessionKey")) { 
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivate.getModulus(), usersPrivate.getPrivateExponent());
 				String[] chatInfo = decryptedMessage.split(",");
+                                
+                                //Store the session key and chat UID in a hashtable for later lookup
+                                sessionKeys.put(Integer.parseInt(chatInfo[0]), new SecretKeySpec(chatInfo[1].getBytes(),"AES"));
 				System.out.println("Session key: " + chatInfo[1]);
 				return;
 			}
@@ -692,6 +697,9 @@ public class Athena
 			c2sdout.writeUTF(encryptServerPublic(chatName));
 			int chatUID = Integer.parseInt(decryptServerPublic(c2sdin.readUTF()));
 			chatSessionKey = AESCrypto.generateKey();
+                        
+                        //Save the session key to a Hashtable
+                        sessionKeys.put(chatUID, chatSessionKey);
 			return chatUID;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -708,21 +716,24 @@ public class Athena
 	 * 
 	 */
 	public static void inviteUsers(String[] inviteUsers, int myChatUID, String chatName) throws IOException {
-		//Send Aegis the information
-		systemMessage("16");
-		c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
-		if(debug>=1)System.out.println("Sent chatUID " + myChatUID);
-		c2sdout.writeUTF(encryptServerPublic(chatName));
-		if(debug>=1)System.out.println("Sent chatName " + chatName);
-		c2sdout.writeUTF(encryptServerPublic(String.valueOf(inviteUsers.length)));
-		if(debug>=1)System.out.println("Sent length " + inviteUsers.length);
-		for(int x=0;x<inviteUsers.length;x++) {
-			c2sdout.writeUTF(encryptServerPublic(inviteUsers[x]));
-			RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUsers[x] + ".pub");
-			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(myChatUID+","+chatSessionKey.toString(), toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
-			c2sdout.writeUTF(messageCipher.toString());
-			if(debug>=1)System.out.println("Sent user " + inviteUsers[x]);			
-		}
+            //Get the session key for this chat
+            String keyString = AESCrypto.asHex(sessionKeys.get(myChatUID).getEncoded());
+
+            //Send Aegis the information
+            systemMessage("16");
+            c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
+            if(debug>=1)System.out.println("Sent chatUID " + myChatUID);
+            c2sdout.writeUTF(encryptServerPublic(chatName));
+            if(debug>=1)System.out.println("Sent chatName " + chatName);
+            c2sdout.writeUTF(encryptServerPublic(String.valueOf(inviteUsers.length)));
+            if(debug>=1)System.out.println("Sent length " + inviteUsers.length);
+            for(int x=0;x<inviteUsers.length;x++) {
+		c2sdout.writeUTF(encryptServerPublic(inviteUsers[x]));
+		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUsers[x] + ".pub");
+		BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(myChatUID+","+keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+		c2sdout.writeUTF(messageCipher.toString());
+		if(debug>=1)System.out.println("Sent user " + inviteUsers[x]);			
+            }
 
 	}
 	/**
@@ -1244,7 +1255,7 @@ public class Athena
 		//Send Aegis the begin message so it knows that this is beginning of the file
 		c2sdout.writeUTF(encryptServerPublic("begin"));
 		//Send Aegis the number lines we're sending
-		c2sdout.writeUTF(encryptServerPublic(new String(String.valueOf(numLines))));
+		c2sdout.writeUTF(encryptServerPublic(String.valueOf(numLines)));
 		for(int x=0; x<buddylistArray.length;x++) {         	          
 			//Now send Aegis the file
 			c2sdout.writeUTF(encryptServerPublic(buddylistArray[x]));
@@ -1262,7 +1273,7 @@ public class Athena
 	}
 
 	/**
-	 * This methid decrypts the input string with the server's public key
+	 * This method decrypts the input string with the server's public key
 	 * @param ciphertext
 	 * @return decrypted message
 	 */
