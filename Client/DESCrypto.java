@@ -18,7 +18,7 @@
  **  Sample program output:
  **    Plain Text: Hello, World!
  **    --Encrypting--
- **    Cipher Text: úVk-P?"F»#e8ç+8;
+ **    Cipher Text: ï¿½Vk-P?"Fï¿½#e8ï¿½+8;
  **    --Decrypting--
  **    Clear Text: Hello, World!
  **
@@ -96,7 +96,7 @@ public class DESCrypto{
 	}
 	
 	// Encrypts message using passphrase and salt.
-	public byte[] encryptData(String message){
+	public final byte[] encryptData(String message){
 		try{
 			// Encrypt the cleartext
 			byte[] ciphertext = pbeCipher.doFinal(message.getBytes());
@@ -114,10 +114,10 @@ public class DESCrypto{
 	public String decryptData(byte[] ciphertext){
 		try{
 			//Decrypt the data
-			byte[] plaintext = pbeReverseCipher.doFinal(ciphertext);
+			byte[] plaintextt = pbeReverseCipher.doFinal(ciphertext);
 			
 			//Return a string of the decrypted data
-			return new String(plaintext);
+			return new String(plaintextt);
 			
 		}catch(Exception e){
 			//Something went wrong. Return null.
