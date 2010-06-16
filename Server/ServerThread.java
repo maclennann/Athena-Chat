@@ -303,14 +303,20 @@ public class ServerThread extends Thread
 	
 	private void chatInvite(){
 		try{
+			if(debug==1)System.out.println("In chatInvite()");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			String chatName = decryptServerPrivate(serverDin.readUTF());
-			String inviteString = chatName+","+username+","+chatNum;
-			int inviteList = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			
+			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			if(debug==1)System.out.println("Received chat number: "+chatNum);
+			String chatName = decryptServerPrivate(serverDin.readUTF());
+			if(debug==1)System.out.println("Received chat name: "+chatName);
+			String inviteString = chatName+","+username+","+chatNum;
+			if(debug==1)System.out.println("Constructed inviteString: "+inviteString);
+			int inviteList = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			if(debug==1)System.out.println("Inviting "+inviteList+" people");
 			for(int x=1;x<inviteList;x++){
 				sendMessage(decryptServerPrivate(serverDin.readUTF()),"ChatInvite",inviteString);
+				if(debug==1)System.out.println("Invited "+x+" people");
 			}
 		}catch(Exception e){
 			e.printStackTrace();
