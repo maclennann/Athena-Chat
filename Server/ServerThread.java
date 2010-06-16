@@ -305,10 +305,15 @@ public class ServerThread extends Thread
 	}
 	
 	private void chatTalk(){
-		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+		try{
 		
-		int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-		String message = decryptServerPrivate(serverDin.readUTF());
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+		
+			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			String message = decryptServerPrivate(serverDin.readUTF());
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 	}
 	private void chatInvite(){
 		try{
