@@ -579,7 +579,7 @@ public class ServerThread extends Thread
 	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 	//TODO Make this return a multi-dementional array of all the fields in the CSV File
-	public static String[] returnBuddyListArray(boolean flag) throws IOException {
+	public String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;
 		InputStream is;
@@ -744,7 +744,7 @@ public class ServerThread extends Thread
 	}
 	
 	//This method decrypts the ciphertext with the server's public key
-	public static String encryptServerPrivate(String plaintext) { 
+	public String encryptServerPrivate(String plaintext) { 
 		//Encrypt the string and return it
 		if(debug==1) System.out.println("Plaintext in encryptServerPrivate: " + plaintext);
 		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
