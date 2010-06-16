@@ -315,7 +315,7 @@ public class ServerThread extends Thread
 			int inviteList = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			if(debug==1)System.out.println("Inviting "+inviteList+" people");
 			String invitingUser="";
-			for(int x=1;x<inviteList;x++){
+			for(int x=0;x<inviteList;x++){
 				invitingUser = decryptServerPrivate(serverDin.readUTF());
 				if(debug==1)System.out.println("Inviting user: "+invitingUser);
 				sendMessage(invitingUser,"ChatInvite",encryptServerPrivate(inviteString));
