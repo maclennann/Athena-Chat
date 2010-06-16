@@ -45,6 +45,7 @@ import java.security.NoSuchAlgorithmException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.swing.ImageIcon;
+import javax.crypto.spec.*;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.MutableAttributeSet;
@@ -78,6 +79,7 @@ public class Athena
 	//private static String serverIP = "10.1.10.49"; //IP of server for Norm. Don't delete this agian.
 	private static int connected = 0; 	//If the client is connect to the server
 	private static int away = 0; //Is the user away?	
+	private static SecretKeySpec chatSessionKey; //Secret key for group chat session key
 	private static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password	
 	private static String toUser; //Recipient for message	
 	public static String awayText; //Away message text	
@@ -494,10 +496,18 @@ public class Athena
 			}
 			//Pop up chat invite
 			if(fromUserDecrypted.equals("ChatInvite")) {
-				decryptedMessage = decryptServerPublic(encryptedMessage);
-				String[] chatName = decryptedMessage.split(".*,.*");
+				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivate.getModulus(),usersPrivate.getPrivateExponent());
+				String[] chatName = decryptedMessage.split(",");
 				
-				JOptionPane.showMessageDialog(null, "You've been invited to join a group chat named, " + chatName[0] + " , by " + chatName[1] + ".");
+				int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to join the group chat: " + chatName[0] + " , by " + chatName[1] + ".");
+				if(toJoin == JOptionPane.YES_OPTION) {
+					//Send server a confirm message
+					systemMessage("14");
+					systemMessage(chatName[2]);
+					
+					clientResource.makeChatTab(chatName[0], 11, true);
+					
+				}
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//Compare the digital signature to the hashed message to verify integrity of the message!
@@ -668,23 +678,38 @@ public class Athena
 	/** This method does something
 	 * 
 	 */
-	public static void createChat() { 
+	public static int createChat(String chatName) { 
 		//TODO Make this an actual window
-		String chatName = JOptionPane.showInputDialog("Input the name of the chat!");
 		try {
-		Athena.systemMessage("12");
+		systemMessage("12");
 		
 		
 		try {
 			c2sdout.writeUTF(encryptServerPublic(chatName));
+			int chatUID = Integer.parseInt(c2sdin.readUTF());
+			return chatUID;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		} catch (NullPointerException npe) { 
+			return -1;			
+		}
+		//TODO Make a new tab to display the group chat window 
+	}
+	/**
+	 * 
+	 */
+	public static void leaveChat(int myChatUID) {
+		//Let Aegis know that we're leaving the chat
+		systemMessage("15");
+		//Send Aegis the chatUID
+		try {
+			c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		} catch (NullPointerException npe) { 
-			
-		}
-		//TODO Make a new tab to display the group chat window 
 	}
 	
 	/**
