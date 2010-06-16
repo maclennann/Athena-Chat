@@ -315,8 +315,9 @@ public class ServerThread extends Thread
 			int inviteList = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			if(debug==1)System.out.println("Inviting "+inviteList+" people");
 			String invitingUser="";
-			for(int x=1;x<inviteList;x++){
+			for(int x=0;x<inviteList;x++){
 				invitingUser = decryptServerPrivate(serverDin.readUTF());
+				if(debug==1)System.out.println("Inviting user: "+invitingUser);
 				sendMessage(invitingUser,"ChatInvite",encryptServerPrivate(inviteString));
 				if(debug==1)System.out.println("Invited "+x+" people");
 			}
@@ -350,6 +351,8 @@ public class ServerThread extends Thread
 	
 	private void joinChat(){
 		try{
+		
+			System.out.println("I'm trying to add username "+username+" to this chat, when "+realUsername+"is the real user here.");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			System.out.println("Joining user "+username+" to chat number "+chatNum+"!!!!!");
