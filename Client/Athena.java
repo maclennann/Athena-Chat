@@ -685,7 +685,7 @@ public class Athena
 				
 		try {
 			c2sdout.writeUTF(encryptServerPublic(chatName));
-			int chatUID = Integer.parseInt(c2sdin.readUTF());
+			int chatUID = Integer.parseInt(decryptServerPublic(c2sdin.readUTF()));
 			return chatUID;
 		} catch (IOException e) {
 			e.printStackTrace();
