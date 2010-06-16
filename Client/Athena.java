@@ -504,7 +504,7 @@ public class Athena
 					//Send server a confirm message
 					systemMessage("14");
 					c2sdout.writeUTF(encryptServerPublic(chatName[2]));
-					clientResource.makeChatTab(chatName[0], 11, true);
+					clientResource.makeChatTab(chatName[0], Integer.parseInt(chatName[2]), true);
 				}
 				return;
 			}
