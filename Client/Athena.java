@@ -496,9 +496,9 @@ public class Athena
 			}
 			//Pop up chat invite
 			else if(fromUserDecrypted.equals("ChatInvite")) {
-				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivate.getModulus(),usersPrivate.getPrivateExponent());
+				decryptedMessage = decryptServerPublic(encryptedMessage);
 				String[] chatName = decryptedMessage.split(",");
-				
+				System.out.println("Invitation message we got: "+ decryptedMessage);
 				int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to join the group chat: " + chatName[0] + " , by " + chatName[1] + ".");
 				if(toJoin == JOptionPane.YES_OPTION) {
 					//Send server a confirm message
