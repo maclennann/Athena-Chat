@@ -437,7 +437,7 @@ public class Athena
 			}
 
 			//Remove user from Buddylist
-			if(fromUserDecrypted.equals("ServerLogOff")) {
+			else if(fromUserDecrypted.equals("ServerLogOff")) {
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				//Check to see if the user is in your buddy list, if not, don't care
 				String[] usernames = returnBuddyListArray();
@@ -465,7 +465,7 @@ public class Athena
 			}
 
 			//Create buddy list entry for user sign on
-			if(fromUserDecrypted.equals("ServerLogOn")) {
+			else if(fromUserDecrypted.equals("ServerLogOn")) {
 				//Decrypt Message
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				if(!(decryptedMessage.equals(username))) 	{
@@ -495,7 +495,7 @@ public class Athena
 				}
 			}
 			//Pop up chat invite
-			if(fromUserDecrypted.equals("ChatInvite")) {
+			else if(fromUserDecrypted.equals("ChatInvite")) {
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivate.getModulus(),usersPrivate.getPrivateExponent());
 				String[] chatName = decryptedMessage.split(",");
 				
@@ -506,8 +506,8 @@ public class Athena
 					systemMessage(chatName[2]);
 					
 					clientResource.makeChatTab(chatName[0], 11, true);
-					
 				}
+				return;
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//Compare the digital signature to the hashed message to verify integrity of the message!
