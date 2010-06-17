@@ -509,7 +509,8 @@ public class Athena
 				String[] chatInfo = decryptedMessage.split(",");
                                 
                                 //Store the session key and chat UID in a hashtable for later lookup
-                                sessionKeys.put(chatInfo[0], new SecretKeySpec(chatInfo[1].getBytes(),"AES"));
+                                SecretKeySpec mySecretKey = new SecretKeySpec(chatInfo[1].getBytes(),"AES");
+                                sessionKeys.put(chatInfo[0], mySecretKey);
 				System.out.println("Session key: " + chatInfo[1]);
 				return;
 			}
