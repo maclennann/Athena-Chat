@@ -867,11 +867,6 @@ public class Athena
                 c2sdout.writeUTF(encryptServerPublic(currentTab.getName()));
                 c2sdout.writeUTF(encryptAES(Integer.parseInt(currentTab.getName()), message));
 
-                //Print the message locally
-		print.writeToTextArea(username+": ", print.getSetHeaderFont(new Color(0, 130, 0)));
-		//print.writeToTextArea(message+"\n", print.getTextFont());
-		parseMarkdown(message,print);
-
             //This is an IM tab
             } else{
                 System.out.println("THIS IS AN IM TAB!!!");
