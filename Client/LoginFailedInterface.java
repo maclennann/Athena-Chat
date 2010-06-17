@@ -1,3 +1,20 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * LoginFailedInterface.java: Informs user of account creation and login outcome.
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -49,7 +66,7 @@ public class LoginFailedInterface extends JFrame {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 		    }
@@ -62,7 +79,7 @@ public class LoginFailedInterface extends JFrame {
 					ClientLogin loginGUI = new ClientLogin();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}}});
 				
@@ -74,7 +91,7 @@ public class LoginFailedInterface extends JFrame {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -86,7 +103,7 @@ public class LoginFailedInterface extends JFrame {
 					ResetPasswordInterface passReset = new ResetPasswordInterface();
 					loginFailed.dispose();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -103,7 +120,6 @@ public class LoginFailedInterface extends JFrame {
 		contentPane.setLayout(null);
 		
 		//If status is true, that means it was a successful login so don't display the sad face.
-		//TODO Add a happy face
 		if(!(status)) {
 		Image generalPreferencesImage1 = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage1);	
@@ -132,7 +148,7 @@ public class LoginFailedInterface extends JFrame {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 		    }
@@ -145,7 +161,7 @@ public class LoginFailedInterface extends JFrame {
 					ClientLogin loginGUI = new ClientLogin();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}}});
 				

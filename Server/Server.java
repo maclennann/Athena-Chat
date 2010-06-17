@@ -1,24 +1,20 @@
-/****************************************************
- * Athena: Encrypted Messaging Application v.0.0.2
- * By: 	
- * 			Gregory LeBlanc
- * 			Norm Maclennan 
- * 			Stephen Failla
- * 
- * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
- * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
- * using a randomly generated email address
- * 
- * File: Server.java
- * 
- * This runs the code for the auth/messaging server. A client will connect to this server via ServerSocket ss. Each connection is handled by a thread
- * of ServerThread. Server handles the record-keeping and connection handling.
- * 
- * When the server starts up, we create a hash table of all of the usernames and passwords for all users, minimizing database transactions.
+/* Athena/Aegis Encrypted Chat Platform
+ * Server.java: Accepts connections, governs user threads (ServerThread instances) and is the gateway to the DB
  *
- * As new users connect, their username is mapped to a socket, which is mapped to a datastream so we can communicate with the user.
- *
- ****************************************************/
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -36,9 +32,7 @@ import java.util.Hashtable;
 
 public class Server
 {
-	//TODO Add debug mode
-	//Change to 1 for debug output
-	@SuppressWarnings("unused")
+	//Change to 1 or 2 for debug output
 	private int debug = 0;
 	
 	//This socket will accept new connection
@@ -85,9 +79,6 @@ public class Server
 	public static Connection dbConnect () { 
 
 		//Location of the database
-		//TODO: DB Server on LAN with auth server (maybe same computer) only accessable from auth server
-		//		of course, we need a real auth server first.
-		//TODO: Don't store DB location, username, or password in the source. Break it out into a conf file.
 		String url = "jdbc:mysql://localhost:3306/aegis";
 	
 		//Database username and password. shhhhh.
@@ -144,6 +135,7 @@ public class Server
 		}catch(SQLException ex) {
 			ex.printStackTrace();
 		}
+                System.gc();
 		
 	}
 
@@ -193,15 +185,9 @@ public class Server
 			System.out.println( "Server-to-Client Connection Established:\n "+c2s );
 			System.out.println( "Client-to-Client Connection Established:\n"+c2c);
 
-			//DataOuputStream to send data from the client's socket
-			//TODO I don't think we need to do this here
-			//DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
-			
-			//Map the outputstream to the socket for later reference
-			//outputStreams.put( s, dout );
-			
-			//Handle the rest of the connection in the new thread
+                        //Handle the rest of the connection in the new thread
 			new ServerThread( this, c2s, c2c );
+                        System.gc();
 		}
 	}
 	
@@ -226,6 +212,7 @@ public class Server
 	
 	// Send a message to all clients (utility routine)
 	synchronized void sendToAll(String eventCode, String message ) {
+                System.gc();
 		//make sure the outputStreams hashtable is up-to-date
 		synchronized( clientOutputStreams ) {
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
@@ -262,6 +249,7 @@ public class Server
 				ie.printStackTrace();
 			}
 		}
+                System.gc();
 	}
 
 	//Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
@@ -290,6 +278,7 @@ public class Server
 				ie.printStackTrace();
 			}
 		}
+                System.gc();
 	}
 	
 	//Server program starts.

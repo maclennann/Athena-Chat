@@ -1,3 +1,20 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * RegistrationInterface.java: Allows users to create accounts for the service
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -137,7 +154,6 @@ public class RegistrationInterface extends JPanel {
 		
 
 		//Password Input
-		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		passwordJPasswordField = new JPasswordField();
 		passwordJLabel.setBounds(15,225,100,25);
 		passwordJPasswordField.setBounds(130,225,120,25);
@@ -222,7 +238,7 @@ public class RegistrationInterface extends JPanel {
 					//Send the information to Aegis
 					sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password, secretQuestionJTextField.getText(),secAns);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 
@@ -233,7 +249,7 @@ public class RegistrationInterface extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				
 				addUserJFrame.dispose();
 			} 
 		});
@@ -246,8 +262,8 @@ public class RegistrationInterface extends JPanel {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				// TODO Auto-generated method stub
+				
+				
 				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
 					emailMatchesJLabel.setIcon(greenCheck);
 					emailMessageJLabel.setText("The email address is valid.");
@@ -263,8 +279,8 @@ public class RegistrationInterface extends JPanel {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				// TODO Auto-generated method stub
+				
+				
 				if(confirmEmailAddresJTextField.getText().equals(emailAddressJTextField.getText()) && confirmEmailAddresJTextField.getText().indexOf("@") > -1) { 
 					emailMatchesJLabel.setIcon(greenCheck);
 					emailMessageJLabel.setText("The email address is valid.");
@@ -549,7 +565,7 @@ public class RegistrationInterface extends JPanel {
 			//dout.writeUTF("Interupt");
 			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic("Interupt",Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent())).toString());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.	
@@ -560,8 +576,6 @@ public class RegistrationInterface extends JPanel {
 		//Send Aegis the goods
 		try {
 			//Encrypt information to send to Aegis. Turn them into BigIntegers so we can move them
-			//TODO These should be encrypted with Aegis' public key
-			//DONE
 			BigInteger firstNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(firstName,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
 			BigInteger lastNameCipher = new BigInteger(RSACrypto.rsaEncryptPublic(lastName,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
 			BigInteger emailAddressCipher = new BigInteger(RSACrypto.rsaEncryptPublic(emailAddress,Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent()));
@@ -570,7 +584,6 @@ public class RegistrationInterface extends JPanel {
 			
 
 			//Send the server the pieces of our public key to be assembled at the other end
-			//TODO These should be encrypted along with everything else
 			//For this test the server needs these numbers to decrypt things
 			dout.writeUTF(publicMod.toString());
 			dout.writeUTF(publicExp.toString());

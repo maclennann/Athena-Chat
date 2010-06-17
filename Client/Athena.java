@@ -1,19 +1,19 @@
-/****************************************************
- * Athena: Encrypted Messaging Application v.0.0.2
- * By: 	
- * 			Gregory LeBlanc
- * 			Norm Maclennan 
- * 			Stephen Failla
- * 
- * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
- * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
- * using a randomly generated email address
- * 
- * File: Client.java
- * 
- * This is where the detailed description of the file will go.
+/* Athena/Aegis Encrypted Chat Platform
+ * Athena.java: Client backend operations for logging in and routing incoming/outgoing messages
  *
- ****************************************************/
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 import java.awt.AWTException;
 import java.awt.Color;
@@ -533,32 +533,73 @@ public class Athena
 				return;
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
-				//Compare the digital signature to the hashed message to verify integrity of the message!
+				//TODO Compare the digital signature to the hashed message to verify integrity of the message!
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivateKey.getModulus(),usersPrivateKey.getPrivateExponent());
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
                                 //If there isn't already a tab for the conversation, make one
 				if(!(clientResource.tabPanels.containsKey(fromUserDecrypted)) && !(sessionKeys.containsKey(fromUserDecrypted)))
                                 {
-					clientResource.makeTab(fromUserDecrypted, false);
+                                    clientResource.makeTab(fromUserDecrypted, false);
+
+                                    //We have to actually print the message now because we have a sane if/else setup
+                                    //Write message to the correct tab
+                                    print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
+                                    print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
+                                    //print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
+                                    parseMarkdown(decryptedMessage,print);
+                                    print.moveToEnd();
+                                    //If we are away send the user our away message
+                                    if(away == 1) {
+					processMessage(fromUserDecrypted,"Auto reply from user: " + awayText);
+                                    }
+
+                                    if(decryptedMessage.equalsIgnoreCase("lmao")){
+					if(getEnableSounds())
+					{
+						// If enabled, open an input stream  to the audio file.
+						InputStream in = new FileInputStream("sounds/lmaoMesg.wav");
+						// Create an AudioStream object from the input stream.
+						AudioStream as = new AudioStream(in);
+						// Use the static class member "player" from class AudioPlayer to play
+						AudioPlayer.player.start(as);
+					}
+                                    }
+                                    else if(decryptedMessage.equals("Incoming file transfer...")) {
+					receiveFile();
+                                    }
+                                    // If enabled, open an input stream  to the audio file.
+                                    else if(getEnableSounds())
+                                    {
+					InputStream in = new FileInputStream("sounds/recvMesg.wav");
+					// Create an AudioStream object from the input stream.
+					AudioStream as = new AudioStream(in);
+					// Use the static class member "player" from class AudioPlayer to play
+					AudioPlayer.player.start(as);
+                                    }
+
+                                    System.gc();
 				}
+                                //Write to an open chat tab
                                 else if (sessionKeys.containsKey(fromUserDecrypted))
                                 {
-                                    System.out.println("DFASSDFDAF");
-                                for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
-                                {
-                                    JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
-                                    if(tabToCheck.getName().equals(fromUserDecrypted))
+                                    System.out.println("This is a chat message");
+                                    for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
                                     {
-                                        decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
-                                        print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
-                                        print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
-                                        parseMarkdown(decryptedMessage,print);
-                                        break;
+                                        JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
+                                        if(tabToCheck.getName().equals(fromUserDecrypted))
+                                        {
+                                            decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
+                                            String[] chatMessage = decryptedMessage.split(",",2);
+                                            print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
+                                            print.writeToTextArea(chatMessage[0]+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
+                                            parseMarkdown(chatMessage[1],print);
+                                            print.moveToEnd();
+                                            break;
+                                        }
                                     }
-                                  }
                                 }
-                                //Must be chat?
+                                //Write to an open IM tab
                                 else {
                                 
 				//Write message to the correct tab
@@ -721,7 +762,6 @@ public class Athena
 	 * 
 	 */
 	public static String createChat(String chatName) {
-		//TODO Make this an actual window
 		try {
 		systemMessage("12");
 				
@@ -740,7 +780,6 @@ public class Athena
 		} catch (NullPointerException npe) { 
 			return "-1";
 		}
-		//TODO Make a new tab to display the group chat window 
 	}
 	
 	/**
@@ -778,7 +817,6 @@ public class Athena
 		try {
 			c2sdout.writeUTF(encryptServerPublic(myChatUID));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -807,7 +845,7 @@ public class Athena
 				//Send the other user the file name
 				processMessage(myFile.getName());
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 				
@@ -845,7 +883,7 @@ public class Athena
 				bytesRead =
 				   is.read(mybytearray, current, (mybytearray.length-current));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 	        if(bytesRead >= 0) current += bytesRead;
@@ -886,6 +924,8 @@ public class Athena
             //This is a chat tab
             if(Integer.parseInt(currentTab.getName()) != -1){
                 System.out.println("THIS IS IN A CHAT TAB! SENDING MESSAGE TO CHAT "+currentTab.getName());
+                //Prepend username and comma to message so we know who it's from.
+                message = username+","+message;
                 //Sending information to Aegis
                 systemMessage("17");
                 c2sdout.writeUTF(encryptServerPublic(currentTab.getName()));
@@ -974,7 +1014,7 @@ public class Athena
 				print.clearTextField();
 			} catch (Exception e) {
 				sendBugReport(getStackTraceAsString(e));
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -1061,7 +1101,7 @@ public class Athena
 				print.clearTextField();
 			} catch (Exception e) {
 				sendBugReport(getStackTraceAsString(e));
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}System.gc();
@@ -1357,7 +1397,6 @@ public class Athena
 	 * This method returns a string array of the lines from the buddylist
 	 * @retrun String array of the buddylist
 	 */
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public static String[] returnBuddyListArray() throws IOException {
 		int count;
 		int readChars;
@@ -1421,7 +1460,6 @@ public class Athena
 
 	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public static String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;

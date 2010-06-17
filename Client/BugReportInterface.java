@@ -1,3 +1,20 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * BugReportInterface.java: Allows users to submit bug reports and feature requests.
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -104,8 +121,6 @@ public class BugReportInterface extends JPanel {
 		JScrollPane actualSP = new JScrollPane(actualJTextArea);
 		actualSP.setBounds(15,360,470,100);
 		actualSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		//Secret answer nput
-		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		
 		
 		
@@ -145,7 +160,7 @@ public class BugReportInterface extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				
 				submitBugJFrame.dispose();
 			} 
 		});

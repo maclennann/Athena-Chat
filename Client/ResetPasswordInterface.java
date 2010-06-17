@@ -1,3 +1,20 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * ResetPasswordInterface.java: Allows user to reset forgotten password
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -90,7 +107,6 @@ public class ResetPasswordInterface extends JPanel {
 		userNameJTextField.setBounds(130,20,150,25);
 
 		//Secret answer nput
-		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		secretQuestionJTextField = new JTextField();
 		secretQuestionJTextField.setEditable(false);
 		secretQuestionJTextField.setBounds(130,55,280,25);
@@ -121,7 +137,7 @@ public class ResetPasswordInterface extends JPanel {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					resetPasswordJFrame.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 		    }
@@ -239,7 +255,7 @@ public class ResetPasswordInterface extends JPanel {
 					//Send the information to Aegis
 					//sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password);*/
 			//	} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 				//	e.printStackTrace();
 				//}
 
@@ -253,7 +269,7 @@ public class ResetPasswordInterface extends JPanel {
 				try{
 					new AuthenticationInterface();
 				}catch(Exception ie){ie.printStackTrace();}
-				// TODO Auto-generated method stub
+				
 				resetPasswordJFrame.dispose();
 			} 
 		});
@@ -300,7 +316,7 @@ public class ResetPasswordInterface extends JPanel {
 			//dout.writeUTF("Interupt");
 			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic("Interupt",Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent())).toString());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.

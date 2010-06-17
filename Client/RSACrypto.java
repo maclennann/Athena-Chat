@@ -1,3 +1,20 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * RSACrypto.java: Provides access to RSA cryptography libraries
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,36 +37,6 @@ import javax.crypto.Cipher;
  *  OlympuSoft Athena
  */
 
-/**
- * 	We'll have to replicate what this does in Client
- * 
- * 	public static void doStuff(String message){
-		byte[] messageBytes = message.getBytes();
-		byte[] encrypted = rsaEncrypt(messageBytes);
-		System.out.println(encrypted);
-		try{
-		saveToFile("encrypted.msg",encrypted);
-		}catch(Exception e){
-			System.out.println("Fail");
-		}
-	}
-*
-*	
-	This one as well
-	
-	static byte[] getMessage(String messageFile) throws IOException {
-		ObjectInputStream oin = new ObjectInputStream(new FileInputStream("encrypted.msg"));
-		try {
-			byte[] msg = (byte[]) oin.readObject();
-			return msg;
-		} catch (Exception e) {
-			throw new RuntimeException("Spurious serialisation error", e);
-		} finally {
-			oin.close();
-		}
-	}
- *
- */
 public class RSACrypto {
 
 	/**
@@ -71,8 +58,6 @@ public class RSACrypto {
 	}
 	
 	// This method will generate the users RSA key files, one public and one private
-	// TODO There be a constructor that calls this method? Might make things more
-	//      standardized and easier to follow.
 	public static void generateRSAKeyPair() { 
 		try{
 			// Define type of encryption for which these keys are made
@@ -93,7 +78,6 @@ public class RSACrypto {
 			priv = fact.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
 			
 			// Save the keys to their respective files.
-			// TODO Should we do this automatically, or wait until it is called?
 			//saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
 			//saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
 			
@@ -101,51 +85,7 @@ public class RSACrypto {
 			System.out.println("An error has occured in 'generateRSAKeyPair'");
 		}
 
-	}
-
-	
-	
-//-------------------------------
-// The following two methods encrypt and decrypt data passed to them
-// using public and private keys stored on the hard drive
-	// Encrypts the given data with the public key in ./public.key
-	// TODO Perhaps this should change back to taking in a filename?
-	/*public static byte[] rsaEncrypt(byte[] data) {
-		try{
-			// Grab the key from this file 
-			PublicKey pubKey = readPubKeyFromFile("/public.key");
-			
-			// Define the cipher style
-			Cipher cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-			
-			// Encrypt the message
-			byte[] cipherData = cipher.doFinal(data);
-			return cipherData;
-		}catch(Exception e){
-			System.out.println("An error has occured in 'rsaEncrypt'");
-		}return null;
-	}
-	//Generic RSA decryption of data using private key private.key
-	public static byte[] rsaDecrypt(byte[] data) {
-		try{
-			// Grab the private key from the file
-			PrivateKey privKey = readPrivKeyFromFile("private.key");	
-			
-			// Define the decryption type
-			Cipher cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.DECRYPT_MODE, privKey);
-			
-			// DECRYPT!
-			byte[] plaintext = cipher.doFinal(data);
-			return plaintext;
-		}catch(Exception e){
-			System.out.println("An error has occured in 'rsaDecrypt'");e.printStackTrace();
-		}
-		return null;
-	}*/
-	
-	
+	}	
 	
 //----------------------------------
 // The following two methods encrypt and decrypt messages by taking in the modulus and
@@ -288,7 +228,6 @@ public class RSACrypto {
 		}
 	}
 	//This method grabs the private key from the file
-	//TODO Make this more secure! 3/31/2010
 	static RSAPrivateKeySpec readPrivKeyFromFile(String keyFileName, DESCrypto descrypto) throws IOException {
 		//This is how we'll get the file
 		ObjectInputStream oin = null;

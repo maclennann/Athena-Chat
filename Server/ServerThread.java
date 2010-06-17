@@ -1,23 +1,19 @@
-/****************************************************
- * Athena: Encrypted Messaging Application v.0.0.2
- * By: 	
- * 			Gregory LeBlanc
- * 			Norm Maclennan 
- * 			Stephen Failla
- * 
- * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
- * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
- * using a randomly generated email address
- * 
- * File: ServerThread.java
- * 
- * Each connection from a client gets its own thread. User logs in, thread handles sending messages to other users.
+/* Athena/Aegis Encrypted Chat Platform
+ * ServerThread.java: Controls the threads for each user connected to Aegis
  *
- * Sender's thread handles sending to recipient's socket.
- *
- * Thread's life is governed by an int isAlive. Set to 1 in the constructor, and set to 0 when user is likey disconnected.
- *
- ****************************************************/
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -130,6 +126,7 @@ public class ServerThread extends Thread
 				server.mapUserClientSocket(username, c2csocket);
 				server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
 				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));
+                                System.gc();
 			}
 			if(username.equals("Interupt")) {
 				routeMessage(serverDin,clientDin);
@@ -140,6 +137,7 @@ public class ServerThread extends Thread
 				while (isAlive==1) {
 					//Take in messages from this thread's client and route them to another client
 					routeMessage(serverDin,clientDin);
+                                        System.gc();
 				}
 				
 				
@@ -148,7 +146,7 @@ public class ServerThread extends Thread
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}finally {
 			//Socket is closed, remove it from the list
@@ -237,108 +235,124 @@ public class ServerThread extends Thread
 	public void systemMessageListener(int eventCode) throws InterruptedException, IOException {
 
 		switch(eventCode) { 
-		case 000: try {
-			createUsername();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		break;
-		case 001: 
-			if(debug==1)System.out.println("Event code received. negotiateClientStatus() run.");
-			negotiateClientStatus();
-			//System.out.println("Event code received. negotiateClientStatus() run.");
-			break;
-		case 002: if(debug==1)System.out.println("Event code received. senToAll() run.");
-			server.sendToAll("ServerLogOn", username);
-			break;
-		case 003: if(debug==1)System.out.println("Event code received. negotiateClientStatus(\"Checkuserstatus\") run.");
-			negotiateClientStatus("CheckUserStatus");
-			break;
-		case 004: if(debug==1)System.out.println("Event code received. publicKeyRequest() run.");
-			publicKeyRequest();
-			break;
-		case 005: if(debug==1)System.out.println("Event code received. returnBuddyListHash() run.");
-			returnBuddyListHash();
-			break;
-		case 006: if(debug==1)System.out.println("Event code received. receiveBuddyListfromClient() run.");
-			recieveBuddyListFromClient();
-			break;
-		case 007: if(debug==1)System.out.println("Event code received. sendPrivateKeyToClients() run.");
-			sendPrivateKeyToClient();
-			break;
-		case 8: if(debug==1)System.out.println("Event code received. sendBuddyListToClient() run.");
-			sendBuddyListToClient();
-			break;
-		case 9: if(debug==1)System.out.println("Event code received. receiveBugReport() run.");
-			receiveBugReport();
-			break;
-		case 10: if(debug==1)System.out.println("Event code received. receiveBugReport(flag) run.");
-			receiveBugReport(true);
-			break;
-		case 11: if(debug==1)System.out.println("Event code received. resetPassword() run.");
-			resetPassword();
-			break;
-		case 12: if(debug==1)System.out.println("Event code received. createChat() run.");
-			createChat();
-			break;
-		case 13: if(debug==1)System.out.println("Event code received. requestSocketInfo() run.");
-			requestSocketInfo();
-			break;
-		case 14: if(debug==1)System.out.println("Event code received. joinChat() run.");
-			joinChat();
-			break;
-		case 15: if(debug==1)System.out.println("Event code received. leaveChat() run.");
-			leaveChat();
-			break;
-		case 16: if(debug==1)System.out.println("Event code received. chatInvite() run.");
-			chatInvite();
-			break;
-		case 17: if(debug==1)System.out.println("Event code received. chatTalk() run.");
-			chatTalk();
-			break;
-		default: return;
+		    case 000:
+				if(debug==1)System.out.println("Event code received. createUsername() run.");
+		        createUsername();
+				break;
+		    case 001:
+				if(debug==1)System.out.println("Event code received. negotiateClientStatus() run.");
+				negotiateClientStatus();
+				break;
+		    case 002:
+				if(debug==1)System.out.println("Event code received. senToAll() run.");
+				server.sendToAll("ServerLogOn", username);
+				break;
+		    case 003:
+				if(debug==1)System.out.println("Event code received. negotiateClientStatus(\"Checkuserstatus\") run.");
+				negotiateClientStatus("CheckUserStatus");
+				break;
+		    case 004:
+				if(debug==1)System.out.println("Event code received. publicKeyRequest() run.");
+				publicKeyRequest();
+				break;
+		    case 005:
+				if(debug==1)System.out.println("Event code received. returnBuddyListHash() run.");
+				returnBuddyListHash();
+				break;
+		    case 006:
+				if(debug==1)System.out.println("Event code received. receiveBuddyListfromClient() run.");
+				recieveBuddyListFromClient();
+				break;
+		    case 007:
+				if(debug==1)System.out.println("Event code received. sendPrivateKeyToClients() run.");
+				sendPrivateKeyToClient();
+				break;
+			case 8:
+				if(debug==1)System.out.println("Event code received. sendBuddyListToClient() run.");
+				sendBuddyListToClient();
+				break;
+			case 9:
+				if(debug==1)System.out.println("Event code received. receiveBugReport() run.");
+				receiveBugReport();
+				break;
+			case 10:
+				if(debug==1)System.out.println("Event code received. receiveBugReport(flag) run.");
+				receiveBugReport(true);
+				break;
+			case 11:
+				if(debug==1)System.out.println("Event code received. resetPassword() run.");
+				resetPassword();
+				break;
+			case 12:
+				if(debug==1)System.out.println("Event code received. createChat() run.");
+				createChat();
+				break;
+			case 13:
+				if(debug==1)System.out.println("Event code received. requestSocketInfo() run.");
+				requestSocketInfo();
+				break;
+			case 14:
+				if(debug==1)System.out.println("Event code received. joinChat() run.");
+				joinChat();
+				break;
+			case 15:
+				if(debug==1)System.out.println("Event code received. leaveChat() run.");
+				leaveChat();
+				break;
+		    case 16:
+				if(debug==1)System.out.println("Event code received. chatInvite() run.");
+				chatInvite();
+				break;
+		    case 17:
+				if(debug==1)System.out.println("Event code received. chatTalk() run.");
+				chatTalk();
+				break;
+		    default:
+				return;
 		}
 	}
 	
 	private void chatTalk(){
 		try{
-		
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-		
+
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			String message = serverDin.readUTF();
-                        //We have the message. Now we have to find out who to send it to.
-                        if(debug==1)System.out.println("Sending received message to chat number "+chatNum);
 
-                        //Grab a DB connection
-                        Connection con = server.dbConnect();
-                        Statement stmt;
+			//We have the message. Now we have to find out who to send it to.
+			if(debug==1)System.out.println("Sending received message to chat number "+chatNum);
+
+			//Grab a DB connection
+			Connection con = server.dbConnect();
+			Statement stmt;
 			ResultSet rs = null;
 
-                        //Get a list of existing chats
+			//Get a list of existing chats
 			stmt = con.createStatement();
 			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '"+chatNum+"';");
 			System.out.println("Got list of users");
                         
-                        //Send the message to the users in the chat
-                        while(rs.next()){
-                            sendMessage(rs.getString(1),String.valueOf(chatNum),message);
+			//Send the message to the users in the chat
+			while(rs.next()){
+				sendMessage(rs.getString(1),String.valueOf(chatNum),message);
 			}
 
-                        //Close everything
-                        rs.close();
-                        stmt.close();
-                        con.close();
+			//Close everything
+			rs.close();
+			stmt.close();
+			con.close();
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 	}
 
+        //Send an invitation to selected users
 	private void chatInvite(){
 		try{
 			if(debug==1)System.out.println("In chatInvite()");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-			
+
+			//Get the chatUID, chat name, and number of users to invite
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			if(debug==1)System.out.println("Received chat number: "+chatNum);
 			String chatName = decryptServerPrivate(serverDin.readUTF());
@@ -349,6 +363,8 @@ public class ServerThread extends Thread
 			String sessionKey = "";
 			if(debug==1)System.out.println("Inviting "+inviteList+" people");
 			String invitingUser="";
+
+			//For each user to invite, take their name, and take the session key encrypted with their public key
 			for(int x=0;x<inviteList;x++){
 				invitingUser = decryptServerPrivate(serverDin.readUTF());
 				sessionKey = serverDin.readUTF();
@@ -361,22 +377,39 @@ public class ServerThread extends Thread
 			e.printStackTrace();
 		}
 	}
-	
+
+        //Remove the user from a chat, and completely delete the chat if it is empty
 	private void leaveChat(){
 		try{
+                        //Get the chat UID
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			System.out.println("User "+username+" is leaving chat number "+chatNum+"!!!!");
 			
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
-			
 			Statement stmt;
+                        ResultSet rs = null;
 			
-			//Get a list of existing chats
+			//Delete the user from the chat table, since he can't get messages for it anymore. Left for some reason
 			stmt = con.createStatement();
 			int deleted = stmt.executeUpdate("DELETE FROM chat WHERE username='"+username+"' AND chatid='"+chatNum+"';");
-			
+                        if(deleted == 1 && debug >= 1) System.out.println(username + " was successfully removed from the chat with UID " + chatNum);
+                        rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "';");
+
+                        //Delete the whole chat if it is empty
+                        if (rs.next()) {
+                            if(debug >= 1)System.out.println("Still people in the chat. Not closing.");
+                        }
+                        else {
+                            System.out.println("No one is left in chat " + chatNum + " closing chat");
+                            stmt.executeUpdate("DELETE FROM allchats WHERE chatid='"+chatNum+"';");
+                        }
+
+                        //TODO Send the chat a message about the departure, if it's still open
+
+                        //Close the connections
+                        rs.close();
 			stmt.close();
 			con.close();
 			
@@ -384,29 +417,34 @@ public class ServerThread extends Thread
 			e.printStackTrace();
 		}
 	}
-	
+
+        //Join user to provided chatUID. Follows the receipt and acceptance of an invitation
 	private void joinChat(){
 		try{
-		
-			System.out.println("I'm trying to add username "+username+" to this chat, when "+realUsername+"is the real user here.");
-			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			System.out.println("Joining user "+username+" to chat number "+chatNum+"!!!!!");
+                    //Get chat UID to join
+                    serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+                    int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+                    System.out.println("Joining user "+username+" to chat number "+chatNum+"!!!!!");
 			
-			//Grab a connection to the database
-			Connection con = server.dbConnect();
-			Statement stmt = con.createStatement();
-			stmt.executeUpdate("INSERT into chat (username,chatid) values('" + username +"','"+chatNum+"')");
-			System.out.println("Inserted the chatid into the allchat table.");
-			
-			stmt.close();
-			con.close();
+                    //Grab a connection to the database
+                    Connection con = server.dbConnect();
+                    Statement stmt = con.createStatement();
+
+                    //Add user to chat in Database so they will get messages
+                    stmt.executeUpdate("INSERT into chat (username,chatid) values('" + username +"','"+chatNum+"')");
+                    if(debug >= 1)System.out.println("Inserted the chatid into the allchat table.");
+
+                    //Close the connections
+                    stmt.close();
+                    con.close();
 			
 		} catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-	
+
+        //Get the socket info for another user
+        //This will be used in direct-protect and file transfer
 	private void requestSocketInfo(){
 		try{
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -418,11 +456,11 @@ public class ServerThread extends Thread
 			e.printStackTrace();
 		}
 	}
-		
+
+        //Create a chat. Generate a UID, add it to the DB, and inform the creator
 	private void createChat(){
 		try{
 			//Grab output stream for the user.
-			//TODO This probably isn't necessary
 			System.out.println("In the method.");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			System.out.println("Created the output stream which we shouldn't have to do.");
@@ -450,7 +488,7 @@ public class ServerThread extends Thread
 				
 				//Get a list of existing chats
 				stmt = con.createStatement();
-				rs = stmt.executeQuery("SELECT DISTINCT chatid FROM chat");
+				rs = stmt.executeQuery("SELECT chatid FROM allchats");
 				System.out.println("Got list of existing chats.");
 				
 				//Read chatIDs into array
@@ -481,7 +519,8 @@ public class ServerThread extends Thread
 			serverDout.writeUTF(encryptServerPrivate(String.valueOf(randInt)));
 		}catch(Exception e){e.printStackTrace();}
 	}
-	
+
+        //Allow the user to reset the password, provided they answer their secret question correctly
 	private void resetPassword(){
 		try{
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream()); 
@@ -491,7 +530,6 @@ public class ServerThread extends Thread
 			//Take in the username to find the secret question and answer for
 			String userToReset = decryptServerPrivate(serverDin.readUTF());
 			
-			//TODO Pull the secret question and secret answer hash from the DB
 			String secretQuestion = null;
 			String secretAnswer = null;
 			
@@ -502,12 +540,14 @@ public class ServerThread extends Thread
 			
 			stmt = con.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + userToReset + "'");
-			
+
+                        //Get their secret question and answer hash
 			if(rs.next()){
 				secretQuestion = rs.getString("secretq");
 				secretAnswer = rs.getString("secreta");
 			}else{
-				secretQuestion = "Invalid Username";
+				secretQuestion = "Invalid Username, try again.";
+                                return;
 			}
 			
 			//Close the resultset
@@ -526,7 +566,7 @@ public class ServerThread extends Thread
 			
 			if(secretAnswerHash.equals(secretAnswer)){
 				System.out.println("HASHES MATCH");
-				//TODO insert newPassword into password field
+
 				String insertString = "UPDATE Users SET password='" + newPassword + "' WHERE username = '" + userToReset + "'";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
@@ -596,7 +636,7 @@ public class ServerThread extends Thread
 	}
 	
 	private boolean sendBuddyListToClient() throws IOException {
-		// TODO Auto-generated method stub
+		
 		String[] buddyListArray = returnBuddyListArray(true);
 		if(debug>=1)System.out.println("Inside sendBuddyListToClient");
 		
@@ -614,7 +654,6 @@ public class ServerThread extends Thread
 		
 	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;
@@ -756,9 +795,8 @@ public class ServerThread extends Thread
 	}
 	
 	private void recieveBuddyListFromClient() throws IOException {
-		//TODO make this dynamic
 		String[] buddyListLines;
-		// TODO Auto-generated method stub
+		
 		//sendSystemMessage(username, "Access Granted. Send me the username.");
 		System.out.println("Should be begin: " + decryptServerPrivate(serverDin.readUTF()));
 		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(serverDin.readUTF())))];
@@ -875,7 +913,7 @@ public class ServerThread extends Thread
 		} catch (Exception e) {
 		}
 	}
-	//TODO Make this work better.
+
 	public boolean createUsername() throws IOException { 
 		try { 
 			//Use dbConnect() to connect to the database
@@ -890,7 +928,6 @@ public class ServerThread extends Thread
 			ResultSet rs = null; 
 			
 			//Read the new user's public key components
-			//TODO in this test we use this key for decryption, but we need to generate server keys for this
 			String publicModString = serverDin.readUTF();
 			String publicExpString = serverDin.readUTF();
 			//Read in the private key components
@@ -904,7 +941,6 @@ public class ServerThread extends Thread
 			String newUser = decryptServerPrivate(serverDin.readUTF());
 			String newPassword = decryptServerPrivate(serverDin.readUTF());
 			
-			//TODO These have to go into the database for later recall
 			String secretQuestion = decryptServerPrivate(serverDin.readUTF());
 			String secretAnswer = decryptServerPrivate(serverDin.readUTF());
 
@@ -995,7 +1031,6 @@ public class ServerThread extends Thread
 
 
 	//Sends message message from user fromUser (this thread/socket) to user toUser (another socket)
-	//TODO: Separate findOuputSteam from this method?
 	void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
 
@@ -1081,15 +1116,12 @@ public class ServerThread extends Thread
 		}	
 
 		//Debug messages.
-		//TODO: Come up with better debug messages
 		if (debug==1)System.out.println("User logging in...");
 		if (debug==1)System.out.println("Hashed Password:" + LocalHashed);
 		if (debug==1)System.out.println("Username :" + clientName);
 
 		//Verify the password hash provided from the user matches the one in the server's hashtable
 		if (clientPassword.equals(LocalHashed)) {
-			//Run some command that lets user log in!
-			//TODO: We need to broadcast a message letting everyone know a user logged in?
 			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Success", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(returnCipher.toString());
 			return returnCipher.toString();
