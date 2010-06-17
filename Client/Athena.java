@@ -520,6 +520,17 @@ public class Athena
 
 
 				//If there isn't already a tab for the conversation, make one
+                                for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
+                                {
+                                    JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
+                                    if(tabToCheck.getName().equals(fromUserDecrypted))
+                                    {
+                                        print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
+                                        print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
+                                        break;
+                                    }
+                                }
+
 				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
