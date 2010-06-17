@@ -1,4 +1,9 @@
 ChangeLog: 
+6/17/2010:
+	## Group chat almost completely implemented
+		@@ TODO Get usernames to show up correctly (comma-splitting)
+		@@ TODO Adding and removing usernames as they come and go
+		
 6/16/2010:
 	## Fixed a logon bug
 	## Usernames show up when you join a chat
