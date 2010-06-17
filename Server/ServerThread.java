@@ -306,7 +306,7 @@ public class ServerThread extends Thread
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 		
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			String message = decryptServerPrivate(serverDin.readUTF());
+			String message = serverDin.readUTF();
                         //We have the message. Now we have to find out who to send it to.
                         if(debug==1)System.out.println("Sending received message to chat number "+chatNum);
 
