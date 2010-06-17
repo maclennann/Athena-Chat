@@ -1,6 +1,6 @@
 import javax.crypto.*;
 import javax.crypto.spec.*;
-
+import java.math.BigInteger;
 /**
 * This program generates a AES key, retrieves its raw bytes, and
 * then reinstantiates a AES key from the key bytes.
@@ -39,7 +39,7 @@ public class AESCrypto {
 			// Generate the secret key specs.
 			SecretKey skey = kgen.generateKey();
 			byte[] raw = skey.getEncoded();
-
+                        System.out.println("AES KEY GENEERATED: "+asHex(raw));
 			SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
 			return skeySpec;
 		}catch(Exception e){
@@ -78,6 +78,29 @@ public class AESCrypto {
 		
 		//Create the cipher
 		SecretKeySpec skeySpec = generateKey();
+		System.out.println("Secret Key: "+asHex(skeySpec.getEncoded()));
+		
+		String input = asHex(skeySpec.getEncoded());
+		byte[] encoded = new BigInteger(input, 16).toByteArray();
+		System.out.println("FIRST BYTE: "+encoded[0]);
+		System.out.println("SECONDBYTE: "+encoded[1]);
+		
+		SecretKeySpec aesKey; 
+		
+		if(encoded[0] == 0){
+			System.out.println("LEADING ZEREOS!!!!");
+			
+			byte[] encoded2= new byte[16];
+			for(int x=0,y=-1; x<encoded.length;x++,y++) { 
+				if(x>=1) encoded2[y]=encoded[x];
+			}
+			aesKey = new SecretKeySpec(encoded2, "AES");
+		}
+		else{
+			aesKey = new SecretKeySpec(encoded, "AES");
+		}
+		
+		System.out.println("Secret KEY: "+asHex(aesKey.getEncoded()));
 		
 		
 		//Encrypt the message
@@ -85,7 +108,7 @@ public class AESCrypto {
 		System.out.println("Encrypted string: " + asHex(encrypted));
 
 		//Decrypt the message
-		byte[] original = decryptMessage(skeySpec, encrypted);
+		byte[] original = decryptMessage(aesKey, encrypted);
 		String originalString = new String(original);
 		System.out.println("Decrypted string: " +
 		originalString + "\nDecrypted String in Hex: " + asHex(original));

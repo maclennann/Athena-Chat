@@ -507,11 +507,29 @@ public class Athena
 			else if(fromUserDecrypted.equals("SessionKey")) { 
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
 				String[] chatInfo = decryptedMessage.split(",");
+                               
+                                byte[] encoded = new BigInteger(chatInfo[1], 16).toByteArray();
+                                System.out.println("FIRST BYTE: "+encoded[0]);
+                                System.out.println("SECONDBYTE: "+encoded[1]);
+		
+                                SecretKeySpec aesKey; 
+		
+                                if(encoded[0] == 0){
+                                    System.out.println("LEADING ZEREOS!!!!");
+			
+                                    byte[] encoded2= new byte[16];
+                                    for(int x=0,y=-1; x<encoded.length;x++,y++) { 
+                                        if(x>=1) encoded2[y]=encoded[x];
+                                    }
+                                    aesKey = new SecretKeySpec(encoded2, "AES");
+                                }
+                                else{
+                                    aesKey = new SecretKeySpec(encoded, "AES");
+                                }
                                 
-                                //Store the session key and chat UID in a hashtable for later lookup
-                                SecretKeySpec mySecretKey = new SecretKeySpec(chatInfo[1].getBytes(),"AES");
-                                sessionKeys.put(chatInfo[0], mySecretKey);
+                                sessionKeys.put(chatInfo[0], aesKey);
 				System.out.println("Session key: " + chatInfo[1]);
+                                System.out.println("SESSION KEY: " + AESCrypto.asHex(aesKey.getEncoded()));
 				return;
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
