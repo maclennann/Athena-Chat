@@ -1,3 +1,20 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * PreferencesInterface.java: Allows user to choose preferences and save them to a file
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
@@ -27,23 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.SwingUtilities;
-
-/****************************************************
- * Athena: Encrypted Messaging Application v.0.0.2
- * By: 	
- * 			Gregory LeBlanc
- * 			Norman Maclennan
- * 			Stephen Failla
- * 
- * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
- * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
- * using a randomly generated email address
- * 
- * File: ClientPreferences.java
- * 
- * Creates the preferences window invoked from ClientApplet
- *
- ****************************************************/
 
 //Let's make the preferences window
 public class PreferencesInterface extends JPanel {

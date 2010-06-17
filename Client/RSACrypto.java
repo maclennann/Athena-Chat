@@ -1,3 +1,20 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * RSACrypto.java: Provides access to RSA cryptography libraries
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,36 +37,6 @@ import javax.crypto.Cipher;
  *  OlympuSoft Athena
  */
 
-/**
- * 	We'll have to replicate what this does in Client
- * 
- * 	public static void doStuff(String message){
-		byte[] messageBytes = message.getBytes();
-		byte[] encrypted = rsaEncrypt(messageBytes);
-		System.out.println(encrypted);
-		try{
-		saveToFile("encrypted.msg",encrypted);
-		}catch(Exception e){
-			System.out.println("Fail");
-		}
-	}
-*
-*	
-	This one as well
-	
-	static byte[] getMessage(String messageFile) throws IOException {
-		ObjectInputStream oin = new ObjectInputStream(new FileInputStream("encrypted.msg"));
-		try {
-			byte[] msg = (byte[]) oin.readObject();
-			return msg;
-		} catch (Exception e) {
-			throw new RuntimeException("Spurious serialisation error", e);
-		} finally {
-			oin.close();
-		}
-	}
- *
- */
 public class RSACrypto {
 
 	/**
