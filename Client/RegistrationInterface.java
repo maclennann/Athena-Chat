@@ -547,7 +547,7 @@ public class RegistrationInterface extends JPanel {
 			//Tell the server we're not going to log in
 			//Maybe we should try encrypting this first!
 			//dout.writeUTF("Interupt");
-			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic((new String("Interupt")),Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent())).toString());
+			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic("Interupt",Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent())).toString());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -22,7 +22,6 @@
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -32,12 +31,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.Socket;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.RSAPrivateKeySpec;
@@ -49,7 +45,6 @@ import java.sql.Statement;
 import java.security.SecureRandom;
 
 import sun.misc.BASE64Encoder;
-import sun.security.util.BigInt;
 
 public class ServerThread extends Thread
 {
@@ -94,6 +89,7 @@ public class ServerThread extends Thread
 	}
 
 	//This runs when the thread starts. It controls everything.
+    @Override
 	public void run() {
 		try {
 		
@@ -311,6 +307,7 @@ public class ServerThread extends Thread
 		
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			String message = decryptServerPrivate(serverDin.readUTF());
+                        
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -586,7 +583,7 @@ public class ServerThread extends Thread
 		//Send Athena the begin message so it knows that this is the beginning of the file
 		//serverDout.writeUTF(encryptServerPrivate("Begin"));
 		//Send Athena the number of lines we're sending
-		serverDout.writeUTF(encryptServerPrivate(new String(String.valueOf(numLines))));
+		serverDout.writeUTF(encryptServerPrivate(String.valueOf(numLines)));
 		//Send the lines of the file!
 		for(int x=0;x<buddyListArray.length;x++) { 
 			serverDout.writeUTF(encryptServerPrivate(buddyListArray[x]));
@@ -1048,10 +1045,10 @@ public class ServerThread extends Thread
 	//This will authenticate the user, before they are allowed to send messages.	
 	public String login(String clientName, String clientPassword) throws IOException { 
 		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-		String hashedPassword;
+		String LocalHashed;
 		try{
 			//Get the password from the hashtable
-			hashedPassword = server.authentication.get(clientName).toString();
+			LocalHashed = server.authentication.get(clientName).toString();
 		}catch(Exception e){
 			//Login fail handler
 			if(debug>=1)System.out.println("User has failed to login");
@@ -1064,11 +1061,11 @@ public class ServerThread extends Thread
 		//Debug messages.
 		//TODO: Come up with better debug messages
 		if (debug==1)System.out.println("User logging in...");
-		if (debug==1)System.out.println("Hashed Password:" + hashedPassword);
+		if (debug==1)System.out.println("Hashed Password:" + LocalHashed);
 		if (debug==1)System.out.println("Username :" + clientName);
 
 		//Verify the password hash provided from the user matches the one in the server's hashtable
-		if (clientPassword.equals(hashedPassword)) { 
+		if (clientPassword.equals(LocalHashed)) {
 			//Run some command that lets user log in!
 			//TODO: We need to broadcast a message letting everyone know a user logged in?
 			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Success", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));

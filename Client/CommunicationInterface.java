@@ -805,6 +805,10 @@ public class CommunicationInterface extends JFrame {
 			disableTextPane(imTabbedPane.indexOfTab(user));
 		
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
+		currentTab.setName("-1");
+		System.out.println("Chat Name = " + currentTab.getName());
+	    System.out.println("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(user)));
+	    
 		if(imTabbedPane.indexOfTab(user) == 0 || userCreated)
 		{
 			contactList.setVisible(true);
@@ -855,6 +859,10 @@ public class CommunicationInterface extends JFrame {
 			disableTextPane(imTabbedPane.indexOfTab(chatName));
 		
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(chatName));
+		currentTab.setName(String.valueOf(chatUID));
+		System.out.println("Chat Name = " + currentTab.getName());
+	    System.out.println("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(chatName)));
+	    		
 		if(imTabbedPane.indexOfTab(chatName) == 0 || userCreated)
 		{
 			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(chatName));
@@ -1509,6 +1517,7 @@ public class CommunicationInterface extends JFrame {
 		        pane.getTitleAt(index),
 		        pane.getIconAt(index),
 		        JLabel.LEFT));
+		    //pane.setName("TEST");
 		    btClose = new JButton(closeIcon);
 		    btClose.setPreferredSize(new Dimension(
 		        closeIcon.getIconWidth(), closeIcon.getIconHeight()));
@@ -1538,6 +1547,7 @@ public class CommunicationInterface extends JFrame {
 			    btClose.setBorder(null);
 			    btClose.addMouseListener(this);
 			    chatUID = currentChatUID;
+			    pane.setName(String.valueOf(chatUID));			
 			  }
 		  
 		  public void mouseEntered(MouseEvent evt) {

@@ -17,7 +17,6 @@
 
 import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.Font;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -26,34 +25,29 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Enumeration;
-import java.security.MessageDigest;
-import java.security.DigestInputStream;
 import java.security.NoSuchAlgorithmException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Hashtable;
-import javax.swing.ImageIcon;
 import javax.crypto.spec.*;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.MutableAttributeSet;
 
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
-import sun.security.util.BigInt;
 
 public class Athena
 {
@@ -69,7 +63,7 @@ public class Athena
 	 */ 
 	protected static CommunicationInterface clientResource; //Accessor objects for referencing objects in another class
 	protected static AuthenticationInterface loginGUI;		
-	protected static MapTextArea print; //Temporary object for the JPanel in a tab	
+	protected static MapTextArea print; //Temporary object for the JPanel in a tab
 	//End protected variables
 	
 	/* Begin private variables
@@ -420,7 +414,7 @@ public class Athena
 
 			if(debug==2)System.out.println("Encrypted Message: "  + encryptedMessage);
 
-			RSAPrivateKeySpec usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
+			RSAPrivateKeySpec usersPrivateKey = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
 			//Decrypt the fromUser to see what user this message came from!
 			String fromUserDecrypted = decryptServerPublic(fromUserCipher);
@@ -511,7 +505,7 @@ public class Athena
 				return;
 			}
 			else if(fromUserDecrypted.equals("SessionKey")) { 
-				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivate.getModulus(), usersPrivate.getPrivateExponent());
+				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
 				String[] chatInfo = decryptedMessage.split(",");
                                 
                                 //Store the session key and chat UID in a hashtable for later lookup
@@ -521,7 +515,7 @@ public class Athena
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//Compare the digital signature to the hashed message to verify integrity of the message!
-				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivate.getModulus(),usersPrivate.getPrivateExponent());
+				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivateKey.getModulus(),usersPrivateKey.getPrivateExponent());
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
 
@@ -828,9 +822,18 @@ public class Athena
 	/** This method takes the message the user types and will get it ready to send
 	 * @param message The message to send
 	 */
-	public static void processMessage( String message ) throws BadLocationException {	
-		//Get user to send message to from active tab
+	public static void processMessage( String message ) throws BadLocationException {
+            //Is this a chat or IM tab?
+            JPanel currentTab = (JPanel) clientResource.imTabbedPane.getSelectedComponent();
+            //This is a chat tab
+            if(Integer.parseInt(currentTab.getName()) != -1){
+                System.out.println("THIS IS IN A CHAT TAB! SENDING MESSAGE TO CHAT "+currentTab.getName());
+            //This is an IM tab
+            } else{
+                System.out.println("THIS IS AN IM TAB!!!");
+                //Get user to send message to from active tab
 		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+
 		//Get the JPanel in the active tab
 		print = (MapTextArea)clientResource.tabPanels.get(toUser);
 		if(debug>=1)System.out.println("JPANEL : " + print.toString());
@@ -911,8 +914,10 @@ public class Athena
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}System.gc();
-	}
+		}
+            }
+            System.gc();
+        }
 	
 	public static void processMessage( String usertoreply, String message ) throws BadLocationException {	
 		//Get user to send message to from active tab
