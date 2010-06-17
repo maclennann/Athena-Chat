@@ -1519,7 +1519,6 @@ public class CommunicationInterface extends JFrame {
 		        pane.getTitleAt(index),
 		        pane.getIconAt(index),
 		        JLabel.LEFT));
-		    //pane.setName("TEST");
 		    btClose = new JButton(closeIcon);
 		    btClose.setPreferredSize(new Dimension(
 		        closeIcon.getIconWidth(), closeIcon.getIconHeight()));
@@ -1548,8 +1547,7 @@ public class CommunicationInterface extends JFrame {
 			    pane.setTabComponentAt(index, this);
 			    btClose.setBorder(null);
 			    btClose.addMouseListener(this);
-			    chatUID = currentChatUID;
-			    pane.setName(String.valueOf(chatUID));			
+			    chatUID = currentChatUID;		
 			  }
 		  
 		  public void mouseEntered(MouseEvent evt) {
