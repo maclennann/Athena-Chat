@@ -522,7 +522,7 @@ public class Athena
 				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
-
+                                //Must be chat?
                                 else {
 
                                 for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
@@ -530,13 +530,15 @@ public class Athena
                                     JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
                                     if(tabToCheck.getName().equals(fromUserDecrypted))
                                     {
+                                        decryptedMessage = decryptAES(Integer.parseInt(fromUserDecrypted), encryptedMessage);
                                         print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
                                         print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
+                                        parseMarkdown(decryptedMessage,print);
                                         break;
                                     }
 
                                 }
-				
+                            }
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
 				print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130))); 
@@ -571,7 +573,7 @@ public class Athena
 					// Use the static class member "player" from class AudioPlayer to play
 					AudioPlayer.player.start(as);
 				}
-                                    }
+                                  
 				System.gc();
 			}
 		}
@@ -844,6 +846,11 @@ public class Athena
             return messageBigInt.toString();
         }
 
+        public static String decryptAES(int myChatUID, String message) {
+            SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
+            BigInteger cipherBigInt = new BigInteger(message);
+            return new String(AESCrypto.decryptMessage(sessionKey, cipherBigInt.toByteArray()));
+        }
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
 	/** This method takes the message the user types and will get it ready to send
