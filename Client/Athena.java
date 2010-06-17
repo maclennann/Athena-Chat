@@ -518,8 +518,13 @@ public class Athena
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivateKey.getModulus(),usersPrivateKey.getPrivateExponent());
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
+                                //If there isn't already a tab for the conversation, make one
+				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
+					clientResource.makeTab(fromUserDecrypted, false);
+				}
 
-				//If there isn't already a tab for the conversation, make one
+                                else {
+
                                 for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
                                 {
                                     JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
@@ -529,11 +534,8 @@ public class Athena
                                         print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
                                         break;
                                     }
-                                }
 
-				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
-					clientResource.makeTab(fromUserDecrypted, false);
-				}
+                                }
 				
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
@@ -569,6 +571,7 @@ public class Athena
 					// Use the static class member "player" from class AudioPlayer to play
 					AudioPlayer.player.start(as);
 				}
+                                    }
 				System.gc();
 			}
 		}
