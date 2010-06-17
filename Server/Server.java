@@ -1,24 +1,20 @@
-/****************************************************
- * Athena: Encrypted Messaging Application v.0.0.2
- * By: 	
- * 			Gregory LeBlanc
- * 			Norm Maclennan 
- * 			Stephen Failla
- * 
- * This program allows a user to send encrypted messages over a fully standardized messaging architecture. It uses RSA with (x) bit keys and SHA-256 to 
- * hash the keys on the server side. It also supports fully encrypted emails using a standardized email address. The user can also send "one-off" emails
- * using a randomly generated email address
- * 
- * File: Server.java
- * 
- * This runs the code for the auth/messaging server. A client will connect to this server via ServerSocket ss. Each connection is handled by a thread
- * of ServerThread. Server handles the record-keeping and connection handling.
- * 
- * When the server starts up, we create a hash table of all of the usernames and passwords for all users, minimizing database transactions.
+/* Athena/Aegis Encrypted Chat Platform
+ * Server.java: Accepts connections, governs user threads (ServerThread instances) and is the gateway to the DB
  *
- * As new users connect, their username is mapped to a socket, which is mapped to a datastream so we can communicate with the user.
- *
- ****************************************************/
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
