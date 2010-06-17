@@ -537,6 +537,7 @@ public class Athena
                                     }
 
                                 }
+                                return;
                             }
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
