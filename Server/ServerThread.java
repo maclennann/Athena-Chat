@@ -307,11 +307,22 @@ public class ServerThread extends Thread
 		
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			String message = decryptServerPrivate(serverDin.readUTF());
-                        
-			}catch(Exception e){
+                        //We have the message. Now we have to find out who to send it to.
+                        if(debug==1)System.out.println("Sending received message to chat number "+chatNum);
+/*
+                        //Grab a DB connection
+                        Connection con = server.dbConnect();
+                        Statement stmt;
+			ResultSet rs = null;
+                        //Get a list of existing chats
+				stmt = con.createStatement();
+				rs = stmt.executeQuery("SELECT DISTINCT chatid FROM chat");
+				System.out.println("Got list of existing chats.");
+			*/}catch(Exception e){
 				e.printStackTrace();
 			}
 	}
+
 	private void chatInvite(){
 		try{
 			if(debug==1)System.out.println("In chatInvite()");

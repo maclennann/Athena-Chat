@@ -833,9 +833,18 @@ public class Athena
 	/** This method takes the message the user types and will get it ready to send
 	 * @param message The message to send
 	 */
-	public static void processMessage( String message ) throws BadLocationException {	
-		//Get user to send message to from active tab
+	public static void processMessage( String message ) throws BadLocationException {
+            //Is this a chat or IM tab?
+            JPanel currentTab = (JPanel) clientResource.imTabbedPane.getSelectedComponent();
+            //This is a chat tab
+            if(Integer.parseInt(currentTab.getName()) != -1){
+                System.out.println("THIS IS IN A CHAT TAB! SENDING MESSAGE TO CHAT "+currentTab.getName());
+            //This is an IM tab
+            } else{
+                System.out.println("THIS IS AN IM TAB!!!");
+                //Get user to send message to from active tab
 		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+
 		//Get the JPanel in the active tab
 		print = (MapTextArea)clientResource.tabPanels.get(toUser);
 		if(debug>=1)System.out.println("JPANEL : " + print.toString());
@@ -914,8 +923,10 @@ public class Athena
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}System.gc();
-	}
+		}
+            }
+            System.gc();
+        }
 	
 	public static void processMessage( String usertoreply, String message ) throws BadLocationException {	
 		//Get user to send message to from active tab
