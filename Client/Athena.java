@@ -524,6 +524,7 @@ public class Athena
 				}
                                 //Must be chat?
                                 else {
+                                System.out.println("DFASSDFDAF");
                                 for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
                                 {
                                     JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
@@ -535,9 +536,8 @@ public class Athena
                                         parseMarkdown(decryptedMessage,print);
                                         break;
                                     }
-
-                                }
-                                return;
+                                  }
+                                
                             }
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
