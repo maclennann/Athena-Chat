@@ -519,12 +519,11 @@ public class Athena
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
                                 //If there isn't already a tab for the conversation, make one
-				if((!clientResource.tabPanels.containsKey(fromUserDecrypted) ) && (!sessionKeys.containsKey(fromUserDecrypted))){
+				if((!clientResource.tabPanels.containsKey(fromUserDecrypted) ) && (!sessionKeys.containsKey(Integer.parseInt(fromUserDecrypted)))){
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
                                 //Must be chat?
                                 else {
-
                                 for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
                                 {
                                     JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
