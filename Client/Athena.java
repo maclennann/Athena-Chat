@@ -861,6 +861,8 @@ public class Athena
 						}
 						messageChunks[i] = message.substring(begin,end);
 
+                                                //Check to see if this tab is a chat tab!!!
+                                                // if(clientResource.)
 						//Grab the other user's public key from file
 						RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 						//Encrypt the toUser with the Server's public key and send it to the server
