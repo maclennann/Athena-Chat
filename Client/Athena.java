@@ -846,6 +846,7 @@ public class Athena
          */
         public static String encryptAES(String myChatUID, String message) {
             SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
+            System.out.println("SESSIONTEST: " + AESCrypto.asHex(sessionKey.getEncoded()));
             BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(sessionKey, message));
             return messageBigInt.toString();
         }
@@ -853,6 +854,7 @@ public class Athena
         public static String decryptAES(String myChatUID, String message) {
             SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
             BigInteger cipherBigInt = new BigInteger(message);
+           System.out.println("SESSIONTEST: " + AESCrypto.asHex(sessionKey.getEncoded()));
             return new String(AESCrypto.decryptMessage(sessionKey, cipherBigInt.toByteArray()));
         }
 	//Called from the actionListener on the tf textfield
