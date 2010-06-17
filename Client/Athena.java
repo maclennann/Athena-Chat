@@ -817,17 +817,40 @@ public class Athena
 
 
 	}
+        /** This method returns the cipher text of the message encrypted with a sessionKey
+         * 
+         * @param key
+         * @param myChatUID
+         * @param message
+         * @return
+         */
+        public static String encryptAES(int myChatUID, String message) {
+            SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
+            BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(sessionKey, message));
+            return messageBigInt.toString();
+        }
+
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
 	/** This method takes the message the user types and will get it ready to send
 	 * @param message The message to send
 	 */
-	public static void processMessage( String message ) throws BadLocationException {
+	public static void processMessage( String message ) throws BadLocationException, IOException {
             //Is this a chat or IM tab?
             JPanel currentTab = (JPanel) clientResource.imTabbedPane.getSelectedComponent();
             //This is a chat tab
             if(Integer.parseInt(currentTab.getName()) != -1){
                 System.out.println("THIS IS IN A CHAT TAB! SENDING MESSAGE TO CHAT "+currentTab.getName());
+                //Sending information to Aegis
+                systemMessage("17");
+                c2sdout.writeUTF(encryptServerPublic(currentTab.getName()));
+                c2sdout.writeUTF(encryptAES(Integer.parseInt(currentTab.getName()), message));
+
+                //Print the message locally
+		print.writeToTextArea(username+": ", print.getSetHeaderFont(new Color(0, 130, 0)));
+		//print.writeToTextArea(message+"\n", print.getTextFont());
+		parseMarkdown(message,print);
+
             //This is an IM tab
             } else{
                 System.out.println("THIS IS AN IM TAB!!!");
