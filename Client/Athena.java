@@ -533,7 +533,7 @@ public class Athena
 				return;
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
-				//Compare the digital signature to the hashed message to verify integrity of the message!
+				//TODO Compare the digital signature to the hashed message to verify integrity of the message!
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivateKey.getModulus(),usersPrivateKey.getPrivateExponent());
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
@@ -542,6 +542,7 @@ public class Athena
                                 {
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
+                                //Write to an open chat tab
                                 else if (sessionKeys.containsKey(fromUserDecrypted))
                                 {
                                     System.out.println("DFASSDFDAF");
@@ -551,14 +552,15 @@ public class Athena
                                     if(tabToCheck.getName().equals(fromUserDecrypted))
                                     {
                                         decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
+                                        String[] chatMessage = decryptedMessage.split(",",2);
                                         print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
-                                        print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
-                                        parseMarkdown(decryptedMessage,print);
+                                        print.writeToTextArea(chatMessage[0]+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
+                                        parseMarkdown(chatMessage[1],print);
                                         break;
                                     }
                                   }
                                 }
-                                //Must be chat?
+                                //Write to an open IM tab
                                 else {
                                 
 				//Write message to the correct tab
@@ -887,6 +889,8 @@ public class Athena
             //This is a chat tab
             if(Integer.parseInt(currentTab.getName()) != -1){
                 System.out.println("THIS IS IN A CHAT TAB! SENDING MESSAGE TO CHAT "+currentTab.getName());
+                //Prepend username and comma to message so we know who it's from.
+                message = username+","+message;
                 //Sending information to Aegis
                 systemMessage("17");
                 c2sdout.writeUTF(encryptServerPublic(currentTab.getName()));
