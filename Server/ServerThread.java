@@ -389,27 +389,26 @@ public class ServerThread extends Thread
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
 			Statement stmt;
-                        ResultSet rs = null;
+			ResultSet rs = null;
 			
 			//Delete the user from the chat table, since he can't get messages for it anymore. Left for some reason
 			stmt = con.createStatement();
 			int deleted = stmt.executeUpdate("DELETE FROM chat WHERE username='"+username+"' AND chatid='"+chatNum+"';");
-                        if(deleted == 1 && debug >= 1) System.out.println(username + " was successfully removed from the chat with UID " + chatNum);
-                        rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "';");
+			if(deleted == 1 && debug >= 1) System.out.println(username + " was successfully removed from the chat with UID " + chatNum);
+			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "';");
+			//Delete the whole chat if it is empty
+			if (rs.next()) {
+				if(debug >= 1)System.out.println("Still people in the chat. Not closing.");
+			}
+			else {
+				System.out.println("No one is left in chat " + chatNum + " closing chat");
+				stmt.executeUpdate("DELETE FROM allchats WHERE chatid='"+chatNum+"';");
+			}
 
-                        //Delete the whole chat if it is empty
-                        if (rs.next()) {
-                            if(debug >= 1)System.out.println("Still people in the chat. Not closing.");
-                        }
-                        else {
-                            System.out.println("No one is left in chat " + chatNum + " closing chat");
-                            stmt.executeUpdate("DELETE FROM allchats WHERE chatid='"+chatNum+"';");
-                        }
+			//TODO Send the chat a message about the departure, if it's still open
 
-                        //TODO Send the chat a message about the departure, if it's still open
-
-                        //Close the connections
-                        rs.close();
+			//Close the connections
+			rs.close();
 			stmt.close();
 			con.close();
 			

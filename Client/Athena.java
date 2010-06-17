@@ -402,7 +402,7 @@ public class Athena
 		}	
 	}
 
-	/** This method is run in a thread and will recieve and process an incoming message
+	/** This method is run in a thread and will receive and process an incoming message
 	 * @param din This DataInputStream is where the messages will come from
 	 */
 	public static void recvMesg(DataInputStream din){
@@ -508,28 +508,29 @@ public class Athena
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
 				String[] chatInfo = decryptedMessage.split(",");
                                
-                                byte[] encoded = new BigInteger(chatInfo[1], 16).toByteArray();
-                                System.out.println("FIRST BYTE: "+encoded[0]);
-                                System.out.println("SECONDBYTE: "+encoded[1]);
-		
-                                SecretKeySpec aesKey; 
-		
-                                if(encoded[0] == 0){
-                                    System.out.println("LEADING ZEREOS!!!!");
-			
-                                    byte[] encoded2= new byte[16];
-                                    for(int x=0,y=-1; x<encoded.length;x++,y++) { 
-                                        if(x>=1) encoded2[y]=encoded[x];
-                                    }
-                                    aesKey = new SecretKeySpec(encoded2, "AES");
-                                }
-                                else{
-                                    aesKey = new SecretKeySpec(encoded, "AES");
-                                }
+				byte[] encoded = new BigInteger(chatInfo[1], 16).toByteArray();
+				System.out.println("FIRST BYTE: "+encoded[0]);
+				System.out.println("SECONDBYTE: "+encoded[1]);
+
+				SecretKeySpec aesKey;
+
+				if(encoded[0] == 0){
+					System.out.println("LEADING ZEREOS!!!!");
+
+					byte[] encoded2= new byte[16];
+					for(int x=0,y=-1; x<encoded.length;x++,y++) {
+						if(x>=1) encoded2[y]=encoded[x];
+					}
+					aesKey = new SecretKeySpec(encoded2, "AES");
+				}
+				else{
+					aesKey = new SecretKeySpec(encoded, "AES");
+				}
                                 
-                                sessionKeys.put(chatInfo[0], aesKey);
+                sessionKeys.put(chatInfo[0], aesKey);
 				System.out.println("Session key: " + chatInfo[1]);
-                                System.out.println("SESSION KEY: " + AESCrypto.asHex(aesKey.getEncoded()));
+                System.out.println("SESSION KEY: " + AESCrypto.asHex(aesKey.getEncoded()));
+
 				return;
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
@@ -758,9 +759,9 @@ public class Athena
 	}
 	
 	
-	//Method for group chat
-	/** This method does something
-	 * 
+	//
+	/** 
+	 *  Method for creating a group chat
 	 */
 	public static String createChat(String chatName) {
 		try {
@@ -771,8 +772,8 @@ public class Athena
 			String chatUID = decryptServerPublic(c2sdin.readUTF());
 			chatSessionKey = AESCrypto.generateKey();
                         
-                        //Save the session key to a Hashtable
-                        sessionKeys.put(chatUID, chatSessionKey);
+			//Save the session key to a Hashtable
+			sessionKeys.put(chatUID, chatSessionKey);
 			return chatUID;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -817,6 +818,8 @@ public class Athena
 		//Send Aegis the chatUID
 		try {
 			c2sdout.writeUTF(encryptServerPublic(myChatUID));
+			sessionKeys.remove(myChatUID);
+			System.gc();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
