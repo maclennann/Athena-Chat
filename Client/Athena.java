@@ -585,7 +585,6 @@ public class Athena
 		char previous=' ';
 		char next=' ';
 		MutableAttributeSet currentAttr = print.getTextFont();
-		
 		//Go through the message, character by character
 		for(x=0;x<message.length();x++){
 			current = message.charAt(x);
