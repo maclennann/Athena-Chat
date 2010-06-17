@@ -518,8 +518,13 @@ public class Athena
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes,usersPrivateKey.getModulus(),usersPrivateKey.getPrivateExponent());
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
+                                //If there isn't already a tab for the conversation, make one
+				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
+					clientResource.makeTab(fromUserDecrypted, false);
+				}
 
-				//If there isn't already a tab for the conversation, make one
+                                else {
+
                                 for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
                                 {
                                     JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
@@ -529,11 +534,8 @@ public class Athena
                                         print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
                                         break;
                                     }
-                                }
 
-				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
-					clientResource.makeTab(fromUserDecrypted, false);
-				}
+                                }
 				
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
@@ -569,6 +571,7 @@ public class Athena
 					// Use the static class member "player" from class AudioPlayer to play
 					AudioPlayer.player.start(as);
 				}
+                                    }
 				System.gc();
 			}
 		}
@@ -828,17 +831,40 @@ public class Athena
 
 
 	}
+        /** This method returns the cipher text of the message encrypted with a sessionKey
+         * 
+         * @param key
+         * @param myChatUID
+         * @param message
+         * @return
+         */
+        public static String encryptAES(int myChatUID, String message) {
+            SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
+            BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(sessionKey, message));
+            return messageBigInt.toString();
+        }
+
 	//Called from the actionListener on the tf textfield
 	//User wants to send a message
 	/** This method takes the message the user types and will get it ready to send
 	 * @param message The message to send
 	 */
-	public static void processMessage( String message ) throws BadLocationException {
+	public static void processMessage( String message ) throws BadLocationException, IOException {
             //Is this a chat or IM tab?
             JPanel currentTab = (JPanel) clientResource.imTabbedPane.getSelectedComponent();
             //This is a chat tab
             if(Integer.parseInt(currentTab.getName()) != -1){
                 System.out.println("THIS IS IN A CHAT TAB! SENDING MESSAGE TO CHAT "+currentTab.getName());
+                //Sending information to Aegis
+                systemMessage("17");
+                c2sdout.writeUTF(encryptServerPublic(currentTab.getName()));
+                c2sdout.writeUTF(encryptAES(Integer.parseInt(currentTab.getName()), message));
+
+                //Print the message locally
+		print.writeToTextArea(username+": ", print.getSetHeaderFont(new Color(0, 130, 0)));
+		//print.writeToTextArea(message+"\n", print.getTextFont());
+		parseMarkdown(message,print);
+
             //This is an IM tab
             } else{
                 System.out.println("THIS IS AN IM TAB!!!");
@@ -875,6 +901,8 @@ public class Athena
 						}
 						messageChunks[i] = message.substring(begin,end);
 
+                                                //Check to see if this tab is a chat tab!!!
+                                                // if(clientResource.)
 						//Grab the other user's public key from file
 						RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser+ ".pub");
 						//Encrypt the toUser with the Server's public key and send it to the server

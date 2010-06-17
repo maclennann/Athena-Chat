@@ -39,6 +39,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import java.io.BufferedReader;
@@ -1759,7 +1761,11 @@ class MapTextArea extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER && (!(myTP.getText().equals(""))))
 					try {
-						Athena.processMessage(myTP.getText());
+                    try {
+                        Athena.processMessage(myTP.getText());
+                    } catch (IOException ex) {
+                        Logger.getLogger(MapTextArea.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 						myTP.getDocument().remove(0, myTP.getText().length());
 						e.consume();
 					} catch (BadLocationException e1) {
