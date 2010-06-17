@@ -89,7 +89,7 @@ public class Athena
 	private static BigInteger modOfBuddy = null;
 	private static BigInteger expOfBuddy = null;	
 	public static RSAPrivateKeySpec usersPrivate; //User's public key
-        private static Hashtable<Integer, SecretKeySpec> sessionKeys = new Hashtable<Integer, SecretKeySpec>();
+        private static Hashtable<String, SecretKeySpec> sessionKeys = new Hashtable<String, SecretKeySpec>();
 	//End private variables
 	
 	/**
@@ -500,7 +500,7 @@ public class Athena
 					//Send server a confirm message
 					systemMessage("14");
 					c2sdout.writeUTF(encryptServerPublic(chatName[2]));
-					clientResource.makeChatTab(chatName[0], Integer.parseInt(chatName[2]), true);
+					clientResource.makeChatTab(chatName[0], chatName[2], true);
 				}
 				return;
 			}
@@ -509,7 +509,7 @@ public class Athena
 				String[] chatInfo = decryptedMessage.split(",");
                                 
                                 //Store the session key and chat UID in a hashtable for later lookup
-                                sessionKeys.put(Integer.parseInt(chatInfo[0]), new SecretKeySpec(chatInfo[1].getBytes(),"AES"));
+                                sessionKeys.put(chatInfo[0], new SecretKeySpec(chatInfo[1].getBytes(),"AES"));
 				System.out.println("Session key: " + chatInfo[1]);
 				return;
 			}
@@ -519,11 +519,11 @@ public class Athena
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
                                 //If there isn't already a tab for the conversation, make one
-				if(!(clientResource.tabPanels.containsKey(fromUserDecrypted)) && !(sessionKeys.containsKey(Integer.parseInt(fromUserDecrypted))))
+				if(!(clientResource.tabPanels.containsKey(fromUserDecrypted)) && !(sessionKeys.containsKey(fromUserDecrypted)))
                                 {
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
-                                else if (sessionKeys.containsKey(Integer.parseInt(fromUserDecrypted)))
+                                else if (sessionKeys.containsKey(fromUserDecrypted))
                                 {
                                     System.out.println("DFASSDFDAF");
                                 for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
@@ -531,7 +531,7 @@ public class Athena
                                     JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
                                     if(tabToCheck.getName().equals(fromUserDecrypted))
                                     {
-                                        decryptedMessage = decryptAES(Integer.parseInt(fromUserDecrypted), encryptedMessage);
+                                        decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
                                         print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
                                         print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
                                         parseMarkdown(decryptedMessage,print);
@@ -702,14 +702,14 @@ public class Athena
 	/** This method does something
 	 * 
 	 */
-	public static int createChat(String chatName) { 
+	public static String createChat(String chatName) {
 		//TODO Make this an actual window
 		try {
 		systemMessage("12");
 				
 		try {
 			c2sdout.writeUTF(encryptServerPublic(chatName));
-			int chatUID = Integer.parseInt(decryptServerPublic(c2sdin.readUTF()));
+			String chatUID = decryptServerPublic(c2sdin.readUTF());
 			chatSessionKey = AESCrypto.generateKey();
                         
                         //Save the session key to a Hashtable
@@ -717,10 +717,10 @@ public class Athena
 			return chatUID;
 		} catch (IOException e) {
 			e.printStackTrace();
-			return -1;
+			return "-1";
 		}
 		} catch (NullPointerException npe) { 
-			return -1;			
+			return "-1";
 		}
 		//TODO Make a new tab to display the group chat window 
 	}
@@ -729,13 +729,13 @@ public class Athena
 	 * @throws IOException 
 	 * 
 	 */
-	public static void inviteUsers(String[] inviteUsers, int myChatUID, String chatName) throws IOException {
+	public static void inviteUsers(String[] inviteUsers, String myChatUID, String chatName) throws IOException {
             //Get the session key for this chat
             String keyString = AESCrypto.asHex(sessionKeys.get(myChatUID).getEncoded());
 
             //Send Aegis the information
             systemMessage("16");
-            c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
+            c2sdout.writeUTF(encryptServerPublic(myChatUID));
             if(debug>=1)System.out.println("Sent chatUID " + myChatUID);
             c2sdout.writeUTF(encryptServerPublic(chatName));
             if(debug>=1)System.out.println("Sent chatName " + chatName);
@@ -753,12 +753,12 @@ public class Athena
 	/**
 	 * 
 	 */
-	public static void leaveChat(int myChatUID) {
+	public static void leaveChat(String myChatUID) {
 		//Let Aegis know that we're leaving the chat
 		systemMessage("15");
 		//Send Aegis the chatUID
 		try {
-			c2sdout.writeUTF(encryptServerPublic(String.valueOf(myChatUID)));
+			c2sdout.writeUTF(encryptServerPublic(myChatUID));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -844,13 +844,13 @@ public class Athena
          * @param message
          * @return
          */
-        public static String encryptAES(int myChatUID, String message) {
+        public static String encryptAES(String myChatUID, String message) {
             SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
             BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(sessionKey, message));
             return messageBigInt.toString();
         }
 
-        public static String decryptAES(int myChatUID, String message) {
+        public static String decryptAES(String myChatUID, String message) {
             SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
             BigInteger cipherBigInt = new BigInteger(message);
             return new String(AESCrypto.decryptMessage(sessionKey, cipherBigInt.toByteArray()));
@@ -869,7 +869,7 @@ public class Athena
                 //Sending information to Aegis
                 systemMessage("17");
                 c2sdout.writeUTF(encryptServerPublic(currentTab.getName()));
-                c2sdout.writeUTF(encryptAES(Integer.parseInt(currentTab.getName()), message));
+                c2sdout.writeUTF(encryptAES(currentTab.getName(), message));
 
             //This is an IM tab
             } else{

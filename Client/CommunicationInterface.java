@@ -833,7 +833,7 @@ public class CommunicationInterface extends JFrame {
 		System.gc();
 	}
 	
-	public void makeChatTab(String chatName, int chatUID, boolean userCreated) {
+	public void makeChatTab(String chatName, String chatUID, boolean userCreated) {
 		lockIconLabel.setVisible(false);
 		logoIconLabel.setVisible(false);
 		int prevIndex = 0;
@@ -1291,7 +1291,7 @@ public class CommunicationInterface extends JFrame {
 				else
 				{
 					//Run the createChat method in Athena, returns the chatUID
-					int chatUID = Athena.createChat(chatNameField.getText());
+					String chatUID = Athena.createChat(chatNameField.getText());
 					//Getting the list
 					String[] inviteUsers = new String[inviteListModel.size()];
 					for(int x=0;x<inviteListModel.size();x++) { 
@@ -1506,7 +1506,7 @@ public class CommunicationInterface extends JFrame {
 		//private static final long serialVersionUID = -6032110177913133517L;
 		private JTabbedPane pane;
 		public JButton btClose;
-		public int chatUID = -1;
+		public String chatUID = "-1";
 	    Icon closeIcon = new ImageIcon("images/close_button.png");
 	    Icon alertIcon = new ImageIcon("images/alert.png");
 	    int myIndex;
@@ -1530,7 +1530,7 @@ public class CommunicationInterface extends JFrame {
 		    btClose.addMouseListener(this);
 		  }
 		  
-		  public CloseTabButton(JTabbedPane pane, int index, int currentChatUID) {
+		  public CloseTabButton(JTabbedPane pane, int index, String currentChatUID) {
 			    this.pane = pane;
 			    myIndex = index;
 			    setOpaque(false);
@@ -1573,7 +1573,7 @@ public class CommunicationInterface extends JFrame {
 		      uniqueIDHash.remove(currentTextPane.getDocument());
 		      //Retrieve the mapTextArea, then see if the tab is a chat tab
                       System.out.println("ChatUID: " + chatUID);
-		      if(chatUID != -1) {
+		      if(!(chatUID.equals("-1"))) {
                           System.out.println("Leaving chat!");
 		    	  Athena.leaveChat(chatUID);		    	  
 		      }
@@ -1583,7 +1583,7 @@ public class CommunicationInterface extends JFrame {
 				CommunicationInterface.lockIconLabel.setVisible(true);
 				CommunicationInterface.logoIconLabel.setVisible(true);
                                         System.out.println("ChatUID: " + chatUID);
-		      if(chatUID != -1) {
+		      if(!(chatUID.equals("-1"))) {
                           System.out.println("Leaving chat!");
 		    	  Athena.leaveChat(chatUID);
 		      }
