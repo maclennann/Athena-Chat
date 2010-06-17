@@ -519,7 +519,7 @@ public class Athena
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
                                 //If there isn't already a tab for the conversation, make one
-				if(!clientResource.tabPanels.containsKey(fromUserDecrypted)){
+				if((!clientResource.tabPanels.containsKey(fromUserDecrypted) ) && (!sessionKeys.containsKey(fromUserDecrypted))){
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
                                 //Must be chat?
