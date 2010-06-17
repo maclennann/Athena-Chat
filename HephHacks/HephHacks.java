@@ -52,8 +52,8 @@ public class HephHacks {
 		clearScreen("Strike while the iron is hot!",4);
 		Scanner in = new Scanner(System.in);
 		String clean="r";
+
 		//Display a menu
-		//TODO Add more features!
 		System.out.println("Choose one option.\n1. Attempt DoS\n2. Spam anonymous connections\n3. Spam authenticated connections.\n4. Spam Server commands\n5. Spam user messages\n6. Spam user creation (db stress test)\n7. Spam Bug Submissions (db stress test)\n8. Attempt message spoofing\n9. Exit");
 		System.out.print("Choice: ");
 		int answer = in.nextInt();
@@ -62,10 +62,10 @@ public class HephHacks {
 		case 1: try { //DoS the server
 				Dos();
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
+				
 				e1.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		break;
@@ -83,10 +83,10 @@ public class HephHacks {
 				}while(again);
 				SpamX(clean);
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		break;
@@ -115,10 +115,10 @@ public class HephHacks {
 				//Spam with provided credentials
 				SpamX(username,password,clean);
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		break;
@@ -140,10 +140,10 @@ public class HephHacks {
 				//Spam with provided credentials
 				SpamMesg(username,password,username,false);
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		break;
@@ -165,10 +165,10 @@ public class HephHacks {
 				//Spam with provided credentials
 				SpamMesg(username,password,username,true);
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		break;
@@ -192,10 +192,10 @@ public class HephHacks {
 				//Spam with provided credentials
 				SpamMesg(username,password,fromUser,true);
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		case 9: System.exit(0);
@@ -205,7 +205,7 @@ public class HephHacks {
 	}
 
 	private static void SpamX(String clean) throws UnknownHostException, IOException {
-		// TODO Auto-generated method stub
+		
 		clearScreen("Spam Anonymous Sessions",14);
 		Scanner in = new Scanner(System.in);
 		System.out.print("How many anonymous connections would you like to create?");
@@ -241,7 +241,7 @@ public class HephHacks {
 		RSAPublicKeySpec serverPublic = RSACrypto.readPubKeyFromFile("Aegis.pub");
 		int passed=0, fail=0;
 		
-		// TODO Auto-generated method stub
+		
 		Scanner in = new Scanner(System.in);
 		System.out.print("Enter how many times you would like to authenticate with Aegis? ");
 		int x = in.nextInt();
@@ -309,7 +309,7 @@ public class HephHacks {
 		RSAPublicKeySpec serverPublic = RSACrypto.readPubKeyFromFile("Aegis.pub");
 		int passed=0, fail=0;
 		
-		// TODO Auto-generated method stub
+		
 		Scanner in = new Scanner(System.in);
 		System.out.print("How many messages would you like to send? ");
 		int x = in.nextInt();
@@ -376,7 +376,7 @@ public class HephHacks {
 	
 
 	private static void Dos() throws InterruptedException, IOException {
-		// TODO Auto-generated method stub
+		
 		InetAddress address = InetAddress.getByName(serverIP);
 		Scanner in = new Scanner(System.in);
 		System.out.println("Will commence DoS in 5 seconds...");
