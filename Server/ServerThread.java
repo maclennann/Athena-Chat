@@ -130,6 +130,7 @@ public class ServerThread extends Thread
 				server.mapUserClientSocket(username, c2csocket);
 				server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
 				server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));
+                                System.gc();
 			}
 			if(username.equals("Interupt")) {
 				routeMessage(serverDin,clientDin);
@@ -140,6 +141,7 @@ public class ServerThread extends Thread
 				while (isAlive==1) {
 					//Take in messages from this thread's client and route them to another client
 					routeMessage(serverDin,clientDin);
+                                        System.gc();
 				}
 				
 				
