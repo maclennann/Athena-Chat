@@ -540,25 +540,64 @@ public class Athena
                                 //If there isn't already a tab for the conversation, make one
 				if(!(clientResource.tabPanels.containsKey(fromUserDecrypted)) && !(sessionKeys.containsKey(fromUserDecrypted)))
                                 {
-					clientResource.makeTab(fromUserDecrypted, false);
+                                    clientResource.makeTab(fromUserDecrypted, false);
+
+                                    //We have to actually print the message now because we have a sane if/else setup
+                                    //Write message to the correct tab
+                                    print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
+                                    print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
+                                    //print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
+                                    parseMarkdown(decryptedMessage,print);
+                                    print.moveToEnd();
+                                    //If we are away send the user our away message
+                                    if(away == 1) {
+					processMessage(fromUserDecrypted,"Auto reply from user: " + awayText);
+                                    }
+
+                                    if(decryptedMessage.equalsIgnoreCase("lmao")){
+					if(getEnableSounds())
+					{
+						// If enabled, open an input stream  to the audio file.
+						InputStream in = new FileInputStream("sounds/lmaoMesg.wav");
+						// Create an AudioStream object from the input stream.
+						AudioStream as = new AudioStream(in);
+						// Use the static class member "player" from class AudioPlayer to play
+						AudioPlayer.player.start(as);
+					}
+                                    }
+                                    else if(decryptedMessage.equals("Incoming file transfer...")) {
+					receiveFile();
+                                    }
+                                    // If enabled, open an input stream  to the audio file.
+                                    else if(getEnableSounds())
+                                    {
+					InputStream in = new FileInputStream("sounds/recvMesg.wav");
+					// Create an AudioStream object from the input stream.
+					AudioStream as = new AudioStream(in);
+					// Use the static class member "player" from class AudioPlayer to play
+					AudioPlayer.player.start(as);
+                                    }
+
+                                    System.gc();
 				}
                                 //Write to an open chat tab
                                 else if (sessionKeys.containsKey(fromUserDecrypted))
                                 {
-                                    System.out.println("DFASSDFDAF");
-                                for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
-                                {
-                                    JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
-                                    if(tabToCheck.getName().equals(fromUserDecrypted))
+                                    System.out.println("This is a chat message");
+                                    for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
                                     {
-                                        decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
-                                        String[] chatMessage = decryptedMessage.split(",",2);
-                                        print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
-                                        print.writeToTextArea(chatMessage[0]+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
-                                        parseMarkdown(chatMessage[1],print);
-                                        break;
+                                        JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
+                                        if(tabToCheck.getName().equals(fromUserDecrypted))
+                                        {
+                                            decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
+                                            String[] chatMessage = decryptedMessage.split(",",2);
+                                            print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
+                                            print.writeToTextArea(chatMessage[0]+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
+                                            parseMarkdown(chatMessage[1],print);
+                                            print.moveToEnd();
+                                            break;
+                                        }
                                     }
-                                  }
                                 }
                                 //Write to an open IM tab
                                 else {
