@@ -519,12 +519,13 @@ public class Athena
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
                                 //If there isn't already a tab for the conversation, make one
-				if((!clientResource.tabPanels.containsKey(fromUserDecrypted) ) && (!sessionKeys.containsKey(Integer.parseInt(fromUserDecrypted)))){
+				if(!(clientResource.tabPanels.containsKey(fromUserDecrypted)) && !(sessionKeys.containsKey(Integer.parseInt(fromUserDecrypted))))
+                                {
 					clientResource.makeTab(fromUserDecrypted, false);
 				}
-                                //Must be chat?
-                                else {
-                                System.out.println("DFASSDFDAF");
+                                else if (sessionKeys.containsKey(Integer.parseInt(fromUserDecrypted)))
+                                {
+                                    System.out.println("DFASSDFDAF");
                                 for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
                                 {
                                     JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
@@ -537,8 +538,10 @@ public class Athena
                                         break;
                                     }
                                   }
+                                }
+                                //Must be chat?
+                                else {
                                 
-                            }
 				//Write message to the correct tab
 				print = (MapTextArea)clientResource.tabPanels.get(fromUserDecrypted);
 				print.writeToTextArea(fromUserDecrypted+": ", print.getSetHeaderFont(new Color(0, 0, 130))); 
@@ -576,6 +579,7 @@ public class Athena
                                   
 				System.gc();
 			}
+                        }
 		}
 		catch ( IOException ie ) {
 			//If we can't use the inputStream, we probably aren't connected
