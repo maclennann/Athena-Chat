@@ -139,6 +139,7 @@ public class Server
 		}catch(SQLException ex) {
 			ex.printStackTrace();
 		}
+                System.gc();
 		
 	}
 
@@ -190,6 +191,7 @@ public class Server
 
                         //Handle the rest of the connection in the new thread
 			new ServerThread( this, c2s, c2c );
+                        System.gc();
 		}
 	}
 	
@@ -214,6 +216,7 @@ public class Server
 	
 	// Send a message to all clients (utility routine)
 	synchronized void sendToAll(String eventCode, String message ) {
+                System.gc();
 		//make sure the outputStreams hashtable is up-to-date
 		synchronized( clientOutputStreams ) {
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode,serverPriv.getModulus(),serverPriv.getPrivateExponent()));
@@ -250,6 +253,7 @@ public class Server
 				ie.printStackTrace();
 			}
 		}
+                System.gc();
 	}
 
 	//Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
@@ -278,6 +282,7 @@ public class Server
 				ie.printStackTrace();
 			}
 		}
+                System.gc();
 	}
 	
 	//Server program starts.

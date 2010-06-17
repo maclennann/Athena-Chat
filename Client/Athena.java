@@ -724,7 +724,6 @@ public class Athena
 	 * 
 	 */
 	public static String createChat(String chatName) {
-		//TODO Make this an actual window
 		try {
 		systemMessage("12");
 				
