@@ -104,8 +104,6 @@ public class BugReportInterface extends JPanel {
 		JScrollPane actualSP = new JScrollPane(actualJTextArea);
 		actualSP.setBounds(15,360,470,100);
 		actualSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		//Secret answer nput
-		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		
 		
 		
@@ -145,7 +143,7 @@ public class BugReportInterface extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				
 				submitBugJFrame.dispose();
 			} 
 		});

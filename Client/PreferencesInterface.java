@@ -83,7 +83,6 @@ public class PreferencesInterface extends JPanel {
 	public Color originalColor;
 	public TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
 
-	//TODO Create components for each of the preference menu categories
 	//Define components for the General Menu Panel
 	public JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
 	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
@@ -201,7 +200,7 @@ public class PreferencesInterface extends JPanel {
 											setFontFaceVal, setBoldVal, setItalicsVal, setUnderlineVal, setSizeVal);
 					writeSavedPreferences(settingsToWrite);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 				apply.setEnabled(false);
@@ -750,10 +749,10 @@ public class PreferencesInterface extends JPanel {
 			outPref.close();
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

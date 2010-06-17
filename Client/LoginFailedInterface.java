@@ -49,7 +49,7 @@ public class LoginFailedInterface extends JFrame {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 		    }
@@ -62,7 +62,7 @@ public class LoginFailedInterface extends JFrame {
 					ClientLogin loginGUI = new ClientLogin();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}}});
 				
@@ -74,7 +74,7 @@ public class LoginFailedInterface extends JFrame {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -86,7 +86,7 @@ public class LoginFailedInterface extends JFrame {
 					ResetPasswordInterface passReset = new ResetPasswordInterface();
 					loginFailed.dispose();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -103,7 +103,6 @@ public class LoginFailedInterface extends JFrame {
 		contentPane.setLayout(null);
 		
 		//If status is true, that means it was a successful login so don't display the sad face.
-		//TODO Add a happy face
 		if(!(status)) {
 		Image generalPreferencesImage1 = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
 		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage1);	
@@ -132,7 +131,7 @@ public class LoginFailedInterface extends JFrame {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 		    }
@@ -145,7 +144,7 @@ public class LoginFailedInterface extends JFrame {
 					ClientLogin loginGUI = new ClientLogin();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}}});
 				

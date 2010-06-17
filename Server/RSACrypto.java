@@ -71,8 +71,6 @@ public class RSACrypto {
 	}
 	
 	// This method will generate the users RSA key files, one public and one private
-	// TODO There be a constructor that calls this method? Might make things more
-	//      standardized and easier to follow.
 	public static void generateRSAKeyPair() { 
 		try{
 			// Define type of encryption for which these keys are made
@@ -93,7 +91,6 @@ public class RSACrypto {
 			priv = fact.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
 			
 			// Save the keys to their respective files.
-			// TODO Should we do this automatically, or wait until it is called?
 			saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
 			saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
 			
@@ -102,50 +99,6 @@ public class RSACrypto {
 		}
 
 	}
-
-	
-	
-//-------------------------------
-// The following two methods encrypt and decrypt data passed to them
-// using public and private keys stored on the hard drive
-	// Encrypts the given data with the public key in ./public.key
-	// TODO Perhaps this should change back to taking in a filename?
-	/*public static byte[] rsaEncrypt(byte[] data) {
-		try{
-			// Grab the key from this file 
-			RSAPublicKeySpec pubKey = readPubKeyFromFile("/public.key");
-			
-			// Define the cipher style
-			Cipher cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-			
-			// Encrypt the message
-			byte[] cipherData = cipher.doFinal(data);
-			return cipherData;
-		}catch(Exception e){
-			System.out.println("An error has occured in 'rsaEncrypt'");
-		}return null;
-	}
-	//Generic RSA decryption of data using private key private.key
-	public static byte[] rsaDecrypt(byte[] data) {
-		try{
-			// Grab the private key from the file
-			RSAPrivateKeySpec privKey = readPrivKeyFromFile("private.key");	
-			
-			// Define the decryption type
-			Cipher cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.DECRYPT_MODE, privKey);
-			
-			// DECRYPT!
-			byte[] plaintext = cipher.doFinal(data);
-			return plaintext;
-		}catch(Exception e){
-			System.out.println("An error has occured in 'rsaDecrypt'");e.printStackTrace();
-		}
-		return null;
-	}*/
-	
-	
 	
 //----------------------------------
 // The following two methods encrypt and decrypt messages by taking in the modulus and
@@ -285,7 +238,6 @@ public class RSACrypto {
 		}
 	}
 	//This method grabs the private key from the file
-	//TODO Make this more secure! 3/31/2010
 	static RSAPrivateKeySpec readPrivKeyFromFile(String keyFileName) throws IOException {
 		//This is how we'll get the file
 		ObjectInputStream oin = null;

@@ -155,7 +155,7 @@ public class AuthenticationInterface extends JFrame {
 					login.dispose();
 					System.gc();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 
@@ -181,7 +181,7 @@ public class AuthenticationInterface extends JFrame {
 						JOptionPane.showMessageDialog(null,"Please enter both a username and password!\n\n","Login Error",JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 
@@ -207,7 +207,7 @@ public class AuthenticationInterface extends JFrame {
 						JOptionPane.showMessageDialog(null,"Please enter both a username and password!\n\n","Login Error",JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 

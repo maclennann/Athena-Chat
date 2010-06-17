@@ -743,7 +743,6 @@ public class Athena
 		} catch (NullPointerException npe) { 
 			return "-1";
 		}
-		//TODO Make a new tab to display the group chat window 
 	}
 	
 	/**
@@ -781,7 +780,6 @@ public class Athena
 		try {
 			c2sdout.writeUTF(encryptServerPublic(myChatUID));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -810,7 +808,7 @@ public class Athena
 				//Send the other user the file name
 				processMessage(myFile.getName());
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 				
@@ -848,7 +846,7 @@ public class Athena
 				bytesRead =
 				   is.read(mybytearray, current, (mybytearray.length-current));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 	        if(bytesRead >= 0) current += bytesRead;
@@ -979,7 +977,7 @@ public class Athena
 				print.clearTextField();
 			} catch (Exception e) {
 				sendBugReport(getStackTraceAsString(e));
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -1066,7 +1064,7 @@ public class Athena
 				print.clearTextField();
 			} catch (Exception e) {
 				sendBugReport(getStackTraceAsString(e));
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}System.gc();
@@ -1362,7 +1360,6 @@ public class Athena
 	 * This method returns a string array of the lines from the buddylist
 	 * @retrun String array of the buddylist
 	 */
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public static String[] returnBuddyListArray() throws IOException {
 		int count;
 		int readChars;
@@ -1426,7 +1423,6 @@ public class Athena
 
 	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public static String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;

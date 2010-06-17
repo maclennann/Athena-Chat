@@ -90,7 +90,6 @@ public class ResetPasswordInterface extends JPanel {
 		userNameJTextField.setBounds(130,20,150,25);
 
 		//Secret answer nput
-		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
 		secretQuestionJTextField = new JTextField();
 		secretQuestionJTextField.setEditable(false);
 		secretQuestionJTextField.setBounds(130,55,280,25);
@@ -121,7 +120,7 @@ public class ResetPasswordInterface extends JPanel {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					resetPasswordJFrame.dispose();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 		    }
@@ -239,7 +238,7 @@ public class ResetPasswordInterface extends JPanel {
 					//Send the information to Aegis
 					//sendInfoToAegis(firstNameJTextField.getText(), lastNameJTextField.getText(), emailAddressJTextField.getText(), userNameJTextField.getText(), password);*/
 			//	} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 				//	e.printStackTrace();
 				//}
 
@@ -253,7 +252,7 @@ public class ResetPasswordInterface extends JPanel {
 				try{
 					new AuthenticationInterface();
 				}catch(Exception ie){ie.printStackTrace();}
-				// TODO Auto-generated method stub
+				
 				resetPasswordJFrame.dispose();
 			} 
 		});
@@ -300,7 +299,7 @@ public class ResetPasswordInterface extends JPanel {
 			//dout.writeUTF("Interupt");
 			dout.writeUTF(new BigInteger(RSACrypto.rsaEncryptPublic("Interupt",Athena.serverPublic.getModulus(),Athena.serverPublic.getPublicExponent())).toString());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		//Invoke Client's systemMessage to tell it what we're about to do, if you know what I mean.

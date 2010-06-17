@@ -102,7 +102,6 @@ import java.io.DataOutputStream;
 import com.inet.jortho.SpellChecker;	
 
 //Client swing window.
-//TODO: Rename it to something else. It's not an applet
 public class CommunicationInterface extends JFrame {
 	/**
 	 * 
@@ -214,7 +213,7 @@ public class CommunicationInterface extends JFrame {
 		try {
 			setSystemTrayIcon(enableSystemTray);
 		} catch (AWTException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		enableESCToClose = Boolean.parseBoolean(settingsArray[1].toString());
@@ -270,8 +269,6 @@ public class CommunicationInterface extends JFrame {
 		edit.setMnemonic(KeyEvent.VK_E);
 		menuBar.add(edit);
 
-		// TODO Add items to the edit menu
-
 		// Create button Edit -> Preferences
 		preferences = new JMenuItem("Preferences");
 		preferences.setMnemonic(KeyEvent.VK_P);
@@ -321,8 +318,6 @@ public class CommunicationInterface extends JFrame {
 		web.setMnemonic(KeyEvent.VK_R);
 		help.add(bugReport);
 		
-		// TODO Add items to the encryption menu
-		
 		// ActionListener to make the disconnect menu item disconnect
 		createChat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -340,7 +335,7 @@ public class CommunicationInterface extends JFrame {
 				try {
 					Athena.sendFile(fc.getSelectedFile());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -360,7 +355,7 @@ public class CommunicationInterface extends JFrame {
 				try {
 					new AuthenticationInterface();
 				} catch (AWTException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -461,9 +456,6 @@ public class CommunicationInterface extends JFrame {
 		contactList.setBorder(buddyBorder);
 		chatList.setBorder(chatListBorder);
 
-		// TODO Add ActionListeners to the images to bring up the add/remove
-		// user windows
-
 		JButton addContactLabel = new JButton(new ImageIcon("images/addUser.png"));
 		JButton removeContactLabel = new JButton(new ImageIcon("images/removeUser.png"));
 		JButton homeListButton = new JButton(new ImageIcon("images/home-icon.png"));
@@ -513,7 +505,7 @@ public class CommunicationInterface extends JFrame {
 						Athena.instantiateBuddyList(usernameToAdd);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -603,7 +595,7 @@ public class CommunicationInterface extends JFrame {
 									if(listOfUsersJComboBox.getItemCount() == 0)
 										removeJButton.setEnabled(false);								
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
+									
 									e.printStackTrace();
 								}
 
@@ -619,7 +611,7 @@ public class CommunicationInterface extends JFrame {
 						System.gc();
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -1052,12 +1044,12 @@ public class CommunicationInterface extends JFrame {
 			}
 
 			public void changedUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
 			public void removeUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 		});
@@ -1221,7 +1213,7 @@ public class CommunicationInterface extends JFrame {
 						JOptionPane.showMessageDialog(null, "No contact selected for invite.", "Attention!", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -1250,7 +1242,7 @@ public class CommunicationInterface extends JFrame {
 						JOptionPane.showMessageDialog(null, "No contact selected for removal.", "Attention!", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -1266,7 +1258,7 @@ public class CommunicationInterface extends JFrame {
 			}
 
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
+				
 			}
 
 			public void keyTyped(KeyEvent e) {
@@ -1301,7 +1293,7 @@ public class CommunicationInterface extends JFrame {
 					try {
 						Athena.inviteUsers(inviteUsers, chatUID, chatNameField.getText());
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
 					}
 					makeChatTab(chatNameField.getText(), chatUID, true);
@@ -1343,7 +1335,7 @@ public class CommunicationInterface extends JFrame {
 		if(debug==1)System.out.println("Username: " + username + "\nStatus: " + status);
 		userStatus.put(username, status);
 	}
-	//TODO: Fix user folder that preference file writes to!
+
 	private Object[] loadSavedPreferences()
 	{	if(debug==1)System.out.println("Importing preferences");
 		Object[] settingsArray = new Object[11];
@@ -1462,10 +1454,10 @@ public class CommunicationInterface extends JFrame {
 				System.gc();
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	return settingsArray;
@@ -1594,19 +1586,19 @@ public class CommunicationInterface extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			
 		}
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			
 		}
 	}
@@ -1682,7 +1674,7 @@ class MapTextArea extends JFrame {
 			//Register the dictionaries for the spell checker
 			 SpellChecker.registerDictionaries( new URL("file", null, ""), "en,de", "en" );
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -1701,31 +1693,31 @@ class MapTextArea extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
 			@Override
 			public void mouseExited(MouseEvent arg0) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				// TODO Auto-generated method stub
+				
 				myJEP.copy();
 				Athena.clientResource.FocusCurrentTextField();
 			}
@@ -1769,13 +1761,13 @@ class MapTextArea extends JFrame {
 						myTP.getDocument().remove(0, myTP.getText().length());
 						e.consume();
 					} catch (BadLocationException e1) {
-						// TODO Auto-generated catch block
+						
 						e1.printStackTrace();
 					}
 			}
 
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
+				
 			}
 
 			public void keyTyped(KeyEvent e) {
@@ -1911,7 +1903,6 @@ class MapTextArea extends JFrame {
 	}
 
 	// Move the cursor to the end of the ScrollPane
-	// TODO: Sometimes it shows highlighted text
 	public void moveToEnd() {
 		myJEP.setCaretPosition(myJEP.getDocument().getLength());
 	}

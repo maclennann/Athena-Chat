@@ -36,9 +36,7 @@ import java.util.Hashtable;
 
 public class Server
 {
-	//TODO Add debug mode
-	//Change to 1 for debug output
-	@SuppressWarnings("unused")
+	//Change to 1 or 2 for debug output
 	private int debug = 0;
 	
 	//This socket will accept new connection
@@ -85,9 +83,6 @@ public class Server
 	public static Connection dbConnect () { 
 
 		//Location of the database
-		//TODO: DB Server on LAN with auth server (maybe same computer) only accessable from auth server
-		//		of course, we need a real auth server first.
-		//TODO: Don't store DB location, username, or password in the source. Break it out into a conf file.
 		String url = "jdbc:mysql://localhost:3306/aegis";
 	
 		//Database username and password. shhhhh.
@@ -193,14 +188,7 @@ public class Server
 			System.out.println( "Server-to-Client Connection Established:\n "+c2s );
 			System.out.println( "Client-to-Client Connection Established:\n"+c2c);
 
-			//DataOuputStream to send data from the client's socket
-			//TODO I don't think we need to do this here
-			//DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
-			
-			//Map the outputstream to the socket for later reference
-			//outputStreams.put( s, dout );
-			
-			//Handle the rest of the connection in the new thread
+                        //Handle the rest of the connection in the new thread
 			new ServerThread( this, c2s, c2c );
 		}
 	}

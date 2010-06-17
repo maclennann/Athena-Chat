@@ -148,7 +148,7 @@ public class ServerThread extends Thread
 		} catch ( EOFException ie ) {
 		} catch ( IOException ie ) {
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}finally {
 			//Socket is closed, remove it from the list
@@ -422,7 +422,6 @@ public class ServerThread extends Thread
 	private void createChat(){
 		try{
 			//Grab output stream for the user.
-			//TODO This probably isn't necessary
 			System.out.println("In the method.");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			System.out.println("Created the output stream which we shouldn't have to do.");
@@ -491,7 +490,6 @@ public class ServerThread extends Thread
 			//Take in the username to find the secret question and answer for
 			String userToReset = decryptServerPrivate(serverDin.readUTF());
 			
-			//TODO Pull the secret question and secret answer hash from the DB
 			String secretQuestion = null;
 			String secretAnswer = null;
 			
@@ -526,7 +524,7 @@ public class ServerThread extends Thread
 			
 			if(secretAnswerHash.equals(secretAnswer)){
 				System.out.println("HASHES MATCH");
-				//TODO insert newPassword into password field
+
 				String insertString = "UPDATE Users SET password='" + newPassword + "' WHERE username = '" + userToReset + "'";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
@@ -596,7 +594,7 @@ public class ServerThread extends Thread
 	}
 	
 	private boolean sendBuddyListToClient() throws IOException {
-		// TODO Auto-generated method stub
+		
 		String[] buddyListArray = returnBuddyListArray(true);
 		if(debug>=1)System.out.println("Inside sendBuddyListToClient");
 		
@@ -614,7 +612,6 @@ public class ServerThread extends Thread
 		
 	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
-	//TODO Make this return a multi-dementional array of all the fields in the CSV File
 	public String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;
@@ -756,9 +753,8 @@ public class ServerThread extends Thread
 	}
 	
 	private void recieveBuddyListFromClient() throws IOException {
-		//TODO make this dynamic
 		String[] buddyListLines;
-		// TODO Auto-generated method stub
+		
 		//sendSystemMessage(username, "Access Granted. Send me the username.");
 		System.out.println("Should be begin: " + decryptServerPrivate(serverDin.readUTF()));
 		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(serverDin.readUTF())))];
@@ -875,7 +871,7 @@ public class ServerThread extends Thread
 		} catch (Exception e) {
 		}
 	}
-	//TODO Make this work better.
+
 	public boolean createUsername() throws IOException { 
 		try { 
 			//Use dbConnect() to connect to the database
@@ -890,7 +886,6 @@ public class ServerThread extends Thread
 			ResultSet rs = null; 
 			
 			//Read the new user's public key components
-			//TODO in this test we use this key for decryption, but we need to generate server keys for this
 			String publicModString = serverDin.readUTF();
 			String publicExpString = serverDin.readUTF();
 			//Read in the private key components
@@ -904,7 +899,6 @@ public class ServerThread extends Thread
 			String newUser = decryptServerPrivate(serverDin.readUTF());
 			String newPassword = decryptServerPrivate(serverDin.readUTF());
 			
-			//TODO These have to go into the database for later recall
 			String secretQuestion = decryptServerPrivate(serverDin.readUTF());
 			String secretAnswer = decryptServerPrivate(serverDin.readUTF());
 
@@ -995,7 +989,6 @@ public class ServerThread extends Thread
 
 
 	//Sends message message from user fromUser (this thread/socket) to user toUser (another socket)
-	//TODO: Separate findOuputSteam from this method?
 	void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
 
@@ -1081,15 +1074,12 @@ public class ServerThread extends Thread
 		}	
 
 		//Debug messages.
-		//TODO: Come up with better debug messages
 		if (debug==1)System.out.println("User logging in...");
 		if (debug==1)System.out.println("Hashed Password:" + LocalHashed);
 		if (debug==1)System.out.println("Username :" + clientName);
 
 		//Verify the password hash provided from the user matches the one in the server's hashtable
 		if (clientPassword.equals(LocalHashed)) {
-			//Run some command that lets user log in!
-			//TODO: We need to broadcast a message letting everyone know a user logged in?
 			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Success", server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(returnCipher.toString());
 			return returnCipher.toString();
