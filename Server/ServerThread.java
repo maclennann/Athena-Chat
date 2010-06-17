@@ -306,12 +306,34 @@ public class ServerThread extends Thread
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 		
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			String message = decryptServerPrivate(serverDin.readUTF());
+			String message = serverDin.readUTF();
+                        //We have the message. Now we have to find out who to send it to.
+                        if(debug==1)System.out.println("Sending received message to chat number "+chatNum);
+
+                        //Grab a DB connection
+                        Connection con = server.dbConnect();
+                        Statement stmt;
+			ResultSet rs = null;
+
+                        //Get a list of existing chats
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '"+chatNum+"';");
+			System.out.println("Got list of users");
                         
+                        //Send the message to the users in the chat
+                        while(rs.next()){
+                            sendMessage(rs.getString(1),String.valueOf(chatNum),message);
+			}
+
+                        //Close everything
+                        rs.close();
+                        stmt.close();
+                        con.close();
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 	}
+
 	private void chatInvite(){
 		try{
 			if(debug==1)System.out.println("In chatInvite()");
