@@ -501,7 +501,7 @@ public class Athena
 					systemMessage("14");
 					c2sdout.writeUTF(encryptServerPublic(chatName[2]));
 					clientResource.makeChatTab(chatName[0], chatName[2], true);
-					getUserList(chatName[2]);
+					getUserList(Integer.parseInt(chatName[2]));
 					SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(),"AES");
 					sessionKeys.put(chatName[2],nothing);
 				}
