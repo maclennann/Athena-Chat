@@ -1,10 +1,10 @@
-ChangeLog: 
+ChangeLog:
+ 
 6/17/2010:
 	## Group chat almost completely implemented
-		@@ TODO Get usernames to show up correctly (comma-splitting)
-		   !! I Decided to finish this tonight. DONE
-		@@ TODO Adding and removing usernames as they come and go
-		
+		@@ Only issue is being in more than one chat
+		    we only use one listmodel for all chats
+	
 6/16/2010:
 	## Fixed a logon bug
 	## Usernames show up when you join a chat

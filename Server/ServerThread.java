@@ -95,7 +95,8 @@ public class ServerThread extends Thread {
 			}
 
 			//Decrypt the username
-			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(), server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(),
+					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
 
 			realUsername = username;
 			if (debug >= 1) {
@@ -110,7 +111,8 @@ public class ServerThread extends Thread {
 				String passwordCipher = serverDin.readUTF();
 
 				//Decrypt the password hash
-				password = RSACrypto.rsaDecryptPrivate(new BigInteger(passwordCipher).toByteArray(), server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+				password = RSACrypto.rsaDecryptPrivate(new BigInteger(passwordCipher).toByteArray(),
+						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
 
 				//Debug statements
 				if (debug >= 1) {
@@ -514,8 +516,6 @@ public class ServerThread extends Thread {
 				stmt.executeUpdate("DELETE FROM allchats WHERE chatid='" + chatNum + "';");
 			}
 
-			//TODO Send the chat a message about the departure, if it's still open
-
 			//Close the connections
 			rs.close();
 			stmt.close();
@@ -750,13 +750,27 @@ public class ServerThread extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("BEGIN BUG REPORT");
-		System.out.println("Bug report received from " + realUsername + ": ");
-		System.out.println("Brief Description: " + title);
-		System.out.println("Steps to recreate: " + recreate);
-		System.out.println("Expected Outcome: " + expected);
-		System.out.println("Actual Outcome: " + actual);
-		System.out.println("END OF REPORT");
+		if (debug >= 1) {
+			System.out.println("BEGIN BUG REPORT");
+		}
+		if (debug >= 1) {
+			System.out.println("Bug report received from " + realUsername + ": ");
+		}
+		if (debug >= 1) {
+			System.out.println("Brief Description: " + title);
+		}
+		if (debug >= 1) {
+			System.out.println("Steps to recreate: " + recreate);
+		}
+		if (debug >= 1) {
+			System.out.println("Expected Outcome: " + expected);
+		}
+		if (debug >= 1) {
+			System.out.println("Actual Outcome: " + actual);
+		}
+		if (debug >= 1) {
+			System.out.println("END OF REPORT");
+		}
 	}
 
 	private boolean sendBuddyListToClient() throws IOException {
@@ -770,8 +784,7 @@ public class ServerThread extends Thread {
 		if (debug >= 1) {
 			System.out.println("numLines: " + numLines);
 		}
-		//Send Athena the begin message so it knows that this is the beginning of the file
-		//serverDout.writeUTF(encryptServerPrivate("Begin"));
+
 		//Send Athena the number of lines we're sending
 		serverDout.writeUTF(encryptServerPrivate(String.valueOf(numLines)));
 		//Send the lines of the file!
@@ -828,11 +841,6 @@ public class ServerThread extends Thread {
 			String raw;
 			//Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
 			while ((raw = in.readLine()) != null) {
-				// Read in the BigInteger in String form. Turn it to a BigInteger
-				// Turn the BigInteger to a byteArray, and decrypt it.
-				//strNum = new BigInteger(raw);
-				//str = descrypto.decryptData(strNum.toByteArray());
-
 				String foo[] = raw.split(",");
 				usernames[x] = foo[0];
 				x++;
@@ -960,17 +968,13 @@ public class ServerThread extends Thread {
 		if (debug == 1) {
 			System.out.println("Plaintext in encryptServerPrivate: " + plaintext);
 		}
-		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext,
+				server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 		return plaintextBigInt.toString();
 	}
 
 	public void negotiateClientStatus() {
 		try {
-			//Acknowledge connection. Make sure we are doing the right thing
-			//Encrypt the String, turn it into a BigInteger
-			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-
-			//serverDout.write "Access Granted. Send me the username.");
 			//Listen for the username
 			String findUserCipher = serverDin.readUTF();
 			System.out.println("FINDUSERCIPHER!@$!#@" + findUserCipher);
@@ -987,11 +991,6 @@ public class ServerThread extends Thread {
 				System.out.println("(Offline)\n");
 			}
 
-			/*//Maps username to socket after user logs in
-			server.mapUserServerSocket(username, c2ssocket);	
-			server.mapUserClientSocket(username, c2csocket);
-			server.addServerOutputStream(c2ssocket,new DataOutputStream(c2ssocket.getOutputStream()));
-			server.addClientOutputStream(c2csocket,new DataOutputStream(c2csocket.getOutputStream()));*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -999,25 +998,31 @@ public class ServerThread extends Thread {
 
 	public void negotiateClientStatus(String checkUserFlag) {
 		try {
-			System.out.println(username);
-			//Encrypt the String, turn it into a BigInteger
-			//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-			//Acknowledge connection. Make sure we are doing the right thing
-			//(username, "CheckUserStatus", accessGrantedCipher.toString());
+			if (debug >= 1) {
+				System.out.println(username);
+			}
 			//Listen for the username
 			String findUser = decryptServerPrivate(serverDin.readUTF());
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			//Print out the received username
-			System.out.println("Username received: " + findUser);
-			System.out.println("Socket serverDout: " + serverDout.toString());
+			if (debug >= 1) {
+				System.out.println("Username received: " + findUser);
+			}
+			if (debug >= 1) {
+				System.out.println("Socket serverDout: " + serverDout.toString());
+			}
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToServerSocket.containsKey(findUser))) {
 
 				serverDout.writeUTF(encryptServerPrivate("1"));
-				System.out.println("(Online)\n");
+				if (debug >= 1) {
+					System.out.println("(Online)\n");
+				}
 			} else {
 				serverDout.writeUTF(encryptServerPrivate("0"));
-				System.out.println("(Offline)\n");
+				if (debug >= 1) {
+					System.out.println("(Offline)\n");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1025,9 +1030,6 @@ public class ServerThread extends Thread {
 	}
 
 	public void returnBuddyListHash() {
-		//BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username.",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
-		//"Access granted. Send me the username.");
-
 		try {
 			String buddyListToFind = serverDin.readUTF();
 			byte[] buddyListBytes = (new BigInteger(buddyListToFind)).toByteArray();
@@ -1050,6 +1052,7 @@ public class ServerThread extends Thread {
 			serverDout.writeUTF(encryptServerPrivate(hashOfBuddyList));
 			serverDout.writeUTF(encryptServerPrivate(lastModDateOfBuddyList));
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -1119,7 +1122,8 @@ public class ServerThread extends Thread {
 			//Test to see if there are any results
 			if (rs.next()) {
 				//Send status message that the username has already been taken.
-				BigInteger failedRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has already been taken, please try again.", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+				BigInteger failedRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has already been taken, please try again.",
+						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(failedRegistrationResultBigInt.toString());
 				rs.close();
 				return false;
@@ -1134,13 +1138,16 @@ public class ServerThread extends Thread {
 				RSACrypto.saveToFile("keys/" + newUser + ".pub", publicMod, publicExp);
 
 				//Grab the users new password
-				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password, secretq, secreta) values('" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "', '" + secretQuestion.replace('\'', '\\') + "', '" + secretAnswer + "')";
+				String insertString = "insert into Users (FirstName, LastName, EmailAddress, username, password, secretq, secreta) values('" + firstName + "', '"
+						+ lastName + "', '" + emailAddress + "', '" + newUser + "', '" + newPassword + "', '" + secretQuestion.replace('\'', '\\') + "', '"
+						+ secretAnswer + "')";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 
 
 				//Inform of our success
-				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Account has been successfully created.", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Account has been successfully created.",
+						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(successfulRegistrationResultBigInt.toString());
 				server.updateHashTable();
 
@@ -1154,17 +1161,20 @@ public class ServerThread extends Thread {
 
 		} catch (SQLException se) {
 			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",
+					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(exceptionRegistrationResultBigInt.toString());
 			return false;
 		} catch (IOException ie) {
 			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",
+					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(exceptionRegistrationResultBigInt.toString());
 			return false;
 		} catch (Exception e) {
 			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",
+					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(exceptionRegistrationResultBigInt.toString());
 			return false;
 		}
@@ -1208,8 +1218,12 @@ public class ServerThread extends Thread {
 
 		//Send the message, and the user it is from
 		try {
-			//Encrypt the fromUser with the public key of userB (we want everything to be anonymous, so we can't encrypt the fromUser with the private key of the server, anyone can decrypt that)
-			BigInteger fromUserCipherBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(fromUser, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			//Encrypt the fromUser with the public key of userB (we want everything to be anonymous,
+			//so we can't encrypt the fromUser with the private key of the server, anyone can decrypt that)
+			//TODO WTF were we thinking here?
+			//	   We are doing exactly what we said we shouldn't. FFS.
+			BigInteger fromUserCipherBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(fromUser,
+					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 			clientDout.writeUTF(fromUserCipherBigInt.toString());
 			clientDout.writeUTF(message);
 		} catch (IOException ie) {
@@ -1254,8 +1268,6 @@ public class ServerThread extends Thread {
 		try {
 			System.out.println("TOUSER: " + toUser + "\nMESSAGE: " + message);
 			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
-			BigInteger toUserCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(toUser, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
-			//dout.writeUTF(toUserCipher.toString());
 			serverDout.writeUTF(messageCipher.toString());
 			if (debug >= 1) {
 				System.out.println("Message sent:\n " + message);
@@ -1329,13 +1341,8 @@ public class ServerThread extends Thread {
 
 	public void publicKeyRequest() throws IOException {
 
-		System.out.println(username);
-		//Acknowledge connection. Make sure we are doing the right thing
-		BigInteger accessGrantedCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Access granted. Send me the username to find the key for.", serverPrivate.getModulus(), serverPrivate.getPrivateExponent()));
-		//sendSystemMessage(username, "Aegis");
-		//serverDout.writeUTF(encryptServerPrivate("ReturnPublicKey"));
-
-		//serverDout.writeUTF(accessGrantedCipher.toString());
+		if(debug >=1)System.out.println(username);
+		
 		try {
 			//Listen for the username
 			String findUser = decryptServerPrivate(serverDin.readUTF());
@@ -1353,19 +1360,16 @@ public class ServerThread extends Thread {
 				System.out.println("EXP: " + keyToReturn.getPublicExponent().toString());
 
 				//Check to see if the user has a key file on the server
-				//BigInteger keyToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getModulus().toString(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(keyToReturn.getModulus().toString());
 				if (debug >= 1) {
 					System.out.println("Modulus Returned\n");
 				}
-				//BigInteger exponentToReturnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(keyToReturn.getPublicExponent().toString(),server.serverPriv.getModulus(),server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(keyToReturn.getPublicExponent().toString());
 				if (debug >= 1) {
 					System.out.println("Exponent Returned\n");
 				}
 
 			} else {
-				//BigInteger keyNotFoundCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("-1",serverPrivate.getModulus(),serverPrivate.getPrivateExponent()));
 				serverDout.writeUTF("-1");
 				if (debug >= 1) {
 					System.out.println("User does not have a keyfile with us");

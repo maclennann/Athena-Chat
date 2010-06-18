@@ -45,7 +45,6 @@ import java.util.logging.Logger;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -98,8 +97,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLEditorKit;
-import java.io.DataOutputStream;
-
 import com.inet.jortho.SpellChecker;
 
 //Client swing window.

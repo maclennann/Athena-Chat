@@ -14,6 +14,8 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+//TODO Code review the three major files.
+//	   Athena.java, CommunicationInterface.java, ServerThread.java
 
 import java.awt.AWTException;
 import java.awt.Color;
@@ -53,7 +55,7 @@ public class Athena {
 	/* Begin public variables
 	 *
 	 */
-
+	public static final int debug = 2; //Show debug messages?
 	public static String username = "null"; //Global username variable
 	public static RSAPublicKeySpec serverPublic; //Servers public key
 	//End public variables
@@ -69,7 +71,7 @@ public class Athena {
 	/* Begin private variables
 	 *
 	 */
-	public static final int debug = 0; //Show debug messages?
+	
 	private static String serverIP = "aegis.athenachat.org"; //IP of the server
 	private static int connected = 0; 	//If the client is connect to the server
 	private static int away = 0; //Is the user away?
@@ -108,7 +110,8 @@ public class Athena {
 				c2csocket = new Socket(serverIP, 7778);
 			} catch (Exception e) {
 				//We can't connect to the server at the specified port for some reason
-				JOptionPane.showMessageDialog(null, "Could not connect to the server.\nPlease check your Internet connection.\n\n", "Connection Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Could not connect to the server.\n"
+						+ "Please check your Internet connection.\n\n", "Connection Error", JOptionPane.ERROR_MESSAGE);
 				loginGUI = new AuthenticationInterface();
 				return;
 			}
@@ -605,7 +608,7 @@ public class Athena {
 					return;
 				}
 			} else { // Need this else in order to hide the system messages coming from Aegis
-				//TODO Compare the digital signature to the hashed message to verify integrity of the message!
+				//TODO Implements digital signatures
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
 				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
@@ -944,7 +947,7 @@ public class Athena {
 
 		//Make sure the user is directly connected with the user he/she wants to send a file to
 		//if (directConnect == 1) {
-		//TODO Send the file!!!!
+		//TODO Send the file!
 		//Grab the file size
 		int fileSize = (int) myFile.length();
 
@@ -1145,7 +1148,9 @@ public class Athena {
 						//Hash the Message for the digital signature
 						//String hashedMessage = ClientLogin.computeHash(message);
 						//Send the server the digital signature (Hash of the message encrypted with UserA's private key
-						//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+						//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, 
+						//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()),
+						//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
 
 						// Append own message to IM window
 						print.moveToEnd();
@@ -1240,7 +1245,9 @@ public class Athena {
 					//Hash the Message for the digital signature
 					//String hashedMessage = ClientLogin.computeHash(message);
 					//Send the server the digital signature (Hash of the message encrypted with UserA's private key
-					//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()), (RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+					//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, 
+					//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()),
+					//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
 
 					// Append own message to IM window
 					print.moveToEnd();
@@ -1498,7 +1505,8 @@ public class Athena {
 			System.out.println("MODOFBUDDY: " + modOfBuddy.toString());
 		}
 		if (modOfBuddy.toString().equals("-1")) {
-			JOptionPane.showMessageDialog(null, "Cannot find user's public key.\nMake sure you typed their username correctly and try again.", "Error Retrieving Key", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Cannot find user's public key.\n"
+					+ "Make sure you typed their username correctly and try again.","Error Retrieving Key", JOptionPane.ERROR_MESSAGE);
 		} else {
 			expOfBuddy = new BigInteger(c2sdin.readUTF());
 			writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
@@ -1871,7 +1879,8 @@ public class Athena {
 	}
 
 	public static void sendBugReport(String stackTrace) {
-		int toSend = JOptionPane.showConfirmDialog(null, "Sorry, it looks like something went wrong.\nWould you like to submit this as a bug report?", "File a Bug Report?", JOptionPane.YES_NO_OPTION);
+		int toSend = JOptionPane.showConfirmDialog(null, "Sorry, it looks like something went wrong.\n"
+				+ "Would you like to submit this as a bug report?", "File a Bug Report?", JOptionPane.YES_NO_OPTION);
 		if (toSend == JOptionPane.YES_OPTION) {
 			String comments = JOptionPane.showInputDialog("Optional: Any comments about this bug (what were you doing when this happened)?");
 			if (comments.equals("")) {
