@@ -507,52 +507,48 @@ public class Athena
 				return;
 			}
 			else if(fromUserDecrypted.equals("SessionKey")) { 
-                                //Do we have a chat window open for this chatUID?
-                                if (sessionKeys.containsKey(currentChatUID))
-                                {
-                                    System.out.println("This is a chat message");
-                                    for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
-                                    {
-                                        JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
-                                        if(tabToCheck.getName().equals(fromUserDecrypted))
-                                        {
-                                        decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
-                                        String[] chatInfo = decryptedMessage.split(",");
+				//Do we have a chat window open for this chatUID?
 
-                                        byte[] encoded = new BigInteger(chatInfo[1], 16).toByteArray();
-                                        System.out.println("FIRST BYTE: "+encoded[0]);
-                                        System.out.println("SECONDBYTE: "+encoded[1]);
+				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
+                String[] chatInfo = decryptedMessage.split(",");
+				System.out.println("This is a chat message");
+					for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
+                    {
+						JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
+                        if(tabToCheck.getName().equals(chatInfo[0]))
+                        {
+							byte[] encoded = new BigInteger(chatInfo[1], 16).toByteArray();
+                            System.out.println("FIRST BYTE: "+encoded[0]);
+                            System.out.println("SECONDBYTE: "+encoded[1]);
 
-                                        SecretKeySpec aesKey;
+                            SecretKeySpec aesKey;
 
-                                        if(encoded[0] == 0){
-                                            System.out.println("LEADING ZEREOS!!!!");
+                            if(encoded[0] == 0){
+								System.out.println("LEADING ZEREOS!!!!");
 
-                                            byte[] encoded2= new byte[16];
-                                            for(int x=0,y=-1; x<encoded.length;x++,y++) {
-                                                if(x>=1) encoded2[y]=encoded[x];
-                                            }
-                                            aesKey = new SecretKeySpec(encoded2, "AES");
-                                        }
-                                        else{
-                                            aesKey = new SecretKeySpec(encoded, "AES");
-                                        }
+								byte[] encoded2= new byte[16];
+								for(int x=0,y=-1; x<encoded.length;x++,y++) {
+									if(x>=1) encoded2[y]=encoded[x];
+								}
+								aesKey = new SecretKeySpec(encoded2, "AES");
+                            }
+                            else{
+								aesKey = new SecretKeySpec(encoded, "AES");
+                            }
 
-                                        sessionKeys.put(chatInfo[0], aesKey);
-                                        System.out.println("Session key: " + chatInfo[1]);
-                                        System.out.println("SESSION KEY: " + AESCrypto.asHex(aesKey.getEncoded()));
+							sessionKeys.put(chatInfo[0], aesKey);
+                            System.out.println("Session key: " + chatInfo[1]);
+                            System.out.println("SESSION KEY: " + AESCrypto.asHex(aesKey.getEncoded()));
 
-                                        BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(aesKey, "ChatJoin,"+username));
-                                        //Alert the other users!
-                                        systemMessage("17");
-                                        c2sdout.writeUTF(chatInfo[0]);
-                                        c2sdout.writeUTF(messageBigInt.toString());
+                            BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(aesKey, "ChatJoin,"+username));
 
-
-                                        return;
-                                        }
-                                    }
-                                }				
+							//Alert the other users!
+                            systemMessage("17");
+                            c2sdout.writeUTF(chatInfo[0]);
+                            c2sdout.writeUTF(messageBigInt.toString());
+                            return;
+						}
+					}
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
 				//TODO Compare the digital signature to the hashed message to verify integrity of the message!
