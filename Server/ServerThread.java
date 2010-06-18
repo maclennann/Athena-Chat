@@ -307,11 +307,42 @@ public class ServerThread extends Thread
 				if(debug==1)System.out.println("Event code received. chatTalk() run.");
 				chatTalk();
 				break;
+			case 18:
+				if(debug==1)System.out.println("Event code received. userList() run.");
+				userList();
+				break;
 		    default:
 				return;
 		}
 	}
-	
+
+	private void userList(){
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+			//Grab a DB connection
+			Connection con = server.dbConnect();
+			Statement stmt;
+			ResultSet rs = null;
+
+			//Get a list of existing chats
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '"+chatNum+"';");
+			System.out.println("Got list of users");
+			String message="";
+			//Send the message to the users in the chat
+			while(rs.next()){
+				message+=rs.getString(1)+",";
+			}
+
+			//Close everything
+			rs.close();
+			stmt.close();
+			con.close();
+			serverDout.writeUTF(encryptServerPrivate(message));
+
+		}catch(Exception e){ e.printStackTrace();}
+	}
 	private void chatTalk(){
 		try{
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());

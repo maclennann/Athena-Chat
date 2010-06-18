@@ -501,6 +501,7 @@ public class Athena
 					systemMessage("14");
 					c2sdout.writeUTF(encryptServerPublic(chatName[2]));
 					clientResource.makeChatTab(chatName[0], chatName[2], true);
+					getUserList(chatName[2]);
 					SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(),"AES");
 					sessionKeys.put(chatName[2],nothing);
 				}
@@ -674,7 +675,18 @@ public class Athena
 		}
 	}
 
-
+	public static void getUserList(int chatUID){
+		try{
+			systemMessage("18");
+			c2sdout.writeUTF(encryptServerPublic(String.valueOf(chatUID)));
+			String userList = c2sdin.readUTF();
+			String[] users = userList.split(",");
+			for(int x=0;x<users.length;x++){
+				clientResource.newChatListItems(users[x]);
+			}
+		}catch(Exception e){ e.printStackTrace();}
+	}
+	
 	//Parse messages for markdown commands before printing them
 	public static void parseMarkdown(String mesg, MapTextArea print){
 		String message = mesg;
