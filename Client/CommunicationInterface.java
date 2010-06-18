@@ -177,6 +177,18 @@ public class CommunicationInterface extends JFrame {
 	public void buddySignOff(String offlineUser) {
 		contactListModel.removeElement(offlineUser);
 	}
+
+	// Method to remove user from the JList who signs off
+	public void chatSignOff(String offlineUser) {
+		inviteListModel.removeElement(offlineUser);
+	}
+	
+	public void newChatListItems(String availableUser) {
+		if(inviteListModel.indexOf(availableUser) == -1){
+			inviteListModel.addElement(availableUser);
+		}
+
+	}
 	
 
 
@@ -1301,6 +1313,7 @@ public class CommunicationInterface extends JFrame {
 					TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
 							TitledBorder.DEFAULT_POSITION , new Font("Arial",Font.PLAIN,14), new Color(0, 0, 120));
 					chatList.setBorder(newChatListBorder);
+					inviteListModel.removeAllElements();
 					inviteListModel.addElement(Athena.username);
 					chatWindow.dispose();
 				}

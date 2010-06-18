@@ -607,8 +607,10 @@ public class Athena
 							print = (MapTextArea)clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
 							if((chatMessage[0].equals("ChatLeave"))) {
 								print.writeToTextArea(chatMessage[1] + " has left the chat.\n", print.getSetHeaderFont(Color.gray));
+								clientResource.chatSignOff(chatMessage[1]);
 							}else if(chatMessage[0].equals("ChatJoin")){
 								print.writeToTextArea(chatMessage[1] + " has joined the chat.\n", print.getSetHeaderFont(Color.gray));
+								clientResource.newChatListItems(chatMessage[1]);
 							}else{
 								print.writeToTextArea(chatMessage[0]+": ", print.getSetHeaderFont(new Color(0, 0, 130)));
 								parseMarkdown(chatMessage[1],print);
