@@ -953,6 +953,20 @@ public class Athena
                 systemMessage("17");
                 c2sdout.writeUTF(encryptServerPublic(currentTab.getName()));
                 c2sdout.writeUTF(encryptAES(currentTab.getName(), message));
+				toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+				print = (MapTextArea)clientResource.tabPanels.get(toUser);
+				if(username.equals("null")){
+					print.writeToTextArea("Error: You are not connected!\n", print.getSetHeaderFont(new Color(130, 0, 0)));
+					print.moveToEnd();
+					print.clearTextField();}
+				else{
+					String[] localMessage = message.split(",",2);
+					//Print the message locally
+					print.writeToTextArea(username+": ", print.getSetHeaderFont(new Color(0, 130, 0)));
+					//print.writeToTextArea(message+"\n", print.getTextFont());
+					parseMarkdown(localMessage[1],print);
+					print.clearTextField();
+				}
 
             //This is an IM tab
             } else{

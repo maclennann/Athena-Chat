@@ -329,7 +329,7 @@ public class ServerThread extends Thread
 
 			//Get a list of existing chats
 			stmt = con.createStatement();
-			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '"+chatNum+"';");
+			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '"+chatNum+"' AND username != '"+username+"';");
 			System.out.println("Got list of users");
                         
 			//Send the message to the users in the chat
