@@ -26,7 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 
-public class LoginFailedInterface extends JFrame { 
+public class LoginFailedInterface extends JFrame {
+
 	/**
 	 * 
 	 */
@@ -38,144 +39,143 @@ public class LoginFailedInterface extends JFrame {
 	public DrawingPanel failedLoginDrawingPanel;
 	public JButton closeThis = new JButton("OK");
 	public JButton forgotPassword = new JButton("Reset Password");
-	
+
 	LoginFailedInterface() {
 		loginFailed = new JFrame("Athena Chat Application");
-		loginFailed.setSize(400,250);
+		loginFailed.setSize(400, 250);
 		loginFailed.setResizable(false);
 		contentPane.setLayout(null);
 		loginFailed.setLocationRelativeTo(Athena.loginGUI);
-		
+
 		Image generalPreferencesImage = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
-		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);	
-		failedLoginDrawingPanel.setBounds(140,60,100,100);
-		
-		closeThis.setBounds(80,185,60,25);
-		forgotPassword.setBounds(180,185,150,25);
+		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage);
+		failedLoginDrawingPanel.setBounds(140, 60, 100, 100);
+
+		closeThis.setBounds(80, 185, 60, 25);
+		forgotPassword.setBounds(180, 185, 150, 25);
 		contentPane.add(closeThis);
 		contentPane.add(forgotPassword);
-		failedPasswordJLabel.setBounds(15,15,400,25);
+		failedPasswordJLabel.setBounds(15, 15, 400, 25);
 		failedPasswordJLabel.setText("Sorry, your login credentials were not correct. Please try again.");
 		contentPane.add(failedPasswordJLabel);
 		contentPane.add(failedLoginDrawingPanel);
 		loginFailed.add(contentPane);
-		
+
 		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
-		    public void windowClosing(WindowEvent winEvt) {
-		        try {
-					AuthenticationInterface loginGUI = new AuthenticationInterface();
-					loginFailed.dispose();
-				} catch (AWTException e) {
-					
-					e.printStackTrace();
-				}
-		    }
-			
-		    }
-		);		
-		/*failedPasswordJLabel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event){
+
+			public void windowClosing(WindowEvent winEvt) {
 				try {
-					ClientLogin loginGUI = new ClientLogin();
-					loginFailed.dispose();
-				} catch (AWTException e) {
-					
-					e.printStackTrace();
-				}}});
-				
-				*/
-			closeThis.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event){
-					//ClientAddUser testOfWindow = new ClientAddUser();
-					try {
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					
+
 					e.printStackTrace();
 				}
 			}
 		});
-			forgotPassword.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event){
-					//ClientAddUser testOfWindow = new ClientAddUser();
-					try {
+		/*failedPasswordJLabel.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent event){
+		try {
+		ClientLogin loginGUI = new ClientLogin();
+		loginFailed.dispose();
+		} catch (AWTException e) {
+
+		e.printStackTrace();
+		}}});
+
+		 */
+		closeThis.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				//ClientAddUser testOfWindow = new ClientAddUser();
+				try {
+					AuthenticationInterface loginGUI = new AuthenticationInterface();
+					loginFailed.dispose();
+				} catch (AWTException e) {
+
+					e.printStackTrace();
+				}
+			}
+		});
+		forgotPassword.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				//ClientAddUser testOfWindow = new ClientAddUser();
+				try {
 					ResetPasswordInterface passReset = new ResetPasswordInterface();
 					loginFailed.dispose();
 				} catch (Exception e) {
-					
+
 					e.printStackTrace();
 				}
 			}
 		});
-		
+
 		loginFailed.setVisible(true);
 		closeThis.requestFocusInWindow();
 	}
-	
+
 	LoginFailedInterface(String messageToDisplay, boolean status) {
 		loginFailed = new JFrame("Athena Chat Application");
-		loginFailed.setSize(400,250);
+		loginFailed.setSize(400, 250);
 		loginFailed.setResizable(false);
 		contentPane.setLayout(null);
-		
+
 		//If status is true, that means it was a successful login so don't display the sad face.
-		if(!(status)) {
-		Image generalPreferencesImage1 = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
-		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage1);	
-		failedLoginDrawingPanel.setBounds(140,75,100,100);
-		contentPane.add(failedLoginDrawingPanel);
-		contentPane.add(forgotPassword);
+		if (!(status)) {
+			Image generalPreferencesImage1 = Toolkit.getDefaultToolkit().getImage("images/sadFace.png");
+			failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage1);
+			failedLoginDrawingPanel.setBounds(140, 75, 100, 100);
+			contentPane.add(failedLoginDrawingPanel);
+			contentPane.add(forgotPassword);
+		} else {
+			Image generalPreferencesImage2 = Toolkit.getDefaultToolkit().getImage("images/happyface.png");
+			failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage2);
+			failedLoginDrawingPanel.setBounds(140, 75, 100, 100);
+			contentPane.add(failedLoginDrawingPanel);
 		}
-		else{
-		Image generalPreferencesImage2 = Toolkit.getDefaultToolkit().getImage("images/happyface.png");
-		failedLoginDrawingPanel = new DrawingPanel(generalPreferencesImage2);	
-		failedLoginDrawingPanel.setBounds(140,75,100,100);
-		contentPane.add(failedLoginDrawingPanel);
-		}
-		closeThis.setBounds(160,185,60,25);
+		closeThis.setBounds(160, 185, 60, 25);
 		contentPane.add(closeThis);
-		failedPasswordJLabel.setBounds(15,15,400,75);
+		failedPasswordJLabel.setBounds(15, 15, 400, 75);
 		failedPasswordJLabel.setText(messageToDisplay);
 		contentPane.add(failedPasswordJLabel);
 
 		loginFailed.add(contentPane);
-		
+
 		loginFailed.addWindowListener(new java.awt.event.WindowAdapter() {
-		    public void windowClosing(WindowEvent winEvt) {
-		        try {
+
+			public void windowClosing(WindowEvent winEvt) {
+				try {
 					Athena.loginGUI.dispose();
 					AuthenticationInterface loginGUI = new AuthenticationInterface();
 					loginFailed.dispose();
 				} catch (AWTException e) {
-					
+
 					e.printStackTrace();
 				}
-		    }
-			
-		    }
-		);		
-		/*failedPasswordJLabel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event){
-				try {
-					ClientLogin loginGUI = new ClientLogin();
-					loginFailed.dispose();
-				} catch (AWTException e) {
-					
-					e.printStackTrace();
-				}}});
-				
-				*/
-			closeThis.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event){
-					//ClientLogin loginGUI = new ClientLogin();
-					loginFailed.dispose();
 			}
 		});
-		
-		
+		/*failedPasswordJLabel.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent event){
+		try {
+		ClientLogin loginGUI = new ClientLogin();
+		loginFailed.dispose();
+		} catch (AWTException e) {
+
+		e.printStackTrace();
+		}}});
+
+		 */
+		closeThis.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				//ClientLogin loginGUI = new ClientLogin();
+				loginFailed.dispose();
+			}
+		});
+
+
 		loginFailed.setVisible(true);
 		closeThis.requestFocusInWindow();
 	}
-		
 }

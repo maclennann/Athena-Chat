@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class AboutInterface extends JFrame { 
+public class AboutInterface extends JFrame {
 
 	/**
 	 * 
@@ -38,16 +38,16 @@ public class AboutInterface extends JFrame {
 	public JLabel usernameLabel = new JLabel("Athena Chat Client v1.0.1b");
 	public JButton cancel = new JButton("OK");
 	ImageIcon logoicon = new ImageIcon("images/splash.png");
-	JLabel logo = new JLabel(); 
+	JLabel logo = new JLabel();
 
 	//Constructor | Here's where the fun begins
-	AboutInterface() throws AWTException { 
+	AboutInterface() throws AWTException {
 		logo.setIcon(logoicon);
-		
+
 		//Initialize aboutWindow window
 		aboutWindow = new JFrame("About Athena");
 		//aboutWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		aboutWindow.setSize(200,300);
+		aboutWindow.setSize(200, 300);
 		aboutWindow.setResizable(false);
 		contentPane.setLayout(null);
 		aboutWindow.setLocationRelativeTo(CommunicationInterface.imContentFrame);
@@ -57,13 +57,14 @@ public class AboutInterface extends JFrame {
 		usernameLabel.setFont(new Font("Dialog", 1, 12));
 
 		//Size the components
-		usernameLabel.setBounds(20,210,150,25);
-		cancel.setBounds(110,235,75,30);
-		logo.setBounds(10,10,175,200);
-		
+		usernameLabel.setBounds(20, 210, 150, 25);
+		cancel.setBounds(110, 235, 75, 30);
+		logo.setBounds(10, 10, 175, 200);
+
 		//ActionListener to make the connect menu item connect
 		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event){
+
+			public void actionPerformed(ActionEvent event) {
 				aboutWindow.dispose();
 			}
 		});
@@ -71,12 +72,9 @@ public class AboutInterface extends JFrame {
 		//Add the components to the Frame
 		contentPane.add(usernameLabel);
 		contentPane.add(cancel);
-		contentPane.add(logo); 
+		contentPane.add(logo);
 		//Initialize Frame
 		aboutWindow.setContentPane(contentPane);
 		aboutWindow.setVisible(true);
 	}
-
 }
-
-

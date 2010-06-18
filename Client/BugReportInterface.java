@@ -40,13 +40,11 @@ import java.awt.Toolkit;
 /**
  * 
  */
-
 /**
  * @author OlmypuSoft
  *
  */
 public class BugReportInterface extends JPanel {
-
 
 	/**
 	 * 
@@ -58,16 +56,13 @@ public class BugReportInterface extends JPanel {
 	public JLabel recreationJLabel = new JLabel("* How can we recreate this bug?");
 	public JLabel expectedJLabel = new JLabel("What did you expect to happen?");
 	public JLabel actualJLabel = new JLabel("What actually happened?");
-	
 	public JTextField descriptionJTextField = new JTextField();
 	public JTextArea recreationJTextArea;
 	public JTextArea expectedJTextArea;
 	public JTextArea actualJTextArea;
-
 	public JButton confirmJButton = new JButton("Confirm");
 	public JButton cancelJButton = new JButton("Cancel");
 	public JButton clearJButton = new JButton("Clear");
-
 	public Border blackline;
 	public TitledBorder generalTitledBorder;
 	public RSAPublicKeySpec pub;
@@ -78,22 +73,22 @@ public class BugReportInterface extends JPanel {
 	public BigInteger privateExp;
 	private BigInteger privateModBigInteger;
 	private BigInteger privateExpBigInteger;
-	public Color goGreen = new Color(51,153,51);
+	public Color goGreen = new Color(51, 153, 51);
 
 	BugReportInterface() {
 		//Create the Main Frame
-		submitBugJFrame= new JFrame("Submit Bug Report/Feature Request");
-		submitBugJFrame.setSize(500,550);
+		submitBugJFrame = new JFrame("Submit Bug Report/Feature Request");
+		submitBugJFrame.setSize(500, 550);
 		submitBugJFrame.setResizable(false);
 		submitBugJFrame.setLocationRelativeTo(CommunicationInterface.imContentFrame);
-		
+
 		//Create the content Pane
 		contentPane = new JPanel();
 		contentPane.setLayout(null);
 		contentPane.setVisible(true);
-		
+
 		submitBugJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
-		
+
 		//Initalize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
 		generalTitledBorder = BorderFactory.createTitledBorder(
@@ -101,58 +96,62 @@ public class BugReportInterface extends JPanel {
 
 		//Username Input
 		descriptionJTextField = new JTextField();
-		descriptionJLabel.setBounds(15,20,150,25);
-		descriptionJTextField.setBounds(15,40,470,25);
+		descriptionJLabel.setBounds(15, 20, 150, 25);
+		descriptionJTextField.setBounds(15, 40, 470, 25);
 
-		recreationJLabel.setBounds(15,80,400,25);
+		recreationJLabel.setBounds(15, 80, 400, 25);
 		recreationJTextArea = new JTextArea();
 		JScrollPane recreationSP = new JScrollPane(recreationJTextArea);
-		recreationSP.setBounds(15,100,470,100);
+		recreationSP.setBounds(15, 100, 470, 100);
 		recreationSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		expectedJLabel.setBounds(15,210,400,25);
+
+		expectedJLabel.setBounds(15, 210, 400, 25);
 		expectedJTextArea = new JTextArea();
 		JScrollPane expectedSP = new JScrollPane(expectedJTextArea);
-		expectedSP.setBounds(15,230,470,100);
+		expectedSP.setBounds(15, 230, 470, 100);
 		expectedSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		actualJLabel.setBounds(15,340,400,25);
+
+		actualJLabel.setBounds(15, 340, 400, 25);
 		actualJTextArea = new JTextArea();
 		JScrollPane actualSP = new JScrollPane(actualJTextArea);
-		actualSP.setBounds(15,360,470,100);
+		actualSP.setBounds(15, 360, 470, 100);
 		actualSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		
-		
-		
-		
+
+
+
+
+
 
 
 		//Confirm and Cancel JButtons
-		confirmJButton.setBounds(280,490,100,25);
-		cancelJButton.setBounds(385,490,100,25);
-		clearJButton.setBounds(10,490,100,25);
+		confirmJButton.setBounds(280, 490, 100, 25);
+		cancelJButton.setBounds(385, 490, 100, 25);
+		clearJButton.setBounds(10, 490, 100, 25);
 
-		
+
 		clearJButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event){
-					recreationJTextArea.setText("");
-					descriptionJTextField.setText("");
-					expectedJTextArea.setText("");
-					actualJTextArea.setText("");
-				}
+
+			public void actionPerformed(ActionEvent event) {
+				recreationJTextArea.setText("");
+				descriptionJTextField.setText("");
+				expectedJTextArea.setText("");
+				actualJTextArea.setText("");
+			}
 		});
-		
+
 		//ActionListener to make the connect menu item connect
 		confirmJButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event){
-					if(!(descriptionJTextField.getText().equals("")) && !(recreationJTextArea.getText().equals(""))){
-					sendInfoToAegis(descriptionJTextField.getText(),recreationJTextArea.getText(),expectedJTextArea.getText(),actualJTextArea.getText());
-					JOptionPane.showMessageDialog(null,"Thank you for submitting this report. It has been added to our database","Thanks!",JOptionPane.INFORMATION_MESSAGE);
+
+			public void actionPerformed(ActionEvent event) {
+				if (!(descriptionJTextField.getText().equals("")) && !(recreationJTextArea.getText().equals(""))) {
+					sendInfoToAegis(descriptionJTextField.getText(), recreationJTextArea.getText(), expectedJTextArea.getText(), actualJTextArea.getText());
+					JOptionPane.showMessageDialog(null, "Thank you for submitting this report. It has been added to our database", "Thanks!", JOptionPane.INFORMATION_MESSAGE);
 					submitBugJFrame.dispose();
-					
-					}else JOptionPane.showMessageDialog(null,"Please fill in all required fields.","Error!",JOptionPane.ERROR_MESSAGE);
-					
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Please fill in all required fields.", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
+
 			}
 		});
 
@@ -160,11 +159,11 @@ public class BugReportInterface extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				submitBugJFrame.dispose();
-			} 
+			}
 		});
-		
+
 		//Add all the components to the contentPane
 		contentPane.add(descriptionJLabel);
 		contentPane.add(descriptionJTextField);
@@ -188,7 +187,7 @@ public class BugReportInterface extends JPanel {
 	}
 
 	//This Method will send all of the information over to Aegis for input into the database
-	public void sendInfoToAegis(String titles, String recreates, String expecteds, String actuals) { 
+	public void sendInfoToAegis(String titles, String recreates, String expecteds, String actuals) {
 
 		//Get a connection
 		//Client.connect();
@@ -212,5 +211,4 @@ public class BugReportInterface extends JPanel {
 		}
 
 	}
-
 }

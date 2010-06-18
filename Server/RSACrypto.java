@@ -30,7 +30,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-
 import javax.crypto.Cipher;
 
 public class RSACrypto {
@@ -42,56 +41,56 @@ public class RSACrypto {
 	// Generated in generateRSAKeyPair().
 	static RSAPublicKeySpec pub;
 	static RSAPrivateKeySpec priv;
-	
+
 	// Retrieve the publickeyspec
-	public static RSAPublicKeySpec getPublicKey(){
+	public static RSAPublicKeySpec getPublicKey() {
 		return pub;
 	}
-	
+
 	// Retrieve the privatekeyspec
-	public static RSAPrivateKeySpec getPrivateKey(){
+	public static RSAPrivateKeySpec getPrivateKey() {
 		return priv;
 	}
-	
+
 	// This method will generate the users RSA key files, one public and one private
-	public static void generateRSAKeyPair() { 
-		try{
+	public static void generateRSAKeyPair() {
+		try {
 			// Define type of encryption for which these keys are made
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-			
+
 			// Define key size
 			kpg.initialize(2048);
-			
+
 			// Generate the key pairs
 			KeyPair kp = kpg.genKeyPair();
 			Key publicKey = kp.getPublic();
 			Key privateKey = kp.getPrivate();
 			KeyFactory fact = KeyFactory.getInstance("RSA");
-			
+
 			// Define public key
 			pub = fact.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
 			//Define private key
 			priv = fact.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
-			
+
 			// Save the keys to their respective files.
 			saveToFile("public.key", pub.getModulus(), pub.getPublicExponent());
 			saveToFile("private.key", priv.getModulus(), priv.getPrivateExponent());
-			
-		}catch(Exception e){
+
+		} catch (Exception e) {
 			System.out.println("An error has occured in 'generateRSAKeyPair'");
 		}
 
 	}
-	
+
 //----------------------------------
 // The following two methods encrypt and decrypt messages by taking in the modulus and
 // exponent of the public key passed to it. They construct the key on-the-fly perform
 // the operation.
 	//RSA encrypts plainText using a public key created from mod and exp
 	public static byte[] rsaEncryptPublic(String plainText, BigInteger mod, BigInteger exp) {
-		try{
+		try {
 			//Grab the key from this file 
-			PublicKey pubKey = makePublicKey(mod,exp);
+			PublicKey pubKey = makePublicKey(mod, exp);
 			//Define the cipher style
 			//RSA OF COURSE
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -99,16 +98,17 @@ public class RSACrypto {
 			//That's right, cipherData, you wish you knew what the message was.
 			byte[] cipherData = cipher.doFinal(plainText.getBytes());
 			return cipherData;
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("An error has occured in 'rsaEncryptPublic'");
-		}return null;
+		}
+		return null;
 	}
 	//RSA decrypts cipherText using a public key created from mod and exp
+
 	public static String rsaDecryptPublic(byte[] cipherText, BigInteger mod, BigInteger exp) {
-		try{
+		try {
 			//Grab the key from this file 
-			PublicKey pubKey = makePublicKey(mod,exp);
+			PublicKey pubKey = makePublicKey(mod, exp);
 			//Define the cipher style
 			//RSA OF COURSE
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -117,23 +117,21 @@ public class RSACrypto {
 			byte[] cipherData = cipher.doFinal(cipherText);
 			String plainText = new String(cipherData);
 			return plainText;
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("An error has occured in 'rsaDecryptPublic'");
-		}return null;
+		}
+		return null;
 	}
 
-	
-	
 //-----------------------------
 // The following two methods encrypt and decrypt messages by taking in the modulus and
 // exponent of the private key passed to it. They construct the key on-the-fly and perform
 // the operation.	
 	//RSA encrypts plainText using a private key created from mod and exp
 	public static byte[] rsaEncryptPrivate(String plainText, BigInteger mod, BigInteger exp) {
-		try{
+		try {
 			//Grab the key from this file 
-			PrivateKey privKey = makePrivateKey(mod,exp);
+			PrivateKey privKey = makePrivateKey(mod, exp);
 			//Define the cipher style
 			//RSA OF COURSE
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -141,17 +139,18 @@ public class RSACrypto {
 			//That's right, cipherData, you wish you knew what the message was.
 			byte[] cipherData = cipher.doFinal(plainText.getBytes());
 			return cipherData;
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("An error has occured in 'rsaEncryptPrivate'");
 			e.printStackTrace();
-		}return null;
+		}
+		return null;
 	}
 	//RSA decrypts cipherText using a private key create from mod and exp
+
 	public static String rsaDecryptPrivate(byte[] cipherText, BigInteger mod, BigInteger exp) {
-		try{
+		try {
 			//Grab the key from this file 
-			PrivateKey privKey = makePrivateKey(mod,exp);
+			PrivateKey privKey = makePrivateKey(mod, exp);
 			//Define the cipher style
 			//RSA OF COURSE
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -160,46 +159,51 @@ public class RSACrypto {
 			byte[] cipherData = cipher.doFinal(cipherText);
 			String plainText = new String(cipherData);
 			return plainText;
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("An error has occured in 'rsaDecryptPrivate'");
-		}return null;
+		}
+		return null;
 	}
-	
-	
-	
+
 //----------------------------
 // The following two methods are used to generate public and private keys from
 // modulus and exponent parts passed to them.	
 	//Creates a public key based on mod and exp
-	public static PublicKey makePublicKey(BigInteger mod, BigInteger exp){
-		RSAPublicKeySpec keySpec = new RSAPublicKeySpec(mod,exp);
-		KeyFactory fact=null;
-		PublicKey pubKey=null;
-		try{
+	public static PublicKey makePublicKey(BigInteger mod, BigInteger exp) {
+		RSAPublicKeySpec keySpec = new RSAPublicKeySpec(mod, exp);
+		KeyFactory fact = null;
+		PublicKey pubKey = null;
+		try {
 			fact = KeyFactory.getInstance("RSA");
-		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
-		try{
+		} catch (Exception e) {
+			System.out.println("KeyFactory issue in makePublicKey");
+		}
+		try {
 			pubKey = fact.generatePublic(keySpec);
-		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
+		} catch (Exception e) {
+			System.out.println("KeyFactory issue in makePublicKey");
+		}
 		return pubKey;
 	}
 	//Creates a private key based on mod and exp
-	public static PrivateKey makePrivateKey(BigInteger mod, BigInteger exp){
-		RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(mod,exp);
-		KeyFactory fact=null;
-		PrivateKey privKey=null;
-		try{
+
+	public static PrivateKey makePrivateKey(BigInteger mod, BigInteger exp) {
+		RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(mod, exp);
+		KeyFactory fact = null;
+		PrivateKey privKey = null;
+		try {
 			fact = KeyFactory.getInstance("RSA");
-		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
-		try{
+		} catch (Exception e) {
+			System.out.println("KeyFactory issue in makePublicKey");
+		}
+		try {
 			privKey = fact.generatePrivate(keySpec);
-		}catch(Exception e){System.out.println("KeyFactory issue in makePublicKey");}
+		} catch (Exception e) {
+			System.out.println("KeyFactory issue in makePublicKey");
+		}
 		return privKey;
 	}
 
-
-	
 //----------------------------------
 // The following two methods read public and private keys from files of the hard disk.
 	//This method returns the public key from the users pubkey file
@@ -221,10 +225,11 @@ public class RSACrypto {
 		}
 	}
 	//This method grabs the private key from the file
+
 	static RSAPrivateKeySpec readPrivKeyFromFile(String keyFileName) throws IOException {
 		//This is how we'll get the file
 		ObjectInputStream oin = null;
-		try{
+		try {
 			//Make sure this selects the correct file!
 			oin = new ObjectInputStream(new FileInputStream(keyFileName));
 			//Grab the m and e values for the RSA key file process
@@ -233,7 +238,7 @@ public class RSACrypto {
 
 			//Run RSA Private Key input 
 			RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
-			
+
 			//Return the private key
 			return keySpec;
 		} catch (Exception e) {
@@ -244,10 +249,8 @@ public class RSACrypto {
 		return null;
 	}
 
-	
-	
 	//Write a public or private key to a file on the hard disk.
-	public static void saveToFile(String fileName,	BigInteger mod, BigInteger exp) throws IOException {
+	public static void saveToFile(String fileName, BigInteger mod, BigInteger exp) throws IOException {
 		//Define the new file 
 		ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)));
 		try {
@@ -259,5 +262,5 @@ public class RSACrypto {
 		} finally {
 			oout.close();
 		}
-	}	
+	}
 }
