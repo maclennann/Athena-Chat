@@ -823,6 +823,15 @@ public class Athena
 	 *
 	 */
 	public static void leaveChat(String myChatUID) {
+		SecretKeySpec skeySpec = sessionKeys.get(myChatUID);
+		BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(skeySpec, "ChatLeave,"+username));
+
+		//Alert the other users!
+        systemMessage("17");
+		try{
+        c2sdout.writeUTF(encryptServerPublic(myChatUID));
+        c2sdout.writeUTF(messageBigInt.toString());
+		}catch(Exception e){e.printStackTrace();}
 		//Let Aegis know that we're leaving the chat
 		systemMessage("15");
 		//Send Aegis the chatUID
