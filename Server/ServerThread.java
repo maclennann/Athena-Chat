@@ -505,7 +505,7 @@ public class ServerThread extends Thread
 			//The chatID is not a duplicate. We can create the chat and add it to the DB
 			System.out.println("Generated number is not a duplicate.");
 			
-			stmt.executeUpdate("INSERT into allchats (chatid,chatname) values('" + randInt +"','"+chatName+"')");
+			stmt.executeUpdate("INSERT into allchats (chatid,chatname) values('" + randInt +"','"+chatName.replace('\'','\\')+"')");
 			System.out.println("Inserted the chatid into the allchat table.");
 			
 			//Now insert the username and the chat id into the chat table
