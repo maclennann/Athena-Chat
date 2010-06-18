@@ -679,7 +679,7 @@ public class Athena
 		try{
 			systemMessage("18");
 			c2sdout.writeUTF(encryptServerPublic(String.valueOf(chatUID)));
-			String userList = c2sdin.readUTF();
+			String userList = decryptServerPublic(c2sdin.readUTF());
 			String[] users = userList.split(",");
 			for(int x=0;x<users.length;x++){
 				clientResource.newChatListItems(users[x]);
