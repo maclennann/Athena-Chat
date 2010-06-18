@@ -87,7 +87,8 @@ public class Athena
 	private static Thread listeningProcedureClientToClient; //Thread that will be used to listen for incoming messages
 	private static boolean enableSounds; //Flag to control sound notifications
 	private static BigInteger modOfBuddy = null;
-	private static BigInteger expOfBuddy = null;	
+	private static BigInteger expOfBuddy = null;
+        private static String currentChatUID = "";
 	public static RSAPrivateKeySpec usersPrivate; //User's public key
         private static Hashtable<String, SecretKeySpec> sessionKeys = new Hashtable<String, SecretKeySpec>();
 	//End private variables
@@ -501,12 +502,13 @@ public class Athena
 					systemMessage("14");
 					c2sdout.writeUTF(encryptServerPublic(chatName[2]));
 					clientResource.makeChatTab(chatName[0], chatName[2], true);
+                                        currentChatUID=chatName[2];
 				}
 				return;
 			}
 			else if(fromUserDecrypted.equals("SessionKey")) { 
                                 //Do we have a chat window open for this chatUID?
-                                if (sessionKeys.containsKey(fromUserDecrypted))
+                                if (sessionKeys.containsKey(currentChatUID))
                                 {
                                     System.out.println("This is a chat message");
                                     for(int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++)
