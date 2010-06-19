@@ -158,7 +158,7 @@ public class Server {
 		System.out.println("**     Welcome to Athena Chat Server     **");
 		System.out.println("**            Codename: Aegis            **");
 		System.out.println("**                                       **");
-		System.out.println("**     v0.0.2a                           **");
+		System.out.println("**     v1.0.1b                           **");
 		System.out.println("**                                       **");
 		System.out.println("**     Server accepting connections:     **");
 		System.out.println("**     Port 7777                         **");

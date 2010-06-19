@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -39,34 +38,37 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.security.SecureRandom;
-
 import sun.misc.BASE64Encoder;
 
 public class ServerThread extends Thread {
-	//Change to 1 for debug output
-
+	
+	//Change to 1 or 2 for debug output
 	private static int debug = 1;
-	//Create the DataInputStream on the current socket 
+
+	//Create the DataStreams on the current sockets
 	public DataInputStream serverDin = null;
 	public DataInputStream clientDin = null;
 	public DataOutputStream serverDout = null;
 	public DataOutputStream clientDout = null;
+
 	// The Server that created this thread
 	private static Server server;
+
 	//Define Global Variable Username / Password
 	private String username;
-	private String realUsername = "";
 	private String password;
-	//Our current socket
+
+	//Our current sockets
 	public Socket c2ssocket;
 	public Socket c2csocket;
+
 	//Message digest for the hashed password
 	MessageDigest hashedPassword;
+
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive = 1;
-	private RSAPrivateKeySpec serverPrivate;
-	// Constructor. Instantiate this thread on the current socket
 
+	// Constructor. Instantiate this thread on the current socket
 	public ServerThread(Server server, Socket c2ssocket, Socket c2csocket) {
 
 		// Remember which socket we are on
@@ -82,7 +84,6 @@ public class ServerThread extends Thread {
 	@Override
 	public void run() {
 		try {
-
 			//Create a datainputstream on the current socket to accept data from the client
 			serverDin = new DataInputStream(c2ssocket.getInputStream());
 			clientDin = new DataInputStream(c2csocket.getInputStream());
@@ -98,24 +99,28 @@ public class ServerThread extends Thread {
 			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(),
 					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
 
-			realUsername = username;
 			if (debug >= 1) {
 				System.out.println("Decrypted Username: " + username);
 			}
-			System.out.println("\n\n\n\nFIRST REAL USERNAME::::: " + realUsername + "+\nUSERNAME:::::: " + username);
+
 			//Interupt means they want to create a new user
 			if (username.equals("Interupt")) {
 				//Do nothing
 			} else {
-				//Receive their password hash from the stream
+				//Get the password hash
+				password = decryptServerPrivate(serverDin.readUTF());
+
+				/*//Receive their password hash from the stream
 				String passwordCipher = serverDin.readUTF();
 
 				//Decrypt the password hash
 				password = RSACrypto.rsaDecryptPrivate(new BigInteger(passwordCipher).toByteArray(),
 						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+				*/
 
 				//Debug statements
 				if (debug >= 1) {
+					System.out.println("Username: " + username);
 					System.out.println("Password: " + password);
 				}
 
@@ -124,7 +129,7 @@ public class ServerThread extends Thread {
 				if (debug >= 1) {
 					System.out.println(loginOutcome);
 				}
-				System.out.println("\n\n\n\nSECOND REAL USERNAME (POSTLOGIN)::::: " + realUsername + "+\nUSERNAME:::::: " + username);
+
 				//Maps username to socket after user logs in
 				server.mapUserServerSocket(username, c2ssocket);
 				server.mapUserClientSocket(username, c2csocket);
@@ -133,8 +138,7 @@ public class ServerThread extends Thread {
 				System.gc();
 			}
 			if (username.equals("Interupt")) {
-				routeMessage(serverDin, clientDin);
-				//server.removeConnection(socket);				
+				routeMessage(serverDin, clientDin);			
 			} else {
 
 				//Route around messages coming in from the client while they are connected
@@ -147,20 +151,20 @@ public class ServerThread extends Thread {
 
 			}
 
-		} catch (EOFException ie) {
-		} catch (IOException ie) {
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		} finally {
 			//Socket is closed, remove it from the list
 			try {
-				System.out.println("REMOVING USERNAME: " + realUsername);
+				
+				if(debug >= 1) {
+					System.out.println("REMOVING USERNAME: " + username);
+				}
 
-				if (realUsername == null) {
+				if (username == null) {
 					server.removeConnection(c2ssocket, c2csocket);
 				} else {
-					server.removeConnection(c2ssocket, c2csocket, realUsername);
+					server.removeConnection(c2ssocket, c2csocket, username);
 				}
 
 			} catch (Exception e) {
@@ -174,35 +178,22 @@ public class ServerThread extends Thread {
 	//and routes the message to the recipient.
 	public void routeMessage(DataInputStream serverDin, DataInputStream clientDin) throws NumberFormatException, InterruptedException {
 		try {
-			//Grab the server's private key - SHHH!!
-			serverPrivate = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
-			//Read in the Encrypted toUser
-			String toUserEncrypted = serverDin.readUTF();
+			//Read in the toUser
+			String toUser = decryptServerPrivate(serverDin.readUTF());
 			//Read in the From User
-			String fromUserEncrypted = serverDin.readUTF();
+			String fromUser = decryptServerPrivate(serverDin.readUTF());
 			//Read in the Encrypted message
 			String messageEncrypted = serverDin.readUTF();
 
 			//Read in the Digital Signature
 			//String digitalSignatureEncrypted = din.readUTF();
 
-
-			if (debug == 2) {
-				System.out.println("Encrypted:" + toUserEncrypted);
-			}
-
-			//Decrypt the to user
-			byte[] toUserBytes = (new BigInteger(toUserEncrypted)).toByteArray();
-			String toUserDecrypted = RSACrypto.rsaDecryptPrivate(toUserBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
-
-			//Decrypt the from user
-			String fromUser = decryptServerPrivate(fromUserEncrypted);
 			if (debug >= 1) {
-				System.out.println("Decrypted:" + toUserDecrypted);
+				System.out.println("Decrypted:" + toUser);
 			}
 
 			//Is the message an eventcode meant for the server?
-			if (toUserDecrypted.equals("Aegis")) {
+			if (toUser.equals("Aegis")) {
 				if (debug >= 1) {
 					System.out.print("Server eventcode detected! ");
 				}
@@ -210,33 +201,29 @@ public class ServerThread extends Thread {
 					System.out.println(decryptServerPrivate(messageEncrypted));
 				}
 				try {
-					int code = Integer.parseInt(decryptServerPrivate(messageEncrypted));
-
-					systemMessageListener(code);
+					systemMessageListener(Integer.parseInt(decryptServerPrivate(messageEncrypted)));
 				} catch (NumberFormatException e) {
 					System.out.println("Message is NOT an eventcode. Ignoring...");
 				}
 				return;
 			}//Is the message someone trying to create an account?
-			if (toUserDecrypted.equals("Interupt")) {
-
+			if (toUser.equals("Interupt")) {
 				try {
-					int code = Integer.parseInt(decryptServerPrivate(messageEncrypted));
-
-					systemMessageListener(code);
+					systemMessageListener(Integer.parseInt(decryptServerPrivate(messageEncrypted)));
 				} catch (NumberFormatException e) {
 					System.out.println("Message is NOT an eventcode. Continuing...");
 				}
 				return;
-			}//Is this a normal message to another client
+			}
+			//Is this a normal message to another client
 			else {
 				if (debug >= 1) {
-					System.out.println("Routing normal message to: " + toUserDecrypted + "\nmessage from: " + fromUser);
+					System.out.println("Routing normal message to: " + toUser + "\nmessage from: " + fromUser);
 				}
 				if (debug == 2) {
 					System.out.println("\nEncrypted message: " + messageEncrypted);
 				}
-				sendMessage(toUserDecrypted, fromUser, messageEncrypted);
+				sendMessage(toUser, fromUser, messageEncrypted);
 
 			}
 			//Collect some garbage
@@ -377,7 +364,10 @@ public class ServerThread extends Thread {
 	private void userList() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			
+			//Get the chatUID
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
+
 			//Grab a DB connection
 			Connection con = server.dbConnect();
 			Statement stmt;
@@ -386,8 +376,13 @@ public class ServerThread extends Thread {
 			//Get a list of existing chats
 			stmt = con.createStatement();
 			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "';");
-			System.out.println("Got list of users");
+			
+			if(debug >= 1) {
+				System.out.println("Got list of users");
+			}
+
 			String message = "";
+
 			//Send the message to the users in the chat
 			while (rs.next()) {
 				message += rs.getString(1) + ",";
@@ -397,6 +392,8 @@ public class ServerThread extends Thread {
 			rs.close();
 			stmt.close();
 			con.close();
+
+			//Return the userlist
 			serverDout.writeUTF(encryptServerPrivate(message));
 
 		} catch (Exception e) {
@@ -408,6 +405,7 @@ public class ServerThread extends Thread {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 
+			//Take in the chatUID and the message
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 			String message = serverDin.readUTF();
 
@@ -431,7 +429,7 @@ public class ServerThread extends Thread {
 				sendMessage(rs.getString(1), String.valueOf(chatNum), message);
 			}
 
-			//Close everything
+			//Close all DB connections
 			rs.close();
 			stmt.close();
 			con.close();
@@ -450,26 +448,24 @@ public class ServerThread extends Thread {
 
 			//Get the chatUID, chat name, and number of users to invite
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			if (debug == 1) {
-				System.out.println("Received chat number: " + chatNum);
-			}
 			String chatName = decryptServerPrivate(serverDin.readUTF());
-			if (debug == 1) {
-				System.out.println("Received chat name: " + chatName);
-			}
 			String inviteString = chatName + "," + username + "," + chatNum;
-			if (debug == 1) {
-				System.out.println("Constructed inviteString: " + inviteString);
-			}
 			int inviteList = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			String sessionKey = "";
-			if (debug == 1) {
+
+			//Debug statements
+			if (debug >= 1) {
+				System.out.println("Received chat number: " + chatNum);
+				System.out.println("Received chat name: " + chatName);
+				System.out.println("Constructed inviteString: " + inviteString);
 				System.out.println("Inviting " + inviteList + " people");
 			}
+
+			String sessionKey = "";
 			String invitingUser = "";
+			int x = 0;
 
 			//For each user to invite, take their name, and take the session key encrypted with their public key
-			for (int x = 0; x < inviteList; x++) {
+			for (x = 0; x < inviteList; x++) {
 				invitingUser = decryptServerPrivate(serverDin.readUTF());
 				sessionKey = serverDin.readUTF();
 				if (debug == 1) {
@@ -477,10 +473,12 @@ public class ServerThread extends Thread {
 				}
 				sendMessage(invitingUser, "ChatInvite", encryptServerPrivate(inviteString));
 				sendMessage(invitingUser, "SessionKey", sessionKey);
-				if (debug == 1) {
-					System.out.println("Invited " + x + " people");
-				}
 			}
+
+			if (debug >= 1) {
+				System.out.println("Invited " + (x+1) + " people");
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -489,10 +487,14 @@ public class ServerThread extends Thread {
 	//Remove the user from a chat, and completely delete the chat if it is empty
 	private void leaveChat() {
 		try {
-			//Get the chat UID
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+
+			//Get the chatUID
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			System.out.println("User " + username + " is leaving chat number " + chatNum + "!!!!");
+			
+			if (debug >= 1) {
+				System.out.println("User " + username + " is leaving chat number " + chatNum + "!!!!");
+			}
 
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
@@ -505,14 +507,20 @@ public class ServerThread extends Thread {
 			if (deleted == 1 && debug >= 1) {
 				System.out.println(username + " was successfully removed from the chat with UID " + chatNum);
 			}
+
+			//Get the users left in the chat
 			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "';");
+
 			//Delete the whole chat if it is empty
 			if (rs.next()) {
 				if (debug >= 1) {
 					System.out.println("Still people in the chat. Not closing.");
 				}
 			} else {
-				System.out.println("No one is left in chat " + chatNum + " closing chat");
+				if (debug >= 1){
+					System.out.println("No one is left in chat " + chatNum + " closing chat");
+				}
+
 				stmt.executeUpdate("DELETE FROM allchats WHERE chatid='" + chatNum + "';");
 			}
 
@@ -532,7 +540,10 @@ public class ServerThread extends Thread {
 			//Get chat UID to join
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			System.out.println("Joining user " + username + " to chat number " + chatNum + "!!!!!");
+			
+			if (debug >= 1){
+				System.out.println("Joining user " + username + " to chat number " + chatNum + "!!!!!");
+			}
 
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
@@ -570,17 +581,31 @@ public class ServerThread extends Thread {
 	//Create a chat. Generate a UID, add it to the DB, and inform the creator
 	private void createChat() {
 		try {
+			if (debug >= 1){
+				System.out.println("In the method.");
+			}
+
 			//Grab output stream for the user.
-			System.out.println("In the method.");
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-			System.out.println("Created the output stream which we shouldn't have to do.");
+
+			if (debug >= 1){
+				System.out.println("Created the output stream which we shouldn't have to do.");
+			}
+
 			//Grab a connection to the database
 			Connection con = server.dbConnect();
-			System.out.println("Connected to the database.");
+
+			if (debug >= 1) {
+				System.out.println("Connected to the database.");
+			}
+
 			//Get the chat name from the user
 			String chatName = decryptServerPrivate(serverDin.readUTF());
 
-			System.out.println("Took in the desired chat name.");
+			if (debug >= 1) {
+				System.out.println("Took in the desired chat name.");
+			}
+
 			//Is the chatID a dupe?
 			int dupe = 0;
 			Statement stmt;
@@ -594,12 +619,18 @@ public class ServerThread extends Thread {
 				byte seed[] = random.generateSeed(20);
 				random.setSeed(seed);
 				randInt = random.nextInt(9999);
-				System.out.println("Generated random chat ID: " + randInt);
+				
+				if (debug >= 1) {
+					System.out.println("Generated random chat ID: " + randInt);
+				}
 
 				//Get a list of existing chats
 				stmt = con.createStatement();
 				rs = stmt.executeQuery("SELECT chatid FROM allchats");
-				System.out.println("Got list of existing chats.");
+
+				if (debug >= 1) {
+					System.out.println("Got list of existing chats.");
+				}
 
 				//Read chatIDs into array
 				while (rs.next()) {
@@ -615,18 +646,28 @@ public class ServerThread extends Thread {
 			rs.close();
 
 			//The chatID is not a duplicate. We can create the chat and add it to the DB
-			System.out.println("Generated number is not a duplicate.");
+			if (debug >= 1) {
+				System.out.println("Generated number is not a duplicate.");
+			}
 
 			stmt.executeUpdate("INSERT into allchats (chatid,chatname) values('" + randInt + "','" + chatName.replace('\'', '\\') + "')");
-			System.out.println("Inserted the chatid into the allchat table.");
+
+			if (debug >= 1) {
+				System.out.println("Inserted the chatid into the allchat table.");
+			}
 
 			//Now insert the username and the chat id into the chat table
 			stmt.executeUpdate("INSERT into chat (username, chatid) values('" + username + "','" + randInt + "')");
-			System.out.println("Inserted the username and chatid into the chat table.");
 
+			if (debug >= 1) {
+				System.out.println("Inserted the username and chatid into the chat table.");
+			}
+
+			//Close the DB connections
 			stmt.close();
 			con.close();
 
+			//Send back the chatUID
 			serverDout.writeUTF(encryptServerPrivate(String.valueOf(randInt)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -637,6 +678,7 @@ public class ServerThread extends Thread {
 	private void resetPassword() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+
 			//Use dbConnect() to connect to the database
 			Connection con = server.dbConnect();
 
@@ -668,11 +710,15 @@ public class ServerThread extends Thread {
 
 			//Send the secret question to the client for answering
 			serverDout.writeUTF(encryptServerPrivate(secretQuestion));
-			System.out.println("SENT Question: " + secretQuestion);
+			if (debug >= 1 ){
+				System.out.println("SENT Question: " + secretQuestion);
+			}
 
 			//Read in the user's answer hash
 			String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
-			System.out.println("READ Answer: " + secretAnswerHash);
+			if (debug >= 1) {
+				System.out.println("READ Answer: " + secretAnswerHash);
+			}
 
 			//Read in the user's desired passwordchange
 			String newPassword = decryptServerPrivate(serverDin.readUTF());
@@ -690,24 +736,29 @@ public class ServerThread extends Thread {
 				} else {
 					server.authentication.put(userToReset, newPassword);
 				}
-				System.out.println("PASSWORDCHANGED");
+
+				if (debug >= 1) {
+					System.out.println("PASSWORDCHANGED");
+				}
+
 				//Close Connections
-				//stmt.close();
 				insertSTMT.close();
-				//con.close();
 
 				//Success message
 				serverDout.writeUTF(encryptServerPrivate("1"));
 			} else {
-				System.out.println("HASH MISMATCH. ABORT");
+				if (debug >= 1) {
+					System.out.println("HASH MISMATCH. ABORT");
+				}
+				
 				//Failure message
 				serverDout.writeUTF(encryptServerPrivate("0"));
 			}
 
 			//Close Connections
 			stmt.close();
-			//insertSTMT.close();
 			con.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -716,10 +767,9 @@ public class ServerThread extends Thread {
 	private void receiveBugReport() {
 		if (debug == 1) {
 			System.out.println("Receiving bug report stacktrace");
-		}
-		if (debug == 1) {
 			System.out.println("Receiving bug report comments");
 		}
+		
 		String trace = "";
 		String comments = "";
 		try {
@@ -729,8 +779,10 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 		}
 
-		System.out.println("Bug report received from " + realUsername + ": " + comments);
-		System.out.println("Stacktrace follows:" + trace);
+		if (debug >= 1) {
+			System.out.println("Bug report received from " + username + ": " + comments);
+			System.out.println("Stacktrace follows:" + trace);
+		}
 	}
 
 	private void receiveBugReport(boolean flag) {
@@ -752,23 +804,11 @@ public class ServerThread extends Thread {
 		}
 		if (debug >= 1) {
 			System.out.println("BEGIN BUG REPORT");
-		}
-		if (debug >= 1) {
-			System.out.println("Bug report received from " + realUsername + ": ");
-		}
-		if (debug >= 1) {
+			System.out.println("Bug report received from " + username + ": ");
 			System.out.println("Brief Description: " + title);
-		}
-		if (debug >= 1) {
 			System.out.println("Steps to recreate: " + recreate);
-		}
-		if (debug >= 1) {
 			System.out.println("Expected Outcome: " + expected);
-		}
-		if (debug >= 1) {
 			System.out.println("Actual Outcome: " + actual);
-		}
-		if (debug >= 1) {
 			System.out.println("END OF REPORT");
 		}
 	}
@@ -787,6 +827,7 @@ public class ServerThread extends Thread {
 
 		//Send Athena the number of lines we're sending
 		serverDout.writeUTF(encryptServerPrivate(String.valueOf(numLines)));
+
 		//Send the lines of the file!
 		for (int x = 0; x < buddyListArray.length; x++) {
 			serverDout.writeUTF(encryptServerPrivate(buddyListArray[x]));
@@ -794,8 +835,8 @@ public class ServerThread extends Thread {
 		return true;
 
 	}
-	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 
+	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 	public String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;
@@ -823,7 +864,7 @@ public class ServerThread extends Thread {
 					++count;
 				}
 			}
-		} //End section
+		}
 
 		//Make the string array the size of the number of lines in the file
 		String[] usernames = new String[count];
@@ -876,7 +917,7 @@ public class ServerThread extends Thread {
 			if (debug >= 1) {
 				System.out.println("MessageLength: " + privateKeyMod.length() + "\nMessageLength/245: " + messageNumbers + "\nCeiling of that: " + messageNumbersInt);
 			}
-
+			//TODO THIS IS A MESSSSS
 			String[] messageChunks = new String[(int) messageNumbersInt];
 			for (int i = 0; i < messageChunks.length; i++) {
 				int begin = i * 245;
@@ -953,7 +994,8 @@ public class ServerThread extends Thread {
 		writeBuddyListToFile(buddyListLines, username);
 		System.out.println("Successfully wrote buddy list to file");
 	}
-
+	
+	//TODO Cmon, stop.
 	//This method decrypts the ciphertext with the server's public key
 	public static String decryptServerPrivate(String ciphertext) {
 		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
