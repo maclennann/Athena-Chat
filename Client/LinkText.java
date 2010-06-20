@@ -30,7 +30,6 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonModel;
@@ -62,9 +61,6 @@ import javax.swing.text.View;
  */
 public class LinkText extends JButton {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3031053824730381392L;
 
 	public LinkText() {

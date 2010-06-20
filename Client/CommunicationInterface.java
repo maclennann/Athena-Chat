@@ -59,7 +59,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Map;
-
 import javax.swing.text.Document;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -99,93 +98,133 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLEditorKit;
 import com.inet.jortho.SpellChecker;
 
-//Client swing window.
+/**
+ * The main window of Athena: IM/Chat tabs, etc
+ * @author OlympuSoft
+ */
 public class CommunicationInterface extends JFrame {
 
 	/**
-	 *
+	 * Hashtable for buddylist users and their current status
 	 */
-	private static final long serialVersionUID = -7742402292330782311L;
-	public static final int debug = 0;
 	public Hashtable<String, Integer> userStatus = new Hashtable<String, Integer>();
+	/**
+	 * I'm....not entirely sure
+	 */
 	public Hashtable<Document, JPanel> uniqueIDHash = new Hashtable<Document, JPanel>();
+	/**
+	 * Used to get and display system fonts in the preferences window
+	 */
 	public static Hashtable<String, String> fontFamilyTable = new Hashtable<String, String>();
-	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	public Font[] allFonts = ge.getAllFonts();
-	public boolean settingsLoaded = false;
-	// Define the listModel for the JList
-	DefaultListModel contactListModel = new DefaultListModel();
-	DefaultListModel inviteListModel = new DefaultListModel();
-	// Components for the visual display of the chat windows
-	public JList userBox = new JList(contactListModel);
-	public JList inviteBox = new JList(inviteListModel);
-	public JList contactBox;
-	public JTextField chatNameField = new JTextField();
-	public JFrame chatWindow;
-	public JScrollPane contactList, chatList;
-	public String[] contactsToInvite = new String[100];
-	public JMenuBar menuBar = new JMenuBar();
-	public JMenu file, edit, encryption, view, help;
-	public JMenuItem disconnect, exit, preferences, createChat, sendFile;
-	public JPanel panel;
+	/**
+	 * JFrames, one for the IM tabs, one for the buddylist
+	 */
 	public static JFrame imContentFrame, buddyListFrame;
-	public JComboBox statusBox = new JComboBox(new String[]{"Available", "Busy"});
+	/**
+	 * Checks if the settings file has been loaded
+	 */
+	public boolean settingsLoaded = false;
+	/**
+	 * TabbedPane for IM and chat tabs
+	 */
 	public JTabbedPane imTabbedPane = new JTabbedPane();
+	/**
+	 * Keeps track of the IM/Chat tabs and their names
+	 */
 	public Hashtable<String, MapTextArea> tabPanels = new Hashtable<String, MapTextArea>();
-	public BufferedImage addUserIcon;
-	public Border buttonBorder = BorderFactory.createRaisedBevelBorder();
-	public Border blackline = BorderFactory.createLineBorder(Color.gray);
-	public Border whiteColor = BorderFactory.createLineBorder(Color.white);
-	public Border oneColor = BorderFactory.createLineBorder(Color.black);
-	public Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
-	public Border threeColor = BorderFactory.createLineBorder(new Color(218, 165, 32)); //Goldenrod
-	public Border contactListBorder, chatListBorder;
-	public ImageIcon lockIcon = new ImageIcon("images/lockicon.png");
-	public ImageIcon logoIcon = new ImageIcon("images/logo.png");
-	public ImageIcon logoIconBig = new ImageIcon("images/logobig.png");
-	static public JLabel lockIconLabel = new JLabel();
-	static public JLabel logoIconLabel = new JLabel();
-	public TitledBorder buddyBorder = BorderFactory.createTitledBorder(blackline, "Contact List");
-	public int sessionTabCount = 0;
-	public boolean enableSystemTray;
-	public boolean enableESCToClose;
-	public boolean enableSpellCheck;
-	public boolean enableSounds;
-	public int encryptionType;
-	public String fontFace;
-	public boolean fontBold;
-	public boolean fontItalic;
-	public boolean fontUnderline;
-	public int fontSize;
-	public int activeTheme;
-	public boolean userStatusFlag = false;
+	/**
+	 * Used to get the fonts list
+	 */
+	public GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	/**
+	 * Loads the font list from the GraphicsEnvironment
+	 */
+	public Font[] allFonts = ge.getAllFonts();
 
-	// Method to add users to the JList when they sign on
+	private static final long serialVersionUID = -7742402292330782311L;
+	private static final int debug = 0;
+	
+	// Define the listModel for the JList
+	private DefaultListModel contactListModel = new DefaultListModel();
+	private DefaultListModel inviteListModel = new DefaultListModel();
+
+	// Components for the visual display of the chat windows
+	private JList userBox = new JList(contactListModel);
+	private JList inviteBox = new JList(inviteListModel);
+	private JList contactBox;
+	private JTextField chatNameField = new JTextField();
+	private JFrame chatWindow;
+	private JScrollPane contactList, chatList;
+	private JMenuBar menuBar = new JMenuBar();
+	private JMenu file, edit, encryption, view, help;
+	private JMenuItem disconnect, exit, preferences, createChat, sendFile;
+	private JPanel panel;
+	private JComboBox statusBox = new JComboBox(new String[]{"Available", "Busy"});
+	private Border buttonBorder = BorderFactory.createRaisedBevelBorder();
+	private Border whiteColor = BorderFactory.createLineBorder(Color.white);
+	private Border oneColor = BorderFactory.createLineBorder(Color.black);
+	private Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
+	private Border threeColor = BorderFactory.createLineBorder(new Color(218, 165, 32)); //Goldenrod
+	private Border contactListBorder, chatListBorder;
+	private ImageIcon lockIcon = new ImageIcon("images/lockicon.png");
+	private ImageIcon logoIcon = new ImageIcon("images/logo.png");
+	private ImageIcon logoIconBig = new ImageIcon("images/logobig.png");
+	private static JLabel lockIconLabel = new JLabel();
+	private static JLabel logoIconLabel = new JLabel();
+	private TitledBorder buddyBorder;
+	private boolean enableSystemTray;
+	private boolean enableESCToClose;
+	private boolean enableSpellCheck;
+	private boolean enableSounds;
+	private int encryptionType;
+	private String fontFace;
+	private boolean fontBold;
+	private boolean fontItalic;
+	private boolean fontUnderline;
+	private int fontSize;
+	private int activeTheme;
+	private boolean userStatusFlag = false;
+	private static Object[] currentSettings = new Object[11];
+
+	/**
+	 * Method to add users to the JList when they sign on
+	 * @param availableUser The user to add to the buddylist
+	 */
 	public void newBuddyListItems(String availableUser) {
 		if (contactListModel.indexOf(availableUser) == -1) {
 			contactListModel.addElement(availableUser);
 		}
-
 	}
 
-	// Method to remove user from the JList who signs off
+	/**
+	 * Method to remove user from the JList who signs off
+	 * @param offlineUser The user to remove from the buddylist
+	 */
 	public void buddySignOff(String offlineUser) {
 		contactListModel.removeElement(offlineUser);
 	}
 
-	// Method to remove user from the JList who signs off
+	/**
+	 * Method to remove user from the JList who signs off
+	 * @param offlineUser The user to remove from the chat userlist
+	 */
 	public void chatSignOff(String offlineUser) {
 		inviteListModel.removeElement(offlineUser);
 	}
 
+	/**
+	 * Method to add users to the list of chat users
+	 * @param availableUser User to add to the chat userlist
+	 */
 	public void newChatListItems(String availableUser) {
 		if (inviteListModel.indexOf(availableUser) == -1) {
 			inviteListModel.addElement(availableUser);
 		}
-
 	}
-	public static Object[] currentSettings = new Object[11];
 
+	/**
+	 * The main window. IM/Chat tabs and buddylist.
+	 */
 	CommunicationInterface() {
 
 		// Initialize chat window
@@ -202,6 +241,7 @@ public class CommunicationInterface extends JFrame {
 		int width = (int) scrnsize.getWidth();
 		int height = (int) scrnsize.getHeight();
 
+		//Load the fonts from the graphics environment
 		String[] allFontNames = new String[allFonts.length];
 		fontFamilyTable.clear();
 		for (int a = 0; a < allFonts.length; a++) {
@@ -220,6 +260,8 @@ public class CommunicationInterface extends JFrame {
 
 			e1.printStackTrace();
 		}
+
+		//Load preferences
 		enableESCToClose = Boolean.parseBoolean(settingsArray[1].toString());
 		closeTabWithESC(enableESCToClose);
 		enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
@@ -233,6 +275,7 @@ public class CommunicationInterface extends JFrame {
 		fontUnderline = Boolean.parseBoolean(settingsArray[8].toString());
 		fontSize = Integer.parseInt(settingsArray[9].toString());
 		activeTheme = Integer.parseInt(settingsArray[10].toString());
+		
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Athena.username);
 		imContentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -240,6 +283,7 @@ public class CommunicationInterface extends JFrame {
 		imContentFrame.setResizable(false);
 		imContentFrame.setLocation(width - (width / 2) - 407, height - (height / 2) - 305);
 		imContentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
+
 		// Create the file menu.
 		file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
@@ -263,7 +307,6 @@ public class CommunicationInterface extends JFrame {
 		exit = new JMenuItem("Exit");
 		exit.setMnemonic(KeyEvent.VK_X);
 		file.add(exit);
-
 
 		// Add the file menu to the menu bar
 		menuBar.add(file);
@@ -346,9 +389,6 @@ public class CommunicationInterface extends JFrame {
 				}
 			}
 		});
-
-
-
 
 		// ActionListener to make the disconnect menu item disconnect
 		disconnect.addActionListener(new ActionListener() {
@@ -465,9 +505,9 @@ public class CommunicationInterface extends JFrame {
 		Border chatListBorderAA = BorderFactory.createCompoundBorder(chatListBorderC, twoColor);
 		contactListBorder = contactListBorderAA;
 		chatListBorder = chatListBorderAA;
-		TitledBorder buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
+		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
 				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), Color.black);
-		TitledBorder chatListBorder = BorderFactory.createTitledBorder(chatListBorderAA, "Group Chat List", TitledBorder.CENTER,
+		chatListBorder = BorderFactory.createTitledBorder(chatListBorderAA, "Group Chat List", TitledBorder.CENTER,
 				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
 		chatList.setBorder(chatListBorder);
@@ -753,6 +793,9 @@ public class CommunicationInterface extends JFrame {
 
 	}
 
+	/**
+	 * Focuses the TextField of the current tab
+	 */
 	public void FocusCurrentTextField() {
 		//Set default icon
 		Icon closeIcon = new ImageIcon("images/close_button.png");
@@ -767,15 +810,27 @@ public class CommunicationInterface extends JFrame {
 		textFieldToFocus.requestFocusInWindow();
 	}
 
+	/**
+	 * Get the current settings as an array
+	 * @return An array of the settings
+	 */
 	public Object[] getCurrentSettingsArray() {
 		return currentSettings;
 	}
 
+	/**
+	 * Set the user's setting
+	 * @param settingsArray The new settings to load
+	 */
 	public void setCurrentSettingsArray(Object[] settingsArray) {
 		currentSettings = settingsArray;
 	}
 
-	// Make a tab for a conversation
+	/**
+	 * Make a tab for a conversation
+	 * @param user The user to make the tab for
+	 * @param userCreated boolean flag
+	 */
 	public void makeTab(String user, boolean userCreated) {
 		lockIconLabel.setVisible(false);
 		logoIconLabel.setVisible(false);
@@ -832,10 +887,16 @@ public class CommunicationInterface extends JFrame {
 				FocusCurrentTextField();
 			}
 		}
-		//Garbage collect!
+		//Garbage collect
 		System.gc();
 	}
 
+	/**
+	 * Make a chat tab
+	 * @param chatName The name of the chat
+	 * @param chatUID The UID of the chat
+	 * @param userCreated Boolean flag
+	 */
 	public void makeChatTab(String chatName, String chatUID, boolean userCreated) {
 		lockIconLabel.setVisible(false);
 		logoIconLabel.setVisible(false);
@@ -897,6 +958,10 @@ public class CommunicationInterface extends JFrame {
 		System.gc();
 	}
 
+	/**
+	 * Disable or enable textfield based on availability
+	 * @param busy Is the user away?
+	 */
 	public void setUserStatus(boolean busy) {
 		if (busy) {
 			int tabCount = imTabbedPane.getTabCount();
@@ -913,6 +978,10 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+	/**
+	 * Disable textfields in a specific tab
+	 * @param index The tab index to disable
+	 */
 	public void disableTextPane(int index) {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
 		Component[] currentTabComponents = currentTab.getComponents();
@@ -924,6 +993,10 @@ public class CommunicationInterface extends JFrame {
 		textFieldToFocus.setText("Change user status to [Available] to resume communication...");
 	}
 
+	/**
+	 * Enable textfields in a specific tab
+	 * @param index The tab index to enable
+	 */
 	public void enableTextPane(int index) {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
 		Component[] currentTabComponents = currentTab.getComponents();
@@ -936,6 +1009,11 @@ public class CommunicationInterface extends JFrame {
 		textFieldToFocus.setText("");
 	}
 
+	/**
+	 * Enable or disable the icon in the notification area
+	 * @param activated Enabled or disabled
+	 * @throws AWTException
+	 */
 	public void setSystemTrayIcon(boolean activated) throws AWTException {
 		SystemTray tray = SystemTray.getSystemTray();
 		TrayIcon[] trayArray = tray.getTrayIcons();
@@ -969,6 +1047,10 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+	/**
+	 * Enable or disable the ESC-key close for tabs
+	 * @param activated Is the setting enabled?
+	 */
 	public void closeTabWithESC(boolean activated) {
 		int tabCount = imTabbedPane.getTabCount();
 		enableESCToClose = activated;
@@ -986,7 +1068,10 @@ public class CommunicationInterface extends JFrame {
 		System.gc();
 	}
 
-	// Adjust spell check setting in current and future text fields
+	/**
+	 * Enable or disable the spellcheck
+	 * @param activated Is the setting enable?
+	 */
 	public void setSpellCheck(boolean activated) {
 		// Retrieve necessary tab and component data
 		int tabCount = imTabbedPane.getTabCount();
@@ -1018,6 +1103,10 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+	/**
+	 * Add an alert notifier to the specified tab index
+	 * @param index Tab index to add the listener on
+	 */
 	private void addAlertNotificationListener(int index) {
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
@@ -1048,6 +1137,10 @@ public class CommunicationInterface extends JFrame {
 		});
 	}
 
+	/**
+	 * Add an ESC key listener to the specified tab
+	 * @param index The tab to add the listener on
+	 */
 	private void addESCKeyListener(int index) {
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
@@ -1095,6 +1188,10 @@ public class CommunicationInterface extends JFrame {
 		});
 	}
 
+	/**
+	 * Remove the ESC key listener from a tab
+	 * @param index Tab to remove it from
+	 */
 	private void removeESCKeyListener(int index) {
 		imTabbedPane.setSelectedIndex(index);
 		JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
@@ -1106,6 +1203,10 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+	/**
+	 * Add a focus listener to the textfield of a tab
+	 * @param index The tab index to act on
+	 */
 	private void addTextFieldFocusListener(int index) {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
 		Component[] currentTabComponents = currentTab.getComponents();
@@ -1125,6 +1226,10 @@ public class CommunicationInterface extends JFrame {
 		});
 	}
 
+	/**
+	 * Add the focuslistener to a chat's textfield
+	 * @param index The index of the chat tab
+	 */
 	private void addChatTextFieldFocusListener(int index) {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
 		Component[] currentTabComponents = currentTab.getComponents();
@@ -1147,6 +1252,9 @@ public class CommunicationInterface extends JFrame {
 		});
 	}
 
+	/**
+	 * The Group Chat creation and invitation window
+	 */
 	public void createChatWindow() {
 		chatWindow = new JFrame("Group Chat Initiation");
 		chatWindow.setSize(400, 480);
@@ -1314,7 +1422,11 @@ public class CommunicationInterface extends JFrame {
 		chatWindow.setVisible(true);
 	}
 
-	// Makes a new hash table with user's online status
+	/**
+	 * Map a buddy to their current status
+	 * @param username Buddy's username
+	 * @param status Their current status
+	 */
 	public void mapUserStatus(String username, int status) {
 		if (debug == 1) {
 			System.out.println("Username: " + username + "\nStatus: " + status);
@@ -1322,6 +1434,10 @@ public class CommunicationInterface extends JFrame {
 		userStatus.put(username, status);
 	}
 
+	/**
+	 * Import preferences from a file
+	 * @return The object[] of the current settings
+	 */
 	private Object[] loadSavedPreferences() {
 		if (debug == 1) {
 			System.out.println("Importing preferences");
@@ -1452,6 +1568,9 @@ public class CommunicationInterface extends JFrame {
 		return settingsArray;
 	}
 
+	/**
+	 * I think this helps us render current user statuses on the buddylist
+	 */
 	class MyCellRenderer extends JLabel implements ListCellRenderer {
 
 		public Component getListCellRendererComponent(
@@ -1478,11 +1597,10 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+	/**
+	 * The close buttons on every tab. Also holds chatUID (-1 for an IM)
+	 */
 	class CloseTabButton extends JPanel implements ActionListener, MouseListener {
-
-		/**
-		 *
-		 */
 		//private static final long serialVersionUID = -6032110177913133517L;
 		private JTabbedPane pane;
 		public JButton btClose;
@@ -1592,26 +1710,54 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+	/**
+	 * Get the currently selected fontface
+	 * @return Font face name
+	 */
 	public String getLoadedFontFace() {
 		return fontFace;
 	}
 
+	/**
+	 * Bold currently enabled/disabled
+	 * @return True if enabled
+	 */
 	public boolean getLoadedBold() {
 		return fontBold;
 	}
 
+	/**
+	 * Italics currently enabled/disabled
+	 * @return True if enabled
+	 */
 	public boolean getLoadedItalic() {
 		return fontItalic;
 	}
 
+	/**
+	 * Underline currently enabled/disabled
+	 * @return True if enabled
+	 */
 	public boolean getLoadedUnderline() {
 		return fontUnderline;
 	}
 
+	/**
+	 * Get currently selected font size
+	 * @return font size
+	 */
 	public int getLoadedFontSize() {
 		return fontSize;
 	}
 
+	/**
+	 * Load some new font settings
+	 * @param newFontFace Name of new font face
+	 * @param newBold Is bold enabled?
+	 * @param newItalic Are italics enabled?
+	 * @param newUnderline Is underline enabled
+	 * @param newSize New font size
+	 */
 	public void setNewFontToLoad(String newFontFace, boolean newBold, boolean newItalic, boolean newUnderline, int newSize) {
 		fontFace = newFontFace;
 		fontBold = newBold;
@@ -1622,32 +1768,39 @@ public class CommunicationInterface extends JFrame {
 	// End of class ClientApplet
 }
 
-// This class holds all of the JComponents and acts as an interface to each
-// conversation's tab
+/**
+ * This class holds all of the JComponents and acts as an interface to each conversation's tab
+ * @author OlympuSoft
+ */
 class MapTextArea extends JFrame {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 2557115166519071868L;
-	public int chatUID = -1;
-	boolean isChat = false;
+	private int chatUID = -1;
+	private boolean isChat = false;
+
 	// The user name associated with the tab
-	String username = null;
+	private String username = null;
+
 	// All of the JComponents in the tab
-	public JPanel myJPanel;
-	public JEditorPane myJEP;
-	public JTextPane myTP;
-	public JTextArea myTA;
-	public JTextField myTF;
-	boolean isBold, isItalic, isUnderline;
-	int fontSize;
-	MutableAttributeSet keyWord = new SimpleAttributeSet();
-	MutableAttributeSet miniKeyWord = new SimpleAttributeSet();
+	private JPanel myJPanel;
+	private JEditorPane myJEP;
+	private JTextPane myTP;
+	//private JTextArea myTA;
+	//private JTextField myTF;
+	//private boolean isBold, isItalic, isUnderline;
+	//private int fontSize;
+	private MutableAttributeSet keyWord = new SimpleAttributeSet();
+	private MutableAttributeSet miniKeyWord = new SimpleAttributeSet();
+	
 	// The index of the tab this lives in
 	int tabIndex = -1;
 
-	// Constructor
+	/**
+	 * The JPanel and components in every tab
+	 * @param user The user associated with the tab
+	 * @param spellCheckFlag Is spellcheck enabled in this tab?
+	 * @param uniqueIDHash The UID of this tab
+	 */
 	MapTextArea(String user, boolean spellCheckFlag, Hashtable<Document, JPanel> uniqueIDHash) {
 
 		try {
@@ -1657,7 +1810,6 @@ class MapTextArea extends JFrame {
 
 			e.printStackTrace();
 		}
-
 
 		//Create the JPanel and put all of the components in it
 		myJPanel = new JPanel();
@@ -1773,41 +1925,54 @@ class MapTextArea extends JFrame {
 		}
 	}
 
-	// Set the user name associated with the tab
+	/**
+	 * Set the username associated with the tab
+	 * @param user The username
+	 */
 	public void setUserName(String user) {
 		username = user;
 	}
 
-	// Get the user name associated with the tab
+	/**
+	 * Get the username associated with the tab
+	 * @return The username
+	 */
 	public String getUserName() {
 		return username;
 	}
 
-	//Get the UID for the tab
-	public int getChatUID() {
-		return chatUID;
-	}
-	//Get the isChat flag
-
-	public boolean getIsChat() {
-		return isChat;
-	}
-	// Set the index of the tab for this JPanel
-
+	/**
+	 * Set the index of this tab on the tabbedpane
+	 * @param index The index of the tab
+	 */
 	public void setTabIndex(int index) {
 		tabIndex = index;
 	}
 
-	// Get the tab index for this JPanel
+	/**
+	 * Get the index of this tab on the tabbedpane
+	 * @return The index
+	 */
 	public int getTabIndex() {
 		return tabIndex;
 	}
 
-	// Get the JPanel for the tab
+	/**
+	 * Get the JPanel for this tab
+	 * @return The JPanel
+	 */
 	public JPanel getJPanel() {
 		return myJPanel;
 	}
 
+	/**
+	 * Set a new font for this tab
+	 * @param fontFace The font face
+	 * @param isBold Is it bold
+	 * @param isItalic Is it italic
+	 * @param isULine Is it underlined
+	 * @param ftSize Font size
+	 */
 	public void setTextFont(String fontFace, boolean isBold, boolean isItalic, boolean isULine, int ftSize) {
 		miniKeyWord = myTP.getInputAttributes();
 		myTP.setFont(new Font(fontFace, Font.PLAIN, ftSize));
@@ -1824,6 +1989,9 @@ class MapTextArea extends JFrame {
 		}
 	}
 
+	/**
+	 * Set the loaded font
+	 */
 	public void setLoadedFont() {
 		myTP.setFont(new Font(Athena.clientResource.getLoadedFontFace(), Font.PLAIN, Athena.clientResource.getLoadedFontSize()));
 		StyleConstants.setBold(miniKeyWord, Athena.clientResource.getLoadedBold());
@@ -1835,13 +2003,23 @@ class MapTextArea extends JFrame {
 		StyleConstants.setFontFamily(miniKeyWord, Athena.clientResource.fontFamilyTable.get(Athena.clientResource.getLoadedFontFace()));
 	}
 
+	/**
+	 * Change the font style
+	 * @param isBold bold
+	 * @param isItalic italic
+	 * @param isULine underline
+	 */
 	public void setTextFont(boolean isBold, boolean isItalic, boolean isULine) {
 		StyleConstants.setBold(miniKeyWord, isBold);
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
 	}
 
-	// Set the text area color
+	/**
+	 * Set the color of the font
+	 * @param color Color to change to
+	 * @return the MutableAttributeSet of the font
+	 */
 	public MutableAttributeSet getSetHeaderFont(Color color) {
 		StyleConstants.setBold(keyWord, true);
 		StyleConstants.setItalic(keyWord, false);
@@ -1853,14 +2031,26 @@ class MapTextArea extends JFrame {
 		return keyWord;
 	}
 
+	/**
+	 * Set the font
+	 * @param currentAttr MAS of the font
+	 */
 	public void setTextFont(MutableAttributeSet currentAttr) {
 		miniKeyWord = currentAttr;
 	}
 
+	/**
+	 * Get the current font
+	 * @return MAS of the current font
+	 */
 	public MutableAttributeSet getTextFont() {
 		return miniKeyWord;
 	}
 
+	/**
+	 * Set the color of the text
+	 * @param color Color to change to
+	 */
 	public void setTextColor(Color color) {
 		StyleConstants.setForeground(keyWord, color);
 		StyleConstants.setBold(keyWord, false);
@@ -1868,17 +2058,26 @@ class MapTextArea extends JFrame {
 		StyleConstants.setFontFamily(keyWord, "Times");
 	}
 
-	// Write a string to the text area
+	/**
+	 * Write a string to the editorpane
+	 * @param message Message to print
+	 * @param attributes Which font to print it in
+	 * @throws BadLocationException
+	 */
 	public void writeToTextArea(String message, MutableAttributeSet attributes) throws BadLocationException {
 		myJEP.getDocument().insertString(myJEP.getDocument().getLength(), message, attributes);
 	}
 
-	// Move the cursor to the end of the ScrollPane
+	/**
+	 * Move the caret to the end of the editorpane
+	 */
 	public void moveToEnd() {
 		myJEP.setCaretPosition(myJEP.getDocument().getLength());
 	}
 
-	// Clear the text out of the text field
+	/**
+	 * Clear the text input area
+	 */
 	public void clearTextField() {
 		myTP.setText("");
 	}

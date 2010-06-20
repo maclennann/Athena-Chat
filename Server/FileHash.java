@@ -1,5 +1,5 @@
 /* Athena/Aegis Encrypted Chat Platform
- * FileHash.java: Used to create secure hashes of any data provided
+ * FileHash.java: Creates secure hashes of data
  *
  * Copyright (C) 2010  OlympuSoft
  * This program is free software; you can redistribute it and/or modify
@@ -18,28 +18,41 @@
 import java.io.*;
 import java.security.MessageDigest;
 
+/**
+ * Calculates the MD5 checksum of a file
+ * @author OlympuSoft
+ */
 public class FileHash {
 
-	public static byte[] createChecksum(String filename) throws Exception {
+	/**
+	 * Calculates the MD5 checksum of a file
+	 * @param filename File to get the checksum of
+	 * @return The checksum
+	 * @throws Exception
+	 */
+	public static byte[] createChecksum(String filename) throws
+			Exception {
 		InputStream fis = new FileInputStream(filename);
 
 		byte[] buffer = new byte[1024];
 		MessageDigest complete = MessageDigest.getInstance("MD5");
 		int numRead;
-
 		do {
 			numRead = fis.read(buffer);
 			if (numRead > 0) {
 				complete.update(buffer, 0, numRead);
 			}
 		} while (numRead != -1);
-
 		fis.close();
 		return complete.digest();
 	}
 
-	// see this How-to for a faster way to convert
-	// a byte array to a HEX string
+	/**
+	 * Convert the file to hex
+	 * @param filename The file to work with
+	 * @return The hex string
+	 * @throws Exception
+	 */
 	public static String getMD5Checksum(String filename) throws Exception {
 		byte[] b = createChecksum(filename);
 		String result = "";

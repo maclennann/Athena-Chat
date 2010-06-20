@@ -38,11 +38,8 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Toolkit;
 
 /**
- * 
- */
-/**
+ * Submit a bug report or feature request to Aegis
  * @author OlmypuSoft
- *
  */
 public class BugReportInterface extends JPanel {
 
@@ -50,30 +47,30 @@ public class BugReportInterface extends JPanel {
 	 * 
 	 */
 	//Define components
-	public JFrame submitBugJFrame;
-	public JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
-	public JLabel descriptionJLabel = new JLabel("* Brief Description:");
-	public JLabel recreationJLabel = new JLabel("* How can we recreate this bug?");
-	public JLabel expectedJLabel = new JLabel("What did you expect to happen?");
-	public JLabel actualJLabel = new JLabel("What actually happened?");
-	public JTextField descriptionJTextField = new JTextField();
-	public JTextArea recreationJTextArea;
-	public JTextArea expectedJTextArea;
-	public JTextArea actualJTextArea;
-	public JButton confirmJButton = new JButton("Confirm");
-	public JButton cancelJButton = new JButton("Cancel");
-	public JButton clearJButton = new JButton("Clear");
-	public Border blackline;
-	public TitledBorder generalTitledBorder;
-	public RSAPublicKeySpec pub;
-	public RSAPrivateKeySpec priv;
-	public BigInteger publicMod;
-	public BigInteger publicExp;
-	public BigInteger privateMod;
-	public BigInteger privateExp;
+	private JFrame submitBugJFrame;
+	private JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
+	private JLabel descriptionJLabel = new JLabel("* Brief Description:");
+	private JLabel recreationJLabel = new JLabel("* How can we recreate this bug?");
+	private JLabel expectedJLabel = new JLabel("What did you expect to happen?");
+	private JLabel actualJLabel = new JLabel("What actually happened?");
+	private JTextField descriptionJTextField = new JTextField();
+	private JTextArea recreationJTextArea;
+	private JTextArea expectedJTextArea;
+	private JTextArea actualJTextArea;
+	private JButton confirmJButton = new JButton("Confirm");
+	private JButton cancelJButton = new JButton("Cancel");
+	private JButton clearJButton = new JButton("Clear");
+	private Border blackline;
+	private TitledBorder generalTitledBorder;
+	private RSAPublicKeySpec pub;
+	private RSAPrivateKeySpec priv;
+	private BigInteger publicMod;
+	private BigInteger publicExp;
+	private BigInteger privateMod;
+	private BigInteger privateExp;
 	private BigInteger privateModBigInteger;
 	private BigInteger privateExpBigInteger;
-	public Color goGreen = new Color(51, 153, 51);
+	private Color goGreen = new Color(51, 153, 51);
 
 	BugReportInterface() {
 		//Create the Main Frame
@@ -186,7 +183,13 @@ public class BugReportInterface extends JPanel {
 		submitBugJFrame.setVisible(true);
 	}
 
-	//This Method will send all of the information over to Aegis for input into the database
+	/**
+	 * Compile the report information and send it to Aegis
+	 * @param titles Summary of bug/feature
+	 * @param recreates Recreation steps for bug
+	 * @param expecteds Expected outcome of action
+	 * @param actuals The bug
+	 */
 	public void sendInfoToAegis(String titles, String recreates, String expecteds, String actuals) {
 
 		//Get a connection

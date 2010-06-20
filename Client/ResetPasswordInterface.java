@@ -40,47 +40,29 @@ import java.awt.Toolkit;
 import java.awt.AWTException;
 
 /**
- * 
- */
-/**
+ * Window where user's reset password
  * @author OlmypuSoft
- *
  */
 public class ResetPasswordInterface extends JPanel {
-
-	/**
-	 * 
-	 */
 	//Define components
-	public JFrame resetPasswordJFrame;
-	public JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
-	public JLabel userNameJLabel = new JLabel("Username:");
-	public JLabel secretAnswerJLabel = new JLabel("Secret Answer:");
-	public JLabel secretQuestionJLabel = new JLabel("Secret Question:");
-	public JTextField secretQuestionJTextField = new JTextField();
-	public JTextField userNameJTextField;
-	public JTextField secretAnswerJTextField;
-	public JButton getQuestJButton = new JButton("Get Question");
-	public JButton confirmJButton = new JButton("Confirm");
-	public JButton cancelJButton = new JButton("Cancel");
-	public JButton clearJButton = new JButton("Clear");
-	public ImageIcon redX = new ImageIcon("images/redX.png");
-	public ImageIcon greenCheck = new ImageIcon("images/greenCheck.png");
-	public JLabel newPasswordJLabel = new JLabel("New Password: ");
-	public JLabel newPasswordConfirmJLabel = new JLabel("Confirm:");
-	public JPasswordField newPasswordJPasswordField = new JPasswordField();
-	public JPasswordField newPasswordConfirmJPasswordField = new JPasswordField();
-	public Border blackline;
-	public TitledBorder generalTitledBorder;
-	public RSAPublicKeySpec pub;
-	public RSAPrivateKeySpec priv;
-	public BigInteger publicMod;
-	public BigInteger publicExp;
-	public BigInteger privateMod;
-	public BigInteger privateExp;
-	private BigInteger privateModBigInteger;
-	private BigInteger privateExpBigInteger;
-	public Color goGreen = new Color(51, 153, 51);
+	private JFrame resetPasswordJFrame;
+	private JPanel contentPane;
+	private JLabel userNameJLabel = new JLabel("Username:");
+	private JLabel secretAnswerJLabel = new JLabel("Secret Answer:");
+	private JLabel secretQuestionJLabel = new JLabel("Secret Question:");
+	private JTextField secretQuestionJTextField = new JTextField();
+	private JTextField userNameJTextField;
+	private JTextField secretAnswerJTextField;
+	private JButton getQuestJButton = new JButton("Get Question");
+	private JButton confirmJButton = new JButton("Confirm");
+	private JButton cancelJButton = new JButton("Cancel");
+	private JButton clearJButton = new JButton("Clear");
+	private JLabel newPasswordJLabel = new JLabel("New Password: ");
+	private JLabel newPasswordConfirmJLabel = new JLabel("Confirm:");
+	private JPasswordField newPasswordJPasswordField = new JPasswordField();
+	private JPasswordField newPasswordConfirmJPasswordField = new JPasswordField();
+	private Border blackline;
+	private TitledBorder generalTitledBorder;
 
 	ResetPasswordInterface() {
 		//Create the Main Frame
@@ -248,7 +230,11 @@ public class ResetPasswordInterface extends JPanel {
 		resetPasswordJFrame.setVisible(true);
 	}
 
-	//This Method will send all of the information over to Aegis for input into the database
+	/**
+	 * Get the secret question from the server
+	 * @param userToReset Username to get the secret question for
+	 * @return The secret question returned from the server
+	 */
 	public String getQuestion(String userToReset) {
 
 		//Get a connection
@@ -284,11 +270,16 @@ public class ResetPasswordInterface extends JPanel {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
-
 		}
 
 	}
 
+	/**
+	 * Change the user's password if his secret answer is right
+	 * @param answerHash Hash of his secret answer
+	 * @param passwordHash Hash of his new password
+	 * @return
+	 */
 	public int changePassword(String answerHash, String passwordHash) {
 		try {
 			DataOutputStream dout = Athena.returnDOUT();

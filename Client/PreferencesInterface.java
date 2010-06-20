@@ -31,7 +31,6 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import javax.swing.UIManager;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -45,89 +44,97 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.SwingUtilities;
 
-//Let's make the preferences window
+/**
+ * The preferences window
+ * @author OlympuSoft
+ */
 public class PreferencesInterface extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5472264414606126641L;
+
 	//Load preference variables from file into array
-	Object[] settingsArray = Athena.clientResource.getCurrentSettingsArray();
-	boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
-	boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
-	boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
-	boolean enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
-	int setEncryptionType = Integer.parseInt(settingsArray[4].toString());
-	String setFontFace = settingsArray[5].toString();
-	boolean enableBold = Boolean.parseBoolean(settingsArray[6].toString());
-	boolean enableItalic = Boolean.parseBoolean(settingsArray[7].toString());
-	boolean enableUnderline = Boolean.parseBoolean(settingsArray[8].toString());
-	int setFontSize = Integer.parseInt(settingsArray[9].toString());
+	private Object[] settingsArray = Athena.clientResource.getCurrentSettingsArray();
+	private boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
+	private boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
+	private boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
+	private boolean enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
+	private int setEncryptionType = Integer.parseInt(settingsArray[4].toString());
+	private String setFontFace = settingsArray[5].toString();
+	private boolean enableBold = Boolean.parseBoolean(settingsArray[6].toString());
+	private boolean enableItalic = Boolean.parseBoolean(settingsArray[7].toString());
+	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[8].toString());
+	private int setFontSize = Integer.parseInt(settingsArray[9].toString());
+
 	//Define components
-	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	private GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	//String[] allFontFamilies = ge.getAvailableFontFamilyNames();
-	Font[] allFonts = ge.getAllFonts();
-	public String[] themeList = {"javax.swing.plaf.metal.MetalLookAndFeel", "com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
+	private Font[] allFonts = ge.getAllFonts();
+	private String[] themeList = {"javax.swing.plaf.metal.MetalLookAndFeel", "com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
 		"com.sun.java.swing.plaf.gtk.GTKLookAndFeel", "com.sun.java.swing.plaf.mac.MacLookAndFeel", "com.sun.java.swing.plaf.motif.MotifLookAndFeel",
 		"com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
-	public JFrame preferences;
-	public JPanel contentPane = new JPanel();
-	public JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
-	public JPanel prefLabelPaneLeft = new JPanel();
-	public JPanel prefLabelPaneRight = new JPanel();
-	public JButton apply = new JButton("Apply");
-	public JButton cancel = new JButton("Close");
-	public Border blackline, whiteline;
-	public Color originalColor;
-	public TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
+	private JFrame preferences;
+	private JPanel contentPane = new JPanel();
+	private JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
+	private JPanel prefLabelPaneLeft = new JPanel();
+	private JPanel prefLabelPaneRight = new JPanel();
+	private JButton apply = new JButton("Apply");
+	private JButton cancel = new JButton("Close");
+	private Border blackline, whiteline;
+	private Color originalColor;
+	private TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
+
 	//Define components for the General Menu Panel
-	public JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
-	public JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
-	public JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
-	public JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
-	boolean systemTrayVal;
-	boolean allowESCVal;
-	boolean enableSCVal;
-	boolean systemTrayFlag = false;
-	boolean allowESCFlag = false;
-	boolean enableSpellCheckFlag = false;
+	private JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
+	private JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
+	private JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
+	private JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
+	private boolean systemTrayVal;
+	private boolean allowESCVal;
+	private boolean enableSCVal;
+	private boolean systemTrayFlag = false;
+	private boolean allowESCFlag = false;
+	private boolean enableSpellCheckFlag = false;
+
 	//Define components for the Notifications Menu Panel
-	public JButton notificationsLabel = new JButton("Notifications", new ImageIcon("images/notificationsPref.png"));
-	public JCheckBox enableSoundsCheckBox = new JCheckBox("Enable Sounds", enableSounds);
-	boolean enableSoundsVal;
-	boolean enableSoundsFlag = false;
+	private JButton notificationsLabel = new JButton("Notifications", new ImageIcon("images/notificationsPref.png"));
+	private JCheckBox enableSoundsCheckBox = new JCheckBox("Enable Sounds", enableSounds);
+	private boolean enableSoundsVal;
+	private boolean enableSoundsFlag = false;
+
 	//Define components for the Encryption Menu Panel
-	public JButton encryptionLabel = new JButton("Encryption", new ImageIcon("images/encryptionPref.png"));
-	public JLabel generateNewKeyPairJLabel = new JLabel("Generate New Encryption Key Pair");
-	public JButton generateNewKeyPairJButton = new JButton("Generate");
+	private JButton encryptionLabel = new JButton("Encryption", new ImageIcon("images/encryptionPref.png"));
+	private JLabel generateNewKeyPairJLabel = new JLabel("Generate New Encryption Key Pair");
+	private JButton generateNewKeyPairJButton = new JButton("Generate");
+
 	//Define components for the Formatting Menu Panel
-	public JButton formattingLabel = new JButton("Formatting", new ImageIcon("images/fontPref.png"));
-	public JLabel selectFontLabel = new JLabel("Font Type:");
-	public JLabel fontSizeLabel = new JLabel("Font Size:");
-	public JLabel generalFontLabel = new JLabel("Font Style:");
-	public JComboBox selectFontComboBox, fontSizeComboBox;
-	public JCheckBox setBoldCheckBox = new JCheckBox("Bold", enableBold);
-	public JCheckBox setItalicsCheckBox = new JCheckBox("Italics", enableItalic);
-	public JCheckBox setUnderlineCheckBox = new JCheckBox("Underlined", enableUnderline);
-	boolean setFontFaceFlag = false;
-	boolean setBoldFlag = false;
-	boolean setItalicsFlag = false;
-	boolean setUnderlineFlag = false;
-	boolean setSizeFlag = false;
-	String setFontFaceVal = setFontFace;
-	boolean setBoldVal = enableBold;
-	boolean setItalicsVal = enableItalic;
-	boolean setUnderlineVal = enableUnderline;
-	int setSizeVal = setFontSize;
+	private JButton formattingLabel = new JButton("Formatting", new ImageIcon("images/fontPref.png"));
+	private JLabel selectFontLabel = new JLabel("Font Type:");
+	private JLabel fontSizeLabel = new JLabel("Font Size:");
+	private JLabel generalFontLabel = new JLabel("Font Style:");
+	private JComboBox selectFontComboBox, fontSizeComboBox;
+	private JCheckBox setBoldCheckBox = new JCheckBox("Bold", enableBold);
+	private JCheckBox setItalicsCheckBox = new JCheckBox("Italics", enableItalic);
+	private JCheckBox setUnderlineCheckBox = new JCheckBox("Underlined", enableUnderline);
+	private boolean setFontFaceFlag = false;
+	private boolean setBoldFlag = false;
+	private boolean setItalicsFlag = false;
+	private boolean setUnderlineFlag = false;
+	private boolean setSizeFlag = false;
+	private String setFontFaceVal = setFontFace;
+	private boolean setBoldVal = enableBold;
+	private boolean setItalicsVal = enableItalic;
+	private boolean setUnderlineVal = enableUnderline;
+	private int setSizeVal = setFontSize;
+
 	//Define components for the Theme Menu Panel
-	public JButton themeLabel = new JButton("Appearance", new ImageIcon("images/themePref.png"));
-	public JComboBox selectThemeComboBox = new JComboBox(themeList);
-	public JLabel selectThemeJLabel = new JLabel("Select Theme");
-	public JButton installNewThemeJButton = new JButton("Install");
-	public JLabel installNewThemeJLabel = new JLabel("Install New Theme");
+	private JButton themeLabel = new JButton("Appearance", new ImageIcon("images/themePref.png"));
+	private JComboBox selectThemeComboBox = new JComboBox(themeList);
+	private JLabel selectThemeJLabel = new JLabel("Select Theme");
+	private JButton installNewThemeJButton = new JButton("Install");
+	private JLabel installNewThemeJLabel = new JLabel("Install New Theme");
+
 	//Initialize array to hold current file settings and accept all new setting changes
-	public Object[] settingsToWrite = settingsArray;
+	private Object[] settingsToWrite = settingsArray;
 
 	//Constructor
 	PreferencesInterface() {

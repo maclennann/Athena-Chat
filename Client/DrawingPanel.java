@@ -19,7 +19,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.JPanel;
 
-//This class instanciates a DrawingPanel which is used to paint icons onto the main Panel
+/**
+ * This class instantiates a DrawingPanel which is used to paint icons onto the main Panel
+ * @author OlympuSoft
+ */
 public class DrawingPanel extends JPanel {
 
 	/**

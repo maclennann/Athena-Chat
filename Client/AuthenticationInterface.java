@@ -39,28 +39,27 @@ import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import sun.misc.BASE64Encoder;
 
+/**
+ * Creates the login window
+ * @author OlympuSoft
+ */
 public class AuthenticationInterface extends JFrame {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1646506272427417952L;
-	public static final int debug = 0;
+	private static final int debug = 0;
 	//Components for the visual display of the login window
-	public JFrame login;
-	public JPanel contentPane = new JPanel();
-	public JTextField username = new JTextField();
-	public JPasswordField password = new JPasswordField();
-	public JLabel usernameLabel = new JLabel("Username");
-	public JLabel passwordLabel = new JLabel("Password");
-	public LinkText registerJLabel = new LinkText("Register!");
-	public JButton connect = new JButton("Connect");
-	public JButton cancel = new JButton("Cancel");
-	ImageIcon logoicon = new ImageIcon("images/logo.png");
-	JLabel logo = new JLabel();
+	private JFrame login;
+	private JPanel contentPane = new JPanel();
+	private JTextField username = new JTextField();
+	private JPasswordField password = new JPasswordField();
+	private JLabel usernameLabel = new JLabel("Username");
+	private JLabel passwordLabel = new JLabel("Password");
+	private LinkText registerJLabel = new LinkText("Register!");
+	private JButton connect = new JButton("Connect");
+	private JButton cancel = new JButton("Cancel");
+	private ImageIcon logoicon = new ImageIcon("images/logo.png");
+	private JLabel logo = new JLabel();
 	//Define an icon for the system tray icon
-	public TrayIcon trayIcon;
-	public static CommunicationInterface clientResource;
+	private  TrayIcon trayIcon;
 
 	//Constructor | Here's where the fun begins
 	AuthenticationInterface() throws AWTException {
@@ -240,7 +239,12 @@ public class AuthenticationInterface extends JFrame {
 		login.setVisible(true);
 	}
 
-	//This will return the hashed input string
+	/**
+	 * Compute the SHA-1 hash of a String
+	 * @param toHash String to hash
+	 * @return toHash hashed with SHA-1
+	 * @throws Exception
+	 */
 	public static String computeHash(String toHash) throws Exception {
 		MessageDigest md = null;
 		try {

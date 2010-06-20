@@ -40,16 +40,20 @@ import java.sql.Statement;
 import java.security.SecureRandom;
 import sun.misc.BASE64Encoder;
 
+/**
+ * A ServerThread is created for each connected user, to route messages around
+ * @author OlympuSoft
+ */
 public class ServerThread extends Thread {
 	
 	//Change to 1 or 2 for debug output
 	private static int debug = 1;
 
 	//Create the DataStreams on the current sockets
-	public DataInputStream serverDin = null;
-	public DataInputStream clientDin = null;
-	public DataOutputStream serverDout = null;
-	public DataOutputStream clientDout = null;
+	private DataInputStream serverDin = null;
+	private DataInputStream clientDin = null;
+	private DataOutputStream serverDout = null;
+	private DataOutputStream clientDout = null;
 
 	// The Server that created this thread
 	private static Server server;
@@ -59,16 +63,21 @@ public class ServerThread extends Thread {
 	private String password;
 
 	//Our current sockets
-	public Socket c2ssocket;
-	public Socket c2csocket;
+	private Socket c2ssocket;
+	private Socket c2csocket;
 
 	//Message digest for the hashed password
-	MessageDigest hashedPassword;
+	private MessageDigest hashedPassword;
 
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive = 1;
 
-	// Constructor. Instantiate this thread on the current socket
+	/**
+	 * Instantiate this thread for the current sockets
+	 * @param server The server that spawned this thread
+	 * @param c2ssocket The "server" thread
+	 * @param c2csocket The "client" thread
+	 */
 	public ServerThread(Server server, Socket c2ssocket, Socket c2csocket) {
 
 		// Remember which socket we are on
@@ -80,7 +89,9 @@ public class ServerThread extends Thread {
 		start();
 	}
 
-	//This runs when the thread starts. It controls everything.
+	/**
+	 * Runs when the thread starts. Let's user log in, then routes messages
+	 */
 	@Override
 	public void run() {
 		try {
@@ -109,14 +120,6 @@ public class ServerThread extends Thread {
 			} else {
 				//Get the password hash
 				password = decryptServerPrivate(serverDin.readUTF());
-
-				/*//Receive their password hash from the stream
-				String passwordCipher = serverDin.readUTF();
-
-				//Decrypt the password hash
-				password = RSACrypto.rsaDecryptPrivate(new BigInteger(passwordCipher).toByteArray(),
-						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
-				*/
 
 				//Debug statements
 				if (debug >= 1) {
@@ -174,8 +177,13 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Takes in a recipient and message from this thread's user
-	//and routes the message to the recipient.
+	/**
+	 * Routes messages for the thread's user
+	 * @param serverDin The "server" inputstream
+	 * @param clientDin The "client" inputstream
+	 * @throws NumberFormatException Generally, difficulty encrypting or decrypting message headers
+	 * @throws InterruptedException
+	 */
 	public void routeMessage(DataInputStream serverDin, DataInputStream clientDin) throws NumberFormatException, InterruptedException {
 		try {
 			//Read in the toUser
@@ -184,9 +192,6 @@ public class ServerThread extends Thread {
 			String fromUser = decryptServerPrivate(serverDin.readUTF());
 			//Read in the Encrypted message
 			String messageEncrypted = serverDin.readUTF();
-
-			//Read in the Digital Signature
-			//String digitalSignatureEncrypted = din.readUTF();
 
 			if (debug >= 1) {
 				System.out.println("Decrypted:" + toUser);
@@ -238,7 +243,12 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Method that handles client to server messages
+	/**
+	 * Handles all messages addressed to "Aegis"
+	 * @param eventCode The eventcode requested by the client
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public void systemMessageListener(int eventCode) throws InterruptedException, IOException {
 
 		switch (eventCode) {
@@ -361,6 +371,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Sends the client the userlist for the selected group chat
+	 */
 	private void userList() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -401,6 +414,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Sends a message from the client to the selected group chat
+	 */
 	private void chatTalk() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -438,7 +454,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Send an invitation to selected users
+	/**
+	 * Send a chat invitation to a specific chat to a list of selected users
+	 */
 	private void chatInvite() {
 		try {
 			if (debug == 1) {
@@ -484,7 +502,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Remove the user from a chat, and completely delete the chat if it is empty
+	/**
+	 * Remove the user from a specified chat, and delete the chat if it is empty
+	 */
 	private void leaveChat() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -534,7 +554,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Join user to provided chatUID. Follows the receipt and acceptance of an invitation
+	/**
+	 * Join the user to a specific chat if they accept the invitation
+	 */
 	private void joinChat() {
 		try {
 			//Get chat UID to join
@@ -564,8 +586,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Get the socket info for another user
-	//This will be used in direct-protect and file transfer
+	/**
+	 * Pass off the socket information for a username. Useful for direct-protect and file transfer
+	 */
 	private void requestSocketInfo() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -578,7 +601,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Create a chat. Generate a UID, add it to the DB, and inform the creator
+	/**
+	 * Create a chat. Generates a UID, adds it to the DB, and informs the creator
+	 */
 	private void createChat() {
 		try {
 			if (debug >= 1){
@@ -674,7 +699,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Allow the user to reset the password, provided they answer their secret question correctly
+	/**
+	 * Allow the user to reset the password, provided they answer their secret question correctly
+	 */
 	private void resetPassword() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -764,6 +791,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Receive an automated bug report from the user
+	 */
 	private void receiveBugReport() {
 		if (debug == 1) {
 			System.out.println("Receiving bug report stacktrace");
@@ -785,6 +815,10 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Receive a manual bug report/feature request from the user
+	 * @param flag Overload differentiation
+	 */
 	private void receiveBugReport(boolean flag) {
 		if (debug == 1) {
 			System.out.println("Receiving bug report/feature request");
@@ -813,6 +847,11 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * If the user needs a copy of their buddylist, send it to them
+	 * @return success
+	 * @throws IOException
+	 */
 	private boolean sendBuddyListToClient() throws IOException {
 
 		String[] buddyListArray = returnBuddyListArray(true);
@@ -836,7 +875,12 @@ public class ServerThread extends Thread {
 
 	}
 
-	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+	/**
+	 * This method returns a nice string array full of the usernames (for now) that are in the buddylist file
+	 * @param flag Overload differentiator
+	 * @return String array of the buddylist pieces
+	 * @throws IOException
+	 */
 	public String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;
@@ -890,6 +934,10 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Sends the user a copy of his private key
+	 * @throws IOException
+	 */
 	private void sendPrivateKeyToClient() throws IOException {
 		RSAPrivateKeySpec privateKey = RSACrypto.readPrivKeyFromFile("keys/" + username + ".priv");
 		//Send over ack message
@@ -952,6 +1000,11 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Takes in user's buddylist and writes it to a file as backup
+	 * @param buddyList
+	 * @param buddyListName
+	 */
 	public void writeBuddyListToFile(String[] buddyList, String buddyListName) {
 		BufferedWriter out;
 		File newFile = new File("buddylists/" + buddyListName + "/buddylist.csv");
@@ -980,10 +1033,13 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Takes in buddylist from the user
+	 * @throws IOException
+	 */
 	private void recieveBuddyListFromClient() throws IOException {
 		String[] buddyListLines;
 
-		//sendSystemMessage(username, "Access Granted. Send me the username.");
 		System.out.println("Should be begin: " + decryptServerPrivate(serverDin.readUTF()));
 		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(serverDin.readUTF())))];
 		System.out.println("Buddylist lines: " + buddyListLines.length);
@@ -994,9 +1050,12 @@ public class ServerThread extends Thread {
 		writeBuddyListToFile(buddyListLines, username);
 		System.out.println("Successfully wrote buddy list to file");
 	}
-	
-	//TODO Cmon, stop.
-	//This method decrypts the ciphertext with the server's public key
+
+	/**
+	 * Decrypt a message using the server's private key
+	 * @param ciphertext The encrypted message
+	 * @return The decrypted message
+	 */
 	public static String decryptServerPrivate(String ciphertext) {
 		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
 		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
@@ -1004,7 +1063,11 @@ public class ServerThread extends Thread {
 		return RSACrypto.rsaDecryptPrivate(cipherBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
 	}
 
-	//This method decrypts the ciphertext with the server's public key
+	/**
+	 * Encrypt a message using the server's private key
+	 * @param plaintext The plaintext message
+	 * @return The encrypted message
+	 */
 	public String encryptServerPrivate(String plaintext) {
 		//Encrypt the string and return it
 		if (debug == 1) {
@@ -1015,15 +1078,22 @@ public class ServerThread extends Thread {
 		return plaintextBigInt.toString();
 	}
 
+	/**
+	 * Figure out if a user is online or not
+	 */
 	public void negotiateClientStatus() {
 		try {
 			//Listen for the username
 			String findUserCipher = serverDin.readUTF();
-			System.out.println("FINDUSERCIPHER!@$!#@" + findUserCipher);
+			if (debug >= 1) {
+				System.out.println("FINDUSERCIPHER!@$!#@" + findUserCipher);
+			}
 			byte[] findUserBytes = (new BigInteger(findUserCipher)).toByteArray();
 			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
 			//Print out the received username
-			System.out.println("Username received: " + findUserDecrypted);
+			if (debug >= 1) {
+				System.out.println("Username received: " + findUserDecrypted);
+			}
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToServerSocket.containsKey(findUserDecrypted))) {
 				serverDout.writeUTF(encryptServerPrivate("1"));
@@ -1038,6 +1108,10 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Check a user's online status
+	 * @param checkUserFlag Overload differentiator
+	 */
 	public void negotiateClientStatus(String checkUserFlag) {
 		try {
 			if (debug >= 1) {
@@ -1071,6 +1145,9 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Check the hash of the backed-up buddylist for comparison
+	 */
 	public void returnBuddyListHash() {
 		try {
 			String buddyListToFind = serverDin.readUTF();
@@ -1088,9 +1165,15 @@ public class ServerThread extends Thread {
 				}
 			}
 			String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
-			System.out.println("PATH: " + path);
+
+			if (debug >= 1) {
+				System.out.println("PATH: " + path);
+			}
+
 			String hashOfBuddyList = FileHash.getMD5Checksum(path);
 			String lastModDateOfBuddyList = String.valueOf(buddylist.lastModified());
+
+			//Send information
 			serverDout.writeUTF(encryptServerPrivate(hashOfBuddyList));
 			serverDout.writeUTF(encryptServerPrivate(lastModDateOfBuddyList));
 		} catch (Exception e) {
@@ -1098,6 +1181,11 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * Create a new user
+	 * @return success
+	 * @throws IOException
+	 */
 	public boolean createUsername() throws IOException {
 		try {
 			//Use dbConnect() to connect to the database
@@ -1114,6 +1202,7 @@ public class ServerThread extends Thread {
 			//Read the new user's public key components
 			String publicModString = serverDin.readUTF();
 			String publicExpString = serverDin.readUTF();
+
 			//Read in the private key components
 			String privateKeyModString = serverDin.readUTF();
 			String privateKeyExpString = serverDin.readUTF();
@@ -1201,18 +1290,6 @@ public class ServerThread extends Thread {
 				return true;
 			}
 
-		} catch (SQLException se) {
-			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",
-					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
-			serverDout.writeUTF(exceptionRegistrationResultBigInt.toString());
-			return false;
-		} catch (IOException ie) {
-			//Inform of our failure
-			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",
-					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
-			serverDout.writeUTF(exceptionRegistrationResultBigInt.toString());
-			return false;
 		} catch (Exception e) {
 			//Inform of our failure
 			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",
@@ -1222,7 +1299,12 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Sends message message from user fromUser (this thread/socket) to user toUser (another socket)
+	/**
+	 * Sends a message from the user to another user
+	 * @param toUser
+	 * @param fromUser
+	 * @param message
+	 */
 	void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
 
@@ -1276,7 +1358,11 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//Send system Messages to selected user
+	/**
+	 * Sends a system message to the selected user
+	 * @param toUser
+	 * @param message
+	 */
 	void sendSystemMessage(String toUser, String message) {
 		Socket foundSocket = null;
 
@@ -1319,7 +1405,13 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	//This will authenticate the user, before they are allowed to send messages.	
+	/**
+	 * Authenticates the user so they can being to send and receive messages
+	 * @param clientName username
+	 * @param clientPassword password hash
+	 * @return success
+	 * @throws IOException
+	 */
 	public String login(String clientName, String clientPassword) throws IOException {
 		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 		String LocalHashed;
@@ -1361,8 +1453,13 @@ public class ServerThread extends Thread {
 			return returnCipher.toString();
 		}
 	}
-	//This will return the hashed input string
-
+	
+	/**
+	 * Computer the SHA-1 hash of a string
+	 * @param toHash The data to hash
+	 * @return The hash
+	 * @throws Exception
+	 */
 	public String computeHash(String toHash) throws Exception {
 		MessageDigest md = null;
 		try {
@@ -1381,6 +1478,10 @@ public class ServerThread extends Thread {
 		return hash; //step 6
 	}
 
+	/**
+	 * Sends the public key of a requested user to the user
+	 * @throws IOException
+	 */
 	public void publicKeyRequest() throws IOException {
 
 		if(debug >=1)System.out.println(username);
@@ -1394,20 +1495,20 @@ public class ServerThread extends Thread {
 				System.out.println("Username received PUBLIC KEY REQUEST: " + findUser);
 			}
 
-
 			File newFile = new File("keys/" + findUser + ".pub");
 			if ((newFile.exists())) {
 				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/" + findUser + ".pub");
-				System.out.println("MOD: " + keyToReturn.getModulus().toString());
-				System.out.println("EXP: " + keyToReturn.getPublicExponent().toString());
+				if (debug >= 1) {
+					System.out.println("MOD: " + keyToReturn.getModulus().toString());
+					System.out.println("EXP: " + keyToReturn.getPublicExponent().toString());
+				}
 
 				//Check to see if the user has a key file on the server
 				serverDout.writeUTF(keyToReturn.getModulus().toString());
+				serverDout.writeUTF(keyToReturn.getPublicExponent().toString());
+
 				if (debug >= 1) {
 					System.out.println("Modulus Returned\n");
-				}
-				serverDout.writeUTF(keyToReturn.getPublicExponent().toString());
-				if (debug >= 1) {
 					System.out.println("Exponent Returned\n");
 				}
 

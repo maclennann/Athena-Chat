@@ -21,26 +21,35 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
+/**
+ * DES cryptography library
+ * @author OlympuSoft
+ */
 public class DESCrypto {
 	// Hardcoded salt
-
-	byte[] salt = {
+	private byte[] salt = {
 		(byte) 0xc7, (byte) 0x73, (byte) 0x21, (byte) 0x8c,
 		(byte) 0x7e, (byte) 0xc8, (byte) 0xee, (byte) 0x99
 	};
+	
 	// Declare the key parts
-	PBEKeySpec pbeKeySpec;
-	PBEParameterSpec pbeParamSpec;
-	SecretKeyFactory keyFac;
-	SecretKey pbeKey;
-	Cipher pbeCipher;
-	Cipher pbeReverseCipher;
-	// Iteration count
-	int count = 20;
-	String plaintext;
-	char[] passphrase;
-	byte[] realSalt;
+	private PBEKeySpec pbeKeySpec;
+	private PBEParameterSpec pbeParamSpec;
+	private SecretKeyFactory keyFac;
+	private SecretKey pbeKey;
+	private Cipher pbeCipher;
+	private Cipher pbeReverseCipher;
 
+	// Iteration count
+	private int count = 20;
+	private char[] passphrase;
+	//private byte[] realSalt;
+
+	/**
+	 * Create a DESCrypto object with the desired salt and passphrase
+	 * @param phrase The passphrase for the cipher
+	 * @param saltString The salt for the cipher
+	 */
 	public DESCrypto(String phrase, String saltString) {
 		try {
 			// Create PBE parameter set
@@ -63,10 +72,14 @@ public class DESCrypto {
 		}
 		//Set variables
 		passphrase = phrase.toCharArray();
-		realSalt = encryptData(saltString);
+		//realSalt = encryptData(saltString);
 	}
 
-	// Encrypts message using passphrase and salt.
+	/**
+	 * Encrypts a message using passphrase and salt
+	 * @param message The message to encrypt
+	 * @return The ciphertext byte[]
+	 */
 	public final byte[] encryptData(String message) {
 		try {
 			// Encrypt the cleartext
@@ -79,16 +92,20 @@ public class DESCrypto {
 			System.out.println("Error encryting data.");
 			return null;
 		}
-
 	}
 
+	/**
+	 * Decrypt a message with a passphrase and salt
+	 * @param ciphertext The encrypted bytes
+	 * @return The plaintext messages
+	 */
 	public String decryptData(byte[] ciphertext) {
 		try {
 			//Decrypt the data
-			byte[] plaintextt = pbeReverseCipher.doFinal(ciphertext);
+			byte[] plaintext = pbeReverseCipher.doFinal(ciphertext);
 
 			//Return a string of the decrypted data
-			return new String(plaintextt);
+			return new String(plaintext);
 
 		} catch (Exception e) {
 			//Something went wrong. Return null.

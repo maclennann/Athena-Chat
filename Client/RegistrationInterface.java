@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,60 +39,55 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 /**
- * 
- */
-/**
+ * Allows users to create an account
  * @author OlmypuSoft
- *
  */
 public class RegistrationInterface extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4233506965211815944L;
+
 	//Define components
-	public JFrame addUserJFrame;
-	public JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
-	public JLabel firstNameJLabel = new JLabel("First name:");
-	public JLabel lastNameJLabel = new JLabel("Last name:");
-	public JLabel emailAddressJLabel = new JLabel("Email address:");
-	public JLabel confirmEmailAddressJLabel = new JLabel("Confirm Email:");
-	public JLabel emailMatchesJLabel = new JLabel();
-	public JLabel emailMessageJLabel = new JLabel("Email is a required field.");
-	public JLabel userNameJLabel = new JLabel("Username:");
-	public JLabel userNameGreaterJLabel = new JLabel();
-	public JLabel userNameMessageJLabel = new JLabel();
-	public JLabel passwordJLabel = new JLabel("Password:");
-	public JLabel confirmPasswordJLabel = new JLabel("Confirm Password:");
-	public JLabel passwordMessageJLabel = new JLabel("Password is a required field.");
-	public JLabel passwordMatchesJLabel = new JLabel();
-	public JLabel secretQuestionJLabel = new JLabel("Secret Question: ");
-	public JLabel secretAnswerJLabel = new JLabel("Secret Answer: ");
-	public JTextField firstNameJTextField;
-	public JTextField lastNameJTextField;
-	public JTextField emailAddressJTextField;
-	public JTextField confirmEmailAddresJTextField;
-	public JTextField userNameJTextField;
-	public JTextField secretQuestionJTextField;
-	public JTextField secretAnswerJTextField;
-	public JPasswordField passwordJPasswordField;
-	public JPasswordField confirmpasswordJPasswordField;
-	public JButton confirmJButton = new JButton("Confirm");
-	public JButton cancelJButton = new JButton("Cancel");
-	public ImageIcon redX = new ImageIcon("images/redX.png");
-	public ImageIcon greenCheck = new ImageIcon("images/greenCheck.png");
-	public Border blackline;
-	public TitledBorder generalTitledBorder;
-	public RSAPublicKeySpec pub;
-	public RSAPrivateKeySpec priv;
-	public BigInteger publicMod;
-	public BigInteger publicExp;
-	public BigInteger privateMod;
-	public BigInteger privateExp;
+	private JFrame addUserJFrame;
+	private JPanel contentPane;//, generalInformationJPanel, loginInformationJPanel;
+	private JLabel firstNameJLabel = new JLabel("First name:");
+	private JLabel lastNameJLabel = new JLabel("Last name:");
+	private JLabel emailAddressJLabel = new JLabel("Email address:");
+	private JLabel confirmEmailAddressJLabel = new JLabel("Confirm Email:");
+	private JLabel emailMatchesJLabel = new JLabel();
+	private JLabel emailMessageJLabel = new JLabel("Email is a required field.");
+	private JLabel userNameJLabel = new JLabel("Username:");
+	private JLabel userNameGreaterJLabel = new JLabel();
+	private JLabel userNameMessageJLabel = new JLabel();
+	private JLabel passwordJLabel = new JLabel("Password:");
+	private JLabel confirmPasswordJLabel = new JLabel("Confirm Password:");
+	private JLabel passwordMessageJLabel = new JLabel("Password is a required field.");
+	private JLabel passwordMatchesJLabel = new JLabel();
+	private JLabel secretQuestionJLabel = new JLabel("Secret Question: ");
+	private JLabel secretAnswerJLabel = new JLabel("Secret Answer: ");
+	private JTextField firstNameJTextField;
+	private JTextField lastNameJTextField;
+	private JTextField emailAddressJTextField;
+	private JTextField confirmEmailAddresJTextField;
+	private JTextField userNameJTextField;
+	private JTextField secretQuestionJTextField;
+	private JTextField secretAnswerJTextField;
+	private JPasswordField passwordJPasswordField;
+	private JPasswordField confirmpasswordJPasswordField;
+	private JButton confirmJButton = new JButton("Confirm");
+	private JButton cancelJButton = new JButton("Cancel");
+	private ImageIcon redX = new ImageIcon("images/redX.png");
+	private ImageIcon greenCheck = new ImageIcon("images/greenCheck.png");
+	private Border blackline;
+	private TitledBorder generalTitledBorder;
+	private RSAPublicKeySpec pub;
+	private RSAPrivateKeySpec priv;
+	private BigInteger publicMod;
+	private BigInteger publicExp;
+	private BigInteger privateMod;
+	private BigInteger privateExp;
 	private BigInteger privateModBigInteger;
 	private BigInteger privateExpBigInteger;
-	public Color goGreen = new Color(51, 153, 51);
+	private Color goGreen = new Color(51, 153, 51);
 
 	RegistrationInterface() {
 		//Create the Main Frame
@@ -543,7 +537,16 @@ public class RegistrationInterface extends JPanel {
 		addUserJFrame.setVisible(true);
 	}
 
-	//This Method will send all of the information over to Aegis for input into the database
+	/**
+	 * This Method will send all of the information over to Aegis for input into the database
+	 * @param firstName User's first name
+	 * @param lastName User's last name
+	 * @param emailAddress User's email address
+	 * @param userName User's desired username
+	 * @param password User's password
+	 * @param secretQuestion User's secret Question
+	 * @param secretAnswer User's secret answer
+	 */
 	public void sendInfoToAegis(String firstName, String lastName, String emailAddress, String userName, String password, String secretQuestion, String secretAnswer) {
 
 		//Get a connection

@@ -30,43 +30,75 @@ import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+/**
+ * The main server component. Accepts/manages connections and threads
+ * @author OlympuSoft
+ */
 public class Server {
-	//Change to 1 or 2 for debug output
 
+	//Change to 1 or 2 for debug output
 	private int debug = 0;
+
 	//This socket will accept new connection
 	private ServerSocket c2ss;
 	private ServerSocket c2css;
-	//This will be a table holding the usernames and hashed passwords pulled from the database
-	//See: updateHashTable()
+
+	//TODO can we do away with this hashtable since the DB is local to save memory?
+	/**
+	 * Holds the usernames and hashed passwords read in from the database.
+	 */
 	public static Hashtable<String, String> authentication = new Hashtable<String, String>();
+
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
 	private static String dbUser = "";
 	private static String dbPass = "";
+
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
-	//Will control listener thread when we do that
-	@SuppressWarnings("unused")
-	private int isListening = 1;
-	//A hashtable that keeps track of the outputStreams linked to each socket
+	
+	/**
+	 * A hashtable that keeps track of the outputStreams linked to each socket
+	 */
 	public Hashtable<Socket, DataOutputStream> serverOutputStreams = new Hashtable<Socket, DataOutputStream>();
-	//A hashtable that keeps track of the outputStreams linked to each socket
+
+	/**
+	 * A hashtable that keeps track of the outputStreams linked to each socket
+	 */
 	public Hashtable<Socket, DataOutputStream> clientOutputStreams = new Hashtable<Socket, DataOutputStream>();
-	//The server's public and private RSA keys
-	public RSAPrivateKeySpec serverPriv;
-	public RSAPublicKeySpec serverPub;
-	//A hashtable mapping each user to a socket
-	//used to find which stream to use to send data to clients
+
+	/**
+	 * A hashtable that maps users to their server socket
+	 */
 	public Hashtable<String, Socket> userToServerSocket = new Hashtable<String, Socket>();
+	/**
+	 * A hashtable that maps users to their client socket
+	 */
 	public Hashtable<String, Socket> userToClientSocket = new Hashtable<String, Socket>();
 
-	//Constructor. Starts listening on the defined port.
+	/**
+	 * Server's private RSA key
+	 */
+	public RSAPrivateKeySpec serverPriv;
+
+	/**
+	 * Server's public key
+	 */
+	public RSAPublicKeySpec serverPub;
+
+	/**
+	 * Starts the server listening
+	 * @param port The port to listen on
+	 * @throws IOException
+	 */
 	public Server(int port) throws IOException {
 		listen(port);
 	}
 
-	//Connect to the database. Returns the connection it established, or null
+	/**
+	 * Gets a connection to the database
+	 * @return The connection to the database
+	 */
 	public static Connection dbConnect() {
 
 		//Location of the database
@@ -95,7 +127,9 @@ public class Server {
 		}
 	}
 
-	//Writes all usernames and password hashes from the database into a hash table
+	/**
+	 * Write the database usernames and passwords to the hashtable
+	 */
 	public static void updateHashTable() {
 		try {
 			//Use dbConnect() to connect to the database
@@ -130,19 +164,29 @@ public class Server {
 
 	}
 
-	//Adds a user (and the socket he is on) to the hashtable for later reference
-	//Called after user authenticates
+	/**
+	 * Adds a user and server socket to the hashtable for later reference
+	 * @param username The username
+	 * @param userSocket The socket to map the username to
+	 */
 	public void mapUserServerSocket(String username, Socket userSocket) {
 		userToServerSocket.put(username, userSocket);
 	}
 
-	//Adds a user (and the socket he is on) to the hashtable for later reference
-	//Called after user authenticates
+	/**
+	 * Maps a user and a client socket in the hashtable
+	 * @param username The username
+	 * @param userSocket The socket to map the username to
+	 */
 	public void mapUserClientSocket(String username, Socket userSocket) {
 		userToClientSocket.put(username, userSocket);
 	}
 
-	//Server listens for client connections, and passes them off to their own thread
+	/**
+	 * The server listens for client connections, threads them, and loops. Forever.
+	 * @param port Port to listen on
+	 * @throws IOException
+	 */
 	private void listen(int port) throws IOException {
 		// Create the ServerSocket
 		c2ss = new ServerSocket(port);
@@ -153,7 +197,6 @@ public class Server {
 		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 
 		// Tell the world we're ready to go
-		//System.out.println( "Listening on "+ss );
 		System.out.println("*******************************************");
 		System.out.println("**     Welcome to Athena Chat Server     **");
 		System.out.println("**            Codename: Aegis            **");
@@ -182,25 +225,46 @@ public class Server {
 		}
 	}
 
-	// Get an enumeration of all the OutputStreams.
+	/**
+	 * Get an enumeration of all of the server OutputStreams to walk through
+	 * @return The outputstreams as an enumeration
+	 */
 	Enumeration<DataOutputStream> getServerOutputStreams() {
 		return serverOutputStreams.elements();
 	}
 
-	// Get an enumeration of all the OutputStreams.
+	/**
+	 * Get an enumeration of all of the client OutputStreams to walk through
+	 * @return The outputstreams as an enumeration
+	 */
 	Enumeration<DataOutputStream> getClientOutputStreams() {
 		return clientOutputStreams.elements();
 	}
 
+	//TODO WTF why can't we just socket.getOutputStream this?
+	/**
+	 * Maps an outputstream to a server socket
+	 * @param servSoc The "Server" socket
+	 * @param dataOut The outputstream from the socket
+	 */
 	public void addServerOutputStream(Socket servSoc, DataOutputStream dataOut) {
 		serverOutputStreams.put(servSoc, dataOut);
 	}
 
+	/**
+	 * Maps an outputstream to a client socket
+	 * @param servSoc The client socket
+	 * @param dataOut The outputstream of the socket
+	 */
 	public void addClientOutputStream(Socket servSoc, DataOutputStream dataOut) {
 		clientOutputStreams.put(servSoc, dataOut);
 	}
 
-	// Send a message to all clients (utility routine)
+	/**
+	 * Sends a message to every connected user
+	 * @param eventCode What we are talking to them about
+	 * @param message The data
+	 */
 	synchronized void sendToAll(String eventCode, String message) {
 		System.gc();
 		//make sure the outputStreams hashtable is up-to-date
@@ -220,7 +284,11 @@ public class Server {
 		}
 	}
 
-	//Just remove a socket (i.e. the user has failed to login)
+	/**
+	 * Remove a socket (user has failed to login)
+	 * @param servsock The "server" socket to remove
+	 * @param clientsock The "client" socket to remove
+	 */
 	void removeConnection(Socket servsock, Socket clientsock) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
@@ -244,7 +312,12 @@ public class Server {
 		System.gc();
 	}
 
-	//Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
+	/**
+	 * Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
+	 * @param servsock The "server" socket
+	 * @param clientsock The "client" socket
+	 * @param uname The username
+	 */
 	void removeConnection(Socket servsock, Socket clientsock, String uname) {
 		// Synchronize so we don't mess up sendToAll() while it walks
 		// down the list of all output streams.
@@ -273,7 +346,11 @@ public class Server {
 		System.gc();
 	}
 
-	//Server program starts.
+	/**
+	 * Read in the usernames from the DB and start listening
+	 * @param args Database credentials
+	 * @throws Exception
+	 */
 	public static void main(String args[]) throws Exception {
 		/*Upon Starting Server
 		 *1. UpdateHashTable

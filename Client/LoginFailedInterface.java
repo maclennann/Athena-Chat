@@ -26,19 +26,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 
+/**
+ * This window comes up when you fail logging in
+ * @author OlympuSoft
+ */
 public class LoginFailedInterface extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5209122311648063644L;
+
 	//Components for the visual display of the login window
-	public JFrame loginFailed;
-	public JPanel contentPane = new JPanel();
-	public JLabel failedPasswordJLabel = new JLabel("Password");
-	public DrawingPanel failedLoginDrawingPanel;
-	public JButton closeThis = new JButton("OK");
-	public JButton forgotPassword = new JButton("Reset Password");
+	private JFrame loginFailed;
+	private JPanel contentPane = new JPanel();
+	private JLabel failedPasswordJLabel = new JLabel("Password");
+	private DrawingPanel failedLoginDrawingPanel;
+	private JButton closeThis = new JButton("OK");
+	private JButton forgotPassword = new JButton("Reset Password");
 
 	LoginFailedInterface() {
 		loginFailed = new JFrame("Athena Chat Application");

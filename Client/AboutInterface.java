@@ -19,26 +19,24 @@ import java.awt.AWTException;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * 'About' window with product and version information
+ * @author Norm
+ */
 public class AboutInterface extends JFrame {
-
-	/**
-	 * 
-	 */
-	public static final int debug = 0;
 	//Components for the visual display of the aboutWindow window
-	public JFrame aboutWindow;
-	public JPanel contentPane = new JPanel();
-	public JLabel usernameLabel = new JLabel("Athena Chat Client v1.0.1b");
-	public JButton cancel = new JButton("OK");
-	ImageIcon logoicon = new ImageIcon("images/splash.png");
-	JLabel logo = new JLabel();
+	private JFrame aboutWindow;
+	private JPanel contentPane = new JPanel();
+	private JLabel usernameLabel = new JLabel("Athena Chat Client v1.0.1b");
+	private JButton cancel = new JButton("OK");
+	private ImageIcon logoicon = new ImageIcon("images/splash.png");
+	private JLabel logo = new JLabel();
 
 	//Constructor | Here's where the fun begins
 	AboutInterface() throws AWTException {

@@ -14,9 +14,9 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
 //TODO Code review the three major files.
 //	   Athena.java, CommunicationInterface.java, ServerThread.java
-
 import java.awt.AWTException;
 import java.awt.Color;
 import java.io.BufferedInputStream;
@@ -38,7 +38,6 @@ import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Enumeration;
-import java.security.NoSuchAlgorithmException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Hashtable;
@@ -47,31 +46,44 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.MutableAttributeSet;
-
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
+/**
+ * Provides the backend components for the Athena chat client
+ */
 public class Athena {
-	/* Begin public variables
-	 *
+	
+	/**
+	 * Print debug messages during runtime (0=off,1=on,2=verbose)
 	 */
 	public static final int debug = 2; //Show debug messages?
-	public static String username = "null"; //Global username variable
-	public static RSAPublicKeySpec serverPublic; //Servers public key
-	//End public variables
-
-	/* Begin protected variables
-	 *
+	/**
+	 * The current user's username. Used globally
 	 */
-	protected static CommunicationInterface clientResource; //Accessor objects for referencing objects in another class
+	public static String username = "null";
+	/**
+	 * The server's public key. Used for server communication
+	 */
+	public static RSAPublicKeySpec serverPublic;
+
+	/**
+	 * The main window. We use this object to manipulate the window.
+	 */
+	protected static CommunicationInterface clientResource;
+	/**
+	 * The login window
+	 */
 	protected static AuthenticationInterface loginGUI;
-	protected static MapTextArea print; //Temporary object for the JPanel in a tab
+	/**
+	 * A MapTextArea object used all over the place to manipulate IM/Chat tabs
+	 */
+	protected static MapTextArea print;
 	//End protected variables
 
-	/* Begin private variables
-	 *
+	/**
+	 * Begin private variables
 	 */
-	
 	private static String serverIP = "aegis.athenachat.org"; //IP of the server
 	private static int connected = 0; 	//If the client is connect to the server
 	private static int away = 0; //Is the user away?
@@ -96,7 +108,10 @@ public class Athena {
 	/**
 	 * Method that connects the user with Aegis
 	 * @param usernameToConnect the username that is entered in the login window
-	 * @param hashedPassword the hashed password that is entered in the logoin window
+	 * @param hashedPassword the hashed password that is entered in the login window
+	 * @throws AWTException
+	 * @throws InterruptedException
+	 * @throws Exception
 	 */
 	public static void connect(String usernameToConnect, String hashedPassword) throws InterruptedException, AWTException, Exception {
 		//Try to connect with and authenticate to the socket
@@ -148,7 +163,8 @@ public class Athena {
 			if (debug >= 1) {
 				System.out.println("User's hashed password: " + hashedPassword);
 			}
-			c2sdout.writeUTF(encryptServerPublic(username)); //Sending Username
+			
+			c2sdout.writeUTF(encryptServerPublic(username));	   //Sending Username
 			c2sdout.writeUTF(encryptServerPublic(hashedPassword)); //Sending Password
 			String result = decryptServerPublic(c2sdin.readUTF()); //Read in the result
 
@@ -157,16 +173,16 @@ public class Athena {
 			}
 			if (result.equals("Failed")) {
 				disconnect();
-				LoginFailedInterface loginFailed = new LoginFailedInterface();
+				new LoginFailedInterface();
 				return;
 			} else {
 				//We're connected
 				connected = 1;
 				clientResource = new CommunicationInterface();
+
 				//Thread created to listen for messages coming in from the server
 				listeningProcedureClientToClient = new Thread(
 						new Runnable() {
-
 							public void run() {
 								//While we are connected to the server, receive messages
 								if (c2cdin == null) {
@@ -177,12 +193,14 @@ public class Athena {
 								}
 							}
 						});
+
 				/* Begin start up sequence
 				 * 1. Find the status of the buddylist users
 				 * 2. Make sure the user's private key exists
 				 * 3. Start the listening thread
 				 * 4. See if the user's public key exists
 				 */
+
 				//Instantiate Buddy List
 				instantiateBuddyList();
 
@@ -224,14 +242,10 @@ public class Athena {
 			}
 			//Garbage collect
 			System.gc();
-		} catch (IOException ie) {
-			sendBugReport(getStackTraceAsString(ie));
-			ie.printStackTrace();
-			loginGUI.dispose();
-		} catch (NoSuchAlgorithmException e) {
+		} catch (Exception e) {
 			sendBugReport(getStackTraceAsString(e));
-			loginGUI.dispose();
 			e.printStackTrace();
+			loginGUI.dispose();
 		}
 	}
 
@@ -241,15 +255,17 @@ public class Athena {
 	 */
 	public static void connect() {
 
-		//Try to connect with and authenticate to the socket
+		//Try to connect to and authenticate with the socket
 		try {
 			try {
 				//Connect to auth server at defined port over socket
 				c2ssocket = new Socket(serverIP, 7777);
 				c2csocket = new Socket(serverIP, 7778);
+				
 			} catch (Exception e) {
 				//We can't connect to the server at the specified port for some reason
-				JOptionPane.showMessageDialog(null, "Could not connect to the server.\nPlease check your Internet connection.\n\n", "Connection Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Could not connect to the server.\nPlease check your Internet connection."
+						+ "\n\n", "Connection Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -356,9 +372,9 @@ public class Athena {
 			} catch (java.util.NoSuchElementException ie) {
 				sendBugReport(getStackTraceAsString(ie));
 				ie.printStackTrace();
-			} catch (Exception eix) {
-				sendBugReport(getStackTraceAsString(eix));
-				eix.printStackTrace();
+			} catch (Exception ie) {
+				sendBugReport(getStackTraceAsString(ie));
+				ie.printStackTrace();
 			}
 		}
 
@@ -371,6 +387,8 @@ public class Athena {
 	/**
 	 * @Overloaded
 	 * This method is called when adding a user to ones buddy list, this immediately checks to see if the inputted user is online
+	 * @param usernameToInstantiate Username of buddy to add to the buddylist
+	 * @throws IOException
 	 */
 	public static void instantiateBuddyList(String usernameToInstantiate) throws IOException {
 
@@ -431,6 +449,7 @@ public class Athena {
 			}
 			//Initialize Result to -1
 			int result = -1;
+
 			//Run the systemMessage Method to let Aegis know what we're about to do
 			systemMessage("003");
 			c2sdout.writeUTF(encryptServerPublic(usernameToCheck));
@@ -554,29 +573,37 @@ public class Athena {
 					//Send server a confirm message
 					systemMessage("14");
 					c2sdout.writeUTF(encryptServerPublic(chatName[2]));
+
+					//Open a tab for the chat
 					clientResource.makeChatTab(chatName[0], chatName[2], true);
+
+					//Get the user list for the chat from the server
 					getUserList(Integer.parseInt(chatName[2]));
+
+					//Put a dummy entry in the hashtable until we get the real session key
 					SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(), "AES");
 					sessionKeys.put(chatName[2], nothing);
 				}
 				return;
 			} else if (fromUserDecrypted.equals("SessionKey")) {
+				//Take in the encrypted session key
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
+
+				//Split the chatUID from the session key
 				String[] chatInfo = decryptedMessage.split(",");
+
+				//Make sure we are actually in the chat this key is for
 				if (sessionKeys.containsKey(chatInfo[0])) {
 					byte[] encoded = new BigInteger(chatInfo[1], 16).toByteArray();
 					if (debug >= 1) {
 						System.out.println("FIRST BYTE: " + encoded[0]);
 					}
-					if (debug >= 1) {
-						System.out.println("SECONDBYTE: " + encoded[1]);
-					}
 
 					SecretKeySpec aesKey;
-
+					//If a leading zero-byte shows up, strip it
 					if (encoded[0] == 0) {
 						if (debug >= 1) {
-							System.out.println("LEADING ZEREOS!!!!");
+							System.out.println("Leading zeroes in session key");
 						}
 
 						byte[] encoded2 = new byte[16];
@@ -589,15 +616,16 @@ public class Athena {
 					} else {
 						aesKey = new SecretKeySpec(encoded, "AES");
 					}
+
+					//Replace the dummy session key with the real one
 					sessionKeys.remove(chatInfo[0]);
 					sessionKeys.put(chatInfo[0], aesKey);
 					if (debug >= 1) {
 						System.out.println("Session key: " + chatInfo[1]);
-					}
-					if (debug >= 1) {
-						System.out.println("SESSION KEY: " + AESCrypto.asHex(aesKey.getEncoded()));
+						System.out.println("Session key: " + AESCrypto.asHex(aesKey.getEncoded()));
 					}
 
+					//Chat join announcement
 					BigInteger messageBigInt = new BigInteger(AESCrypto.encryptMessage(aesKey, "ChatJoin," + username));
 
 					//Alert the other users!
@@ -608,9 +636,8 @@ public class Athena {
 					return;
 				}
 			} else { // Need this else in order to hide the system messages coming from Aegis
-				//TODO Implements digital signatures
+				//TODO Implement digital signatures
 				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
-				//if(decryptedMessage.equals(ClientLogin.computeHash("Test"))) {
 
 				//If there isn't already a tab for the conversation, make one
 				if (!(clientResource.tabPanels.containsKey(fromUserDecrypted)) && !(sessionKeys.containsKey(fromUserDecrypted))) {
@@ -620,7 +647,6 @@ public class Athena {
 					//Write message to the correct tab
 					print = (MapTextArea) clientResource.tabPanels.get(fromUserDecrypted);
 					print.writeToTextArea(fromUserDecrypted + ": ", print.getSetHeaderFont(new Color(0, 0, 130)));
-					//print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
 					parseMarkdown(decryptedMessage, print);
 					print.moveToEnd();
 
@@ -639,9 +665,9 @@ public class Athena {
 							// Use the static class member "player" from class AudioPlayer to play
 							AudioPlayer.player.start(as);
 						}
-					} else if (decryptedMessage.equals("Incoming file transfer...")) {
+					} /*else if (decryptedMessage.equals("Incoming file transfer...")) {
 						receiveFile();
-					} // If enabled, open an input stream  to the audio file.
+					} // If enabled, open an input stream  to the audio file.*/
 					else if (getEnableSounds()) {
 						InputStream in = new FileInputStream("sounds/recvMesg.wav");
 						// Create an AudioStream object from the input stream.
@@ -656,16 +682,22 @@ public class Athena {
 					if (debug >= 1) {
 						System.out.println("This is a chat message");
 					}
+					//Find the chat tab
 					for (int z = 0; z < clientResource.imTabbedPane.getTabCount(); z++) {
 						JPanel tabToCheck = (JPanel) clientResource.imTabbedPane.getComponentAt(z);
 						if (tabToCheck.getName().equals(fromUserDecrypted)) {
+							//Decrypt the message with the session key
 							decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
+							//Split the username from the message
 							String[] chatMessage = decryptedMessage.split(",", 2);
+							//Get the MapTextArea so we can write the message to it
 							print = (MapTextArea) clientResource.tabPanels.get(clientResource.imTabbedPane.getTitleAt(z));
 							if ((chatMessage[0].equals("ChatLeave"))) {
+								//Format a chat leave message
 								print.writeToTextArea(chatMessage[1] + " has left the chat.\n", print.getSetHeaderFont(Color.gray));
 								clientResource.chatSignOff(chatMessage[1]);
 							} else if (chatMessage[0].equals("ChatJoin")) {
+								//Format a chat join message
 								print.writeToTextArea(chatMessage[1] + " has joined the chat.\n", print.getSetHeaderFont(Color.gray));
 								clientResource.newChatListItems(chatMessage[1]);
 							} else {
@@ -682,14 +714,15 @@ public class Athena {
 					//Write message to the correct tab
 					print = (MapTextArea) clientResource.tabPanels.get(fromUserDecrypted);
 					print.writeToTextArea(fromUserDecrypted + ": ", print.getSetHeaderFont(new Color(0, 0, 130)));
-					//print.writeToTextArea(decryptedMessage+"\n", print.getTextFont());
 					parseMarkdown(decryptedMessage, print);
 					print.moveToEnd();
+					
 					//If we are away send the user our away message
 					if (away == 1) {
 						processMessage(fromUserDecrypted, "Auto reply from user: " + awayText);
 					}
 
+					//Play the lmao sound
 					if (decryptedMessage.equalsIgnoreCase("lmao")) {
 						if (getEnableSounds()) {
 							// If enabled, open an input stream  to the audio file.
@@ -714,10 +747,6 @@ public class Athena {
 				}
 			}
 		} catch (IOException ie) {
-			//If we can't use the inputStream, we probably aren't connected
-			//ndBugReport(getStackTraceAsString(ie));
-			//They probably just disconnected, get this off of my screen
-			//if(debug>=2)ie.printStackTrace();
 			connected = 0;
 		} catch (Exception e) {
 			sendBugReport(getStackTraceAsString(e));
@@ -727,11 +756,17 @@ public class Athena {
 		}
 	}
 
+	/**
+	 * Get the userlist of a chat
+	 * @param chatUID The UID of the chat of which you want the userlist
+	 */
 	public static void getUserList(int chatUID) {
 		try {
 			systemMessage("18");
 			c2sdout.writeUTF(encryptServerPublic(String.valueOf(chatUID)));
 			String userList = decryptServerPublic(c2sdin.readUTF());
+
+			//Split the userlist and add it to the GUI
 			String[] users = userList.split(",");
 			for (int x = 0; x < users.length; x++) {
 				clientResource.newChatListItems(users[x]);
@@ -741,7 +776,11 @@ public class Athena {
 		}
 	}
 
-	//Parse messages for markdown commands before printing them
+	/**
+	 * Parse messages for markdown commands before printing them
+	 * @param mesg The message you want to parse for markdown
+	 * @param print The tab to write the parsed message to
+	 */
 	public static void parseMarkdown(String mesg, MapTextArea print) {
 		String message = mesg;
 		int bold = 0;
@@ -850,9 +889,10 @@ public class Athena {
 		print.setTextFont(currentAttr);
 	}
 
-	//
 	/**
 	 *  Method for creating a group chat
+	 * @param chatName The name of the chat to create
+	 * @return The UID of the created chat, or -1 for failure
 	 */
 	public static String createChat(String chatName) {
 		try {
@@ -876,8 +916,11 @@ public class Athena {
 	}
 
 	/**
+	 * Invite buddies to a group chat
+	 * @param inviteUsers An array of usernames to invite
+	 * @param myChatUID The chatUID to invite the users to
+	 * @param chatName The name of the chat associated with the chatUID
 	 * @throws IOException
-	 *
 	 */
 	public static void inviteUsers(String[] inviteUsers, String myChatUID, String chatName) throws IOException {
 		//Get the session key for this chat
@@ -910,7 +953,8 @@ public class Athena {
 	}
 
 	/**
-	 *
+	 * Leave a group chat
+	 * @param myChatUID The chatUID to depart from
 	 */
 	public static void leaveChat(String myChatUID) {
 		SecretKeySpec skeySpec = sessionKeys.get(myChatUID);
@@ -938,7 +982,7 @@ public class Athena {
 
 	/**
 	 * This method sends the file to the other user (must initialize direct-connect first!)
-	 * @param filename
+	 * @param myFile The filename to send
 	 * @throws IOException
 	 */
 	public static void sendFile(File myFile) throws IOException {
@@ -980,7 +1024,6 @@ public class Athena {
 	/**
 	 * This method receives a file from a user (must initialize a direct-connect first!)
 	 * @throws IOException
-	 *
 	 */
 	public static void receiveFile() throws IOException {
 		//Grab the file size
@@ -1013,12 +1056,11 @@ public class Athena {
 
 	}
 
-	/** This method returns the cipher text of the message encrypted with a sessionKey
-	 *
-	 * @param key
-	 * @param myChatUID
-	 * @param message
-	 * @return
+	/** 
+	 * This method returns the cipher text of the message encrypted with a sessionKey
+	 * @param myChatUID The UID for the chat the message belongs to (to find the session key)
+	 * @param message The plaintext message
+	 * @return The encrypted message
 	 */
 	public static String encryptAES(String myChatUID, String message) {
 		SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
@@ -1029,6 +1071,12 @@ public class Athena {
 		return messageBigInt.toString();
 	}
 
+	/**
+	 * Decrypt a chat message using AES
+	 * @param myChatUID The UID the message is associated with (to find the session key)
+	 * @param message The message to decrypt
+	 * @return The decrypted message
+	 */
 	public static String decryptAES(String myChatUID, String message) {
 		SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
 		BigInteger cipherBigInt = new BigInteger(message);
@@ -1037,11 +1085,12 @@ public class Athena {
 		}
 		return new String(AESCrypto.decryptMessage(sessionKey, cipherBigInt.toByteArray()));
 	}
-	//Called from the actionListener on the tf textfield
-	//User wants to send a message
 
-	/** This method takes the message the user types and will get it ready to send
+	/**
+	 * This method takes the message the user types and will get it ready to send
 	 * @param message The message to send
+	 * @throws BadLocationException
+	 * @throws IOException
 	 */
 	public static void processMessage(String message) throws BadLocationException, IOException {
 		//Is this a chat or IM tab?
@@ -1145,12 +1194,7 @@ public class Athena {
 						c2sdout.writeUTF(encryptServerPublic(toUser));
 						c2sdout.writeUTF(encryptServerPublic(username));
 						c2sdout.writeUTF(messageCipher.toString());
-						//Hash the Message for the digital signature
-						//String hashedMessage = ClientLogin.computeHash(message);
-						//Send the server the digital signature (Hash of the message encrypted with UserA's private key
-						//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, 
-						//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()),
-						//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+						//TODO Hash the Message for the digital signature
 
 						// Append own message to IM window
 						print.moveToEnd();
@@ -1175,6 +1219,12 @@ public class Athena {
 		System.gc();
 	}
 
+	/**
+	 * Send a message to specified user (used for away message)
+	 * @param usertoreply
+	 * @param message
+	 * @throws BadLocationException
+	 */
 	public static void processMessage(String usertoreply, String message) throws BadLocationException {
 		//Get user to send message to from active tab
 		toUser = usertoreply;
@@ -1242,12 +1292,7 @@ public class Athena {
 					c2sdout.writeUTF(encryptServerPublic(toUser));
 					c2sdout.writeUTF(encryptServerPublic(username));
 					c2sdout.writeUTF(messageCipher.toString());
-					//Hash the Message for the digital signature
-					//String hashedMessage = ClientLogin.computeHash(message);
-					//Send the server the digital signature (Hash of the message encrypted with UserA's private key
-					//dout.writeUTF(RSACrypto.rsaEncryptPrivate(hashedMessage, 
-					//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getModulus()),
-					//	(RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv").getPrivateExponent())).toString());
+					//TODO Hash the Message for the digital signature
 
 					// Append own message to IM window
 					print.moveToEnd();
@@ -1264,7 +1309,6 @@ public class Athena {
 				print.clearTextField();
 			} catch (Exception e) {
 				sendBugReport(getStackTraceAsString(e));
-
 				e.printStackTrace();
 			}
 		}
@@ -1272,7 +1316,8 @@ public class Athena {
 	}
 
 	/** This method adds a user to the buddylist
-	 * @param usernameToAdd This is the username you woant to add
+	 * @param usernameToAdd This is the username you want to add
+	 * @throws Exception
 	 */
 	public static void buddyList(String usernameToAdd) throws Exception {
 		//Add the username to a new line in the file
@@ -1355,6 +1400,7 @@ public class Athena {
 	/**
 	 * This method writes the buddy list to file
 	 * @param buddyList String array of the lines of the buddy list
+	 * @param flag Differentiating parameter
 	 */
 	static void writeBuddyListToFile(String[] buddyList, boolean flag) {
 		BigInteger encryptedUsername;
@@ -1387,6 +1433,10 @@ public class Athena {
 		}
 	}
 
+	/**
+	 * Get the user's private key from the server
+	 * @throws IOException
+	 */
 	public static void receivePrivateKeyFromServer() throws IOException {
 		systemMessage("007");
 		//Receive ack message
@@ -1490,7 +1540,7 @@ public class Athena {
 
 	/**
 	 * Method gets the user's public key from Aegis
-	 * @param usernameToFind
+	 * @param publicKeyToFind The user to find the key for
 	 * @throws IOException
 	 */
 	public static void getUsersPublicKeyFromAegis(String publicKeyToFind) throws IOException {
@@ -1540,9 +1590,10 @@ public class Athena {
 
 	}
 
-	//This method will send the user's buddy list to the server line by line
 	/**
 	 * Method sends the buddy list to Aegis
+	 * @throws IOException
+	 * @return success
 	 */
 	public static boolean sendBuddyListToServer() throws IOException {
 		String[] buddylistArray = returnBuddyListArray(true);
@@ -1564,7 +1615,7 @@ public class Athena {
 	/**
 	 * This encrypts the input string with the server's public key
 	 * @param plaintext The plaintext
-	 * @return cipherText The encrypted String
+	 * @return cipherText - The encrypted String
 	 */
 	public static String encryptServerPublic(String plaintext) {
 		BigInteger cipherText = new BigInteger(RSACrypto.rsaEncryptPublic(plaintext, Athena.serverPublic.getModulus(), Athena.serverPublic.getPublicExponent()));
@@ -1585,7 +1636,8 @@ public class Athena {
 
 	/**
 	 * This method returns a string array of the lines from the buddylist
-	 * @retrun String array of the buddylist
+	 * @throws IOException Cannot read the file
+	 * @return String array of the buddylist
 	 */
 	public static String[] returnBuddyListArray() throws IOException {
 		int count;
@@ -1649,6 +1701,12 @@ public class Athena {
 	}
 	//This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 
+	/**
+	 * An overload of returnBuddyListArray for some reason
+	 * @param flag Differentiating overload parameter
+	 * @return String[] of user's buddies
+	 * @throws IOException File not found
+	 */
 	public static String[] returnBuddyListArray(boolean flag) throws IOException {
 		int count;
 		int readChars;
@@ -1718,9 +1776,9 @@ public class Athena {
 		away = status;
 	}
 
-	//Use this method if Contact with Aegis is needed
 	/**
-	 * This method
+	 * Send a message directly to Aegis
+	 * @param message The message to send
 	 */
 	public static void systemMessage(String message) {
 		//Send the message
@@ -1761,7 +1819,8 @@ public class Athena {
 	/**
 	 * Method returns a hash of the local buddylist
 	 * @param buddyname Buddylist you want to find the hash of
-	 * @retrun String hash of the buddylist
+	 * @return String hash of the buddylist
+	 * @throws Exception
 	 */
 	public static String returnHashOfLocalBuddyList(String buddyname) throws Exception {
 		String path = "users/".concat(buddyname).concat("/buddylist.csv");
@@ -1787,10 +1846,10 @@ public class Athena {
 		return buddylist.lastModified();
 	}
 
-	//This method returns a hash of the remote buddy list
 	/**
 	 * Method returns the hash of the remote buddylist
 	 * @param buddyname Buddylist you want to find the hash of
+	 * @return The hash and date modified
 	 */
 	public static String[] returnHashOfRemoteBuddyList(String buddyname) {
 		try {
@@ -1823,8 +1882,8 @@ public class Athena {
 	}
 
 	/**
-	 *
-	 * @param activated
+	 * Enable or disable sound notifications
+	 * @param activated to enable or disable
 	 */
 	public static void setEnableSounds(boolean activated) {
 		if (activated) {
@@ -1835,15 +1894,15 @@ public class Athena {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Are sounds enabled?
+	 * @return If sounds are enabled or not
 	 */
 	public static boolean getEnableSounds() {
 		return enableSounds;
 	}
 
 	/**
-	 *
+	 * Close all connections, and shut 'er down
 	 */
 	public static void disconnect() {
 		try {
@@ -1872,12 +1931,16 @@ public class Athena {
 	}
 
 	/**
-	 *
+	 * Exit the program
 	 */
 	public static void exit() {
 		System.exit(0);
 	}
 
+	/**
+	 * Send a bug report to Aegis as a result of an exception
+	 * @param stackTrace the StackTrace of the exception
+	 */
 	public static void sendBugReport(String stackTrace) {
 		int toSend = JOptionPane.showConfirmDialog(null, "Sorry, it looks like something went wrong.\n"
 				+ "Would you like to submit this as a bug report?", "File a Bug Report?", JOptionPane.YES_NO_OPTION);
@@ -1897,6 +1960,11 @@ public class Athena {
 		}
 	}
 
+	/**
+	 * Turn a stackTrace into a string for transmission
+	 * @param e The stacktrace to convert
+	 * @return The stacktrace as a string
+	 */
 	public static String getStackTraceAsString(Exception e) {
 		StringWriter stackTrace = new StringWriter();
 		e.printStackTrace(new PrintWriter(stackTrace));
@@ -1904,8 +1972,8 @@ public class Athena {
 	}
 
 	/**
-	 *
-	 * @param args
+	 * Spawn the login GUI
+	 * @param args nothing
 	 * @throws AWTException
 	 */
 	public static void main(String[] args) throws AWTException {

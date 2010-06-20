@@ -18,8 +18,18 @@
 import java.io.*;
 import java.security.MessageDigest;
 
+/**
+ * Calculates the MD5 checksum of a file
+ * @author OlympuSoft
+ */
 public class FileHash {
 
+	/**
+	 * Calculates the MD5 checksum of a file
+	 * @param filename File to get the checksum of
+	 * @return The checksum
+	 * @throws Exception
+	 */
 	public static byte[] createChecksum(String filename) throws
 			Exception {
 		InputStream fis = new FileInputStream(filename);
@@ -37,8 +47,12 @@ public class FileHash {
 		return complete.digest();
 	}
 
-	// see this How-to for a faster way to convert
-	// a byte array to a HEX string
+	/**
+	 * Convert the file to hex
+	 * @param filename The file to work with
+	 * @return The hex string
+	 * @throws Exception
+	 */
 	public static String getMD5Checksum(String filename) throws Exception {
 		byte[] b = createChecksum(filename);
 		String result = "";
