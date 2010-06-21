@@ -101,7 +101,7 @@ public class Athena {
 	private static boolean enableSounds; //Flag to control sound notifications
 	private static BigInteger modOfBuddy = null;
 	private static BigInteger expOfBuddy = null;
-	private static RSAPrivateKeySpec usersPrivate; //User's public key
+	//private static RSAPrivateKeySpec usersPrivate; //User's public key
 	private static Hashtable<String, SecretKeySpec> sessionKeys = new Hashtable<String, SecretKeySpec>();
 	//End private variables
 
@@ -228,7 +228,7 @@ public class Athena {
 					}
 				}
 
-				usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
+				//usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 			}
 			//Start the thread
 			if (listeningProcedureClientToClient != null) {
