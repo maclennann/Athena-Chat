@@ -35,7 +35,6 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.security.SecureRandom;
 import java.util.logging.Level;
@@ -47,30 +46,24 @@ import sun.misc.BASE64Encoder;
  * @author OlympuSoft
  */
 public class ServerThread extends Thread {
-	
+
 	//Change to 1 or 2 for debug output
 	private static int debug = 1;
-
 	//Create the DataStreams on the current sockets
 	private DataInputStream serverDin = null;
 	private DataInputStream clientDin = null;
 	private DataOutputStream serverDout = null;
 	private DataOutputStream clientDout = null;
-
 	// The Server that created this thread
 	private static Server server;
-
 	//Define Global Variable Username / Password
 	private String username;
 	private String password;
-
 	//Our current sockets
 	private Socket c2ssocket;
 	private Socket c2csocket;
-
 	//Message digest for the hashed password
 	private MessageDigest hashedPassword;
-
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive = 1;
 
@@ -141,7 +134,7 @@ public class ServerThread extends Thread {
 				System.gc();
 			}
 			if (username.equals("Interupt")) {
-				routeMessage(serverDin, clientDin);			
+				routeMessage(serverDin, clientDin);
 			} else {
 
 				//Route around messages coming in from the client while they are connected
@@ -159,8 +152,8 @@ public class ServerThread extends Thread {
 		} finally {
 			//Socket is closed, remove it from the list
 			try {
-				
-				if(debug >= 1) {
+
+				if (debug >= 1) {
 					System.out.println("REMOVING USERNAME: " + username);
 				}
 
@@ -219,8 +212,7 @@ public class ServerThread extends Thread {
 					System.out.println("Message is NOT an eventcode. Continuing...");
 				}
 				return;
-			}
-			//Is this a normal message to another client
+			} //Is this a normal message to another client
 			else {
 				if (debug >= 1) {
 					System.out.println("Routing normal message to: " + toUser + "\nmessage from: " + fromUser);
@@ -377,7 +369,7 @@ public class ServerThread extends Thread {
 	private void userList() {
 		try {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-			
+
 			//Get the chatUID
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 
@@ -389,8 +381,8 @@ public class ServerThread extends Thread {
 			//Get a list of existing chats
 			stmt = con.createStatement();
 			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "';");
-			
-			if(debug >= 1) {
+
+			if (debug >= 1) {
 				System.out.println("Got list of users");
 			}
 
@@ -494,9 +486,9 @@ public class ServerThread extends Thread {
 			}
 
 			if (debug >= 1) {
-				System.out.println("Invited " + (x+1) + " people");
+				System.out.println("Invited " + (x + 1) + " people");
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -511,7 +503,7 @@ public class ServerThread extends Thread {
 
 			//Get the chatUID
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			
+
 			if (debug >= 1) {
 				System.out.println("User " + username + " is leaving chat number " + chatNum + "!!!!");
 			}
@@ -537,7 +529,7 @@ public class ServerThread extends Thread {
 					System.out.println("Still people in the chat. Not closing.");
 				}
 			} else {
-				if (debug >= 1){
+				if (debug >= 1) {
 					System.out.println("No one is left in chat " + chatNum + " closing chat");
 				}
 
@@ -562,8 +554,8 @@ public class ServerThread extends Thread {
 			//Get chat UID to join
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
-			
-			if (debug >= 1){
+
+			if (debug >= 1) {
 				System.out.println("Joining user " + username + " to chat number " + chatNum + "!!!!!");
 			}
 
@@ -606,14 +598,14 @@ public class ServerThread extends Thread {
 	 */
 	private void createChat() {
 		try {
-			if (debug >= 1){
+			if (debug >= 1) {
 				System.out.println("In the method.");
 			}
 
 			//Grab output stream for the user.
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 
-			if (debug >= 1){
+			if (debug >= 1) {
 				System.out.println("Created the output stream which we shouldn't have to do.");
 			}
 
@@ -644,7 +636,7 @@ public class ServerThread extends Thread {
 				byte seed[] = random.generateSeed(20);
 				random.setSeed(seed);
 				randInt = random.nextInt(9999);
-				
+
 				if (debug >= 1) {
 					System.out.println("Generated random chat ID: " + randInt);
 				}
@@ -737,7 +729,7 @@ public class ServerThread extends Thread {
 
 			//Send the secret question to the client for answering
 			serverDout.writeUTF(encryptServerPrivate(secretQuestion));
-			if (debug >= 1 ){
+			if (debug >= 1) {
 				System.out.println("SENT Question: " + secretQuestion);
 			}
 
@@ -757,13 +749,6 @@ public class ServerThread extends Thread {
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 
-/*				if (server.authentication.containsKey(userToReset)) {
-					server.authentication.remove(userToReset);
-					server.authentication.put(userToReset, newPassword);
-				} else {
-					server.authentication.put(userToReset, newPassword);
-				}*/
-
 				if (debug >= 1) {
 					System.out.println("PASSWORDCHANGED");
 				}
@@ -777,7 +762,7 @@ public class ServerThread extends Thread {
 				if (debug >= 1) {
 					System.out.println("HASH MISMATCH. ABORT");
 				}
-				
+
 				//Failure message
 				serverDout.writeUTF(encryptServerPrivate("0"));
 			}
@@ -785,7 +770,7 @@ public class ServerThread extends Thread {
 			//Close Connections
 			stmt.close();
 			con.close();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -799,7 +784,7 @@ public class ServerThread extends Thread {
 			System.out.println("Receiving bug report stacktrace");
 			System.out.println("Receiving bug report comments");
 		}
-		
+
 		String trace = "";
 		String comments = "";
 		try {
@@ -1280,7 +1265,6 @@ public class ServerThread extends Thread {
 				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Account has been successfully created.",
 						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(successfulRegistrationResultBigInt.toString());
-//				server.updateHashTable();
 
 				//Close Connections
 				stmt.close();
@@ -1305,9 +1289,9 @@ public class ServerThread extends Thread {
 	 * @param fromUser
 	 * @param message
 	 */
-             void sendMessage(String toUser, String fromUser, String message) {
+	void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
-                DataOutputStream clientDout = null;
+		DataOutputStream clientDout = null;
 
 		//Debug statement: who is this going to?
 		if (debug == 1) {
@@ -1322,11 +1306,11 @@ public class ServerThread extends Thread {
 				System.out.print("Found user.. Continuing...");
 			}
 			foundSocket = (Socket) server.userToClientSocket.get(toUser);
-            try {
-                clientDout = new DataOutputStream(foundSocket.getOutputStream());
-            } catch (IOException ex) {
-                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+			try {
+				clientDout = new DataOutputStream(foundSocket.getOutputStream());
+			} catch (IOException ex) {
+				Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
 			if (debug == 1) {
 				System.out.print("Found Socket: " + foundSocket);
 			}
@@ -1360,7 +1344,7 @@ public class ServerThread extends Thread {
 	 */
 	void sendSystemMessage(String toUser, String message) {
 		Socket foundSocket = null;
-                DataOutputStream serverDout = null;
+		DataOutputStream serverDout = null;
 
 		//Debug statement: who is this going to?
 		if (debug == 1) {
@@ -1375,11 +1359,11 @@ public class ServerThread extends Thread {
 				System.out.println("Found user.. Continuing...");
 			}
 			foundSocket = (Socket) server.userToServerSocket.get(toUser);
-            try {
-                serverDout = new DataOutputStream(foundSocket.getOutputStream());
-            } catch (IOException ex) {
-                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+			try {
+				serverDout = new DataOutputStream(foundSocket.getOutputStream());
+			} catch (IOException ex) {
+				Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
 			if (debug == 1) {
 				System.out.println("Found Socket: " + foundSocket);
 			}
@@ -1407,7 +1391,7 @@ public class ServerThread extends Thread {
 	 */
 	public String login(String clientName, String clientPassword) throws IOException {
 		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-		String localHashed="";
+		String localHashed = "";
 		try {
 			//Get the password from the database
 			//Grab a DB connection
@@ -1428,7 +1412,6 @@ public class ServerThread extends Thread {
 			rs.close();
 			stmt.close();
 			con.close();
-			//LocalHashed = server.authentication.get(clientName).toString();
 		} catch (Exception e) {
 			//Login fail handler
 			if (debug >= 1) {
@@ -1464,7 +1447,7 @@ public class ServerThread extends Thread {
 			return returnCipher.toString();
 		}
 	}
-	
+
 	/**
 	 * Computer the SHA-1 hash of a string
 	 * @param toHash The data to hash
@@ -1495,8 +1478,10 @@ public class ServerThread extends Thread {
 	 */
 	public void publicKeyRequest() throws IOException {
 
-		if(debug >=1)System.out.println(username);
-		
+		if (debug >= 1) {
+			System.out.println(username);
+		}
+
 		try {
 			//Listen for the username
 			String findUser = decryptServerPrivate(serverDin.readUTF());

@@ -24,9 +24,7 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -38,35 +36,18 @@ public class Server {
 
 	//Change to 1 or 2 for debug output
 	private int debug = 0;
-
 	//This socket will accept new connection
 	private ServerSocket c2ss;
 	private ServerSocket c2css;
-
-	//TODO can we do away with this hashtable since the DB is local to save memory?
 	/**
 	 * Holds the usernames and hashed passwords read in from the database.
 	 */
-	//public static Hashtable<String, String> authentication = new Hashtable<String, String>();
-
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
 	private static String dbUser = "";
 	private static String dbPass = "";
-
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
-	
-	/**
-	 * A hashtable that keeps track of the outputStreams linked to each socket
-	 */
-	//public Hashtable<Socket, DataOutputStream> serverOutputStreams = new Hashtable<Socket, DataOutputStream>();
-
-	/**
-	 * A hashtable that keeps track of the outputStreams linked to each socket
-	 */
-	//public Hashtable<Socket, DataOutputStream> clientOutputStreams = new Hashtable<Socket, DataOutputStream>();
-
 	/**
 	 * A hashtable that maps users to their server socket
 	 */
@@ -75,12 +56,10 @@ public class Server {
 	 * A hashtable that maps users to their client socket
 	 */
 	public Hashtable<String, Socket> userToClientSocket = new Hashtable<String, Socket>();
-
 	/**
 	 * Server's private RSA key
 	 */
 	public RSAPrivateKeySpec serverPriv;
-
 	/**
 	 * Server's public key
 	 */
@@ -126,43 +105,6 @@ public class Server {
 			return null;
 		}
 	}
-
-	/**
-	 * Write the database usernames and passwords to the hashtable
-	 */
-/*	public static void updateHashTable() {
-		try {
-			//Use dbConnect() to connect to the database
-			Connection getHashed = dbConnect();
-
-			//Create a statement and resultset for the query
-			Statement stmt;
-			ResultSet rs;
-
-			//Return all usernames and hashes passwords
-			stmt = getHashed.createStatement();
-			rs = stmt.executeQuery("SELECT * from Users"); //Here is where the query goes that we would like to run.
-
-			//Iterate through the results and write them to a hashtables
-			while (rs.next()) {
-				String username = rs.getString("username");
-				String hashedPassword = rs.getString("password");
-
-				//Write username and hashed password to next element of hash table
-				if (authentication.containsKey(username)) {
-					//DO nothing
-				} else {
-					authentication.put(username, hashedPassword);
-					System.out.println("Inputting username and password into the hashtable\n" + username + "\n" + hashedPassword);
-				}
-			}
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		System.gc();
-
-	}*/
 
 	/**
 	 * Adds a user and server socket to the hashtable for later reference
@@ -225,29 +167,29 @@ public class Server {
 		}
 	}
 
-        /**
+	/**
 	 * Sends a message to every connected user
 	 * @param eventCode What we are talking to them about
 	 * @param message The data
 	 */
 	synchronized void sendToAll(String eventCode, String message) {
 		System.gc();
-			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
-			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
-                        Enumeration userEnumeration = userToClientSocket.elements();
+		BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
+		BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
+		Enumeration userEnumeration = userToClientSocket.elements();
 
-                        //Get the outputStream for each socket and send message
-			for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
-                                Socket sendToAllSocket = (Socket) e.nextElement();
-				try {
-                                        DataOutputStream dout = new DataOutputStream(sendToAllSocket.getOutputStream());
-					dout.writeUTF(eventCodeCipher.toString());
-					dout.writeUTF(messageCipher.toString());
-				} catch (IOException ie) {
-					System.out.println(ie);
-				}
+		//Get the outputStream for each socket and send message
+		for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
+			Socket sendToAllSocket = (Socket) e.nextElement();
+			try {
+				DataOutputStream dout = new DataOutputStream(sendToAllSocket.getOutputStream());
+				dout.writeUTF(eventCodeCipher.toString());
+				dout.writeUTF(messageCipher.toString());
+			} catch (IOException ie) {
+				System.out.println(ie);
 			}
-    }
+		}
+	}
 
 	/**
 	 * Remove a socket (user has failed to login)
@@ -255,20 +197,19 @@ public class Server {
 	 * @param clientsock The "client" socket to remove
 	 */
 	void removeConnection(Socket servsock, Socket clientsock) {
-        		// Debug text
-			System.out.println("Connection Terminated:\n" + servsock + "\n\n");
+		// Debug text
+		System.out.println("Connection Terminated:\n" + servsock + "\n\n");
 
-			// Make sure it's closed
-			try {
-				servsock.close();
-				clientsock.close();
-			} catch (IOException ie) {
-				System.out.println("Error closing " + servsock);
-				ie.printStackTrace();
-			}
-                        System.gc();
+		// Make sure it's closed
+		try {
+			servsock.close();
+			clientsock.close();
+		} catch (IOException ie) {
+			System.out.println("Error closing " + servsock);
+			ie.printStackTrace();
+		}
+		System.gc();
 	}
-		
 
 	/**
 	 * Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
@@ -277,27 +218,26 @@ public class Server {
 	 * @param uname The username
 	 */
 	void removeConnection(Socket servsock, Socket clientsock, String uname) {
-        		// Debug text
-			System.out.println("User Disconnected: " + uname + "\n\n");
+		// Debug text
+		System.out.println("User Disconnected: " + uname + "\n\n");
 
-			// Remove thread's entries from hashtables
-			userToServerSocket.remove(uname);
-			userToClientSocket.remove(uname);
+		// Remove thread's entries from hashtables
+		userToServerSocket.remove(uname);
+		userToClientSocket.remove(uname);
 
-			// Make sure the socket is closed
-			try {
-				servsock.close();
-				clientsock.close();
+		// Make sure the socket is closed
+		try {
+			servsock.close();
+			clientsock.close();
 
-				//Sending User Log off message after we close the socket
-				sendToAll("ServerLogOff", uname);
-			} catch (IOException ie) {
-				System.out.println("Error closing " + servsock);
-				ie.printStackTrace();
-			}
-                        System.gc();
+			//Sending User Log off message after we close the socket
+			sendToAll("ServerLogOff", uname);
+		} catch (IOException ie) {
+			System.out.println("Error closing " + servsock);
+			ie.printStackTrace();
 		}
-		
+		System.gc();
+	}
 
 	/**
 	 * Read in the usernames from the DB and start listening
@@ -311,9 +251,6 @@ public class Server {
 		 *3. The Universe collapses in on itself*/
 		dbUser = args[0];
 		dbPass = args[1];
-
-		//Read all usernames and hashed passwords into hashtable from database
-//		updateHashTable();
 
 		// Create a Server object, which will automatically begin accepting connections.
 		new Server(listenPort);
