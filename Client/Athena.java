@@ -86,6 +86,7 @@ public class Athena {
     /**
      * Begin private variables
      */
+	private static DataInputStream dpInputStream;
     private static String serverIP = "aegis.athenachat.org"; //IP of the server
     private static int connected = 0; 	//If the client is connect to the server
     private static int away = 0; //Is the user away?
@@ -652,7 +653,8 @@ public class Athena {
                     systemMessage("20");
                     c2sdout.writeUTF(encryptServerPublic(inviteInformationArray[2]));
                     c2sdout.writeUTF(encryptServerPublic("yes"));
-                    
+                    dpSocket = new Socket(inviteInformationArray[1], 7779);
+					dpInputStream = new DataInputStream(dpSocket.getInputStream());
                     //Thread created to listen for messages coming in from the server
                     listeningProcedureConnectDirectProtect = new Thread(
                         new Runnable() {
@@ -664,8 +666,8 @@ public class Athena {
                                 }
                                 while (connected == 1) {
                             try {
-                                dpSocket = new Socket(inviteInformationArray[1], 7779);
-                            } catch (IOException ex) {
+                                recvMesg(dpInputStream);
+                            } catch (Exception ex) {
                                 Logger.getLogger(Athena.class.getName()).log(Level.SEVERE, null, ex);
                             }
                                 }

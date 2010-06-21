@@ -326,7 +326,7 @@ public class ServerThread extends Thread {
 				if (debug == 1) {
 					System.out.println("Event code received. requestSocketInfo() run.");
 				}
-				requestSocketInfo();
+				//requestSocketInfo();
 				break;
 			case 14:
 				if (debug == 1) {
@@ -358,8 +358,68 @@ public class ServerThread extends Thread {
 				}
 				userList();
 				break;
+			case 19:
+				if (debug >= 1) {
+					System.out.println("Event code received. DPInvite() run.");
+				}
+				dPInvite();
+				break;
+			case 20:
+				if (debug >= 1) {
+					System.out.println("Event code received. dPResult() run.");
+				}
+				dPResult();
+				break;
 			default:
 				return;
+		}
+	}
+
+	private void dPResult() {
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			String usernameResult = decryptServerPrivate(serverDin.readUTF());
+			String success = decryptServerPrivate(serverDin.readUTF());
+			String inviteString = username + "," + success + "," + requestSocketInfo(username);
+
+			sendMessage(usernameResult, "DPResult", encryptServerPrivate(inviteString));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+	}
+	private void dPInvite() {
+		try {
+			if (debug == 1) {
+				System.out.println("In dPInvite()");
+			}
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			
+			String invitingUser = decryptServerPrivate(serverDin.readUTF());
+			String ipAddress = decryptServerPrivate(serverDin.readUTF());
+
+			String inviteString = username + "," + ipAddress;
+
+			//Debug statements
+			if (debug >= 1) {
+				System.out.println("Received ip address: " + ipAddress);
+				System.out.println("Constructed inviteString: " + inviteString);
+			}
+
+			//For each user to invite, take their name, and take the session key encrypted with their public key
+			if (debug == 1) {
+				System.out.println("Inviting user: " + invitingUser);
+			}
+			sendMessage(invitingUser, "DPInvite", encryptServerPrivate(inviteString));
+			
+			if (debug >= 1) {
+				System.out.println("Sent invitation");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -581,15 +641,14 @@ public class ServerThread extends Thread {
 	/**
 	 * Pass off the socket information for a username. Useful for direct-protect and file transfer
 	 */
-	private void requestSocketInfo() {
+	private String requestSocketInfo(String user) {
 		try {
-			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			String userForSocket = decryptServerPrivate(serverDin.readUTF());
 			Socket foundSocket = (Socket) server.userToClientSocket.get(userForSocket);
-			String socketString = foundSocket.toString();
-			serverDout.writeUTF(encryptServerPrivate(socketString));
+			return foundSocket.getInetAddress().toString();
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 
