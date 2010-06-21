@@ -47,7 +47,7 @@ public class Server {
 	/**
 	 * Holds the usernames and hashed passwords read in from the database.
 	 */
-	public static Hashtable<String, String> authentication = new Hashtable<String, String>();
+	//public static Hashtable<String, String> authentication = new Hashtable<String, String>();
 
 	//Creates a SQL connection object. See dbConnect()
 	private static Connection con = null;
@@ -130,7 +130,7 @@ public class Server {
 	/**
 	 * Write the database usernames and passwords to the hashtable
 	 */
-	public static void updateHashTable() {
+/*	public static void updateHashTable() {
 		try {
 			//Use dbConnect() to connect to the database
 			Connection getHashed = dbConnect();
@@ -162,7 +162,7 @@ public class Server {
 		}
 		System.gc();
 
-	}
+	}*/
 
 	/**
 	 * Adds a user and server socket to the hashtable for later reference
@@ -313,7 +313,7 @@ public class Server {
 		dbPass = args[1];
 
 		//Read all usernames and hashed passwords into hashtable from database
-		updateHashTable();
+//		updateHashTable();
 
 		// Create a Server object, which will automatically begin accepting connections.
 		new Server(listenPort);

@@ -757,12 +757,12 @@ public class ServerThread extends Thread {
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 
-				if (server.authentication.containsKey(userToReset)) {
+/*				if (server.authentication.containsKey(userToReset)) {
 					server.authentication.remove(userToReset);
 					server.authentication.put(userToReset, newPassword);
 				} else {
 					server.authentication.put(userToReset, newPassword);
-				}
+				}*/
 
 				if (debug >= 1) {
 					System.out.println("PASSWORDCHANGED");
@@ -1280,7 +1280,7 @@ public class ServerThread extends Thread {
 				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Account has been successfully created.",
 						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(successfulRegistrationResultBigInt.toString());
-				server.updateHashTable();
+//				server.updateHashTable();
 
 				//Close Connections
 				stmt.close();
@@ -1407,10 +1407,28 @@ public class ServerThread extends Thread {
 	 */
 	public String login(String clientName, String clientPassword) throws IOException {
 		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
-		String LocalHashed;
+		String localHashed="";
 		try {
-			//Get the password from the hashtable
-			LocalHashed = server.authentication.get(clientName).toString();
+			//Get the password from the database
+			//Grab a DB connection
+			Connection con = server.dbConnect();
+			Statement stmt;
+			ResultSet rs = null;
+
+			//Get a list of existing chats
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("SELECT password FROM Users WHERE username = '" + clientName + "';");
+
+			//Send the message to the users in the chat
+			if (rs.next()) {
+				localHashed = rs.getString(1);
+			}
+
+			//Close all DB connections
+			rs.close();
+			stmt.close();
+			con.close();
+			//LocalHashed = server.authentication.get(clientName).toString();
 		} catch (Exception e) {
 			//Login fail handler
 			if (debug >= 1) {
@@ -1427,14 +1445,14 @@ public class ServerThread extends Thread {
 			System.out.println("User logging in...");
 		}
 		if (debug == 1) {
-			System.out.println("Hashed Password:" + LocalHashed);
+			System.out.println("Hashed Password:" + localHashed);
 		}
 		if (debug == 1) {
 			System.out.println("Username :" + clientName);
 		}
 
 		//Verify the password hash provided from the user matches the one in the server's hashtable
-		if (clientPassword.equals(LocalHashed)) {
+		if (clientPassword.equals(localHashed)) {
 			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Success", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(returnCipher.toString());
 			return returnCipher.toString();
