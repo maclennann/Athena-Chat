@@ -60,12 +60,12 @@ public class Server {
 	/**
 	 * A hashtable that keeps track of the outputStreams linked to each socket
 	 */
-	public Hashtable<Socket, DataOutputStream> serverOutputStreams = new Hashtable<Socket, DataOutputStream>();
+	//public Hashtable<Socket, DataOutputStream> serverOutputStreams = new Hashtable<Socket, DataOutputStream>();
 
 	/**
 	 * A hashtable that keeps track of the outputStreams linked to each socket
 	 */
-	public Hashtable<Socket, DataOutputStream> clientOutputStreams = new Hashtable<Socket, DataOutputStream>();
+	//public Hashtable<Socket, DataOutputStream> clientOutputStreams = new Hashtable<Socket, DataOutputStream>();
 
 	/**
 	 * A hashtable that maps users to their server socket
@@ -225,64 +225,29 @@ public class Server {
 		}
 	}
 
-	/**
-	 * Get an enumeration of all of the server OutputStreams to walk through
-	 * @return The outputstreams as an enumeration
-	 */
-	Enumeration<DataOutputStream> getServerOutputStreams() {
-		return serverOutputStreams.elements();
-	}
-
-	/**
-	 * Get an enumeration of all of the client OutputStreams to walk through
-	 * @return The outputstreams as an enumeration
-	 */
-	Enumeration<DataOutputStream> getClientOutputStreams() {
-		return clientOutputStreams.elements();
-	}
-
-	//TODO WTF why can't we just socket.getOutputStream this?
-	/**
-	 * Maps an outputstream to a server socket
-	 * @param servSoc The "Server" socket
-	 * @param dataOut The outputstream from the socket
-	 */
-	public void addServerOutputStream(Socket servSoc, DataOutputStream dataOut) {
-		serverOutputStreams.put(servSoc, dataOut);
-	}
-
-	/**
-	 * Maps an outputstream to a client socket
-	 * @param servSoc The client socket
-	 * @param dataOut The outputstream of the socket
-	 */
-	public void addClientOutputStream(Socket servSoc, DataOutputStream dataOut) {
-		clientOutputStreams.put(servSoc, dataOut);
-	}
-
-	/**
+        /**
 	 * Sends a message to every connected user
 	 * @param eventCode What we are talking to them about
 	 * @param message The data
 	 */
 	synchronized void sendToAll(String eventCode, String message) {
 		System.gc();
-		//make sure the outputStreams hashtable is up-to-date
-		synchronized (clientOutputStreams) {
 			BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
 			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
-			//Get the outputStream for each socket and send message
-			for (Enumeration<?> e = getClientOutputStreams(); e.hasMoreElements();) {
-				DataOutputStream dout = (DataOutputStream) e.nextElement();
+                        Enumeration userEnumeration = userToClientSocket.elements();
+
+                        //Get the outputStream for each socket and send message
+			for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
+                                Socket sendToAllSocket = (Socket) e.nextElement();
 				try {
+                                        DataOutputStream dout = new DataOutputStream(sendToAllSocket.getOutputStream());
 					dout.writeUTF(eventCodeCipher.toString());
 					dout.writeUTF(messageCipher.toString());
 				} catch (IOException ie) {
 					System.out.println(ie);
 				}
 			}
-		}
-	}
+    }
 
 	/**
 	 * Remove a socket (user has failed to login)
@@ -290,15 +255,8 @@ public class Server {
 	 * @param clientsock The "client" socket to remove
 	 */
 	void removeConnection(Socket servsock, Socket clientsock) {
-		// Synchronize so we don't mess up sendToAll() while it walks
-		// down the list of all output streams.
-		synchronized (clientOutputStreams) {
-			// Debug text
+        		// Debug text
 			System.out.println("Connection Terminated:\n" + servsock + "\n\n");
-
-			// Remove socket from our hashtable/list
-			clientOutputStreams.remove(clientsock);
-			serverOutputStreams.remove(servsock);
 
 			// Make sure it's closed
 			try {
@@ -308,9 +266,9 @@ public class Server {
 				System.out.println("Error closing " + servsock);
 				ie.printStackTrace();
 			}
-		}
-		System.gc();
+                        System.gc();
 	}
+		
 
 	/**
 	 * Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
@@ -319,15 +277,10 @@ public class Server {
 	 * @param uname The username
 	 */
 	void removeConnection(Socket servsock, Socket clientsock, String uname) {
-		// Synchronize so we don't mess up sendToAll() while it walks
-		// down the list of all output streams.
-		synchronized (clientOutputStreams) {
-			// Debug text
+        		// Debug text
 			System.out.println("User Disconnected: " + uname + "\n\n");
 
 			// Remove thread's entries from hashtables
-			serverOutputStreams.remove(servsock);
-			clientOutputStreams.remove(clientsock);
 			userToServerSocket.remove(uname);
 			userToClientSocket.remove(uname);
 
@@ -342,9 +295,9 @@ public class Server {
 				System.out.println("Error closing " + servsock);
 				ie.printStackTrace();
 			}
+                        System.gc();
 		}
-		System.gc();
-	}
+		
 
 	/**
 	 * Read in the usernames from the DB and start listening

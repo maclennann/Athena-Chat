@@ -38,6 +38,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.security.SecureRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -136,8 +138,6 @@ public class ServerThread extends Thread {
 				//Maps username to socket after user logs in
 				server.mapUserServerSocket(username, c2ssocket);
 				server.mapUserClientSocket(username, c2csocket);
-				server.addServerOutputStream(c2ssocket, new DataOutputStream(c2ssocket.getOutputStream()));
-				server.addClientOutputStream(c2csocket, new DataOutputStream(c2csocket.getOutputStream()));
 				System.gc();
 			}
 			if (username.equals("Interupt")) {
@@ -1305,8 +1305,9 @@ public class ServerThread extends Thread {
 	 * @param fromUser
 	 * @param message
 	 */
-	void sendMessage(String toUser, String fromUser, String message) {
+             void sendMessage(String toUser, String fromUser, String message) {
 		Socket foundSocket = null;
+                DataOutputStream clientDout = null;
 
 		//Debug statement: who is this going to?
 		if (debug == 1) {
@@ -1321,22 +1322,16 @@ public class ServerThread extends Thread {
 				System.out.print("Found user.. Continuing...");
 			}
 			foundSocket = (Socket) server.userToClientSocket.get(toUser);
+            try {
+                clientDout = new DataOutputStream(foundSocket.getOutputStream());
+            } catch (IOException ex) {
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
 			if (debug == 1) {
 				System.out.print("Found Socket: " + foundSocket);
 			}
 		} else {
 			sendMessage(fromUser, "UnavailableUser", encryptServerPrivate(toUser));
-			return;
-		}
-
-		//Find the outputstream associated with toUser's socket
-		//We send data through this outputstream to send the message
-		//If we cannot find the outputstream, send back an error
-		//This should not fail
-		if (server.clientOutputStreams.containsKey(foundSocket)) {
-			clientDout = (DataOutputStream) server.clientOutputStreams.get(foundSocket);
-		} else {
-			sendMessage(fromUser, "MissingSocket", encryptServerPrivate(toUser));
 			return;
 		}
 
@@ -1365,6 +1360,7 @@ public class ServerThread extends Thread {
 	 */
 	void sendSystemMessage(String toUser, String message) {
 		Socket foundSocket = null;
+                DataOutputStream serverDout = null;
 
 		//Debug statement: who is this going to?
 		if (debug == 1) {
@@ -1379,17 +1375,14 @@ public class ServerThread extends Thread {
 				System.out.println("Found user.. Continuing...");
 			}
 			foundSocket = (Socket) server.userToServerSocket.get(toUser);
+            try {
+                serverDout = new DataOutputStream(foundSocket.getOutputStream());
+            } catch (IOException ex) {
+                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
 			if (debug == 1) {
 				System.out.println("Found Socket: " + foundSocket);
 			}
-		}
-
-		//Find the outputstream associated with toUser's socket
-		//We send data through this outputstream to send the message
-		//If we cannot find the outputstream, send back an error
-		//This should not fail
-		if (server.serverOutputStreams.containsKey(foundSocket)) {
-			serverDout = (DataOutputStream) server.serverOutputStreams.get(foundSocket);
 		}
 
 		//Send the message, and the user it is from
