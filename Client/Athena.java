@@ -697,6 +697,9 @@ public class Athena {
                                 while (connected == 1) {
                             try {
                                 directProtectSocket = new ServerSocket(7779);
+                                Socket dpSocket = directProtectSocket.accept();
+                                DataInputStream dpDIS = new DataInputStream(dpSocket.getInputStream());
+                                recvMesg(dpDIS);
                             } catch (IOException ex) {
                                 Logger.getLogger(Athena.class.getName()).log(Level.SEVERE, null, ex);
                             }
