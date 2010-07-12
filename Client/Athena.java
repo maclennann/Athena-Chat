@@ -688,31 +688,55 @@ public class Athena {
                 //inviteInformationArray = inviteInformation.split(",");
 
                 //Open up an alert!
+				if ((clientResource.tabPanels.containsKey(inviteInformation))) {
+                        print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
+                        print.writeToTextArea(inviteInformation + " has invited us to a Direct Protect session.\n", print.getSetHeaderFont(Color.gray));
+                }
                 int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to direct protect with: " + inviteInformation + ".");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
-                  //  systemMessage("20");
-                   // c2sdout.writeUTF(encryptServerPublic(inviteInformation));
-                   // c2sdout.writeUTF(encryptServerPublic("yes"));
+					systemMessage("20");
+					c2sdout.writeUTF(encryptServerPublic(inviteInformation));
+					c2sdout.writeUTF(encryptServerPublic("yes"));
 					
 					//Put a dummy entry in the hashtable until we get the real session key
                     SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(), "AES");
                     sessionKeys.put(inviteInformation, nothing);
 					//dpSocket = new Socket(inviteInformationArray[1], 7779);
 					//dpInputStream = new DataInputStream(dpSocket.getInputStream());
-                    
+                    if ((clientResource.tabPanels.containsKey(inviteInformation))) {
+                        print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
+                        print.writeToTextArea("Joining Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
+					}
                 }
 				else {
-                 //   //Send server a confirm message
-                 //   systemMessage("20");
-                 //   c2sdout.writeUTF(encryptServerPublic(inviteInformation));
-                 //   c2sdout.writeUTF(encryptServerPublic("no"));
+					if ((clientResource.tabPanels.containsKey(inviteInformation))) {
+                        print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
+                        print.writeToTextArea("Aborting Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
+					}
+                   //Send server a confirm message
+                    systemMessage("20");
+                    c2sdout.writeUTF(encryptServerPublic(inviteInformation));
+                    c2sdout.writeUTF(encryptServerPublic("no"));
                 }
             } else if (fromUserDecrypted.equals("DPResult")) {
-
-         
                 decryptedMessage = decryptServerPublic(encryptedMessage);
                 String[] inviteInformation = decryptedMessage.split(",");
+				if(inviteInformation[1].equals("yes")){
+					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
+						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
+						print.writeToTextArea("Direct Protect session started!\n", print.getSetHeaderFont(Color.gray));
+					}
+				}
+				else{
+					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
+						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
+						print.writeToTextArea("Invitation Refused!\n", print.getSetHeaderFont(Color.gray));
+					}
+					if(sessionKeys.containsKey(inviteInformation[0])){
+						sessionKeys.remove(inviteInformation[0]);
+					}
+				}
                              
             } else { // Need this else in order to hide the system messages coming from Aegis
                 //TODO Implement digital signatures
@@ -1018,6 +1042,11 @@ public class Athena {
 			System.out.println("Session key sent");
 			
 			sessionKeys.put(inviteUser, dpSessionKey);
+
+			if ((clientResource.tabPanels.containsKey(inviteUser))) {
+                        print = (MapTextArea) clientResource.tabPanels.get(inviteUser);
+                        print.writeToTextArea("Inviting "+inviteUser+" to a Direct Protect session.\n", print.getSetHeaderFont(Color.gray));
+            }
 
         } catch (Exception ie) {
         }

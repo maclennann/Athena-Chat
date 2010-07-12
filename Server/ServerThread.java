@@ -380,7 +380,7 @@ public class ServerThread extends Thread {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			String usernameResult = decryptServerPrivate(serverDin.readUTF());
 			String success = decryptServerPrivate(serverDin.readUTF());
-			String inviteString = username + "," + success + "," + requestSocketInfo(username);
+			String inviteString = username + "," + success;
 
 			sendMessage(usernameResult, "DPResult", encryptServerPrivate(inviteString));
 
