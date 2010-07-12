@@ -405,7 +405,7 @@ public class ServerThread extends Thread {
 				System.out.println("Inviting user: " + invitingUser);
 			}
 			sendMessage(invitingUser, "DPInvite", encryptServerPrivate(username));
-			sendMessage(invitingUser, "SessionKey", sessionKey);
+			sendMessage(invitingUser, "DPSessionKey", sessionKey);
 			if (debug >= 1) {
 				System.out.println("Sent invitation");
 			}

@@ -641,18 +641,59 @@ public class Athena {
 
                     return;
                 }
+            } else if (fromUserDecrypted.equals("DPSessionKey")) {
+                //Take in the encrypted session key
+                decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
+
+                //Split the chatUID from the session key
+                String[] chatInfo = decryptedMessage.split(",");
+
+                //Make sure we are actually in the chat this key is for
+                if (sessionKeys.containsKey(chatInfo[0])) {
+                    byte[] encoded = new BigInteger(chatInfo[1], 16).toByteArray();
+                    if (debug >= 1) {
+                        System.out.println("FIRST BYTE: " + encoded[0]);
+                    }
+
+                    SecretKeySpec aesKey;
+                    //If a leading zero-byte shows up, strip it
+                    if (encoded[0] == 0) {
+                        if (debug >= 1) {
+                            System.out.println("Leading zeroes in session key");
+                        }
+
+                        byte[] encoded2 = new byte[16];
+                        for (int x = 0, y = -1; x < encoded.length; x++, y++) {
+                            if (x >= 1) {
+                                encoded2[y] = encoded[x];
+                            }
+                        }
+                        aesKey = new SecretKeySpec(encoded2, "AES");
+                    } else {
+                        aesKey = new SecretKeySpec(encoded, "AES");
+                    }
+
+                    //Replace the dummy session key with the real one
+                    sessionKeys.remove(chatInfo[0]);
+                    sessionKeys.put(chatInfo[0], aesKey);
+                    if (debug >= 1) {
+                        System.out.println("Session key: " + chatInfo[1]);
+                        System.out.println("Session key: " + AESCrypto.asHex(aesKey.getEncoded()));
+                    }
+                    return;
+                }
             } else if (fromUserDecrypted.equals("DPInvite")) {
                 //Read in the information
-                String inviteInformation = c2sdin.readUTF();
+                String inviteInformation = decryptServerPublic(encryptedMessage);
                 //inviteInformationArray = inviteInformation.split(",");
 
                 //Open up an alert!
                 int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to direct protect with: " + inviteInformation + ".");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
-                    systemMessage("20");
-                    c2sdout.writeUTF(encryptServerPublic(inviteInformation));
-                    c2sdout.writeUTF(encryptServerPublic("yes"));
+                  //  systemMessage("20");
+                   // c2sdout.writeUTF(encryptServerPublic(inviteInformation));
+                   // c2sdout.writeUTF(encryptServerPublic("yes"));
 					
 					//Put a dummy entry in the hashtable until we get the real session key
                     SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(), "AES");
@@ -662,10 +703,10 @@ public class Athena {
                     
                 }
 				else {
-                    //Send server a confirm message
-                    systemMessage("20");
-                    c2sdout.writeUTF(encryptServerPublic(inviteInformation));
-                    c2sdout.writeUTF(encryptServerPublic("no"));
+                 //   //Send server a confirm message
+                 //   systemMessage("20");
+                 //   c2sdout.writeUTF(encryptServerPublic(inviteInformation));
+                 //   c2sdout.writeUTF(encryptServerPublic("no"));
                 }
             } else if (fromUserDecrypted.equals("DPResult")) {
 
@@ -972,7 +1013,7 @@ public class Athena {
             //Send the user our session key
             String keyString = AESCrypto.asHex(dpSessionKey.getEncoded());
             RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUser + ".pub");
-            BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+            BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(username + "," + keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
             c2sdout.writeUTF(messageCipher.toString());
 			System.out.println("Session key sent");
 			
@@ -1217,7 +1258,13 @@ public class Athena {
                 parseMarkdown(message, print);
                 //Send the message
                 try {
-                    if (message.length() > 245) {
+					if(sessionKeys.containsKey(toUser)){
+						c2sdout.writeUTF(encryptServerPublic(toUser));
+                        c2sdout.writeUTF(encryptServerPublic(username));
+                        c2sdout.writeUTF(encryptAES(toUser, message));
+						
+					}
+					else if(message.length() > 245) {
                         double messageNumbers = (double) message.length() / 245;
                         double messageNumbersInt = Math.ceil(messageNumbers);
                         if (debug >= 1) {
