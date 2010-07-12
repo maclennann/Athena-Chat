@@ -378,6 +378,7 @@ public class CommunicationInterface extends JFrame {
 		// ActionListener to make the disconnect menu item disconnect
 		startDP.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				System.out.println("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
 				Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
 			}
 		});

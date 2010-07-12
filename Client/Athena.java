@@ -959,17 +959,20 @@ public class Athena {
             dpSessionKey = AESCrypto.generateKey();
             //Alert Aegis of our invite!
             systemMessage("19");
+			System.out.println("We're sending a DP invite");
 
             //Send the user we're connecting to
             c2sdout.writeUTF(encryptServerPublic(inviteUser));
+			System.out.println("Username sent");
+			
             //Send the user our session key
             String keyString = AESCrypto.asHex(dpSessionKey.getEncoded());
-			
-			sessionKeys.put(inviteUser, dpSessionKey);
-			
             RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUser + ".pub");
             BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
             c2sdout.writeUTF(messageCipher.toString());
+			System.out.println("Session key sent");
+			
+			sessionKeys.put(inviteUser, dpSessionKey);
 
         } catch (Exception ie) {
         }

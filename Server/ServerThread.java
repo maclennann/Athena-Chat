@@ -1116,8 +1116,7 @@ public class ServerThread extends Thread {
 		if (debug == 1) {
 			System.out.println("Plaintext in encryptServerPrivate: " + plaintext);
 		}
-		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext,
-				server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
 		return plaintextBigInt.toString();
 	}
 
