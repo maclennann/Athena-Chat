@@ -711,7 +711,7 @@ public class Athena {
 
                     System.gc();
                 } //Write to an open chat tab
-                else if (sessionKeys.containsKey(fromUserDecrypted)) {
+                else if (sessionKeys.containsKey(fromUserDecrypted) && !(clientResource.tabPanels.containsKey(fromUserDecrypted))) {
                     if (debug >= 1) {
                         System.out.println("This is a chat message");
                     }
@@ -743,7 +743,9 @@ public class Athena {
                     }
                 } //Write to an open IM tab
                 else {
-
+					if(sessionKeys.containsKey(fromUserDecrypted)){
+						decryptedMessage = decryptAES(fromUserDecrypted, encryptedMessage);
+					}
                     //Write message to the correct tab
                     print = (MapTextArea) clientResource.tabPanels.get(fromUserDecrypted);
                     print.writeToTextArea(fromUserDecrypted + ": ", print.getSetHeaderFont(new Color(0, 0, 130)));
