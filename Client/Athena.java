@@ -90,7 +90,7 @@ public class Athena {
     private static String serverIP = "aegis.athenachat.org"; //IP of the server
     private static int connected = 0; 	//If the client is connect to the server
     private static int away = 0; //Is the user away?
-    private static SecretKeySpec chatSessionKey; //Secret key for group chat session key
+    private static SecretKeySpec chatSessionKey, dpSessionKey; //Secret key for group chat session key
     private static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password
     private static String toUser; //Recipient for message
     private static String awayText; //Away message text
@@ -997,13 +997,18 @@ public class Athena {
      */
     public static void directProtect(String inviteUser) {
         try {
+            //Create the session key
+            dpSessionKey = AESCrypto.generateKey();
             //Alert Aegis of our invite!
             systemMessage("19");
 
             //Send the user we're connecting to
             c2sdout.writeUTF(encryptServerPublic(inviteUser));
-            //Send the user our IP
-            c2sdout.writeUTF(encryptServerPublic(String.valueOf(c2ssocket.getLocalSocketAddress())));
+            //Send the user our session key
+            String keyString = AESCrypto.asHex(dpSessionKey.getEncoded());
+            RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUser + ".pub");
+            BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+            c2sdout.writeUTF(messageCipher.toString());
 
         } catch (Exception ie) {
         }
