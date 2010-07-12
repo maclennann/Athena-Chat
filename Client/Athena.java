@@ -964,6 +964,9 @@ public class Athena {
             c2sdout.writeUTF(encryptServerPublic(inviteUser));
             //Send the user our session key
             String keyString = AESCrypto.asHex(dpSessionKey.getEncoded());
+			
+			sessionKeys.put(inviteUser, dpSessionKey);
+			
             RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUser + ".pub");
             BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
             c2sdout.writeUTF(messageCipher.toString());
