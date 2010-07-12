@@ -400,19 +400,12 @@ public class ServerThread extends Thread {
 			String invitingUser = decryptServerPrivate(serverDin.readUTF());
 			String sessionKey = serverDin.readUTF();
 
-			String inviteString = username + "," + sessionKey;
-			System.out.println("\n\n\n\nINVITE STRING: "+inviteString);
-			//Debug statements
-			if (debug >= 1) {
-				System.out.println("Constructed inviteString: " + inviteString);
-			}
-
 			//For each user to invite, take their name, and take the session key encrypted with their public key
 			if (debug == 1) {
 				System.out.println("Inviting user: " + invitingUser);
 			}
-			sendMessage(invitingUser, "DPInvite", encryptServerPrivate(inviteString));
-			
+			sendMessage(invitingUser, "DPInvite", encryptServerPrivate(username));
+			sendMessage(invitingUser, "SessionKey", sessionKey);
 			if (debug >= 1) {
 				System.out.println("Sent invitation");
 			}

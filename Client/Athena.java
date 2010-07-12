@@ -644,23 +644,27 @@ public class Athena {
             } else if (fromUserDecrypted.equals("DPInvite")) {
                 //Read in the information
                 String inviteInformation = c2sdin.readUTF();
-                inviteInformationArray = inviteInformation.split(",");
+                //inviteInformationArray = inviteInformation.split(",");
 
                 //Open up an alert!
-                int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to direct protect with: " + inviteInformationArray[2] + ".");
+                int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to direct protect with: " + inviteInformation + ".");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
                     systemMessage("20");
-                    c2sdout.writeUTF(encryptServerPublic(inviteInformationArray[2]));
+                    c2sdout.writeUTF(encryptServerPublic(inviteInformation));
                     c2sdout.writeUTF(encryptServerPublic("yes"));
-                    dpSocket = new Socket(inviteInformationArray[1], 7779);
-					dpInputStream = new DataInputStream(dpSocket.getInputStream());
+					
+					//Put a dummy entry in the hashtable until we get the real session key
+                    SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(), "AES");
+                    sessionKeys.put(inviteInformation, nothing);
+					//dpSocket = new Socket(inviteInformationArray[1], 7779);
+					//dpInputStream = new DataInputStream(dpSocket.getInputStream());
                     
                 }
-            else {
+				else {
                     //Send server a confirm message
                     systemMessage("20");
-                    c2sdout.writeUTF(encryptServerPublic(inviteInformationArray[2]));
+                    c2sdout.writeUTF(encryptServerPublic(inviteInformation));
                     c2sdout.writeUTF(encryptServerPublic("no"));
                 }
             } else if (fromUserDecrypted.equals("DPResult")) {
