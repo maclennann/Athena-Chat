@@ -401,7 +401,7 @@ public class ServerThread extends Thread {
 			String sessionKey = serverDin.readUTF();
 
 			String inviteString = username + "," + sessionKey;
-
+			System.out.println("\n\n\n\nINVITE STRING: "+inviteString);
 			//Debug statements
 			if (debug >= 1) {
 				System.out.println("Constructed inviteString: " + inviteString);
