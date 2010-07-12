@@ -655,29 +655,9 @@ public class Athena {
                     c2sdout.writeUTF(encryptServerPublic("yes"));
                     dpSocket = new Socket(inviteInformationArray[1], 7779);
 					dpInputStream = new DataInputStream(dpSocket.getInputStream());
-                    //Thread created to listen for messages coming in from the server
-                    listeningProcedureConnectDirectProtect = new Thread(
-                        new Runnable() {
-
-                            public void run() {
-                                //While we are connected to the server, receive messages
-                                if (c2cdin == null) {
-                                    connected = 0;
-                                }
-                                while (connected == 1) {
-                            try {
-                                recvMesg(dpInputStream);
-                            } catch (Exception ex) {
-                                Logger.getLogger(Athena.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                                }
-                            }
-                        });
-
-                     listeningProcedureConnectDirectProtect.start();
-
+                    
                 }
- else {
+            else {
                     //Send server a confirm message
                     systemMessage("20");
                     c2sdout.writeUTF(encryptServerPublic(inviteInformationArray[2]));
@@ -685,34 +665,10 @@ public class Athena {
                 }
             } else if (fromUserDecrypted.equals("DPResult")) {
 
-                 //Thread created to listen for messages coming in from the server
-                listeningProcedureDirectProtect = new Thread(
-                        new Runnable() {
-
-                            public void run() {
-                                //While we are connected to the server, receive messages
-                                if (c2cdin == null) {
-                                    connected = 0;
-                                }
-                                while (connected == 1) {
-                            try {
-                                directProtectSocket = new ServerSocket(7779);
-                                Socket dpSocket = directProtectSocket.accept();
-                                DataInputStream dpDIS = new DataInputStream(dpSocket.getInputStream());
-                                recvMesg(dpDIS);
-                            } catch (IOException ex) {
-                                Logger.getLogger(Athena.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                                }
-                            }
-                        });
-
+         
                 decryptedMessage = decryptServerPublic(encryptedMessage);
                 String[] inviteInformation = decryptedMessage.split(",");
-                if (inviteInformation[1].equals("yes")) {
-                   listeningProcedureDirectProtect.start();
-                }
-                
+                             
             } else { // Need this else in order to hide the system messages coming from Aegis
                 //TODO Implement digital signatures
                 decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
