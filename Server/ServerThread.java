@@ -398,13 +398,12 @@ public class ServerThread extends Thread {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			
 			String invitingUser = decryptServerPrivate(serverDin.readUTF());
-			String ipAddress = decryptServerPrivate(serverDin.readUTF());
+			String sessionKey = serverDin.readUTF();
 
-			String inviteString = username + "," + ipAddress;
+			String inviteString = username + "," + sessionKey;
 
 			//Debug statements
 			if (debug >= 1) {
-				System.out.println("Received ip address: " + ipAddress);
 				System.out.println("Constructed inviteString: " + inviteString);
 			}
 
