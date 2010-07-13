@@ -382,16 +382,22 @@ public class CommunicationInterface extends JFrame {
 
 		// ActionListener to make the disconnect menu item disconnect
 		sendFile.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent event) {
 				//Create a file chooser
 				final JFileChooser fc = new JFileChooser();
 				//Open the file chooser
 				int returnVal = fc.showOpenDialog(CommunicationInterface.this);
 				try {
+					//Establish DP first!
+				if(!Athena.sessionKeys.containsKey(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()))){
+					System.out.println("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
+					Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
 					Athena.sendFile(fc.getSelectedFile());
+				}
+				else {
+					Athena.sendFile(fc.getSelectedFile());
+				}
 				} catch (IOException e) {
-
 					e.printStackTrace();
 				}
 			}
