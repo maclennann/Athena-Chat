@@ -42,8 +42,6 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.spec.*;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
