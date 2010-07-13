@@ -370,11 +370,62 @@ public class ServerThread extends Thread {
 				}
 				dPResult();
 				break;
+			case 21:
+				if (debug >= 1) {
+					System.out.println("Event code received. fileInvite() run.");
+				}
+				fileInvite();
+				break;
+			case 22:
+				if (debug >=1) {
+					System.out.println("Event code received. fileResult() run.");
+				}
+				fileResult();
+				break;
 			default:
 				return;
 		}
 	}
 
+	private void fileResult() {
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			String usernameResult = decryptServerPrivate(serverDin.readUTF());
+			String success = decryptServerPrivate(serverDin.readUTF());
+			String inviteString = username + "," + success;
+
+			sendMessage(usernameResult, "FileResult", encryptServerPrivate(inviteString));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	private void fileInvite() {
+		try {
+			if (debug == 1) {
+				System.out.println("In fileInvite()");
+			}
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+
+			String invitingUser = decryptServerPrivate(serverDin.readUTF());
+			String fileName = serverDin.readUTF();
+			String fileSize = serverDin.readUTF();
+			String inviteString = encryptServerPrivate(username+","+fileName+","+fileSize);
+
+			//For each user to invite, take their name, and take the session key encrypted with their public key
+			if (debug == 1) {
+				System.out.println("Trying to send file to: " + invitingUser);
+			}
+			sendMessage(invitingUser, "FileInvite", inviteString);
+			//sendMessage(invitingUser, "DPSessionKey", sessionKey);
+			if (debug >= 1) {
+				System.out.println("Sent invitation");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	private void dPResult() {
 		try{
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
