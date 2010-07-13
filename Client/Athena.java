@@ -1291,6 +1291,10 @@ public class Athena {
 						c2sdout.writeUTF(encryptServerPublic(toUser));
                         c2sdout.writeUTF(encryptServerPublic(username));
                         c2sdout.writeUTF(encryptAES(toUser, message));
+						// Append own message to IM window
+                        print.moveToEnd();
+                        // Clear out text input field
+                        print.clearTextField();
 						
 					}
 					else if(message.length() > 245) {
