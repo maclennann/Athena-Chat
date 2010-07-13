@@ -1147,13 +1147,11 @@ public class Athena {
 
         toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
 
-        //Make sure the user is directly connected with the user he/she wants to send a file to
-        //if (directConnect == 1) {
         //TODO Send the file!
         //Grab the file size
         int fileSize = (int) myFile.length();
 
-        //Use process me    ssage to initiate the file transfer
+        //Use process message to initiate the file transfer
         try {
             processMessage("Incoming file transfer...");
             //Now the other client knows that a file is coming, therefore call the recieveFile method
@@ -1170,7 +1168,7 @@ public class Athena {
         FileInputStream fis = new FileInputStream(myFile);
         BufferedInputStream bis = new BufferedInputStream(fis);
         bis.read(mybytearray, 0, mybytearray.length);
-        OutputStream os = c2ssocket.getOutputStream();
+        OutputStream os = c2ssocket.getOutputStream(); //TODO use newly created socket for this!!
         if (debug >= 1) {
             System.out.println("Sending...");
         }
