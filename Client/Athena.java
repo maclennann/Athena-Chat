@@ -536,6 +536,11 @@ public class Athena {
                     if ((usernames[x].equals(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) {
                         print = (MapTextArea) clientResource.tabPanels.get(decryptedMessage);
                         print.writeToTextArea(decryptedMessage + " has signed off.\n", print.getSetHeaderFont(Color.gray));
+						if(sessionKeys.containsKey(decryptedMessage)){
+							print.writeToTextArea("DirectProtect session aborted!\n", print.getSetHeaderFont(Color.gray));
+							print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
+							sessionKeys.remove(decryptedMessage);
+						}
                     }
                 }
                 return;
@@ -707,12 +712,14 @@ public class Athena {
                     if ((clientResource.tabPanels.containsKey(inviteInformation))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
                         print.writeToTextArea("Joining Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
+						print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
                 }
 				else {
 					if ((clientResource.tabPanels.containsKey(inviteInformation))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
                         print.writeToTextArea("Aborting Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
+						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
 					}
                    //Send server a confirm message
                     systemMessage("20");
@@ -726,12 +733,14 @@ public class Athena {
 					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("Direct Protect session started!\n", print.getSetHeaderFont(Color.gray));
+						print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 				}
 				else{
 					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("DirectProtect session aborted!\n", print.getSetHeaderFont(Color.gray));
+						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
 					}
 					if(sessionKeys.containsKey(inviteInformation[0])){
 						sessionKeys.remove(inviteInformation[0]);
@@ -1029,6 +1038,7 @@ public class Athena {
 			if ((clientResource.tabPanels.containsKey(user))) {
 				print = (MapTextArea) clientResource.tabPanels.get(user);
 				print.writeToTextArea("DirectProtect session has been terminated.\n", print.getSetHeaderFont(Color.gray));
+				print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
            }
 		}}catch(Exception e){}
 	}

@@ -1790,9 +1790,10 @@ public class CommunicationInterface extends JFrame {
 class MapTextArea extends JFrame {
 
 	private static final long serialVersionUID = 2557115166519071868L;
-	private int chatUID = -1;
-	private boolean isChat = false;
-
+	//private int chatUID = -1;
+	//private boolean isChat = false;
+	public JLabel encType = new JLabel("Encryption Type: RSA - DirectProtect Inactive");
+	
 	// The user name associated with the tab
 	private String username = null;
 
@@ -1864,11 +1865,11 @@ class MapTextArea extends JFrame {
 
 
 		JScrollPane mySP = new JScrollPane(myJEP);
-		mySP.setBounds(10, 10, 559, 420);
+		mySP.setBounds(10, 10, 559, 410); //9,0
 		mySP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		mySP.setOpaque(true);
 		myJPanel.add(mySP);
-
+		
 		//Create the text pane
 		StyledEditorKit miniKit = new StyledEditorKit();
 		myTP = new JTextPane();
@@ -1879,6 +1880,13 @@ class MapTextArea extends JFrame {
 		myJPanel.add(myTP);
 
 		uniqueIDHash.put(myJEP.getDocument(), myJPanel);
+
+		if(Athena.sessionKeys.containsKey(user)){
+			encType.setText("Encryption Type: AES - DirectProtect Active");
+		}
+		encType.setBounds(11,418,300,20);
+		encType.setVisible(true);
+		myJPanel.add(encType);
 
 		//Register the spell checker in the text field
 		if (spellCheckFlag) {
