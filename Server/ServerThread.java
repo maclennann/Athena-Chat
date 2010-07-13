@@ -391,15 +391,17 @@ public class ServerThread extends Thread {
 		try{
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			String usernameResult = decryptServerPrivate(serverDin.readUTF());
+			String fileName = decryptServerPrivate(serverDin.readUTF());
 			String success = decryptServerPrivate(serverDin.readUTF());
-			String inviteString = username + "," + success;
+			String resultString = username + "," + fileName + "," + success;
 
-			sendMessage(usernameResult, "FileResult", encryptServerPrivate(inviteString));
+			sendMessage(usernameResult, "FileResult", encryptServerPrivate(resultString));
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 	private void fileInvite() {
 		try {
 			if (debug == 1) {
@@ -426,6 +428,7 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
 	private void dPResult() {
 		try{
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
