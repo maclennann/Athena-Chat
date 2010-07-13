@@ -107,7 +107,7 @@ public class Athena {
     private static ServerSocket directProtectSocket; //Direct protect socket!
     private static Socket dpSocket;
     //private static RSAPrivateKeySpec usersPrivate; //User's public key
-    private static Hashtable<String, SecretKeySpec> sessionKeys = new Hashtable<String, SecretKeySpec>();
+    public static Hashtable<String, SecretKeySpec> sessionKeys = new Hashtable<String, SecretKeySpec>();
     //End private variables
 
     /**
@@ -731,7 +731,7 @@ public class Athena {
 				else{
 					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
-						print.writeToTextArea("Invitation Refused!\n", print.getSetHeaderFont(Color.gray));
+						print.writeToTextArea("DirectProtect session aborted!\n", print.getSetHeaderFont(Color.gray));
 					}
 					if(sessionKeys.containsKey(inviteInformation[0])){
 						sessionKeys.remove(inviteInformation[0]);
@@ -1019,6 +1019,19 @@ public class Athena {
         }
     }
 
+	public static void leaveDP(String user) {
+		try{
+		if(sessionKeys.containsKey(user)){
+			sessionKeys.remove(user);
+			systemMessage("20");
+            c2sdout.writeUTF(encryptServerPublic(user));
+            c2sdout.writeUTF(encryptServerPublic("no"));
+			if ((clientResource.tabPanels.containsKey(user))) {
+				print = (MapTextArea) clientResource.tabPanels.get(user);
+				print.writeToTextArea("DirectProtect session has been terminated.\n", print.getSetHeaderFont(Color.gray));
+           }
+		}}catch(Exception e){}
+	}
     /**
      *
      */

@@ -333,7 +333,7 @@ public class CommunicationInterface extends JFrame {
 		// Create button Encryption -> Export Key Pair
 		JMenuItem exportKey = new JMenuItem("Export Key Pair");
 		encryption.add(exportKey);
-		JMenuItem startDP = new JMenuItem("Start Direct Protect in current tab");
+		JMenuItem startDP = new JMenuItem("Start/Stop DirectProtect Here");
 		encryption.add(startDP);
 
 		// Create the view menu
@@ -378,8 +378,13 @@ public class CommunicationInterface extends JFrame {
 		// ActionListener to make the disconnect menu item disconnect
 		startDP.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				System.out.println("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
-				Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
+				if(!Athena.sessionKeys.containsKey(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()))){
+					System.out.println("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
+					Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
+				}
+				else {
+					Athena.leaveDP(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
+				}
 			}
 		});
 
