@@ -749,42 +749,45 @@ public class Athena {
 			 else if (fromUserDecrypted.equals("FileInvite")) {
                 //Read in the information
                 String inviteInformation = decryptServerPublic(encryptedMessage);
-                //inviteInformationArray = inviteInformation.split(",");
+                inviteInformationArray = inviteInformation.split(",");
 
                 //Open up an alert!
 				if ((clientResource.tabPanels.containsKey(inviteInformation))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
-                        print.writeToTextArea(inviteInformation[0] + " wants to send us a file. File name: " + inviteInformation[1] + "\n", print.getSetHeaderFont(Color.gray));
+                        print.writeToTextArea(inviteInformationArray[0] + " wants to send us a file. File name: " + inviteInformationArray[1] + "\n", print.getSetHeaderFont(Color.gray));
                 }
-                int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to direct protect with: " + inviteInformation + ".");
+                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " wants to send us a file. File name: " + inviteInformationArray[1] + ".");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
-					systemMessage("20");
+					systemMessage("22");
 					c2sdout.writeUTF(encryptServerPublic(inviteInformation));
 					c2sdout.writeUTF(encryptServerPublic("yes"));
-
-					//Put a dummy entry in the hashtable until we get the real session key
-                    SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(), "AES");
-                    sessionKeys.put(inviteInformation, nothing);
-					//dpSocket = new Socket(inviteInformationArray[1], 7779);
-					//dpInputStream = new DataInputStream(dpSocket.getInputStream());
-                    if ((clientResource.tabPanels.containsKey(inviteInformation))) {
-                        print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
-                        print.writeToTextArea("Joining Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
-						print.encType.setText("Encryption Type: AES - DirectProtect Active");
-					}
-                }
+					receiveFile(); //Receieve the file!
+				}
 				else {
-					if ((clientResource.tabPanels.containsKey(inviteInformation))) {
-                        print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
-                        print.writeToTextArea("Aborting Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
-						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
-					}
-                   //Send server a confirm message
-                    systemMessage("20");
+					//Send server a confirm message
+                    systemMessage("22");
                     c2sdout.writeUTF(encryptServerPublic(inviteInformation));
                     c2sdout.writeUTF(encryptServerPublic("no"));
                 }
+            } else if (fromUserDecrypted.equals("FileResult")) {
+                decryptedMessage = decryptServerPublic(encryptedMessage);
+                String[] inviteInformation = decryptedMessage.split(",");
+				if(inviteInformation[2].equals("yes")){
+					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
+						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
+						print.writeToTextArea("File transfer session started!\n", print.getSetHeaderFont(Color.gray));
+						print.encType.setText("Encryption Type: AES - DirectProtect Active");
+					}
+				}
+				else{
+					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
+						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
+						print.writeToTextArea("File transfer session aborted!\n", print.getSetHeaderFont(Color.gray));
+						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
+					}
+				}
+
             } else { // Need this else in order to hide the system messages coming from Aegis
                 //TODO Implement digital signatures
                 decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
@@ -1196,7 +1199,7 @@ public class Athena {
 		systemMessage("21");
 		//Send the server the user to invite, the filename and then the file size
         c2sdout.writeUTF(encryptServerPublic(toUser));			
-		c2sdout.writeUTF(encryptServerPublic(myFile.getName()));
+		c2sdout.writeUTF(encryptServerPublic(myFile.getPath()));
 		c2sdout.writeUTF(encryptServerPublic((String.valueOf(fileSize))));
 
         byte[] mybytearray = new byte[(int) myFile.length()];
