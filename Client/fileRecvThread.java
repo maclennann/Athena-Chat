@@ -34,10 +34,12 @@ public class fileRecvThread extends Thread {
 
 	public void run() {
 		try{
+			//Get rid of the leading /
+			String socketIPReplace = socketIP.replace("/", "");
 			//JOptionPane.showMessageDialog(null, "Receiving a file.");
 			Socket fileSocket = null;
 			while(fileSocket == null){
-				fileSocket = new Socket(socketIP, 7779);//"71.232.78.143", 7779);
+				fileSocket = new Socket(socketIPReplace, 7779);//"71.232.78.143", 7779);
 			}
 			//JOptionPane.showMessageDialog(null, "Connected to user.");
 			InputStream is = fileSocket.getInputStream();

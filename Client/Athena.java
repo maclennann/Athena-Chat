@@ -1257,6 +1257,7 @@ public class Athena {
     public static void receiveFile(String fromUser, String filePath, String fileSize, String sendersExternal, String sendersLocal) throws IOException {
 		//Find the external IP of me
 		systemMessage("13");
+		System.out.println("IP Requested, waiting for result..");
 		String myExternalIP = decryptServerPublic(c2sdin.readUTF());
 		if(myExternalIP.equals(sendersExternal)) {
 			System.out.println("SAME NETWORK!\n" + sendersExternal + "\n" + myExternalIP);
