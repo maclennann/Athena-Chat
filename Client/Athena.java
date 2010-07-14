@@ -1216,6 +1216,14 @@ public class Athena {
         //TODO Send the file!
         //Grab the file size
         int fileSize = (int) myFile.length();
+		byte[] mybytearray = new byte[(int) myFile.length()];
+
+		FileInputStream fis = new FileInputStream(myFile);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		bis.read(mybytearray, 0, mybytearray.length);
+
+		byte[] encryptedFile = encryptAES(toUser,mybytearray);
+		fileSize = (int)encryptedFile.length;
 
         //Use process message to initiate the file transfer
  
@@ -1248,10 +1256,10 @@ public class Athena {
 		//TODO COMMENTS JESUS
 		//Straight up string encryption/decryption
 		String test = "fuck";
-		String test2 = encryptAES(toUser,test);
-		String test3 = decryptAES(toUser,test2);
 		System.out.println("TESTString:"+test);
+		String test2 = encryptAES(toUser,test);
 		System.out.println("TESTString:"+test2);
+		String test3 = decryptAES(toUser,test2);
 		System.out.println("TESTString:"+test3);
 
 		//I'm able to encrypt and decrypt bytes
@@ -1262,7 +1270,8 @@ public class Athena {
 		byte[] testBytes = new BigInteger(test5).toByteArray();
 		String test6 = new String(decryptAES(toUser,testBytes));
 		System.out.println("TESTBytes:"+test6+"\n\n\n\n\n\n\n\n\n\n");
-		
+
+
 		System.out.println("Original file: "+new String(mybytearray));
 		byte[] encryptedFile = encryptAES(toUser,mybytearray);
 		System.out.println("Encrypted file: "+new String(encryptedFile));
@@ -1270,14 +1279,14 @@ public class Athena {
 		System.out.println("Something: "+String.valueOf(something));
 		byte[] decryptedFile = decryptAES(toUser,something);
 		System.out.println("Decrypted file: "+new String(decryptedFile));
-
-
+		
 		if (debug >= 1) {
 			System.out.println("Sending...");
 		}
-		//os.write(encryptedFile, 0, encryptedFile.length);
+		os.write(encryptedFile, 0, encryptedFile.length);
+		JOptionPane.showMessageDialog(null,"Server: "+encryptedFile.length);
 		os.flush();
-
+		os.close();
 
 	}
     /**
@@ -1309,32 +1318,24 @@ public class Athena {
 		int current = bytesRead;
 		JOptionPane.showMessageDialog(null, "Read "+current+"bytes on first read.");
 		//Reconstruct the file
-		do {
-			try {
-				bytesRead =	is.read(mybytearray, current, (mybytearray.length - current));
-				//JOptionPane.showMessageDialog(null, "Read "+bytesRead+" more bytes.");
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
-			if (bytesRead > 0) {
-				current += bytesRead;
-			}
-		} while (bytesRead > 0);
+		do { //System.out.println("loop"); 
+			bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
+			//System.out.println(bytesRead);
+			if(bytesRead >= 0) current += bytesRead;
+		} while(bytesRead != 0);
 		JOptionPane.showMessageDialog(null, "Done reading bytes, read "+current+" bytes.");
-		//String encryptedFile = is.readUTF(); //Encrypted
-		//String fileString = decryptAES(fromUser, encryptedFile); //Encrpyted
-		//String fileString = is.readUTF();
-		
-		//BigInteger fileBInt = new BigInteger(fileString);
-		//mybytearray = fileBInt.toByteArray();
-		//TODO COMMENTS!!
-		
-		byte[] decryptedFile = decryptAES(fromUser, mybytearray);
 
-		byte[] decryptedFileByteArray = decryptedFile;
+		System.out.println("Encrypted file: "+new String(mybytearray));
+		byte[] something = new BigInteger(mybytearray).toByteArray();
+		System.out.println("Something: "+String.valueOf(something));
+		byte[] decryptedFile = decryptAES(toUser,something);
+		System.out.println("Decrypted file: "+new String(decryptedFile));
 
-        bos.write(decryptedFileByteArray);
+//		byte[] decryptedFile = decryptAES(fromUser, mybytearray);
+
+		//byte[] decryptedFileByteArray = decryptedFile;
+
+        bos.write(decryptedFile);
         bos.flush();
 		JOptionPane.showMessageDialog(null, "Done/Closing file file.");
 
