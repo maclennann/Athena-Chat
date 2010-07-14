@@ -775,7 +775,7 @@ public class Athena {
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 
-					receiveFile(inviteInformationArray[0],inviteInformationArray[1]); //Receieve the file!
+					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2]); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
@@ -1240,41 +1240,36 @@ public class Athena {
 
 		ServerSocket fileSS = new ServerSocket(7779);
 		Socket fileSocket = fileSS.accept();
-		DataOutputStream fileDOS = new DataOutputStream(fileSocket.getOutputStream());
-		DataInputStream fileDIS = new DataInputStream(fileSocket.getInputStream());
-		fileDOS.writeUTF(String.valueOf(myFile.length()));
-		byte[] mybytearray = new byte[(int) myFile.length()];
-        FileInputStream fis = new FileInputStream(myFile);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        bis.read(mybytearray, 0, mybytearray.length);
-        if (debug >= 1) {
-            System.out.println("Sending...");
-        }
-		//fileDOS.writeUTF(String.valueOf(new BigInteger(mybytearray))); //unencrypted
-
+		OutputStream os = fileSocket.getOutputStream();
 		
-        fileDOS.writeUTF(encryptAES(toUser, String.valueOf(new BigInteger(mybytearray)))); //encrpyted
-        fileDOS.flush();
+		byte[] mybytearray = new byte[(int) myFile.length()];
+		
+		FileInputStream fis = new FileInputStream(myFile);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		bis.read(mybytearray, 0, mybytearray.length);
+		
+		if (debug >= 1) {
+			System.out.println("Sending...");
+		}
+		os.write(mybytearray, 0, mybytearray.length);
+		os.flush();
+
+
 	}
     /**
      * This method receives a file from a user (must initialize a direct-connect first!)
      * @throws IOException
      */
-    public static void receiveFile(String fromUser, String filePath) throws IOException {
+    public static void receiveFile(String fromUser, String filePath, String fileSize) throws IOException {
 		JOptionPane.showMessageDialog(null, "Receiving a file.");
 		Socket fileSocket = null;
 		while(fileSocket == null){
-			fileSocket = new Socket("71.232.78.143", 7779);
+			fileSocket = new Socket("127.0.0.1", 7779);
 		}
 		JOptionPane.showMessageDialog(null, "Connected to user.");
-		DataInputStream is = new DataInputStream(fileSocket.getInputStream());
-
-        //Grab the file size
-        int filesize = Integer.parseInt(is.readUTF());
-        //Grab the file name
-        //String filename = c2sdin.readUTF();
-		JOptionPane.showMessageDialog(null, "Got file size.");
-        byte[] mybytearray = new byte[filesize];
+		InputStream is = fileSocket.getInputStream();
+		
+        byte[] mybytearray = new byte[Integer.parseInt(fileSize)];
 
 		//Get the filename
 		String filePathReplace = filePath.replace("\\", ",");
@@ -1283,34 +1278,45 @@ public class Athena {
 
 		//TODO Check to see if the downloads folder exists! 
         FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
-		JOptionPane.showMessageDialog(null, "Opened file for wriitng.");
+		JOptionPane.showMessageDialog(null, "Opened file for writiiiiing.");
         BufferedOutputStream bos = new BufferedOutputStream(fos);
-		String encryptedFile = is.readUTF(); //Encrypted
-		String fileString = decryptAES(fromUser, encryptedFile); //Encrpyted
+		JOptionPane.showMessageDialog(null, "Reading " +fileSize+" bytes.");
+		int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+		int current = bytesRead;
+		JOptionPane.showMessageDialog(null, "Read "+current+"bytes on first read.");
+		//Reconstruct the file
+		do {
+			try {
+				bytesRead =	is.read(mybytearray, current, (mybytearray.length - current));
+				//JOptionPane.showMessageDialog(null, "Read "+bytesRead+" more bytes.");
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+			if (bytesRead > 0) {
+				current += bytesRead;
+			}
+		} while (bytesRead > 0);
+		JOptionPane.showMessageDialog(null, "Done reading bytes, read "+current+" bytes.");
+		//String encryptedFile = is.readUTF(); //Encrypted
+		//String fileString = decryptAES(fromUser, encryptedFile); //Encrpyted
 		//String fileString = is.readUTF();
 		
-		BigInteger fileBInt = new BigInteger(fileString);
-		mybytearray = fileBInt.toByteArray();
-       /* int bytesRead = is.read(mybytearray, 0, mybytearray.length);
-        int current = bytesRead;
-
-        //Reconstruct the file
-        do {
-            try {
-                bytesRead =
-                        is.read(mybytearray, current, (mybytearray.length - current));
-            } catch (IOException e) {
-
-                e.printStackTrace();
-            }
-            if (bytesRead >= 0) {
-                current += bytesRead;
-            }
-        } while (bytesRead > -1);
-*/
+		//BigInteger fileBInt = new BigInteger(fileString);
+		//mybytearray = fileBInt.toByteArray();
         bos.write(mybytearray);
         bos.flush();
 		JOptionPane.showMessageDialog(null, "Done/Closing file file.");
+
+
+		/* byte[] mybytearray = new byte[filesize];
+		InputStream is = c2ssocket.getInputStream();
+		FileOutputStream fos = new FileOutputStream(filename);
+		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		
+		bos.write(mybytearray, 0, current);
+		bos.flush();*/
+
 
 
     }
