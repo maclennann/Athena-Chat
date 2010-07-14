@@ -33,15 +33,12 @@ public class fileRecvThread extends Thread {
 
 	public void run() {
 		try{
-
-
-
-			JOptionPane.showMessageDialog(null, "Receiving a file.");
+			//JOptionPane.showMessageDialog(null, "Receiving a file.");
 			Socket fileSocket = null;
 			while(fileSocket == null){
 				fileSocket = new Socket("127.0.0.1",7779);//"71.232.78.143", 7779);
 			}
-			JOptionPane.showMessageDialog(null, "Connected to user.");
+			//JOptionPane.showMessageDialog(null, "Connected to user.");
 			InputStream is = fileSocket.getInputStream();
 
 			byte[] mybytearray = new byte[Integer.parseInt(fileSize)];
@@ -53,12 +50,12 @@ public class fileRecvThread extends Thread {
 
 			//TODO Check to see if the downloads folder exists!
 			FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
-			JOptionPane.showMessageDialog(null, "Opened file for writiiiiing.");
+			//JOptionPane.showMessageDialog(null, "Opened file for writiiiiing.");
 			Progress frame = new Progress(filePathArray[arrSize-1],Integer.parseInt(fileSize));
 			frame.pack();
 			frame.setVisible(true);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			JOptionPane.showMessageDialog(null, "Reading " +fileSize+" bytes.");
+			//JOptionPane.showMessageDialog(null, "Reading " +fileSize+" bytes.");
 			StopWatch s = new StopWatch();
 			s.start();
 			int bytesRead = is.read(mybytearray, 0, mybytearray.length);
@@ -67,7 +64,7 @@ public class fileRecvThread extends Thread {
 			//Reconstruct the file
 			//TODO Write in chunks so we can write large files withouth running out of memory
 			do { //System.out.println("loop");
-				frame.iterate(current);
+				frame.iterate(current,(int)s.getElapsedTime());
 				bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
 
 				//System.out.println(bytesRead);
@@ -97,6 +94,11 @@ public class fileRecvThread extends Thread {
 
 			bos.write(decryptedFile);
 			bos.flush();
+			bos.close();
+			fos.close();
+			is.close();
+			fileSocket.close();
+			System.gc();
 
 			System.out.println("elapsed time in milliseconds: " + s.getElapsedTime());
 		}catch(Exception e){}

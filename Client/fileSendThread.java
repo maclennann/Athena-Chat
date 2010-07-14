@@ -55,6 +55,9 @@ public class fileSendThread extends Thread {
 			JOptionPane.showMessageDialog(null,"Server: "+encryptedFile.length);
 			os.flush();
 			os.close();
+			fileSocket.close();
+			fileSS.close();
+			System.gc();
 		}catch(Exception e){}
 	}
 }

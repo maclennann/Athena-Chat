@@ -750,13 +750,15 @@ public class Athena {
                 //Read in the information
                 String inviteInformation = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
                 inviteInformationArray = inviteInformation.split(",");
+				String filePathReplace = inviteInformationArray[1].replace("\\", ",");
+				String[] filePathArray = filePathReplace.split(",");
 
-                //Open up an alert!
-				if ((clientResource.tabPanels.containsKey(inviteInformation))) {
-                        print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
-                        print.writeToTextArea(inviteInformationArray[0] + " wants to send us a file. File name: " + inviteInformationArray[1] + "\n", print.getSetHeaderFont(Color.gray));
+				//Open up an alert!
+				if ((clientResource.tabPanels.containsKey(inviteInformationArray[0]))) {
+                        print = (MapTextArea) clientResource.tabPanels.get(inviteInformationArray[0]);
+                        print.writeToTextArea(inviteInformationArray[0] + " wants to send us a file.\n", print.getSetHeaderFont(Color.gray));
                 }
-                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " wants to send us a file. File name: " + inviteInformationArray[1] + ".");
+                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " wants to send us a file.\nFile name: " + filePathArray[filePathArray.length-1] + "\nFile Size: "+Integer.parseInt(inviteInformationArray[2])/1000+"kb\n.");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
 					systemMessage("22");

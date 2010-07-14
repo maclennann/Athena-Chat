@@ -8,6 +8,7 @@ public class Progress extends JFrame {
     JTextArea out;
     JButton find;
 	JLabel filename;
+	JLabel elapsedTime;
     Thread runner;
     int num = 0;
 
@@ -18,17 +19,21 @@ public class Progress extends JFrame {
         JPanel pane = new JPanel();
         pane.setLayout(new FlowLayout());
 		filename = new JLabel(fileName+": ");
+		elapsedTime = new JLabel("Time: 0 sec");
         current = new JProgressBar(0, total);
         current.setValue(0);
         current.setStringPainted(true);
 		pane.add(filename);
         pane.add(current);
+		pane.add(elapsedTime);
         setContentPane(pane);
     }
 
 
-    public void iterate(int currNum) {
+    public void iterate(int currNum, int currTime) {
         current.setValue(currNum);
+		elapsedTime.setText("Time: "+currTime+" ms");
+		this.pack();
     }
 
   /*  public static void main(String[] arguments) {
