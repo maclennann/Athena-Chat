@@ -1256,23 +1256,22 @@ public class Athena {
 
 		//I'm able to encrypt and decrypt bytes
 		String test4 = "fuck";
-		System.out.println("TESTBytes:"+test4);
+		System.out.println("\n\n\n\n\n\n\n\nTESTBytes:"+test4);
 		byte[] test5 = encryptAES(toUser,test4.getBytes());
 		System.out.println("TESTBytes:"+test5);
 		byte[] testBytes = new BigInteger(test5).toByteArray();
 		String test6 = new String(decryptAES(toUser,testBytes));
-		System.out.println("TESTBytes:"+test6);
+		System.out.println("TESTBytes:"+test6+"\n\n\n\n\n\n\n\n\n\n");
+		
+		System.out.println("Original file: "+new String(mybytearray));
+		byte[] encryptedFile = encryptAES(toUser,mybytearray);
+		System.out.println("Encrypted file: "+new String(encryptedFile));
+		byte[] something = new BigInteger(encryptedFile).toByteArray();
+		System.out.println("Something: "+String.valueOf(something));
+		byte[] decryptedFile = decryptAES(toUser,something);
+		System.out.println("Decrypted file: "+new String(decryptedFile));
 
-		//Shit doesn't work
-		BigInteger fileInt = new BigInteger(mybytearray);
-		String fileString = String.valueOf(fileInt);
-		String encryptedFile = encryptAES(toUser, fileString);
-		byte[] encryptedFileBytes = new BigInteger(encryptedFile).toByteArray();
-		byte[] decryptedFile = decryptAES(toUser, encryptedFileBytes);
-		System.out.println("OriginalFile: "+new String(mybytearray));
-		System.out.println("EncryptedFile: "+encryptedFile);
-		System.out.println("DecryptedFile: "+new String(decryptedFile));
-		System.out.println("TOUSER: "+toUser);
+
 		if (debug >= 1) {
 			System.out.println("Sending...");
 		}
