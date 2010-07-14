@@ -1198,10 +1198,16 @@ public class Athena {
  
 		systemMessage("21");
 		//Send the server the user to invite, the filename and then the file size
-        c2sdout.writeUTF(encryptServerPublic(toUser));			
-		c2sdout.writeUTF(encryptServerPublic(myFile.getPath()));
-		c2sdout.writeUTF(encryptServerPublic((String.valueOf(fileSize))));
+		String inviteString = new String(username + "," + myFile.getPath() + "," + String.valueOf(fileSize));
 
+		//Grab the other user's public key from file
+		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
+        //Encrypt the toUser with the Server's public key and send it to the server
+        //Encrypt the message with the toUser's public key and send it to the server
+        BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(inviteString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+        c2sdout.writeUTF(encryptServerPublic(toUser));			
+		c2sdout.writeUTF(messageCipher.toString());
+		
        /* byte[] mybytearray = new byte[(int) myFile.length()];
         FileInputStream fis = new FileInputStream(myFile);
         BufferedInputStream bis = new BufferedInputStream(fis);
