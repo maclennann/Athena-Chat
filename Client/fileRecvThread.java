@@ -59,6 +59,7 @@ public class fileRecvThread extends Thread {
 			int current = bytesRead;
 			//JOptionPane.showMessageDialog(null, "Read "+current+"bytes on first read.");
 			//Reconstruct the file
+			//TODO Write in chunks so we can write large files withouth running out of memory
 			do { //System.out.println("loop");
 				bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
 

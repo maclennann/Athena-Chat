@@ -38,6 +38,8 @@ public class fileSendThread extends Thread {
 			Socket fileSocket = fileSS.accept();
 			OutputStream os = fileSocket.getOutputStream();
 
+			//TODO file needs to be chunked so we can send
+			//     large files without running out of memory
 			byte[] mybytearray = new byte[(int) myFile.length()];
 
 			FileInputStream fis = new FileInputStream(myFile);
