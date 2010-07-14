@@ -775,7 +775,7 @@ public class Athena {
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 
-					//receiveFile(); //Receieve the file!
+					receiveFile(); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
@@ -802,6 +802,7 @@ public class Athena {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("File transfer session started!\n", print.getSetHeaderFont(Color.gray));
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
+						transferFile(new File(inviteInformation[1]));
 					}
 				}
 				else{
@@ -910,9 +911,7 @@ public class Athena {
                             // Use the static class member "player" from class AudioPlayer to play
                             AudioPlayer.player.start(as);
                         }
-                    } else if (decryptedMessage.equals("Incoming file transfer...")) {
-                        receiveFile();
-                    } // If enabled, open an input stream  to the audio file.
+                    }  // If enabled, open an input stream  to the audio file.
                     else if (getEnableSounds()) {
                         InputStream in = new FileInputStream("sounds/recvMesg.wav");
                         // Create an AudioStream object from the input stream.
@@ -1231,37 +1230,53 @@ public class Athena {
         BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(inviteString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
         c2sdout.writeUTF(encryptServerPublic(toUser));			
 		c2sdout.writeUTF(messageCipher.toString());
-		
-       /* byte[] mybytearray = new byte[(int) myFile.length()];
+    }
+
+	public static void transferFile(File myFile) throws IOException {
+		ServerSocket fileSS = new ServerSocket(7779);
+		Socket fileSocket = fileSS.accept();
+		DataOutputStream fileDOS = new DataOutputStream(fileSocket.getOutputStream());
+		DataInputStream fileDIS = new DataInputStream(fileSocket.getInputStream());
+		fileDOS.writeUTF(String.valueOf(myFile.length()));
+		byte[] mybytearray = new byte[(int) myFile.length()];
         FileInputStream fis = new FileInputStream(myFile);
         BufferedInputStream bis = new BufferedInputStream(fis);
         bis.read(mybytearray, 0, mybytearray.length);
-        OutputStream os = c2ssocket.getOutputStream(); //TODO use newly created socket for this!!
         if (debug >= 1) {
             System.out.println("Sending...");
         }
-        os.write(mybytearray, 0, mybytearray.length);
-        os.flush();*/	
-		
-
-    }
-
+        fileDOS.writeUTF(String.valueOf(new BigInteger(mybytearray)));
+        fileDOS.flush();
+	}
     /**
      * This method receives a file from a user (must initialize a direct-connect first!)
      * @throws IOException
      */
     public static void receiveFile() throws IOException {
-        //Grab the file size
-        int filesize = c2sdin.readInt();
-        //Grab the file name
-        String filename = c2sdin.readUTF();
+		JOptionPane.showMessageDialog(null, "Receiving a file.");
+		Socket fileSocket = null;
+		while(fileSocket == null){
+			fileSocket = new Socket("127.0.0.1", 7779);
+		}
+		JOptionPane.showMessageDialog(null, "Connected to user.");
+		DataInputStream is = new DataInputStream(fileSocket.getInputStream());
 
-       /* byte[] mybytearray = new byte[filesize];
-        InputStream is = c2ssocket.getInputStream();
-        FileOutputStream fos = new FileOutputStream(filename);
+        //Grab the file size
+        int filesize = Integer.parseInt(is.readUTF());
+        //Grab the file name
+        //String filename = c2sdin.readUTF();
+		JOptionPane.showMessageDialog(null, "Got file size.");
+        byte[] mybytearray = new byte[filesize];
+        
+        FileOutputStream fos = new FileOutputStream("OMGITZAFILE.txt");
+		JOptionPane.showMessageDialog(null, "Opened file for wriitng.");
         BufferedOutputStream bos = new BufferedOutputStream(fos);
-        int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+		String fileString = is.readUTF();
+		BigInteger fileBInt = new BigInteger(fileString);
+		mybytearray = fileBInt.toByteArray();
+       /* int bytesRead = is.read(mybytearray, 0, mybytearray.length);
         int current = bytesRead;
+
         //Reconstruct the file
         do {
             try {
@@ -1275,8 +1290,10 @@ public class Athena {
                 current += bytesRead;
             }
         } while (bytesRead > -1);
-        bos.write(mybytearray, 0, current);
-        bos.flush();*/
+*/
+        bos.write(mybytearray);
+        bos.flush();
+		JOptionPane.showMessageDialog(null, "Done/Closing file file.");
 
 
     }
