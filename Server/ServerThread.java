@@ -391,11 +391,9 @@ public class ServerThread extends Thread {
 		try{
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			String usernameResult = decryptServerPrivate(serverDin.readUTF());
-			String fileName = decryptServerPrivate(serverDin.readUTF());
-			String success = decryptServerPrivate(serverDin.readUTF());
-			String resultString = username + "," + fileName + "," + success;
+			String resultString = serverDin.readUTF();
 
-			sendMessage(usernameResult, "FileResult", encryptServerPrivate(resultString));
+			sendMessage(usernameResult, "FileResult", resultString);
 
 		} catch (Exception e) {
 			e.printStackTrace();

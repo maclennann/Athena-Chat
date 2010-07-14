@@ -760,15 +760,28 @@ public class Athena {
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
 					systemMessage("22");
-					c2sdout.writeUTF(encryptServerPublic(inviteInformation));
-					c2sdout.writeUTF(encryptServerPublic("yes"));
+					c2sdout.writeUTF(encryptServerPublic(inviteInformationArray[0]));
+					String inviteString = username+","+inviteInformationArray[1]+","+"yes";
+					//Grab the other user's public key from file
+					RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
+					//Encrypt the toUser with the Server's public key and send it to the server
+					//Encrypt the message with the toUser's public key and send it to the server
+					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(inviteString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+					c2sdout.writeUTF(messageCipher.toString());
+
 					receiveFile(); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
                     systemMessage("22");
-                    c2sdout.writeUTF(encryptServerPublic(inviteInformation));
-                    c2sdout.writeUTF(encryptServerPublic("no"));
+                    c2sdout.writeUTF(encryptServerPublic(inviteInformationArray[0]));
+                    String inviteString = username+","+inviteInformationArray[1]+","+"yes";
+					//Grab the other user's public key from file
+					RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
+					//Encrypt the toUser with the Server's public key and send it to the server
+					//Encrypt the message with the toUser's public key and send it to the server
+					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(inviteString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+					c2sdout.writeUTF(messageCipher.toString());
                 }
             } else if (fromUserDecrypted.equals("FileResult")) {
                 decryptedMessage = decryptServerPublic(encryptedMessage);
@@ -777,14 +790,14 @@ public class Athena {
 					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("File transfer session started!\n", print.getSetHeaderFont(Color.gray));
-						print.encType.setText("Encryption Type: AES - DirectProtect Active");
+						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 				}
 				else{
 					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("File transfer session aborted!\n", print.getSetHeaderFont(Color.gray));
-						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
+						//print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
 					}
 				}
 
@@ -1198,7 +1211,7 @@ public class Athena {
  
 		systemMessage("21");
 		//Send the server the user to invite, the filename and then the file size
-		String inviteString = new String(username + "," + myFile.getPath() + "," + String.valueOf(fileSize));
+		String inviteString = username + "," + myFile.getPath() + "," + String.valueOf(fileSize);
 
 		//Grab the other user's public key from file
 		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
