@@ -748,7 +748,7 @@ public class Athena {
             }
 			 else if (fromUserDecrypted.equals("FileInvite")) {
                 //Read in the information
-                String inviteInformation = decryptServerPublic(encryptedMessage);
+                String inviteInformation = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
                 inviteInformationArray = inviteInformation.split(",");
 
                 //Open up an alert!
@@ -769,22 +769,33 @@ public class Athena {
 					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(inviteString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 					c2sdout.writeUTF(messageCipher.toString());
 
+					if ((clientResource.tabPanels.containsKey(inviteInformationArray[0]))) {
+						print = (MapTextArea) clientResource.tabPanels.get(inviteInformationArray[0]);
+						print.writeToTextArea("File transfer session started!\n", print.getSetHeaderFont(Color.gray));
+						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
+					}
+
 					//receiveFile(); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
                     systemMessage("22");
                     c2sdout.writeUTF(encryptServerPublic(inviteInformationArray[0]));
-                    String inviteString = username+","+inviteInformationArray[1]+","+"yes";
+                    String inviteString = username+","+inviteInformationArray[1]+","+"no";
 					//Grab the other user's public key from file
 					RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
 					//Encrypt the toUser with the Server's public key and send it to the server
 					//Encrypt the message with the toUser's public key and send it to the server
 					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(inviteString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 					c2sdout.writeUTF(messageCipher.toString());
+					if ((clientResource.tabPanels.containsKey(inviteInformationArray[0]))) {
+						print = (MapTextArea) clientResource.tabPanels.get(inviteInformationArray[0]);
+						print.writeToTextArea("File transfer session aborted!\n", print.getSetHeaderFont(Color.gray));
+						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
+					}
                 }
             } else if (fromUserDecrypted.equals("FileResult")) {
-                decryptedMessage = decryptServerPublic(encryptedMessage);
+                decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
                 String[] inviteInformation = decryptedMessage.split(",");
 				if(inviteInformation[2].equals("yes")){
 					if ((clientResource.tabPanels.containsKey(inviteInformation[0]))) {
