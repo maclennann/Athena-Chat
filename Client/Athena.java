@@ -1252,8 +1252,8 @@ public class Athena {
         }
 		//fileDOS.writeUTF(String.valueOf(new BigInteger(mybytearray))); //unencrypted
 
-		BigInteger fileCipher = new BigInteger(RSACrypto.rsaEncryptPublic(String.valueOf(new BigInteger(mybytearray)), toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
-        fileDOS.writeUTF(fileCipher.toString()); //encrpyted
+		
+        fileDOS.writeUTF(encryptAES(toUser, mybytearray.toString())); //encrpyted
         fileDOS.flush();
 	}
     /**
@@ -1261,7 +1261,6 @@ public class Athena {
      * @throws IOException
      */
     public static void receiveFile() throws IOException {
-		RSAPrivateKeySpec usersPrivateKey = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 		JOptionPane.showMessageDialog(null, "Receiving a file.");
 		Socket fileSocket = null;
 		while(fileSocket == null){
@@ -1281,7 +1280,7 @@ public class Athena {
 		JOptionPane.showMessageDialog(null, "Opened file for wriitng.");
         BufferedOutputStream bos = new BufferedOutputStream(fos);
 		String encryptedFile = is.readUTF(); //Encrypted
-		String fileString = RSACrypto.rsaDecryptPrivate(encryptedFile.getBytes(), usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent()); //Encrypted
+		String fileString = decryptAES(username, encryptedFile); //Encrpyted
 		//String fileString = is.readUTF();
 		
 		BigInteger fileBInt = new BigInteger(fileString);
