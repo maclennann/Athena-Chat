@@ -1,4 +1,5 @@
 
+import java.awt.Color;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -80,6 +81,12 @@ public class fileRecvThread extends Thread {
 			} while(bytesRead != 0);
 			//JOptionPane.showMessageDialog(null, "Done reading bytes, read "+current+" bytes.");
 			s.stop();
+			if ((Athena.clientResource.tabPanels.containsKey(fromUser))) {
+					try{
+						MapTextArea print = (MapTextArea) Athena.clientResource.tabPanels.get(fromUser);
+						print.writeToTextArea("Transfer completed in "+s.getElapsedTime()+" ms.\nDecrypting file, please wait...\n", print.getSetHeaderFont(Color.gray));
+					}catch(Exception e){System.out.println("OOOOOOOOOPs");}
+				}
 			//System.out.println("Encrypted file: "+new String(mybytearray));
 			//byte[] something = new BigInteger(mybytearray).toByteArray();
 			//System.out.println("Something: "+String.valueOf(something));
@@ -89,13 +96,19 @@ public class fileRecvThread extends Thread {
 	//		byte[] decryptedFile = decryptAES(fromUser, mybytearray);
 
 			//byte[] decryptedFileByteArray = decryptedFile;
-
+			
 			bos.write(decryptedFile);
 			bos.flush();
 			bos.close();
 			fos.close();
 			is.close();
 			fileSocket.close();
+			if ((Athena.clientResource.tabPanels.containsKey(fromUser))) {
+					try{
+						MapTextArea print = (MapTextArea) Athena.clientResource.tabPanels.get(fromUser);
+						print.writeToTextArea("File decrypted and stored in downloads directory.\n", print.getSetHeaderFont(Color.gray));
+					}catch(Exception e){System.out.println("OOOOOOOOOPs");}
+				}
 			System.gc();
 
 			System.out.println("elapsed time in milliseconds: " + s.getElapsedTime());
