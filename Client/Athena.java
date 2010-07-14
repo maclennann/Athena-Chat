@@ -1253,7 +1253,7 @@ public class Athena {
 		//fileDOS.writeUTF(String.valueOf(new BigInteger(mybytearray))); //unencrypted
 
 		
-        fileDOS.writeUTF(encryptAES(toUser, mybytearray.toString())); //encrpyted
+        fileDOS.writeUTF(encryptAES(toUser, String.valueOf(new BigInteger(mybytearray.toString())))); //encrpyted
         fileDOS.flush();
 	}
     /**
