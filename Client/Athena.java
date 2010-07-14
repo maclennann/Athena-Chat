@@ -1280,7 +1280,7 @@ public class Athena {
 		JOptionPane.showMessageDialog(null, "Opened file for wriitng.");
         BufferedOutputStream bos = new BufferedOutputStream(fos);
 		String encryptedFile = is.readUTF(); //Encrypted
-		String fileString = decryptAES(username, encryptedFile); //Encrpyted
+		String fileString = decryptAES(fromUser, encryptedFile); //Encrpyted
 		//String fileString = is.readUTF();
 		
 		BigInteger fileBInt = new BigInteger(fileString);
