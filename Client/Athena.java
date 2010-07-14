@@ -777,9 +777,11 @@ public class Athena {
 
 					//Check to see if they're on the same network as you!
 					if (inviteInformationArray[3].equals(c2ssocket.getLocalAddress())) { //Same network!!
+					System.out.println("SAME NETWORK!\nMY IP: " + c2ssocket.getLocalAddress() + "\nSENDERS IP: " + inviteInformationArray[3]);
 					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2], inviteInformationArray[4]); //Receieve the file!
 					}
 					else { //Different network :(
+					System.out.println("DIFFERENT NETWORK!\nMY IP: " + c2ssocket.getLocalAddress() + "\nSENDERS IP: " + inviteInformationArray[3]);
 					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2], inviteInformationArray[3]); //Receieve the file!
 					}
 				}
@@ -1237,6 +1239,8 @@ public class Athena {
 		//Send the server the user to invite, the filename and then the file size
 		InetAddress thisIp = InetAddress.getLocalHost();      // Get IP Address
 		String inviteString = username + "," + myFile.getPath() + "," + String.valueOf(fileSize) + "," + c2ssocket.getLocalAddress() + "," + thisIp.getHostAddress();
+		System.out.println("LOCAL EXTERNAL ADDRESS: " + c2ssocket.getLocalAddress());
+		System.out.println("LOCAL LOCAL ADDRESS: " + thisIp.getHostAddress());
 
 		//Grab the other user's public key from file
 		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
