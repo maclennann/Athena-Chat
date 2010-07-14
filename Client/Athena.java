@@ -802,7 +802,7 @@ public class Athena {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("File transfer session started!\n", print.getSetHeaderFont(Color.gray));
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
-						transferFile(new File(inviteInformation[1]));
+						transferFile(new File(inviteInformation[1]),inviteInformation[0]);
 					}
 				}
 				else{
@@ -1240,116 +1240,17 @@ public class Athena {
 		c2sdout.writeUTF(messageCipher.toString());
     }
 
-	public static void transferFile(File myFile) throws IOException {
-		//Grab the other user's public key from file
-		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
-
-		ServerSocket fileSS = new ServerSocket(7779);
-		Socket fileSocket = fileSS.accept();
-		OutputStream os = fileSocket.getOutputStream();
-		
-		byte[] mybytearray = new byte[(int) myFile.length()];
-		
-		FileInputStream fis = new FileInputStream(myFile);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		bis.read(mybytearray, 0, mybytearray.length);
-		//TODO COMMENTS JESUS
-		//Straight up string encryption/decryption
-		String test = "fuck";
-		System.out.println("TESTString:"+test);
-		String test2 = encryptAES(toUser,test);
-		System.out.println("TESTString:"+test2);
-		String test3 = decryptAES(toUser,test2);
-		System.out.println("TESTString:"+test3);
-
-		//I'm able to encrypt and decrypt bytes
-		String test4 = "fuck";
-		System.out.println("\n\n\n\n\n\n\n\nTESTBytes:"+test4);
-		byte[] test5 = encryptAES(toUser,test4.getBytes());
-		System.out.println("TESTBytes:"+test5);
-		byte[] testBytes = new BigInteger(test5).toByteArray();
-		String test6 = new String(decryptAES(toUser,testBytes));
-		System.out.println("TESTBytes:"+test6+"\n\n\n\n\n\n\n\n\n\n");
-
-
-		System.out.println("Original file: "+new String(mybytearray));
-		byte[] encryptedFile = encryptAES(toUser,mybytearray);
-		System.out.println("Encrypted file: "+new String(encryptedFile));
-		byte[] something = new BigInteger(encryptedFile).toByteArray();
-		System.out.println("Something: "+String.valueOf(something));
-		byte[] decryptedFile = decryptAES(toUser,something);
-		System.out.println("Decrypted file: "+new String(decryptedFile));
-		
-		if (debug >= 1) {
-			System.out.println("Sending...");
-		}
-		os.write(encryptedFile, 0, encryptedFile.length);
-		JOptionPane.showMessageDialog(null,"Server: "+encryptedFile.length);
-		os.flush();
-		os.close();
-
+	public static void transferFile(File myFile, String userTo) throws IOException {
+		Thread sendFile = new fileSendThread(myFile,userTo);
+		sendFile.start();
 	}
     /**
      * This method receives a file from a user (must initialize a direct-connect first!)
      * @throws IOException
      */
     public static void receiveFile(String fromUser, String filePath, String fileSize) throws IOException {
-		JOptionPane.showMessageDialog(null, "Receiving a file.");
-		Socket fileSocket = null;
-		while(fileSocket == null){
-			fileSocket = new Socket("127.0.0.1",7779);//"71.232.78.143", 7779);
-		}
-		JOptionPane.showMessageDialog(null, "Connected to user.");
-		InputStream is = fileSocket.getInputStream();
-		
-        byte[] mybytearray = new byte[Integer.parseInt(fileSize)];
-
-		//Get the filename
-		String filePathReplace = filePath.replace("\\", ",");
-		String[] filePathArray = filePathReplace.split(",");
-		int arrSize = filePathArray.length;
-
-		//TODO Check to see if the downloads folder exists! 
-        FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
-		JOptionPane.showMessageDialog(null, "Opened file for writiiiiing.");
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-		JOptionPane.showMessageDialog(null, "Reading " +fileSize+" bytes.");
-		int bytesRead = is.read(mybytearray, 0, mybytearray.length);
-		int current = bytesRead;
-		JOptionPane.showMessageDialog(null, "Read "+current+"bytes on first read.");
-		//Reconstruct the file
-		do { //System.out.println("loop"); 
-			bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
-			//System.out.println(bytesRead);
-			if(bytesRead >= 0) current += bytesRead;
-		} while(bytesRead != 0);
-		JOptionPane.showMessageDialog(null, "Done reading bytes, read "+current+" bytes.");
-
-		System.out.println("Encrypted file: "+new String(mybytearray));
-		byte[] something = new BigInteger(mybytearray).toByteArray();
-		System.out.println("Something: "+String.valueOf(something));
-		byte[] decryptedFile = decryptAES(toUser,something);
-		System.out.println("Decrypted file: "+new String(decryptedFile));
-
-//		byte[] decryptedFile = decryptAES(fromUser, mybytearray);
-
-		//byte[] decryptedFileByteArray = decryptedFile;
-
-        bos.write(decryptedFile);
-        bos.flush();
-		JOptionPane.showMessageDialog(null, "Done/Closing file file.");
-
-
-		/* byte[] mybytearray = new byte[filesize];
-		InputStream is = c2ssocket.getInputStream();
-		FileOutputStream fos = new FileOutputStream(filename);
-		BufferedOutputStream bos = new BufferedOutputStream(fos);
-		
-		bos.write(mybytearray, 0, current);
-		bos.flush();*/
-
-
-
+		Thread getFile = new fileRecvThread(fromUser,filePath,fileSize,toUser,username);
+		getFile.start();
     }
 
     /**
