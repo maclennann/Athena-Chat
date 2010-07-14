@@ -33,6 +33,9 @@ public class fileRecvThread extends Thread {
 
 	public void run() {
 		try{
+
+
+
 			JOptionPane.showMessageDialog(null, "Receiving a file.");
 			Socket fileSocket = null;
 			while(fileSocket == null){
@@ -51,6 +54,9 @@ public class fileRecvThread extends Thread {
 			//TODO Check to see if the downloads folder exists!
 			FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
 			JOptionPane.showMessageDialog(null, "Opened file for writiiiiing.");
+			Progress frame = new Progress(filePathArray[arrSize-1],Integer.parseInt(fileSize));
+			frame.pack();
+			frame.setVisible(true);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			JOptionPane.showMessageDialog(null, "Reading " +fileSize+" bytes.");
 			StopWatch s = new StopWatch();
@@ -61,6 +67,7 @@ public class fileRecvThread extends Thread {
 			//Reconstruct the file
 			//TODO Write in chunks so we can write large files withouth running out of memory
 			do { //System.out.println("loop");
+				frame.iterate(current);
 				bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
 
 				//System.out.println(bytesRead);
@@ -72,6 +79,7 @@ public class fileRecvThread extends Thread {
 						print.writeToTextArea("Transfer is "+Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0+"% done.\n", print.getSetHeaderFont(Color.gray));
 					}catch(Exception e){System.out.println("OOOOOOOOOPs");}
 				}*/
+				//JOptionPane.showMessageDialog(null,Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0);
 				System.out.println("Transfer is "+Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0+"% done.\n");
 
 			} while(bytesRead != 0);
