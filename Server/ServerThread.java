@@ -326,7 +326,7 @@ public class ServerThread extends Thread {
 				if (debug == 1) {
 					System.out.println("Event code received. requestSocketInfo() run.");
 				}
-				//requestSocketInfo();
+				requestSocketInfo();
 				break;
 			case 14:
 				if (debug == 1) {
@@ -683,14 +683,16 @@ public class ServerThread extends Thread {
 	/**
 	 * Pass off the socket information for a username. Useful for direct-protect and file transfer
 	 */
-	private String requestSocketInfo(String user) {
+	private void requestSocketInfo() {
 		try {
-			String userForSocket = decryptServerPrivate(serverDin.readUTF());
-			Socket foundSocket = (Socket) server.userToClientSocket.get(userForSocket);
-			return foundSocket.getInetAddress().toString();
+			//String userForSocket = decryptServerPrivate(serverDin.readUTF());
+			//Socket foundSocket = (Socket) server.userToClientSocket.get(userForSocket);
+			//return foundSocket.getInetAddress().toString();
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+			serverDout.writeUTF(encryptServerPrivate(c2ssocket.getInetAddress().toString()));
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			//return null;
 		}
 	}
 
