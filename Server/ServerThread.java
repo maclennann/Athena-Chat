@@ -410,9 +410,7 @@ public class ServerThread extends Thread {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 
 			String invitingUser = decryptServerPrivate(serverDin.readUTF());
-			String fileName = serverDin.readUTF();
-			String fileSize = serverDin.readUTF();
-			String inviteString = encryptServerPrivate(username+","+fileName+","+fileSize);
+			String inviteString = serverDin.readUTF();
 
 			//For each user to invite, take their name, and take the session key encrypted with their public key
 			if (debug == 1) {
