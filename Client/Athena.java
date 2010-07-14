@@ -1246,13 +1246,37 @@ public class Athena {
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		bis.read(mybytearray, 0, mybytearray.length);
 		//TODO COMMENTS JESUS
-		
-		byte[] encryptedFile = encryptAES(toUser, mybytearray);
+		//Straight up string encryption/decryption
+		String test = "fuck";
+		String test2 = encryptAES(toUser,test);
+		String test3 = decryptAES(toUser,test2);
+		System.out.println("TESTString:"+test);
+		System.out.println("TESTString:"+test2);
+		System.out.println("TESTString:"+test3);
 
+		//I'm able to encrypt and decrypt bytes
+		String test4 = "fuck";
+		System.out.println("TESTBytes:"+test4);
+		byte[] test5 = encryptAES(toUser,test4.getBytes());
+		System.out.println("TESTBytes:"+test5);
+		byte[] testBytes = new BigInteger(test5).toByteArray();
+		String test6 = new String(decryptAES(toUser,testBytes));
+		System.out.println("TESTBytes:"+test6);
+
+		//Shit doesn't work
+		BigInteger fileInt = new BigInteger(mybytearray);
+		String fileString = String.valueOf(fileInt);
+		String encryptedFile = encryptAES(toUser, fileString);
+		byte[] encryptedFileBytes = new BigInteger(encryptedFile).toByteArray();
+		byte[] decryptedFile = decryptAES(toUser, encryptedFileBytes);
+		System.out.println("OriginalFile: "+new String(mybytearray));
+		System.out.println("EncryptedFile: "+encryptedFile);
+		System.out.println("DecryptedFile: "+new String(decryptedFile));
+		System.out.println("TOUSER: "+toUser);
 		if (debug >= 1) {
 			System.out.println("Sending...");
 		}
-		os.write(encryptedFile, 0, encryptedFile.length);
+		//os.write(encryptedFile, 0, encryptedFile.length);
 		os.flush();
 
 
@@ -1265,7 +1289,7 @@ public class Athena {
 		JOptionPane.showMessageDialog(null, "Receiving a file.");
 		Socket fileSocket = null;
 		while(fileSocket == null){
-			fileSocket = new Socket("71.232.78.143", 7779);
+			fileSocket = new Socket("127.0.0.1",7779);//"71.232.78.143", 7779);
 		}
 		JOptionPane.showMessageDialog(null, "Connected to user.");
 		InputStream is = fileSocket.getInputStream();
@@ -1348,7 +1372,7 @@ public class Athena {
         if (debug >= 1) {
             System.out.println("SESSIONTEST: " + AESCrypto.asHex(sessionKey.getEncoded()));
         }
-        byte[] messageBigInt =AESCrypto.encryptMessage(sessionKey, message);
+        byte[] messageBigInt = AESCrypto.encryptMessage(sessionKey, message);
         return messageBigInt;
     }
 
