@@ -1235,8 +1235,6 @@ public class Athena {
 	public static void transferFile(File myFile) throws IOException {
 		//Grab the other user's public key from file
 		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
-		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
-
 
 		ServerSocket fileSS = new ServerSocket(7779);
 		Socket fileSocket = fileSS.accept();
@@ -1247,11 +1245,16 @@ public class Athena {
 		FileInputStream fis = new FileInputStream(myFile);
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		bis.read(mybytearray, 0, mybytearray.length);
-		
+		//TODO COMMENTS JESUS
+		String fileString = new String(mybytearray);
+		String encryptedFile = encryptAES(toUser, fileString);
+		BigInteger encryptedBigInt = new BigInteger(encryptedFile);
+		byte[] encryptedByteArray = encryptedBigInt.toByteArray();
+
 		if (debug >= 1) {
 			System.out.println("Sending...");
 		}
-		os.write(mybytearray, 0, mybytearray.length);
+		os.write(encryptedByteArray, 0, encryptedByteArray.length);
 		os.flush();
 
 
@@ -1264,7 +1267,7 @@ public class Athena {
 		JOptionPane.showMessageDialog(null, "Receiving a file.");
 		Socket fileSocket = null;
 		while(fileSocket == null){
-			fileSocket = new Socket("127.0.0.1", 7779);
+			fileSocket = new Socket("71.232.78.143", 7779);
 		}
 		JOptionPane.showMessageDialog(null, "Connected to user.");
 		InputStream is = fileSocket.getInputStream();
@@ -1304,7 +1307,13 @@ public class Athena {
 		
 		//BigInteger fileBInt = new BigInteger(fileString);
 		//mybytearray = fileBInt.toByteArray();
-        bos.write(mybytearray);
+		//TODO COMMENTS!!
+		BigInteger encryptedBigInt = new BigInteger(mybytearray);
+		String encryptedFile = new String(new BigInteger(mybytearray).toByteArray());
+		String decryptedFile = decryptAES(fromUser, encryptedFile);
+		byte[] decryptedFileByteArray = decryptedFile.getBytes();
+
+        bos.write(decryptedFileByteArray);
         bos.flush();
 		JOptionPane.showMessageDialog(null, "Done/Closing file file.");
 
