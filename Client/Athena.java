@@ -775,7 +775,7 @@ public class Athena {
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 
-					receiveFile(); //Receieve the file!
+					receiveFile(inviteInformationArray[0]); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
@@ -1260,7 +1260,7 @@ public class Athena {
      * This method receives a file from a user (must initialize a direct-connect first!)
      * @throws IOException
      */
-    public static void receiveFile() throws IOException {
+    public static void receiveFile(String fromUser) throws IOException {
 		JOptionPane.showMessageDialog(null, "Receiving a file.");
 		Socket fileSocket = null;
 		while(fileSocket == null){
