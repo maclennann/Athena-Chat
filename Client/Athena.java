@@ -769,7 +769,7 @@ public class Athena {
 					BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(inviteString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
 					c2sdout.writeUTF(messageCipher.toString());
 
-					receiveFile(); //Receieve the file!
+					//receiveFile(); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
