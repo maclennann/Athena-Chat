@@ -775,15 +775,7 @@ public class Athena {
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 
-					//Check to see if they're on the same network as you!
-					if (inviteInformationArray[3].equals(c2ssocket.getLocalAddress())) { //Same network!!
-					System.out.println("SAME NETWORK!\nMY IP: " + c2ssocket.getLocalAddress() + "\nSENDERS IP: " + inviteInformationArray[3]);
-					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2], inviteInformationArray[4]); //Receieve the file!
-					}
-					else { //Different network :(
-					System.out.println("DIFFERENT NETWORK!\nMY IP: " + c2ssocket.getLocalAddress() + "\nSENDERS IP: " + inviteInformationArray[3]);
-					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2], inviteInformationArray[3]); //Receieve the file!
-					}
+					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2], inviteInformationArray[3], inviteInformationArray[4]); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
@@ -1234,13 +1226,16 @@ public class Athena {
 		fileSize = (int)encryptedFile.length;
 
         //Use process message to initiate the file transfer
+		//Get my external IP
+		systemMessage("13");
+		String myExternalIP = decryptServerPublic(c2sdin.readUTF());
  
 		systemMessage("21");
 		//Send the server the user to invite, the filename and then the file size
-		InetAddress thisIp = InetAddress.getLocalHost();      // Get IP Address
-		String inviteString = username + "," + myFile.getPath() + "," + String.valueOf(fileSize) + "," + c2ssocket.getLocalAddress() + "," + thisIp.getHostAddress();
-		System.out.println("LOCAL EXTERNAL ADDRESS: " + c2ssocket.getLocalAddress());
-		System.out.println("LOCAL LOCAL ADDRESS: " + thisIp.getHostAddress());
+		InetAddress myLocalIP = InetAddress.getLocalHost();      // Get IP Address
+		String inviteString = username + "," + myFile.getPath() + "," + String.valueOf(fileSize) + "," + myExternalIP + "," + myLocalIP.getHostAddress();
+		System.out.println("LOCAL EXTERNAL ADDRESS: " + myExternalIP);
+		System.out.println("LOCAL LOCAL ADDRESS: " + myLocalIP.getHostAddress());
 
 		//Grab the other user's public key from file
 		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
@@ -1259,9 +1254,20 @@ public class Athena {
      * This method receives a file from a user (must initialize a direct-connect first!)
      * @throws IOException
      */
-    public static void receiveFile(String fromUser, String filePath, String fileSize, String connectIP) throws IOException {
-		Thread getFile = new fileRecvThread(fromUser,filePath,fileSize,toUser,username, connectIP);
-		getFile.start();
+    public static void receiveFile(String fromUser, String filePath, String fileSize, String sendersExternal, String sendersLocal) throws IOException {
+		//Find the external IP of me
+		systemMessage("13");
+		String myExternalIP = decryptServerPublic(c2sdin.readUTF());
+		if(myExternalIP.equals(sendersExternal)) {
+			System.out.println("SAME NETWORK!\n" + sendersExternal + "\n" + myExternalIP);
+			Thread getFile = new fileRecvThread(fromUser,filePath,fileSize,toUser,username, sendersLocal);
+			getFile.start();
+		}
+		else {
+			System.out.println("DIFFERENT NETWORK!\n" + sendersExternal + "\n" + myExternalIP);
+			Thread getFile = new fileRecvThread(fromUser,filePath,fileSize,toUser,username, sendersExternal);
+			getFile.start();
+		}
     }
 
     /**
