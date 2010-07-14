@@ -1233,6 +1233,11 @@ public class Athena {
     }
 
 	public static void transferFile(File myFile) throws IOException {
+		//Grab the other user's public key from file
+		toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
+
+
 		ServerSocket fileSS = new ServerSocket(7779);
 		Socket fileSocket = fileSS.accept();
 		DataOutputStream fileDOS = new DataOutputStream(fileSocket.getOutputStream());
@@ -1245,7 +1250,10 @@ public class Athena {
         if (debug >= 1) {
             System.out.println("Sending...");
         }
-        fileDOS.writeUTF(String.valueOf(new BigInteger(mybytearray)));
+		//fileDOS.writeUTF(String.valueOf(new BigInteger(mybytearray))); //unencrypted
+
+		BigInteger fileCipher = new BigInteger(RSACrypto.rsaEncryptPublic(String.valueOf(new BigInteger(mybytearray)), toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+        fileDOS.writeUTF(fileCipher.toString()); //encrpyted
         fileDOS.flush();
 	}
     /**
@@ -1253,10 +1261,11 @@ public class Athena {
      * @throws IOException
      */
     public static void receiveFile() throws IOException {
+		RSAPrivateKeySpec usersPrivateKey = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 		JOptionPane.showMessageDialog(null, "Receiving a file.");
 		Socket fileSocket = null;
 		while(fileSocket == null){
-			fileSocket = new Socket("127.0.0.1", 7779);
+			fileSocket = new Socket("71.232.78.143", 7779);
 		}
 		JOptionPane.showMessageDialog(null, "Connected to user.");
 		DataInputStream is = new DataInputStream(fileSocket.getInputStream());
@@ -1271,7 +1280,10 @@ public class Athena {
         FileOutputStream fos = new FileOutputStream("OMGITZAFILE.txt");
 		JOptionPane.showMessageDialog(null, "Opened file for wriitng.");
         BufferedOutputStream bos = new BufferedOutputStream(fos);
-		String fileString = is.readUTF();
+		String encryptedFile = is.readUTF(); //Encrypted
+		String fileString = RSACrypto.rsaDecryptPrivate(encryptedFile.getBytes(), usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent()); //Encrypted
+		//String fileString = is.readUTF();
+		
 		BigInteger fileBInt = new BigInteger(fileString);
 		mybytearray = fileBInt.toByteArray();
        /* int bytesRead = is.read(mybytearray, 0, mybytearray.length);
