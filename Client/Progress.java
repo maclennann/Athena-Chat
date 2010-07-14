@@ -12,13 +12,13 @@ public class Progress extends JFrame {
     int num = 0;
 
     public Progress(String fileName, int total) {
-        super("Progress");
+        super("File Transfer Progress");
 
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel pane = new JPanel();
         pane.setLayout(new FlowLayout());
 		filename = new JLabel(fileName+": ");
-		elapsedTime = new JLabel("Time: 0 sec");
+		elapsedTime = new JLabel("Time: 0 ms");
         current = new JProgressBar(0, total);
         current.setValue(0);
         current.setStringPainted(true);
