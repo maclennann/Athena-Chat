@@ -1310,7 +1310,11 @@ public class Athena {
 		//mybytearray = fileBInt.toByteArray();
 		//TODO COMMENTS!!
 		BigInteger encryptedBigInt = new BigInteger(mybytearray);
+<<<<<<< HEAD
 		String encryptedFile = String.valueOf(encryptedBigInt);
+=======
+		String encryptedFile = new String(new BigInteger(mybytearray).toString());
+>>>>>>> 905c3ac1081e4f511a9c402c270c79351c2b2df3
 		String decryptedFile = decryptAES(fromUser, encryptedFile);
 		byte[] decryptedFileByteArray = decryptedFile.getBytes();
 
