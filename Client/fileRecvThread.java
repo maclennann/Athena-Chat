@@ -81,9 +81,9 @@ public class fileRecvThread extends Thread {
 			//JOptionPane.showMessageDialog(null, "Done reading bytes, read "+current+" bytes.");
 			s.stop();
 			//System.out.println("Encrypted file: "+new String(mybytearray));
-			byte[] something = new BigInteger(mybytearray).toByteArray();
+			//byte[] something = new BigInteger(mybytearray).toByteArray();
 			//System.out.println("Something: "+String.valueOf(something));
-			byte[] decryptedFile = Athena.decryptAES(toUser,something);
+			byte[] decryptedFile = Athena.decryptAES(toUser,mybytearray);//something);
 			//System.out.println("Decrypted file: "+new String(decryptedFile));
 
 	//		byte[] decryptedFile = decryptAES(fromUser, mybytearray);
