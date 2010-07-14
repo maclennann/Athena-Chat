@@ -1247,8 +1247,10 @@ public class Athena {
 		bis.read(mybytearray, 0, mybytearray.length);
 		//TODO COMMENTS JESUS
 		String fileString = new String(mybytearray);
-		System.out.println("FILE STRING: " +fileString);
+		System.out.println("FILE STRING: "+fileString);
 		String encryptedFile = encryptAES(toUser, fileString);
+		System.out.println("ENCRYPTED FILE: "+encryptedFile);
+
 		BigInteger encryptedBigInt = new BigInteger(encryptedFile);
 		byte[] encryptedByteArray = encryptedBigInt.toByteArray();
 
@@ -1311,8 +1313,9 @@ public class Athena {
 		//TODO COMMENTS!!
 		BigInteger encryptedBigInt = new BigInteger(mybytearray);
 		String encryptedFile = String.valueOf(encryptedBigInt);
-
+		System.out.println("ENCRYPTED FILE BigInteger: "+encryptedFile);
 		String decryptedFile = decryptAES(fromUser, encryptedFile);
+
 		byte[] decryptedFileByteArray = decryptedFile.getBytes();
 
         bos.write(decryptedFileByteArray);
