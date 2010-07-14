@@ -1246,18 +1246,13 @@ public class Athena {
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		bis.read(mybytearray, 0, mybytearray.length);
 		//TODO COMMENTS JESUS
-		String fileString = new String(mybytearray);
-		System.out.println("FILE STRING: "+fileString);
-		String encryptedFile = encryptAES(toUser, fileString);
-		System.out.println("ENCRYPTED FILE: "+encryptedFile);
-
-		BigInteger encryptedBigInt = new BigInteger(encryptedFile);
-		byte[] encryptedByteArray = encryptedBigInt.toByteArray();
+		
+		byte[] encryptedFile = encryptAES(toUser, mybytearray);
 
 		if (debug >= 1) {
 			System.out.println("Sending...");
 		}
-		os.write(encryptedByteArray, 0, encryptedByteArray.length);
+		os.write(encryptedFile, 0, encryptedFile.length);
 		os.flush();
 
 
@@ -1311,12 +1306,10 @@ public class Athena {
 		//BigInteger fileBInt = new BigInteger(fileString);
 		//mybytearray = fileBInt.toByteArray();
 		//TODO COMMENTS!!
-		BigInteger encryptedBigInt = new BigInteger(mybytearray);
-		String encryptedFile = new String(encryptedBigInt.toString());
-		System.out.println("ENCRYPTED FILE BigInteger: "+encryptedFile);
-		String decryptedFile = decryptAES(fromUser, encryptedFile);
+		
+		byte[] decryptedFile = decryptAES(fromUser, mybytearray);
 
-		byte[] decryptedFileByteArray = decryptedFile.getBytes();
+		byte[] decryptedFileByteArray = decryptedFile;
 
         bos.write(decryptedFileByteArray);
         bos.flush();
@@ -1350,6 +1343,15 @@ public class Athena {
         return messageBigInt.toString();
     }
 
+	public static byte[] encryptAES(String myChatUID, byte[] message) {
+        SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
+        if (debug >= 1) {
+            System.out.println("SESSIONTEST: " + AESCrypto.asHex(sessionKey.getEncoded()));
+        }
+        byte[] messageBigInt =AESCrypto.encryptMessage(sessionKey, message);
+        return messageBigInt;
+    }
+
     /**
      * Decrypt a chat message using AES
      * @param myChatUID The UID the message is associated with (to find the session key)
@@ -1364,6 +1366,15 @@ public class Athena {
         }
         return new String(AESCrypto.decryptMessage(sessionKey, cipherBigInt.toByteArray()));
     }
+
+	public static byte[] decryptAES(String myChatUID, byte[] message) {
+        SecretKeySpec sessionKey = sessionKeys.get(myChatUID);
+        if (debug >= 1) {
+            System.out.println("SESSIONTEST: " + AESCrypto.asHex(sessionKey.getEncoded()));
+        }
+        return AESCrypto.decryptMessage(sessionKey, message);
+    }
+
 
     /**
      * This method takes the message the user types and will get it ready to send

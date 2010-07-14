@@ -82,6 +82,18 @@ public class AESCrypto {
 		}
 	}
 
+	public static byte[] encryptMessage(SecretKeySpec skeySpec, byte[] message) {
+		try {
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+			return cipher.doFinal(message);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+
 	/**
 	 * Decrypt an encrypted message using AES
 	 * @param skeySpec The AES key's SecretKeySpec
@@ -98,4 +110,5 @@ public class AESCrypto {
 			return null;
 		}
 	}
+	
 }
