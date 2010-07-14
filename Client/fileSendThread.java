@@ -1,16 +1,10 @@
 
-import java.awt.Color;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
-import javax.swing.JOptionPane;
 
 /*
  * To change this template, choose Tools | Templates
@@ -52,7 +46,7 @@ public class fileSendThread extends Thread {
 				System.out.println("Sending...");
 			}
 			os.write(encryptedFile, 0, encryptedFile.length);
-			JOptionPane.showMessageDialog(null,"Server: "+encryptedFile.length);
+			//JOptionPane.showMessageDialog(null,"Server: "+encryptedFile.length);
 			os.flush();
 			os.close();
 			fileSocket.close();

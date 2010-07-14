@@ -1,11 +1,9 @@
 
-import java.awt.Color;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.Socket;
-import javax.swing.JOptionPane;
 
 /*
  * To change this template, choose Tools | Templates

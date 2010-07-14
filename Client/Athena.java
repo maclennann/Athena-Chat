@@ -20,19 +20,16 @@
 import java.awt.AWTException;
 import java.awt.Color;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.spec.RSAPrivateKeySpec;
@@ -84,7 +81,7 @@ public class Athena {
     /**
      * Begin private variables
      */
-	private static DataInputStream dpInputStream;
+	//private static DataInputStream dpInputStream;
     private static String serverIP = "aegis.athenachat.org"; //IP of the server
     private static int connected = 0; 	//If the client is connect to the server
     private static int away = 0; //Is the user away?
@@ -98,12 +95,12 @@ public class Athena {
     private static DataInputStream c2sdin; //Client to Server DataInputStream
     private static DataOutputStream c2cdout; //Client to Client DataOutputStream
     private static DataInputStream c2cdin; //Clien to Client DataInputStream
-    private static Thread listeningProcedureClientToClient, listeningProcedureDirectProtect, listeningProcedureConnectDirectProtect; //Thread that will be used to listen for incoming messages
+    private static Thread listeningProcedureClientToClient;//, listeningProcedureDirectProtect, listeningProcedureConnectDirectProtect; //Thread that will be used to listen for incoming messages
     private static boolean enableSounds; //Flag to control sound notifications
     private static BigInteger modOfBuddy = null;
     private static BigInteger expOfBuddy = null;
-    private static ServerSocket directProtectSocket; //Direct protect socket!
-    private static Socket dpSocket;
+    //private static ServerSocket directProtectSocket; //Direct protect socket!
+    //private static Socket dpSocket;
     //private static RSAPrivateKeySpec usersPrivate; //User's public key
     public static Hashtable<String, SecretKeySpec> sessionKeys = new Hashtable<String, SecretKeySpec>();
     //End private variables
@@ -758,7 +755,7 @@ public class Athena {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformationArray[0]);
                         print.writeToTextArea(inviteInformationArray[0] + " wants to send us a file.\n", print.getSetHeaderFont(Color.gray));
                 }
-                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " wants to send us a file.\nFile name: " + filePathArray[filePathArray.length-1] + "\nFile Size: "+Integer.parseInt(inviteInformationArray[2])/1000+"kb\n.");
+                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " wants to send us a file.\nFile name: " + filePathArray[filePathArray.length-1] + "\nFile Size: "+Integer.parseInt(inviteInformationArray[2])/1000+"kb");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
 					systemMessage("22");
