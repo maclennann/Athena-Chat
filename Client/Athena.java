@@ -775,7 +775,7 @@ public class Athena {
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 
-					receiveFile(inviteInformationArray[0]); //Receieve the file!
+					receiveFile(inviteInformationArray[0],inviteInformationArray[1]); //Receieve the file!
 				}
 				else {
 					//Send server a confirm message
@@ -1260,7 +1260,7 @@ public class Athena {
      * This method receives a file from a user (must initialize a direct-connect first!)
      * @throws IOException
      */
-    public static void receiveFile(String fromUser) throws IOException {
+    public static void receiveFile(String fromUser, String filePath) throws IOException {
 		JOptionPane.showMessageDialog(null, "Receiving a file.");
 		Socket fileSocket = null;
 		while(fileSocket == null){
@@ -1275,8 +1275,13 @@ public class Athena {
         //String filename = c2sdin.readUTF();
 		JOptionPane.showMessageDialog(null, "Got file size.");
         byte[] mybytearray = new byte[filesize];
-        
-        FileOutputStream fos = new FileOutputStream("OMGITZAFILE.txt");
+
+		//Get the filename
+		String[] filePathArray = filePath.split("\\");
+		int arrSize = filePathArray.length;
+
+		//TODO Check to see if the downloads folder exists! 
+        FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
 		JOptionPane.showMessageDialog(null, "Opened file for wriitng.");
         BufferedOutputStream bos = new BufferedOutputStream(fos);
 		String encryptedFile = is.readUTF(); //Encrypted
