@@ -1277,7 +1277,8 @@ public class Athena {
         byte[] mybytearray = new byte[filesize];
 
 		//Get the filename
-		String[] filePathArray = filePath.split("\\");
+		String filePathReplace = filePath.replace("\\", ",");
+		String[] filePathArray = filePathReplace.split(",");
 		int arrSize = filePathArray.length;
 
 		//TODO Check to see if the downloads folder exists! 
