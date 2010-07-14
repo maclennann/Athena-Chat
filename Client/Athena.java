@@ -1202,7 +1202,7 @@ public class Athena {
 		c2sdout.writeUTF(encryptServerPublic(myFile.getPath()));
 		c2sdout.writeUTF(encryptServerPublic((String.valueOf(fileSize))));
 
-        byte[] mybytearray = new byte[(int) myFile.length()];
+       /* byte[] mybytearray = new byte[(int) myFile.length()];
         FileInputStream fis = new FileInputStream(myFile);
         BufferedInputStream bis = new BufferedInputStream(fis);
         bis.read(mybytearray, 0, mybytearray.length);
@@ -1211,7 +1211,8 @@ public class Athena {
             System.out.println("Sending...");
         }
         os.write(mybytearray, 0, mybytearray.length);
-        os.flush();
+        os.flush();*/	
+		
 
     }
 
@@ -1225,7 +1226,7 @@ public class Athena {
         //Grab the file name
         String filename = c2sdin.readUTF();
 
-        byte[] mybytearray = new byte[filesize];
+       /* byte[] mybytearray = new byte[filesize];
         InputStream is = c2ssocket.getInputStream();
         FileOutputStream fos = new FileOutputStream(filename);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -1245,7 +1246,7 @@ public class Athena {
             }
         } while (bytesRead > -1);
         bos.write(mybytearray, 0, current);
-        bos.flush();
+        bos.flush();*/
 
 
     }
