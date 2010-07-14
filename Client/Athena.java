@@ -1312,7 +1312,7 @@ public class Athena {
 		//mybytearray = fileBInt.toByteArray();
 		//TODO COMMENTS!!
 		BigInteger encryptedBigInt = new BigInteger(mybytearray);
-		String encryptedFile = String.valueOf(encryptedBigInt);
+		String encryptedFile = new String(encryptedBigInt.toString());
 		System.out.println("ENCRYPTED FILE BigInteger: "+encryptedFile);
 		String decryptedFile = decryptAES(fromUser, encryptedFile);
 
