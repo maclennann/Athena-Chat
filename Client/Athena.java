@@ -37,6 +37,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Enumeration;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Hashtable;
 import javax.crypto.spec.*;
@@ -774,7 +775,13 @@ public class Athena {
 						//print.encType.setText("Encryption Type: AES - DirectProtect Active");
 					}
 
-					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2]); //Receieve the file!
+					//Check to see if they're on the same network as you!
+					if (inviteInformationArray[3].equals(c2ssocket.getLocalAddress())) { //Same network!!
+					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2], inviteInformationArray[4]); //Receieve the file!
+					}
+					else { //Different network :(
+					receiveFile(inviteInformationArray[0],inviteInformationArray[1],inviteInformationArray[2], inviteInformationArray[3]); //Receieve the file!
+					}
 				}
 				else {
 					//Send server a confirm message
@@ -1228,7 +1235,8 @@ public class Athena {
  
 		systemMessage("21");
 		//Send the server the user to invite, the filename and then the file size
-		String inviteString = username + "," + myFile.getPath() + "," + String.valueOf(fileSize);
+		InetAddress thisIp = InetAddress.getLocalHost();      // Get IP Address
+		String inviteString = username + "," + myFile.getPath() + "," + String.valueOf(fileSize) + "," + c2ssocket.getLocalAddress() + "," + thisIp.getHostAddress();
 
 		//Grab the other user's public key from file
 		RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
@@ -1247,8 +1255,8 @@ public class Athena {
      * This method receives a file from a user (must initialize a direct-connect first!)
      * @throws IOException
      */
-    public static void receiveFile(String fromUser, String filePath, String fileSize) throws IOException {
-		Thread getFile = new fileRecvThread(fromUser,filePath,fileSize,toUser,username);
+    public static void receiveFile(String fromUser, String filePath, String fileSize, String connectIP) throws IOException {
+		Thread getFile = new fileRecvThread(fromUser,filePath,fileSize,toUser,username, connectIP);
 		getFile.start();
     }
 

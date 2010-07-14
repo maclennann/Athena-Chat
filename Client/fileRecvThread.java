@@ -21,13 +21,15 @@ public class fileRecvThread extends Thread {
 	String fileSize;
 	String toUser;
 	String username;
+	String socketIP;
 	
-	public fileRecvThread(String afromUser, String afilePath, String afileSize, String atoUser, String ausername){
+	public fileRecvThread(String afromUser, String afilePath, String afileSize, String atoUser, String ausername, String connectIP){
 		fromUser = afromUser;
 		filePath = afilePath;
 		fileSize = afileSize;
 		toUser = atoUser;
 		username = ausername;
+		socketIP = connectIP;
 	}
 
 	public void run() {
@@ -35,7 +37,7 @@ public class fileRecvThread extends Thread {
 			//JOptionPane.showMessageDialog(null, "Receiving a file.");
 			Socket fileSocket = null;
 			while(fileSocket == null){
-				fileSocket = new Socket("127.0.0.1",7779);//"71.232.78.143", 7779);
+				fileSocket = new Socket(socketIP, 7779);//"71.232.78.143", 7779);
 			}
 			//JOptionPane.showMessageDialog(null, "Connected to user.");
 			InputStream is = fileSocket.getInputStream();
