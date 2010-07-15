@@ -139,10 +139,12 @@ public class CommunicationInterface extends JFrame {
 	// Define the listModel for the JList
 	private DefaultListModel contactListModel = new DefaultListModel();
 	private DefaultListModel inviteListModel = new DefaultListModel();
+        public Hashtable<String, DefaultListModel> chatListModels = new Hashtable<String, DefaultListModel>();
 
 	// Components for the visual display of the chat windows
 	private JList userBox = new JList(contactListModel);
 	private JList inviteBox = new JList(inviteListModel);
+        private JList chatBox = new JList(new DefaultListModel());
 	private JList contactBox;
 	private JTextField chatNameField = new JTextField();
 	private JFrame chatWindow;
@@ -177,6 +179,7 @@ public class CommunicationInterface extends JFrame {
 	private int activeTheme;
 	private boolean userStatusFlag = false;
 	private static Object[] currentSettings = new Object[11];
+        private String chatIDToLocate = null;
 
 	/**
 	 * Method to add users to the JList when they sign on
@@ -200,19 +203,36 @@ public class CommunicationInterface extends JFrame {
 	 * Method to remove user from the JList who signs off
 	 * @param offlineUser The user to remove from the chat userlist
 	 */
-	public void chatSignOff(String offlineUser) {
-		inviteListModel.removeElement(offlineUser);
+	public void chatSignOff(String offlineUser, String chatUID) {
+                DefaultListModel currentListModel = chatListModels.get(chatUID);
+                chatListModels.remove(chatUID);
+		currentListModel.removeElement(offlineUser);
+                chatListModels.put(chatUID, currentListModel);
 	}
 
 	/**
 	 * Method to add users to the list of chat users
 	 * @param availableUser User to add to the chat userlist
 	 */
-	public void newChatListItems(String availableUser) {
-		if (inviteListModel.indexOf(availableUser) == -1) {
-			inviteListModel.addElement(availableUser);
-		}
+	public void newChatListItems(String[] availableUsers, String chatUID) {
+            DefaultListModel currentListModel = new DefaultListModel();
+
+            for (int x = 0; x < availableUsers.length; x++) {
+                    if (currentListModel.indexOf(availableUsers[x]) == -1) {
+                       	currentListModel.addElement(availableUsers[x]);
+                    }
+                }
+            chatListModels.put(chatUID, currentListModel);
 	}
+
+        public void newChatListItems(String availableUser, String chatUID) {
+            DefaultListModel currentListModel = chatListModels.get(chatUID);
+            chatListModels.remove(chatUID);
+            if (currentListModel.indexOf(availableUser) == -1) {
+                       	currentListModel.addElement(availableUser);
+                    }
+            chatListModels.put(chatUID, currentListModel);
+        }
 
 	/**
 	 * The main window. IM/Chat tabs and buddylist.
@@ -505,7 +525,7 @@ public class CommunicationInterface extends JFrame {
 		// Adds the contact list to a scroll pane
 		userBox.setCellRenderer(new MyCellRenderer());
 		contactList = new JScrollPane(userBox);
-		chatList = new JScrollPane(inviteBox);
+		chatList = new JScrollPane(chatBox);
 		contactList.setBounds(600, 2, 195, 450);
 		chatList.setBounds(600, 2, 195, 450);
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
@@ -910,7 +930,7 @@ public class CommunicationInterface extends JFrame {
 	 * @param chatUID The UID of the chat
 	 * @param userCreated Boolean flag
 	 */
-	public void makeChatTab(String chatName, String chatUID, boolean userCreated) {
+	public void makeChatTab(String chatName, String chatUID) {
 		lockIconLabel.setVisible(false);
 		logoIconLabel.setVisible(false);
 		int prevIndex = 0;
@@ -935,13 +955,13 @@ public class CommunicationInterface extends JFrame {
 		//Add alert notification listener
 		addAlertNotificationListener(imTabbedPane.indexOfTab(chatName));
 		// Focus the new tab if first tab or if textarea is empty
-		addChatTextFieldFocusListener(imTabbedPane.indexOfTab(chatName));
+		addChatTextFieldFocusListener(imTabbedPane.indexOfTab(chatName), chatUID);
 		if (userStatusFlag) {
 			disableTextPane(imTabbedPane.indexOfTab(chatName));
 		}
 
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(chatName));
-		currentTab.setName(String.valueOf(chatUID));
+		currentTab.setName(chatUID);
 		if (debug >= 1) {
 			System.out.println("Chat Name = " + currentTab.getName());
 		}
@@ -949,24 +969,16 @@ public class CommunicationInterface extends JFrame {
 			System.out.println("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(chatName)));
 		}
 
-		if (imTabbedPane.indexOfTab(chatName) == 0 || userCreated) {
-			imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(chatName));
+                        imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(chatName));
 			contactList.setVisible(false);
-			chatList.setViewportView(inviteBox);
+
+                        System.out.println("CURRENT LISTMODEL: " + chatListModels.get(chatUID));
+                        chatBox.setModel(chatListModels.get(chatUID));
+			chatList.setViewportView(chatBox);
 			chatList.setVisible(true);
 			if (!(userStatusFlag)) {
 				FocusCurrentTextField();
 			}
-		} else {
-			Icon alertIcon = new ImageIcon("images/alert.png");
-			CloseTabButton c = (CloseTabButton) imTabbedPane.getTabComponentAt(imTabbedPane.indexOfTab(chatName));
-			JButton currentButton = (JButton) c.getComponent(1);
-			currentButton.setIcon(alertIcon);
-			imTabbedPane.setSelectedIndex(prevIndex);
-			if (!(userStatusFlag)) {
-				FocusCurrentTextField();
-			}
-		}
 		//Garbage collect!
 		System.gc();
 	}
@@ -1243,14 +1255,19 @@ public class CommunicationInterface extends JFrame {
 	 * Add the focuslistener to a chat's textfield
 	 * @param index The index of the chat tab
 	 */
-	private void addChatTextFieldFocusListener(int index) {
+	private void addChatTextFieldFocusListener(int index, String chatUID) {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(index);
 		Component[] currentTabComponents = currentTab.getComponents();
 		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		currentTextField.addFocusListener(new FocusListener() {
 
 			public void focusGained(FocusEvent e) {
+                                chatIDToLocate = imTabbedPane.getSelectedComponent().getName();
 				contactList.setVisible(false);
+                                chatBox.setModel(chatListModels.get(chatIDToLocate));
+                                System.out.println("CURRENT CHAT UID: " + chatIDToLocate);
+                                System.out.println("CURRENT LISTMODEL: " + chatBox.getModel().toString());
+                                chatList.setViewportView(chatBox);
 				chatList.setVisible(true);
 				Icon closeIcon = new ImageIcon("images/close_button.png");
 				CloseTabButton c = (CloseTabButton) imTabbedPane.getTabComponentAt(imTabbedPane.getSelectedIndex());
@@ -1283,6 +1300,7 @@ public class CommunicationInterface extends JFrame {
 		contactList.setBorder(chatBorder);
 
 		inviteListModel.removeAllElements();
+                inviteBox = new JList(inviteListModel);
 		JScrollPane inviteList = new JScrollPane(inviteBox);
 		inviteList.setBounds(200, 15, 150, 285);
 		TitledBorder inviteBorder = BorderFactory.createTitledBorder(contactListBorder, "Contacts To Invite", TitledBorder.CENTER, TitledBorder.ABOVE_TOP);
@@ -1399,12 +1417,14 @@ public class CommunicationInterface extends JFrame {
 
 						e.printStackTrace();
 					}
-					makeChatTab(chatNameField.getText(), chatUID, true);
-					TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
-							TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
-					chatList.setBorder(newChatListBorder);
-					inviteListModel.removeAllElements();
-					inviteListModel.addElement(Athena.username);
+                                        DefaultListModel tempListModel = inviteListModel;
+                                        tempListModel.addElement(Athena.username);
+                                        chatListModels.put(chatUID, tempListModel);                
+					makeChatTab(chatNameField.getText(), chatUID);
+					//TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
+					//		TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
+					chatList.setBorder(chatListBorder);
+					//inviteListModel.removeAllElements();
 					chatWindow.dispose();
 				}
 			}
@@ -1674,6 +1694,8 @@ public class CommunicationInterface extends JFrame {
 				String userToRemove = pane.getTitleAt(i);
 				pane.remove(i);
 				tabPanels.remove(userToRemove);
+                                chatListModels.remove(chatUID);
+                                //chatLists.remove(chatUID);
 				if (debug >= 1) {
 					System.out.println("Removed Tab for user: " + userToRemove);
 				}

@@ -581,11 +581,11 @@ public class Athena {
                     systemMessage("14");
                     c2sdout.writeUTF(encryptServerPublic(chatName[2]));
 
-                    //Open a tab for the chat
-                    clientResource.makeChatTab(chatName[0], chatName[2], true);
-
                     //Get the user list for the chat from the server
                     getUserList(Integer.parseInt(chatName[2]));
+
+                    //Open a tab for the chat
+                    clientResource.makeChatTab(chatName[0], chatName[2]);
 
                     //Put a dummy entry in the hashtable until we get the real session key
                     SecretKeySpec nothing = new SecretKeySpec("lol".getBytes(), "AES");
@@ -872,11 +872,11 @@ public class Athena {
                             if ((chatMessage[0].equals("ChatLeave"))) {
                                 //Format a chat leave message
                                 print.writeToTextArea(chatMessage[1] + " has left the chat.\n", print.getSetHeaderFont(Color.gray));
-                                clientResource.chatSignOff(chatMessage[1]);
+                                clientResource.chatSignOff(chatMessage[1], tabToCheck.getName());
                             } else if (chatMessage[0].equals("ChatJoin")) {
                                 //Format a chat join message
                                 print.writeToTextArea(chatMessage[1] + " has joined the chat.\n", print.getSetHeaderFont(Color.gray));
-                                clientResource.newChatListItems(chatMessage[1]);
+                                clientResource.newChatListItems(chatMessage[1], tabToCheck.getName());
                             } else {
                                 print.writeToTextArea(chatMessage[0] + ": ", print.getSetHeaderFont(new Color(0, 0, 130)));
                                 parseMarkdown(chatMessage[1], print);
@@ -945,9 +945,7 @@ public class Athena {
 
             //Split the userlist and add it to the GUI
             String[] users = userList.split(",");
-            for (int x = 0; x < users.length; x++) {
-                clientResource.newChatListItems(users[x]);
-            }
+            clientResource.newChatListItems(users, String.valueOf(chatUID));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1165,10 +1163,10 @@ public class Athena {
             System.out.println("Sent length " + inviteUsers.length);
         }
         for (int x = 0; x < inviteUsers.length; x++) {
-            c2sdout.writeUTF(encryptServerPublic(inviteUsers[x]));
-            RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUsers[x] + ".pub");
-            BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(myChatUID + "," + keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
-            c2sdout.writeUTF(messageCipher.toString());
+                c2sdout.writeUTF(encryptServerPublic(inviteUsers[x]));
+                RSAPublicKeySpec toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + inviteUsers[x] + ".pub");
+                BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPublic(myChatUID + "," + keyString, toUserPublic.getModulus(), toUserPublic.getPublicExponent()));
+                c2sdout.writeUTF(messageCipher.toString());
             if (debug >= 1) {
                 System.out.println("Sent user " + inviteUsers[x]);
             }
