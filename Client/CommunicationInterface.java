@@ -89,6 +89,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import com.inet.jortho.SpellChecker;
+import javax.swing.ListModel;
 
 /**
  * The main window of Athena: IM/Chat tabs, etc
@@ -1417,9 +1418,13 @@ public class CommunicationInterface extends JFrame {
 
 						e.printStackTrace();
 					}
-                                        DefaultListModel tempListModel = inviteListModel;
+                                        DefaultListModel tempListModel = new DefaultListModel();
                                         tempListModel.addElement(Athena.username);
-                                        chatListModels.put(chatUID, tempListModel);                
+                                        chatListModels.put(chatUID, tempListModel);
+                                        //for(int z = 0; z < inviteListModel.size(); z++)
+                                        //{
+                                        //    tempListModel.addElement(inviteListModel.elementAt(z));
+                                        //}
 					makeChatTab(chatNameField.getText(), chatUID);
 					//TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
 					//		TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
