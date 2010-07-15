@@ -3,25 +3,19 @@ import java.awt.Color;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.Socket;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
- * @author Norm
+ * @author OlympuSoft
  */
 public class fileRecvThread extends Thread {
-	String fromUser;
-	String filePath;
-	String fileSize;
-	String toUser;
-	String username;
-	String socketIP;
+	String fromUser; //User that is sending the file (used to look up session key)
+	String filePath; //The name of the file
+	String fileSize; //The size of the file
+	String toUser;   //Is this the same as fromUser?
+	String username; //The username that invoked this thread
+	String socketIP; //The IP of the "server"
 	
 	public fileRecvThread(String afromUser, String afilePath, String afileSize, String atoUser, String ausername, String connectIP){
 		fromUser = afromUser;
@@ -36,14 +30,22 @@ public class fileRecvThread extends Thread {
 		try{
 			//Get rid of the leading /
 			String socketIPReplace = socketIP.replace("/", "");
-			//JOptionPane.showMessageDialog(null, "Receiving a file.");
 			Socket fileSocket = null;
-			while(fileSocket == null){
-				fileSocket = new Socket(socketIPReplace, 7779);//"71.232.78.143", 7779);
+
+			//Keep trying to connect to the sender on port 7779
+			//TODO Made rudimentary timeout after 15 seconds. Is this an okay time?
+			int i=0;
+			while(fileSocket == null && i < 15){
+				fileSocket = new Socket(socketIPReplace, 7779);
+				i++;
+				Thread.sleep(1000);
 			}
-			//JOptionPane.showMessageDialog(null, "Connected to user.");
+			if(fileSocket == null) return;
+
+			//Get the inputstream from the socket to get the file from
 			InputStream is = fileSocket.getInputStream();
 
+			//Make a byte[] to hold the file coming in from the inputstream
 			byte[] mybytearray = new byte[Integer.parseInt(fileSize)];
 
 			//Get the filename
@@ -51,62 +53,67 @@ public class fileRecvThread extends Thread {
 			String[] filePathArray = filePathReplace.split(",");
 			int arrSize = filePathArray.length;
 
+			//Open the file for writing
 			//TODO Check to see if the downloads folder exists!
 			FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
-			//JOptionPane.showMessageDialog(null, "Opened file for writiiiiing.");
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+			//Start the progress bar with 100% being the total number of bytes were are reading in
 			Progress frame = new Progress(filePathArray[arrSize-1],Integer.parseInt(fileSize));
 			frame.pack();
 			frame.setVisible(true);
-			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			//JOptionPane.showMessageDialog(null, "Reading " +fileSize+" bytes.");
+
+			//Start the stopwatch so we know how much time as elapsed
 			StopWatch s = new StopWatch();
 			s.start();
+
+			//Take the first read
 			int bytesRead = is.read(mybytearray, 0, mybytearray.length);
 			int current = bytesRead;
-			//JOptionPane.showMessageDialog(null, "Read "+current+"bytes on first read.");
-			//Reconstruct the file
-			//TODO Write in chunks so we can write large files withouth running out of memory
-			do { //System.out.println("loop");
+
+			//Read in the remaining bytes
+			//TODO Write in chunks so we can write large files without running out of memory
+			do {
+				//Update the progress bar
 				frame.iterate(current,(int)s.getElapsedTime());
+
+				//Read in more bytes
 				bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
 
-				//System.out.println(bytesRead);
+				//If we read any bytes, update the total. Else we are done
 				if(bytesRead >= 0) current += bytesRead;
 
-				/*if ((Athena.clientResource.tabPanels.containsKey(fromUser))) {
-					try{
-						MapTextArea print = (MapTextArea) Athena.clientResource.tabPanels.get(fromUser);
-						print.writeToTextArea("Transfer is "+Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0+"% done.\n", print.getSetHeaderFont(Color.gray));
-					}catch(Exception e){System.out.println("OOOOOOOOOPs");}
-				}*/
-				//JOptionPane.showMessageDialog(null,Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0);
-				System.out.println("Transfer is "+Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0+"% done.\n");
+				if(Athena.debug >=1) {
+					System.out.println("Transfer is "+Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0+"% done.\n");
+				}
 
 			} while(bytesRead != 0);
-			//JOptionPane.showMessageDialog(null, "Done reading bytes, read "+current+" bytes.");
+
+			//Transfer is done, stop the stopwatch
 			s.stop();
+
+			//Notify the user
 			if ((Athena.clientResource.tabPanels.containsKey(fromUser))) {
 					try{
 						MapTextArea print = (MapTextArea) Athena.clientResource.tabPanels.get(fromUser);
 						print.writeToTextArea("Transfer completed in "+s.getElapsedTime()+" ms.\nDecrypting file, please wait...\n", print.getSetHeaderFont(Color.gray));
 					}catch(Exception e){System.out.println("OOOOOOOOOPs");}
-				}
-			//System.out.println("Encrypted file: "+new String(mybytearray));
-			//byte[] something = new BigInteger(mybytearray).toByteArray();
-			//System.out.println("Something: "+String.valueOf(something));
-			byte[] decryptedFile = Athena.decryptAES(toUser,mybytearray);//something);
-			//System.out.println("Decrypted file: "+new String(decryptedFile));
+			}
 
-	//		byte[] decryptedFile = decryptAES(fromUser, mybytearray);
+			//Decrypt the file
+			byte[] decryptedFile = Athena.decryptAES(toUser,mybytearray);
 
-			//byte[] decryptedFileByteArray = decryptedFile;
-			
+			//Write the byte[] to the open file
 			bos.write(decryptedFile);
 			bos.flush();
+
+			//Button everything up
 			bos.close();
 			fos.close();
 			is.close();
 			fileSocket.close();
+
+			//Notify the user that their file is done
 			if ((Athena.clientResource.tabPanels.containsKey(fromUser))) {
 					try{
 						MapTextArea print = (MapTextArea) Athena.clientResource.tabPanels.get(fromUser);
@@ -115,7 +122,9 @@ public class fileRecvThread extends Thread {
 				}
 			System.gc();
 
-			System.out.println("elapsed time in milliseconds: " + s.getElapsedTime());
+			if( Athena.debug >= 1) {
+				System.out.println("elapsed time in milliseconds: " + s.getElapsedTime());
+			}
 		}catch(Exception e){}
 	}
 }

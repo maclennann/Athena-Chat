@@ -38,7 +38,6 @@ import java.util.Enumeration;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.util.Hashtable;
 import javax.crypto.spec.*;
 import javax.swing.JOptionPane;
