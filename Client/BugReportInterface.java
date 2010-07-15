@@ -1,23 +1,34 @@
+/* Athena/Aegis Encrypted Chat Platform
+ * BugReportInterface.java: Allows users to submit bug reports and feature requests.
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
@@ -27,62 +38,54 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Toolkit;
 
 /**
- * 
- */
-
-/**
+ * Submit a bug report or feature request to Aegis
  * @author OlmypuSoft
- *
  */
 public class BugReportInterface extends JPanel {
-
 
 	/**
 	 * 
 	 */
 	//Define components
-	public JFrame submitBugJFrame;
-	public JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
-	public JLabel descriptionJLabel = new JLabel("* Brief Description:");
-	public JLabel recreationJLabel = new JLabel("* How can we recreate this bug?");
-	public JLabel expectedJLabel = new JLabel("What did you expect to happen?");
-	public JLabel actualJLabel = new JLabel("What actually happened?");
-	
-	public JTextField descriptionJTextField = new JTextField();
-	public JTextArea recreationJTextArea;
-	public JTextArea expectedJTextArea;
-	public JTextArea actualJTextArea;
-
-	public JButton confirmJButton = new JButton("Confirm");
-	public JButton cancelJButton = new JButton("Cancel");
-	public JButton clearJButton = new JButton("Clear");
-
-	public Border blackline;
-	public TitledBorder generalTitledBorder;
-	public RSAPublicKeySpec pub;
-	public RSAPrivateKeySpec priv;
-	public BigInteger publicMod;
-	public BigInteger publicExp;
-	public BigInteger privateMod;
-	public BigInteger privateExp;
+	private JFrame submitBugJFrame;
+	private JPanel contentPane, generalInformationJPanel, loginInformationJPanel;
+	private JLabel descriptionJLabel = new JLabel("* Brief Description:");
+	private JLabel recreationJLabel = new JLabel("* How can we recreate this bug?");
+	private JLabel expectedJLabel = new JLabel("What did you expect to happen?");
+	private JLabel actualJLabel = new JLabel("What actually happened?");
+	private JTextField descriptionJTextField = new JTextField();
+	private JTextArea recreationJTextArea;
+	private JTextArea expectedJTextArea;
+	private JTextArea actualJTextArea;
+	private JButton confirmJButton = new JButton("Confirm");
+	private JButton cancelJButton = new JButton("Cancel");
+	private JButton clearJButton = new JButton("Clear");
+	private Border blackline;
+	private TitledBorder generalTitledBorder;
+	private RSAPublicKeySpec pub;
+	private RSAPrivateKeySpec priv;
+	private BigInteger publicMod;
+	private BigInteger publicExp;
+	private BigInteger privateMod;
+	private BigInteger privateExp;
 	private BigInteger privateModBigInteger;
 	private BigInteger privateExpBigInteger;
-	public Color goGreen = new Color(51,153,51);
+	private Color goGreen = new Color(51, 153, 51);
 
 	BugReportInterface() {
 		//Create the Main Frame
-		submitBugJFrame= new JFrame("Submit Bug Report/Feature Request");
-		submitBugJFrame.setSize(500,550);
+		submitBugJFrame = new JFrame("Submit Bug Report/Feature Request");
+		submitBugJFrame.setSize(500, 550);
 		submitBugJFrame.setResizable(false);
 		submitBugJFrame.setLocationRelativeTo(CommunicationInterface.imContentFrame);
-		
+
 		//Create the content Pane
 		contentPane = new JPanel();
 		contentPane.setLayout(null);
 		contentPane.setVisible(true);
-		
+
 		submitBugJFrame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
-		
+
 		//Initalize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
 		generalTitledBorder = BorderFactory.createTitledBorder(
@@ -90,60 +93,62 @@ public class BugReportInterface extends JPanel {
 
 		//Username Input
 		descriptionJTextField = new JTextField();
-		descriptionJLabel.setBounds(15,20,150,25);
-		descriptionJTextField.setBounds(15,40,470,25);
+		descriptionJLabel.setBounds(15, 20, 150, 25);
+		descriptionJTextField.setBounds(15, 40, 470, 25);
 
-		recreationJLabel.setBounds(15,80,400,25);
+		recreationJLabel.setBounds(15, 80, 400, 25);
 		recreationJTextArea = new JTextArea();
 		JScrollPane recreationSP = new JScrollPane(recreationJTextArea);
-		recreationSP.setBounds(15,100,470,100);
+		recreationSP.setBounds(15, 100, 470, 100);
 		recreationSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		expectedJLabel.setBounds(15,210,400,25);
+
+		expectedJLabel.setBounds(15, 210, 400, 25);
 		expectedJTextArea = new JTextArea();
 		JScrollPane expectedSP = new JScrollPane(expectedJTextArea);
-		expectedSP.setBounds(15,230,470,100);
+		expectedSP.setBounds(15, 230, 470, 100);
 		expectedSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		actualJLabel.setBounds(15,340,400,25);
+
+		actualJLabel.setBounds(15, 340, 400, 25);
 		actualJTextArea = new JTextArea();
 		JScrollPane actualSP = new JScrollPane(actualJTextArea);
-		actualSP.setBounds(15,360,470,100);
+		actualSP.setBounds(15, 360, 470, 100);
 		actualSP.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		//Secret answer nput
-		//TODO Create some way to have an image pop up if they match, etc. Maybe a password strenght meter?
-		
-		
-		
-		
-		
+
+
+
+
+
 
 
 		//Confirm and Cancel JButtons
-		confirmJButton.setBounds(280,490,100,25);
-		cancelJButton.setBounds(385,490,100,25);
-		clearJButton.setBounds(10,490,100,25);
+		confirmJButton.setBounds(280, 490, 100, 25);
+		cancelJButton.setBounds(385, 490, 100, 25);
+		clearJButton.setBounds(10, 490, 100, 25);
 
-		
+
 		clearJButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event){
-					recreationJTextArea.setText("");
-					descriptionJTextField.setText("");
-					expectedJTextArea.setText("");
-					actualJTextArea.setText("");
-				}
+
+			public void actionPerformed(ActionEvent event) {
+				recreationJTextArea.setText("");
+				descriptionJTextField.setText("");
+				expectedJTextArea.setText("");
+				actualJTextArea.setText("");
+			}
 		});
-		
+
 		//ActionListener to make the connect menu item connect
 		confirmJButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event){
-					if(!(descriptionJTextField.getText().equals("")) && !(recreationJTextArea.getText().equals(""))){
-					sendInfoToAegis(descriptionJTextField.getText(),recreationJTextArea.getText(),expectedJTextArea.getText(),actualJTextArea.getText());
-					JOptionPane.showMessageDialog(null,"Thank you for submitting this report. It has been added to our database","Thanks!",JOptionPane.INFORMATION_MESSAGE);
+
+			public void actionPerformed(ActionEvent event) {
+				if (!(descriptionJTextField.getText().equals("")) && !(recreationJTextArea.getText().equals(""))) {
+					sendInfoToAegis(descriptionJTextField.getText(), recreationJTextArea.getText(), expectedJTextArea.getText(), actualJTextArea.getText());
+					JOptionPane.showMessageDialog(null, "Thank you for submitting this report. It has been added to our database", "Thanks!", JOptionPane.INFORMATION_MESSAGE);
 					submitBugJFrame.dispose();
-					
-					}else JOptionPane.showMessageDialog(null,"Please fill in all required fields.","Error!",JOptionPane.ERROR_MESSAGE);
-					
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Please fill in all required fields.", "Error!", JOptionPane.ERROR_MESSAGE);
+				}
+
 			}
 		});
 
@@ -151,11 +156,11 @@ public class BugReportInterface extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+
 				submitBugJFrame.dispose();
-			} 
+			}
 		});
-		
+
 		//Add all the components to the contentPane
 		contentPane.add(descriptionJLabel);
 		contentPane.add(descriptionJTextField);
@@ -178,8 +183,14 @@ public class BugReportInterface extends JPanel {
 		submitBugJFrame.setVisible(true);
 	}
 
-	//This Method will send all of the information over to Aegis for input into the database
-	public void sendInfoToAegis(String titles, String recreates, String expecteds, String actuals) { 
+	/**
+	 * Compile the report information and send it to Aegis
+	 * @param titles Summary of bug/feature
+	 * @param recreates Recreation steps for bug
+	 * @param expecteds Expected outcome of action
+	 * @param actuals The bug
+	 */
+	public void sendInfoToAegis(String titles, String recreates, String expecteds, String actuals) {
 
 		//Get a connection
 		//Client.connect();
@@ -203,5 +214,4 @@ public class BugReportInterface extends JPanel {
 		}
 
 	}
-
 }

@@ -1,129 +1,117 @@
-/**  DESCrypto.java
- **  Author: Norm MacLennan/OlympuSoft
- **  Adapted from code found online at:
- **    http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html
- **
- **  A test of passphrase/password-based encryption
- **  and decryption using standard java libraries.
- **  
- **  To run this test, pass two arguments to the program
- **  The first argument should be the strng you want to 
- **  test with. The second argument should be your
- **  passphrase/password. The third argument is used to
- **  calculate the salt.
- **
- **  Sample program input:
- **    java DESCrypto "Hello, World!" "Call me Ishmael." "7 chars"
- **
- **  Sample program output:
- **    Plain Text: Hello, World!
- **    --Encrypting--
- **    Cipher Text: úVk-P?"F»#e8ç+8;
- **    --Decrypting--
- **    Clear Text: Hello, World!
- **
- **  A short overview of what this program does:
- **    The program should get an array of 3 arguments when it is
- **    run. The message, the passphrase, and the salt. The program
- **    has a hard-coded salt. The salt that is passed from the command
- **    lane is passed through encryption with the provided passphrase
- **    and the hard-coded salt. The resulting char[] is used as the
- **    new salt. This doesn't work if the provided salt is more than
- **    seven characters long. The real message is then encrypted using
- **    the passphrase and the generated salt. The message is then retrieved
- **    using the same passphrase and salt.
- **
- **  This code can be adapted to allow Athena and Aegis to store
- **  confidential data in external files (preferences, private key,
- **  contact list, etc) in a secure manner through the use of
- **  symmetric encryption. The files can be encrypted with the 
- **  user's account password (or a hash thereof) and it can be used
- **  to decrypt their private key from their hard drive when they 
- **  log in.
- **/
- 
+/* Athena/Aegis Encrypted Chat Platform
+ * DESCrypto.java: Provides access to DES cryptography libraries
+ *
+ * Copyright (C) 2010  OlympuSoft
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-public class DESCrypto{
-    // Hardcoded salt
-    byte[] salt = {
-	(byte)0xc7, (byte)0x73, (byte)0x21, (byte)0x8c,
-	(byte)0x7e, (byte)0xc8, (byte)0xee, (byte)0x99
-    };
-		
+/**
+ * DES cryptography library
+ * @author OlympuSoft
+ */
+public class DESCrypto {
+	// Hardcoded salt
+	private byte[] salt = {
+		(byte) 0xc7, (byte) 0x73, (byte) 0x21, (byte) 0x8c,
+		(byte) 0x7e, (byte) 0xc8, (byte) 0xee, (byte) 0x99
+	};
+	
 	// Declare the key parts
-	PBEKeySpec pbeKeySpec;
-	PBEParameterSpec pbeParamSpec;
-	SecretKeyFactory keyFac;
-	SecretKey pbeKey;
-	Cipher pbeCipher;
-	Cipher pbeReverseCipher;
-	
+	private PBEKeySpec pbeKeySpec;
+	private PBEParameterSpec pbeParamSpec;
+	private SecretKeyFactory keyFac;
+	private SecretKey pbeKey;
+	private Cipher pbeCipher;
+	private Cipher pbeReverseCipher;
+
 	// Iteration count
-	int count = 20;
-	
-	String plaintext;
-	char[] passphrase;
-	byte[] realSalt;
+	private int count = 20;
+	private char[] passphrase;
+	//private byte[] realSalt;
 
-	public DESCrypto(String phrase, String saltString){
-		try{
-		// Create PBE parameter set
-		pbeParamSpec = new PBEParameterSpec(salt, count);
-		pbeKeySpec = new PBEKeySpec(passphrase);
-			
-		// Initialize the key for encryption
-		keyFac = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-		pbeKey = keyFac.generateSecret(pbeKeySpec);
+	/**
+	 * Create a DESCrypto object with the desired salt and passphrase
+	 * @param phrase The passphrase for the cipher
+	 * @param saltString The salt for the cipher
+	 */
+	public DESCrypto(String phrase, String saltString) {
+		try {
+			// Create PBE parameter set
+			pbeParamSpec = new PBEParameterSpec(salt, count);
+			pbeKeySpec = new PBEKeySpec(passphrase);
 
-		// Create PBE Cipher
-		pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-		pbeReverseCipher = Cipher.getInstance("PBEWithMD5AndDES");
-		
-		// Initialize PBE Cipher with key and parameters
-		pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
-		pbeReverseCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
-		}catch(Exception e){
+			// Initialize the key for encryption
+			keyFac = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+			pbeKey = keyFac.generateSecret(pbeKeySpec);
+
+			// Create PBE Cipher
+			pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
+			pbeReverseCipher = Cipher.getInstance("PBEWithMD5AndDES");
+
+			// Initialize PBE Cipher with key and parameters
+			pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
+			pbeReverseCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
+		} catch (Exception e) {
 			System.out.println("Unable to create DESCrypto object.");
 		}
 		//Set variables
 		passphrase = phrase.toCharArray();
-		realSalt = encryptData(saltString);
+		//realSalt = encryptData(saltString);
 	}
-	
-	// Encrypts message using passphrase and salt.
-	public byte[] encryptData(String message){
-		try{
+
+	/**
+	 * Encrypts a message using passphrase and salt
+	 * @param message The message to encrypt
+	 * @return The ciphertext byte[]
+	 */
+	public final byte[] encryptData(String message) {
+		try {
 			// Encrypt the cleartext
 			byte[] ciphertext = pbeCipher.doFinal(message.getBytes());
-					
+
 			return ciphertext;
-			
-		}catch(Exception e){
+
+		} catch (Exception e) {
 			// Something went wrong. Return null.
 			System.out.println("Error encryting data.");
 			return null;
 		}
-		
 	}
-	
-	public String decryptData(byte[] ciphertext){
-		try{
+
+	/**
+	 * Decrypt a message with a passphrase and salt
+	 * @param ciphertext The encrypted bytes
+	 * @return The plaintext messages
+	 */
+	public String decryptData(byte[] ciphertext) {
+		try {
 			//Decrypt the data
 			byte[] plaintext = pbeReverseCipher.doFinal(ciphertext);
-			
+
 			//Return a string of the decrypted data
 			return new String(plaintext);
-			
-		}catch(Exception e){
+
+		} catch (Exception e) {
 			//Something went wrong. Return null.
 			System.out.println("Error decryting data.");
 			return null;
 		}
-		
+
 	}
 }
