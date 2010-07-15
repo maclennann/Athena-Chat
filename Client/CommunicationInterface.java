@@ -541,8 +541,8 @@ public class CommunicationInterface extends JFrame {
 		chatListBorder = chatListBorderAA;
 		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
 				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), Color.black);
-		chatListBorder = BorderFactory.createTitledBorder(chatListBorderAA, "Group Chat List", TitledBorder.CENTER,
-				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
+		//chatListBorder = BorderFactory.createTitledBorder(chatListBorderAA, "Group Chat List", TitledBorder.CENTER,
+		//		TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
 		contactList.setBorder(buddyBorder);
 		chatList.setBorder(chatListBorder);
 
@@ -974,6 +974,9 @@ public class CommunicationInterface extends JFrame {
 			contactList.setVisible(false);
 
                         System.out.println("CURRENT LISTMODEL: " + chatListModels.get(chatUID));
+                        TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, chatName + " Chat List", TitledBorder.CENTER,
+                            TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
+			chatList.setBorder(newChatListBorder);
                         chatBox.setModel(chatListModels.get(chatUID));
 			chatList.setViewportView(chatBox);
 			chatList.setVisible(true);
@@ -1238,7 +1241,6 @@ public class CommunicationInterface extends JFrame {
 		Component[] currentTabComponents = currentTab.getComponents();
 		JTextPane currentTextField = (JTextPane) currentTabComponents[1];
 		currentTextField.addFocusListener(new FocusListener() {
-
 			public void focusGained(FocusEvent e) {
 				Icon closeIcon = new ImageIcon("images/close_button.png");
 				CloseTabButton c = (CloseTabButton) imTabbedPane.getTabComponentAt(imTabbedPane.getSelectedIndex());
@@ -1418,18 +1420,13 @@ public class CommunicationInterface extends JFrame {
 
 						e.printStackTrace();
 					}
+                                        //Create the listmodel for this chat and map it to chat ID
                                         DefaultListModel tempListModel = new DefaultListModel();
                                         tempListModel.addElement(Athena.username);
                                         chatListModels.put(chatUID, tempListModel);
-                                        //for(int z = 0; z < inviteListModel.size(); z++)
-                                        //{
-                                        //    tempListModel.addElement(inviteListModel.elementAt(z));
-                                        //}
+
+                                        //Create chat tab
 					makeChatTab(chatNameField.getText(), chatUID);
-					//TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " Chat List", TitledBorder.CENTER,
-					//		TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
-					chatList.setBorder(chatListBorder);
-					//inviteListModel.removeAllElements();
 					chatWindow.dispose();
 				}
 			}
