@@ -28,6 +28,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,6 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -85,13 +87,14 @@ public class PreferencesInterface extends JPanel {
 	private TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
 
 	//Define components for the General Menu Panel
-	private JTextField downDirTextField = new JTextField();
+	private JTextField downDirTextField = new JTextField("C:\\Program Files\\Athena\\users\\"+Athena.username+"\\downloads\\");
 	private JButton downDirLaunchButton = new JButton ("Browse");
 	private JLabel downDirJLabel = new JLabel("Download Directory:");
 	private JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
 	private JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
 	private JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
 	private JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
+	private JFileChooser fc = new JFileChooser();
 	private boolean systemTrayVal;
 	private boolean allowESCVal;
 	private boolean enableSCVal;
@@ -241,7 +244,7 @@ public class PreferencesInterface extends JPanel {
 		enableSpellCheckCheckBox.setBounds(50, 100, 200, 50);
 		downDirJLabel.setBounds(50,150,200,25);
 		downDirTextField.setBounds(50,170,200,25);
-		downDirLaunchButton.setBounds(165,195,85,25);
+		downDirLaunchButton.setBounds(165,195,84,25);
 		downDirJLabel.setVisible(true);
 		downDirLaunchButton.setVisible(true);
 		downDirTextField.setVisible(true);
@@ -379,6 +382,23 @@ public class PreferencesInterface extends JPanel {
 		formattingPanel.add(selectFontLabel);
 		formattingPanel.add(fontSizeLabel);
 		formattingPanel.add(generalFontLabel);
+
+		downDirLaunchButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+			//Handle open button action.
+			if (e.getSource() == downDirLaunchButton) {
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnVal = fc.showOpenDialog(null);
+				
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					downDirTextField.setText(file.getPath());
+				} 
+			}
+		}});
+
+
 
 		selectFontComboBox.addActionListener(new ActionListener() {
 
