@@ -744,8 +744,12 @@ public class Athena {
                              
             }
 			 else if (fromUserDecrypted.equals("FileInvite")) {
+				 toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+
+				 
                 //Read in the information
                 String inviteInformation = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
+
                 inviteInformationArray = inviteInformation.split(",");
 				String filePathReplace = inviteInformationArray[1].replace("\\", ",");
 				String[] filePathArray = filePathReplace.split(",");
