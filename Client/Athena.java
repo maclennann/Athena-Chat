@@ -56,7 +56,7 @@ public class Athena {
      * Print debug messages during runtime (0=off,1=on,2=verbose)
      */
     public static final int debug = 2; //Show debug messages?
-    public static String[] inviteInformationArray;
+    //public static String[] inviteInformationArray;
     /**
      * The current user's username. Used globally
      */
@@ -750,7 +750,7 @@ public class Athena {
                 //Read in the information
                 String inviteInformation = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
 
-                inviteInformationArray = inviteInformation.split(",");
+                String[] inviteInformationArray = inviteInformation.split(",");
 				String filePathReplace = inviteInformationArray[1].replace("\\", ",");
 				String[] filePathArray = filePathReplace.split(",");
 

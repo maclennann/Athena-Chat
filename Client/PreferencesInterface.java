@@ -40,6 +40,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.SwingUtilities;
@@ -84,6 +85,9 @@ public class PreferencesInterface extends JPanel {
 	private TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
 
 	//Define components for the General Menu Panel
+	private JTextField downDirTextField = new JTextField();
+	private JButton downDirLaunchButton = new JButton ("Browse");
+	private JLabel downDirJLabel = new JLabel("Download Directory:");
 	private JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
 	private JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
 	private JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
@@ -235,7 +239,16 @@ public class PreferencesInterface extends JPanel {
 		systemTrayCheckBox.setBounds(50, 20, 200, 50);
 		allowESCCheckBox.setBounds(50, 60, 200, 50);
 		enableSpellCheckCheckBox.setBounds(50, 100, 200, 50);
+		downDirJLabel.setBounds(50,150,200,25);
+		downDirTextField.setBounds(50,170,200,25);
+		downDirLaunchButton.setBounds(165,195,85,25);
+		downDirJLabel.setVisible(true);
+		downDirLaunchButton.setVisible(true);
+		downDirTextField.setVisible(true);
 
+		generalPanel.add(downDirJLabel);
+		generalPanel.add(downDirTextField);
+		generalPanel.add(downDirLaunchButton);
 		generalPanel.add(systemTrayCheckBox);
 		generalPanel.add(allowESCCheckBox);
 		generalPanel.add(enableSpellCheckCheckBox);
