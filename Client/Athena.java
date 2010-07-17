@@ -1276,11 +1276,13 @@ public class Athena {
 
             //This is an IM tab
         } else {
-            if (debug >= 1) {
-                //writeLog("THIS IS AN IM TAB!!!");
-            }
+            
             //Get user to send message to from active tab
             toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+
+			if (debug >= 1) {
+                writeLog("Sending message to "+toUser);
+            }
 
             //Get the JPanel in the active tab
             print = (MapTextArea) clientResource.tabPanels.get(toUser);
