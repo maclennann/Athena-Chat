@@ -84,7 +84,7 @@ public class fileRecvThread extends Thread {
 				if(bytesRead >= 0) current += bytesRead;
 
 				if(Athena.debug >=1) {
-					System.out.println("Transfer is "+Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0+"% done.\n");
+					Athena.writeLog("Transfer is "+Double.parseDouble(String.valueOf(current))/Double.parseDouble(fileSize)*100.0+"% done.\n");
 				}
 
 			} while(bytesRead != 0);
@@ -97,7 +97,7 @@ public class fileRecvThread extends Thread {
 					try{
 						MapTextArea print = (MapTextArea) Athena.clientResource.tabPanels.get(fromUser);
 						print.writeToTextArea("Transfer completed in "+s.getElapsedTime()+" ms.\nDecrypting file, please wait...\n", print.getSetHeaderFont(Color.gray));
-					}catch(Exception e){System.out.println("OOOOOOOOOPs");}
+					}catch(Exception e){Athena.writeLog("OOOOOOOOOPs");}
 			}
 
 			//Decrypt the file
@@ -118,12 +118,12 @@ public class fileRecvThread extends Thread {
 					try{
 						MapTextArea print = (MapTextArea) Athena.clientResource.tabPanels.get(fromUser);
 						print.writeToTextArea("File decrypted and stored in downloads directory.\n", print.getSetHeaderFont(Color.gray));
-					}catch(Exception e){System.out.println("OOOOOOOOOPs");}
+					}catch(Exception e){Athena.writeLog("OOOOOOOOOPs");}
 				}
 			System.gc();
 
 			if( Athena.debug >= 1) {
-				System.out.println("elapsed time in milliseconds: " + s.getElapsedTime());
+				Athena.writeLog("elapsed time in milliseconds: " + s.getElapsedTime());
 			}
 		}catch(Exception e){}
 	}

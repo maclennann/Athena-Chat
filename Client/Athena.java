@@ -407,7 +407,7 @@ public class Athena {
             String encryptedMessage = din.readUTF();
 
             if (debug == 2) {
-                writeLog("Encrypted Message: " + encryptedMessage);
+                //writeLog("Encrypted Message: " + encryptedMessage);
             }
 
             RSAPrivateKeySpec usersPrivateKey = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
@@ -419,7 +419,7 @@ public class Athena {
             byte[] messageBytes = (new BigInteger(encryptedMessage)).toByteArray();
 
             if (debug >= 1) {
-                writeLog("FROMUSER: " + fromUserDecrypted);
+                writeLog("Received Message From: " + fromUserDecrypted);
             }
             //If the message is an unavailable user response
             if (fromUserDecrypted.equals("UnavailableUser")) {
@@ -1251,7 +1251,7 @@ public class Athena {
         //This is a chat tab
         if (Integer.parseInt(currentTab.getName()) != -1) {
             if (debug >= 1) {
-                writeLog("THIS IS IN A CHAT TAB! SENDING MESSAGE TO CHAT " + currentTab.getName());
+                writeLog("Sending message to chat " + currentTab.getName());
             }
             //Prepend username and comma to message so we know who it's from.
             message = username + "," + message;
@@ -1277,7 +1277,7 @@ public class Athena {
             //This is an IM tab
         } else {
             if (debug >= 1) {
-                writeLog("THIS IS AN IM TAB!!!");
+                //writeLog("THIS IS AN IM TAB!!!");
             }
             //Get user to send message to from active tab
             toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
@@ -1285,12 +1285,12 @@ public class Athena {
             //Get the JPanel in the active tab
             print = (MapTextArea) clientResource.tabPanels.get(toUser);
             if (debug >= 1) {
-                writeLog("JPANEL : " + print.toString());
+                //writeLog("JPANEL : " + print.toString());
             }
 
             //See if the user is logged in. If yes, send it. If no, error.
             if (debug >= 1) {
-                writeLog("USERNAME: " + username);
+                //writeLog("USERNAME: " + username);
             }
             if (username.equals("null")) {
                 print.writeToTextArea("Error: You are not connected!\n", print.getSetHeaderFont(new Color(130, 0, 0)));

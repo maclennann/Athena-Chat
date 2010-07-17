@@ -44,7 +44,7 @@ public class fileSendThread extends Thread {
 			byte[] encryptedFile = Athena.encryptAES(toUser,mybytearray);
 
 			if (Athena.debug >= 1) {
-				System.out.println("Sending...");
+				Athena.writeLog("Sending...");
 			}
 
 			//Send the file
