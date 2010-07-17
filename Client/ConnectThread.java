@@ -114,10 +114,10 @@ public class ConnectThread extends Thread {
                  * 4. See if the user's public key exists
                  */
 
-				loginBar.iterate(1200,"Querying Contact Status");
+				loginBar.iterate(1400,"Querying Contact Status");
                 //Instantiate Buddy List
                 Athena.instantiateBuddyList();
-				loginBar.iterate(1500,"Verifying Private Key");
+				loginBar.iterate(1900,"Verifying Private Key");
                 //Check to see if the user's private key is there
                 File privateKey = new File("users/" + username + "/keys/" + username + ".priv");
                 if (!(privateKey.exists())) {
@@ -149,7 +149,7 @@ public class ConnectThread extends Thread {
                 Athena.listeningProcedureClientToClient.start();
             }
 
-			loginBar.iterate(1800,"Verifying Public Key");
+			loginBar.iterate(1950,"Verifying Public Key");
             //Check to see if the user's public key is there
             File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
             if (!(publicKey.exists())) {
