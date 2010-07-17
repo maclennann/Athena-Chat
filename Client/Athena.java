@@ -159,7 +159,7 @@ public class Athena {
      * Method instantiate the buddy list
      * @throws Exception
      */
-    public static void instantiateBuddyList() throws Exception {
+    public static void instantiateBuddyList(LoginProgress loginBar) throws Exception {
         //First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
         String hashOfLocalBuddyList = returnHashOfLocalBuddyList(username);
         //Now we need to get the hash of the user's buddy list on the server
@@ -203,7 +203,9 @@ public class Athena {
 
         //Grab string array of the buddylist.csv file
         String[] usernames = returnBuddyListArray();
-
+		loginBar.iterate(1500,"Querying User Status");
+		int moveIt = (1900-1500)/usernames.length;
+		int current = 1500;
         //Check entire buddylist and fill hashtable with user online statuses
         for (int i = 0; i < usernames.length; i++) {
             if (debug == 1) {
@@ -215,6 +217,8 @@ public class Athena {
                 getUsersPublicKeyFromAegis(usernames[i]);
             }
             checkUserStatus(usernames[i]);
+			current+=moveIt;
+			loginBar.iterate(current,"Querying User Status");
         }
         //Counter
         int y = 0;

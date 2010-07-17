@@ -114,9 +114,9 @@ public class ConnectThread extends Thread {
                  * 4. See if the user's public key exists
                  */
 
-				loginBar.iterate(1400,"Querying Contact Status");
+				loginBar.iterate(1400,"Verifying Contact List");
                 //Instantiate Buddy List
-                Athena.instantiateBuddyList();
+                Athena.instantiateBuddyList(loginBar);
 				loginBar.iterate(1900,"Verifying Private Key");
                 //Check to see if the user's private key is there
                 File privateKey = new File("users/" + username + "/keys/" + username + ".priv");

@@ -15,6 +15,7 @@ public class LoginProgress extends JFrame {
     public LoginProgress() {
         super("Logging in...");
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		super.setIconImage(Toolkit.getDefaultToolkit().getImage("images/logosmall.png"));
 		Dimension scrnsize = toolkit.getScreenSize();
 		int width = (int) scrnsize.getWidth();
 		int height = (int) scrnsize.getHeight();
@@ -31,7 +32,7 @@ public class LoginProgress extends JFrame {
 		pane.add(current,BorderLayout.CENTER);
         pane.add(currentAction,BorderLayout.PAGE_END);
         setContentPane(pane);
-		super.setLocation(width - (width / 2) - 185, height - (height / 2)-200);
+		super.setLocation(width - (width / 2) - 100, height - (height / 2)- 250);
     }
 
 
