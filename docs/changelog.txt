@@ -1,5 +1,13 @@
 ChangeLog:
- 
+
+7/17/2010:
+	## Group chat issues all fixed
+	## DirectProtect implemented completely
+	## File transfer implemented almost completely
+		@@ We may want to do chunking
+	## Threaded connection method, added progress bar
+	## Bunch of general fixes
+
 6/17/2010:
 	## Group chat almost completely implemented
 		@@ Only issue is being in more than one chat

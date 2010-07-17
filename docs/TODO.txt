@@ -1,7 +1,5 @@
 BOTH:
 	## Make the code many many times more efficient
-	## CREATE JAVADOC Comments
-	## SECURE the code. We have EVERYTHING as public.
 	## Allow users to generate new keypairs
 	## Password reset
 		@@ Decrypt all relevant info with old password, and re-encrypt with new password
