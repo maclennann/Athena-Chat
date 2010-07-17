@@ -157,8 +157,8 @@ public class Athena {
 			debugWriter.write(getDateTime() + ": "+debugText+"\r\n");
 			debugWriter.flush();
 		} catch(Exception e){
-			e.printStackTrace();
-			System.out.println("Unable to write to log file");
+			//e.printStackTrace();
+			System.out.println("Unable to write to log file. Make sure the file is open for writing.");
 		}
 	}
 
