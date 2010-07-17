@@ -82,20 +82,20 @@ public class Athena {
      * Begin private variables
      */
 	//private static DataInputStream dpInputStream;
-    private static String serverIP = "aegis.athenachat.org"; //IP of the server
-    private static int connected = 0; 	//If the client is connect to the server
+    static String serverIP = "aegis.athenachat.org"; //IP of the server
+    static int connected = 0; 	//If the client is connect to the server
     private static int away = 0; //Is the user away?
     private static SecretKeySpec chatSessionKey, dpSessionKey; //Secret key for group chat session key
-    private static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password
+	static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password
     private static String toUser; //Recipient for message
     private static String awayText; //Away message text
-    private static Socket c2ssocket; // The socket connecting us to the server for client communication
-    private static Socket c2csocket; // The socket connecting us to the server for server communication
-    private static DataOutputStream c2sdout; // Client to Server DataOutputStream
-    private static DataInputStream c2sdin; //Client to Server DataInputStream
-    private static DataOutputStream c2cdout; //Client to Client DataOutputStream
-    private static DataInputStream c2cdin; //Clien to Client DataInputStream
-    private static Thread listeningProcedureClientToClient;//, listeningProcedureDirectProtect, listeningProcedureConnectDirectProtect; //Thread that will be used to listen for incoming messages
+    static Socket c2ssocket; // The socket connecting us to the server for client communication
+    static Socket c2csocket; // The socket connecting us to the server for server communication
+    static DataOutputStream c2sdout; // Client to Server DataOutputStream
+    static DataInputStream c2sdin; //Client to Server DataInputStream
+    static DataOutputStream c2cdout; //Client to Client DataOutputStream
+    static DataInputStream c2cdin; //Clien to Client DataInputStream
+    static Thread listeningProcedureClientToClient;//, listeningProcedureDirectProtect, listeningProcedureConnectDirectProtect; //Thread that will be used to listen for incoming messages
     private static boolean enableSounds; //Flag to control sound notifications
     private static BigInteger modOfBuddy = null;
     private static BigInteger expOfBuddy = null;
@@ -114,140 +114,8 @@ public class Athena {
      * @throws Exception
      */
     public static void connect(String usernameToConnect, String hashedPassword) throws InterruptedException, AWTException, Exception {
-        //Try to connect with and authenticate to the socket
-        username = usernameToConnect;
-        try {
-            try {
-                //Connect to auth server at defined port over socket
-                //This socket is for client -> server coms
-                c2ssocket = new Socket(serverIP, 7777);
-                //This socket is for client -> client coms
-                c2csocket = new Socket(serverIP, 7778);
-            } catch (Exception e) {
-                //We can't connect to the server at the specified port for some reason
-                JOptionPane.showMessageDialog(null, "Could not connect to the server.\n"
-                        + "Please check your Internet connection.\n\n", "Connection Error", JOptionPane.ERROR_MESSAGE);
-                loginGUI = new AuthenticationInterface();
-                return;
-            }
-
-            //Create the DESCrypto object for buddylist and preferences cryptography
-            String saltUser;
-            if (username.length() >= 8) {
-                saltUser = username.substring(0, 8);
-            } else {
-                saltUser = username;
-            }
-            descrypto = new DESCrypto(hashedPassword, saltUser);
-
-            //Connection established debug code.
-            if (debug >= 1) {
-                System.out.println("Connected to " + c2ssocket + "<- for client to server communication."); //Client to server coms
-            }
-            if (debug >= 1) {
-                System.out.println("Connected to " + c2csocket + "<- for client to client communication."); //Client to client coms
-            }
-
-            //Bind the datastreams to the socket in order to send/receive data
-            //These datastreams are for client -> server coms
-            c2sdin = new DataInputStream(c2ssocket.getInputStream());
-            c2sdout = new DataOutputStream(c2ssocket.getOutputStream());
-            //These datastreams are for client -> client coms
-            c2cdin = new DataInputStream(c2csocket.getInputStream());
-            c2cdout = new DataOutputStream(c2ssocket.getOutputStream());
-
-            //Read in the server's public key for encryption of headers
-            serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
-
-            //Send username and hashed password over the socket for authentication
-            if (debug >= 1) {
-                System.out.println("User's hashed password: " + hashedPassword);
-            }
-
-            c2sdout.writeUTF(encryptServerPublic(username));	   //Sending Username
-            c2sdout.writeUTF(encryptServerPublic(hashedPassword)); //Sending Password
-            String result = decryptServerPublic(c2sdin.readUTF()); //Read in the result
-
-            if (debug >= 1) {
-                System.out.println("Result: " + result);
-            }
-            if (result.equals("Failed")) {
-                disconnect();
-                new LoginFailedInterface();
-                return;
-            } else {
-                //We're connected
-                connected = 1;
-                clientResource = new CommunicationInterface();
-
-                //Thread created to listen for messages coming in from the server
-                listeningProcedureClientToClient = new Thread(
-                        new Runnable() {
-
-                            public void run() {
-                                //While we are connected to the server, receive messages
-                                if (c2cdin == null) {
-                                    connected = 0;
-                                }
-                                while (connected == 1) {
-                                    Athena.recvMesg(c2cdin); //Listen for incomming messages from another client
-                                }
-                            }
-                        });
-
-                /* Begin start up sequence
-                 * 1. Find the status of the buddylist users
-                 * 2. Make sure the user's private key exists
-                 * 3. Start the listening thread
-                 * 4. See if the user's public key exists
-                 */
-
-                //Instantiate Buddy List
-                instantiateBuddyList();
-
-                //Check to see if the user's private key is there
-                File privateKey = new File("users/" + username + "/keys/" + username + ".priv");
-                if (!(privateKey.exists())) {
-                    //Check to see if the public key is there too
-                    boolean success = new File("users/" + username + "/keys/").mkdirs();
-                    if (success) {
-                        try {
-                            receivePrivateKeyFromServer();
-                        } catch (IOException e) {
-                            sendBugReport(getStackTraceAsString(e));
-                            e.printStackTrace();
-                        }
-
-                    } else {
-                        try {
-                            receivePrivateKeyFromServer();
-                        } catch (IOException e) {
-                            sendBugReport(getStackTraceAsString(e));
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-
-                //usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
-            }
-            //Start the thread
-            if (listeningProcedureClientToClient != null) {
-                listeningProcedureClientToClient.start();
-            }
-
-            //Check to see if the user's public key is there
-            File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
-            if (!(publicKey.exists())) {
-                getUsersPublicKeyFromAegis(username);
-            }
-            //Garbage collect
-            System.gc();
-        } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
-            e.printStackTrace();
-            loginGUI.dispose();
-        }
+		ConnectThread connect = new ConnectThread(usernameToConnect, hashedPassword);
+		connect.start();
     }
 
     /**

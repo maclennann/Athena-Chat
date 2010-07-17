@@ -143,15 +143,14 @@ public class AuthenticationInterface extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				//Ya'll like some hash?
 				try {
-
+					login.dispose();
 					Athena.setUsername(username.getText());
 					String passwordToHash = new String(password.getPassword());
 					String hashedPassword = computeHash(passwordToHash).toString();
+					
 					Athena.connect(username.getText(), hashedPassword);
-					login.dispose();
 					System.gc();
 				} catch (Exception e) {
-
 					e.printStackTrace();
 				}
 
