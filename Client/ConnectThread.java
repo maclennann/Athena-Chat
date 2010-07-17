@@ -17,6 +17,7 @@ public class ConnectThread extends Thread {
 
 	public void run() {
 		try{
+			Athena.openLog(new File("users/"+username+"/logs/"+Athena.getCleanDateTime()+"-debugLog.txt"));
 			//Try to connect with and authenticate to the socket
     		LoginProgress loginBar = new LoginProgress();
 			loginBar.pack();
@@ -51,10 +52,10 @@ public class ConnectThread extends Thread {
 			loginBar.iterate(250,"Decrypting Contact List");
             //Connection established debug code.
             if (Athena.debug >= 1) {
-                System.out.println("Connected to " + Athena.c2ssocket + "<- for client to server communication."); //Client to server coms
+                Athena.writeLog("Connected to " + Athena.c2ssocket + "<- for client to server communication."); //Client to server coms
             }
             if (Athena.debug >= 1) {
-                System.out.println("Connected to " + Athena.c2csocket + "<- for client to client communication."); //Client to client coms
+                Athena.writeLog("Connected to " + Athena.c2csocket + "<- for client to client communication."); //Client to client coms
             }
 
             //Bind the datastreams to the socket in order to send/receive data
@@ -71,7 +72,7 @@ public class ConnectThread extends Thread {
 
             //Send username and hashed password over the socket for authentication
             if (Athena.debug >= 1) {
-                System.out.println("User's hashed password: " + password);
+                Athena.writeLog("User's hashed password: " + password);
             }
 
             Athena.c2sdout.writeUTF(Athena.encryptServerPublic(username));	   //Sending Username
@@ -80,7 +81,7 @@ public class ConnectThread extends Thread {
 
 			loginBar.iterate(500,"Transmitting Credentials");
             if (Athena.debug >= 1) {
-                System.out.println("Result: " + result);
+                Athena.writeLog("Result: " + result);
             }
             if (result.equals("Failed")) {
                 Athena.disconnect();

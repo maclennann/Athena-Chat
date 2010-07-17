@@ -260,7 +260,7 @@ public class CommunicationInterface extends JFrame {
 		for (int a = 0; a < allFonts.length; a++) {
 			allFontNames[a] = allFonts[a].getFontName();
 			fontFamilyTable.put(allFonts[a].getFontName(), allFonts[a].getFamily());
-			//System.out.println("FONT NAME: " + allFonts[a].getFontName() + "\t\tFONT FAMILY: " + allFonts[a].getFamily());
+			//Athena.writeLog("FONT NAME: " + allFonts[a].getFontName() + "\t\tFONT FAMILY: " + allFonts[a].getFamily());
 		}
 
 		//Load preference settings
@@ -392,7 +392,7 @@ public class CommunicationInterface extends JFrame {
 		startDP.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(!Athena.sessionKeys.containsKey(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()))){
-					System.out.println("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
+					Athena.writeLog("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
 					Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
 				}
 				else {
@@ -411,7 +411,7 @@ public class CommunicationInterface extends JFrame {
 				try {
 					//Establish DP first!
 				if(!Athena.sessionKeys.containsKey(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()))){
-					System.out.println("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
+					Athena.writeLog("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
 					Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
 					Athena.sendFile(fc.getSelectedFile());
 				}
@@ -616,7 +616,7 @@ public class CommunicationInterface extends JFrame {
 					// Find out what was double-clicked
 					int index = theList.getSelectedIndex();
 					if (debug == 1) {
-						System.out.println(index);
+						Athena.writeLog(String.valueOf(index));
 					}
 					if (index >= 0) {
 
@@ -898,10 +898,10 @@ public class CommunicationInterface extends JFrame {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
 		currentTab.setName("-1");
 		if (debug >= 1) {
-			System.out.println("Chat Name = " + currentTab.getName());
+			Athena.writeLog("Chat Name = " + currentTab.getName());
 		}
 		if (debug >= 1) {
-			System.out.println("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(user)));
+			Athena.writeLog("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(user)));
 		}
 
 		if (imTabbedPane.indexOfTab(user) == 0 || userCreated) {
@@ -964,16 +964,16 @@ public class CommunicationInterface extends JFrame {
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(chatName));
 		currentTab.setName(chatUID);
 		if (debug >= 1) {
-			System.out.println("Chat Name = " + currentTab.getName());
+			Athena.writeLog("Chat Name = " + currentTab.getName());
 		}
 		if (debug >= 1) {
-			System.out.println("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(chatName)));
+			Athena.writeLog("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(chatName)));
 		}
 
                         imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(chatName));
 			contactList.setVisible(false);
 
-                        System.out.println("CURRENT LISTMODEL: " + chatListModels.get(chatUID));
+                        Athena.writeLog("CURRENT LISTMODEL: " + chatListModels.get(chatUID));
                         TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, chatName + " Chat List", TitledBorder.CENTER,
                             TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
 			chatList.setBorder(newChatListBorder);
@@ -1054,7 +1054,7 @@ public class CommunicationInterface extends JFrame {
 
 					public void actionPerformed(ActionEvent e) {
 						if (debug == 1) {
-							System.out.println("Exiting...");
+							Athena.writeLog("Exiting...");
 						}
 						System.exit(0);
 					}
@@ -1143,7 +1143,7 @@ public class CommunicationInterface extends JFrame {
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 		JEditorPane currentEditorPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 		if (debug >= 1) {
-			System.out.println("Alert listener on: " + currentEditorPane.toString());
+			Athena.writeLog("Alert listener on: " + currentEditorPane.toString());
 		}
 		currentEditorPane.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -1268,8 +1268,8 @@ public class CommunicationInterface extends JFrame {
                                 chatIDToLocate = imTabbedPane.getSelectedComponent().getName();
 				contactList.setVisible(false);
                                 chatBox.setModel(chatListModels.get(chatIDToLocate));
-                                System.out.println("CURRENT CHAT UID: " + chatIDToLocate);
-                                System.out.println("CURRENT LISTMODEL: " + chatBox.getModel().toString());
+                                Athena.writeLog("CURRENT CHAT UID: " + chatIDToLocate);
+                                Athena.writeLog("CURRENT LISTMODEL: " + chatBox.getModel().toString());
                                 chatList.setViewportView(chatBox);
 				chatList.setVisible(true);
 				Icon closeIcon = new ImageIcon("images/close_button.png");
@@ -1464,7 +1464,7 @@ public class CommunicationInterface extends JFrame {
 	 */
 	public void mapUserStatus(String username, int status) {
 		if (debug == 1) {
-			System.out.println("Username: " + username + "\nStatus: " + status);
+			Athena.writeLog("Username: " + username + "\nStatus: " + status);
 		}
 		userStatus.put(username, status);
 	}
@@ -1475,7 +1475,7 @@ public class CommunicationInterface extends JFrame {
 	 */
 	private Object[] loadSavedPreferences() {
 		if (debug == 1) {
-			System.out.println("Importing preferences");
+			Athena.writeLog("Importing preferences");
 		}
 		Object[] settingsArray = new Object[11];
 		int arrayCount = 0;
@@ -1488,7 +1488,7 @@ public class CommunicationInterface extends JFrame {
 				boolean success = new File("users/" + Athena.username + "/").mkdirs();
 				if (success) {
 					if (debug == 1) {
-						System.out.println("File Not Found! Copying...");
+						Athena.writeLog("File Not Found! Copying...");
 					}
 					File oldFile = new File("users/Aegis/athena.conf");
 					FileChannel inChannel = new FileInputStream(oldFile).getChannel();
@@ -1507,7 +1507,7 @@ public class CommunicationInterface extends JFrame {
 					}
 				} else {
 					if (debug == 1) {
-						System.out.println("File Not Found! Copying...");
+						Athena.writeLog("File Not Found! Copying...");
 					}
 					File oldFile = new File("users/Aegis/athena.conf");
 					FileChannel inChannel = new FileInputStream(oldFile).getChannel();
@@ -1699,7 +1699,7 @@ public class CommunicationInterface extends JFrame {
                                 chatListModels.remove(chatUID);
                                 //chatLists.remove(chatUID);
 				if (debug >= 1) {
-					System.out.println("Removed Tab for user: " + userToRemove);
+					Athena.writeLog("Removed Tab for user: " + userToRemove);
 				}
 				if (imTabbedPane.getTabCount() > 0) {
 					JPanel currentTab = (JPanel) imTabbedPane.getSelectedComponent();
@@ -1709,11 +1709,11 @@ public class CommunicationInterface extends JFrame {
 					uniqueIDHash.remove(currentTextPane.getDocument());
 					//Retrieve the mapTextArea, then see if the tab is a chat tab
 					if (debug >= 1) {
-						System.out.println("ChatUID: " + chatUID);
+						Athena.writeLog("ChatUID: " + chatUID);
 					}
 					if (!(chatUID.equals("-1"))) {
 						if (debug >= 1) {
-							System.out.println("Leaving chat!");
+							Athena.writeLog("Leaving chat!");
 						}
 						Athena.leaveChat(chatUID);
 					}
@@ -1723,10 +1723,10 @@ public class CommunicationInterface extends JFrame {
 					CommunicationInterface.lockIconLabel.setVisible(true);
 					CommunicationInterface.logoIconLabel.setVisible(true);
 					if (debug >= 1) {
-						System.out.println("ChatUID: " + chatUID);
+						Athena.writeLog("ChatUID: " + chatUID);
 					}
 					if (!(chatUID.equals("-1"))) {
-						System.out.println("Leaving chat!");
+						Athena.writeLog("Leaving chat!");
 						Athena.leaveChat(chatUID);
 					}
 				}
@@ -1946,7 +1946,7 @@ class MapTextArea extends JFrame {
 		//Set default font settings to new text pane
 		if (!(Athena.clientResource.settingsLoaded)) {
 			if (Athena.debug >= 1) {
-				System.out.println("Settings loaded from file, settingsLoaded = " + Athena.clientResource.settingsLoaded);
+				Athena.writeLog("Settings loaded from file, settingsLoaded = " + Athena.clientResource.settingsLoaded);
 			}
 			setLoadedFont();
 			StyledDocument doc = myTP.getStyledDocument();
@@ -1957,7 +1957,7 @@ class MapTextArea extends JFrame {
 			}
 		} else {
 			if (Athena.debug >= 1) {
-				System.out.println("Settings already changed, settingsLoaded = " + Athena.clientResource.settingsLoaded);
+				Athena.writeLog("Settings already changed, settingsLoaded = " + Athena.clientResource.settingsLoaded);
 			}
 			//Dont set default config font, get current font
 			setLoadedFont();
