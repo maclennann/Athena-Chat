@@ -125,6 +125,21 @@ public class Athena {
 
 	public static void openLog(File fileName) {
 		try{
+			int numLogs = new File("users/"+username+"/logs").list().length;
+			if(numLogs > 15) {
+				File directory = new File("users/"+username+"/logs");
+				// Get all files in directory
+
+				File[] files = directory.listFiles();
+				for (File file : files)	{
+					// Delete each file
+					if (!file.delete())	{
+						// Failed to delete file
+				       System.out.println("Failed to delete "+file);
+					}
+				}
+			}
+
 			debugLog = fileName;
 			if (!(debugLog.exists())) {
 				boolean success = new File("users/" + username+"/logs").mkdirs();
@@ -134,6 +149,7 @@ public class Athena {
 					debugLog.createNewFile();
 				}
             }
+
             debugWriter = new BufferedWriter(new FileWriter(debugLog));
 		} catch(Exception e) {
 			System.out.println("Unable to open log file");
