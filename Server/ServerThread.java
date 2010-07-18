@@ -402,20 +402,22 @@ public class ServerThread extends Thread {
 		ResultSet rs = null;
 
 		//Add user to chat in Database so they will get messages
-		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE username = "+ username + "');");
+		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE username = '"+ username + "';");
 		while (rs.next()) {
 			listSize = rs.getInt(1);
 		}
 		String[] blockList = new String[listSize];
 
-		rs = stmt.executeQuery("SELECT user_blocked FROM blocklist WHERE username = "+ username + "');");
+		rs = stmt.executeQuery("SELECT user_blocked FROM blocklist WHERE username = '"+ username + "';");
 
 		int i=0;
 		while (rs.next()) {
-			blockList[1] = rs.getString(2);
+			blockList[i] = rs.getString(1);
+			i++;
 		}
 
 		//Close the connections
+		rs.close();
 		stmt.close();
 		con.close();
 		return blockList;
@@ -447,6 +449,7 @@ public class ServerThread extends Thread {
 		}
 
 		//Close the connections
+		rs.close();
 		stmt.close();
 		con.close();
 		return blockList;
