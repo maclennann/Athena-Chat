@@ -431,6 +431,7 @@ public class ServerThread extends Thread {
 		ResultSet rs = null;
 
 		//Add user to chat in Database so they will get messages
+		System.out.println("THE FUCKING QUERY IS FUCKIN: SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "');");
 		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "');");
 		while (rs.next()) {
 			listSize = rs.getInt(1);
