@@ -187,8 +187,10 @@ public class Server {
 			String userToCheck = (String)usernameEnumeration.nextElement();
 
 			if(blockList != null && blockList.length!=0){
+				System.out.println("Blocklist exists");
 			for(int i=0;i<blockList.length-1;i++) {
-				if(blockList[1].equals(userToCheck)) send=0;
+				System.out.println("Checking: "+blockList[i] + " against " + userToCheck);
+				if(blockList[i].equals(userToCheck)) send=0;
 			}}
 			if(send==1){
 			try {
