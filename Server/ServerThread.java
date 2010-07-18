@@ -442,7 +442,7 @@ public class ServerThread extends Thread {
 
 		int i=0;
 		while (rs.next()) {
-			blockList[1] = rs.getString(2);
+			blockList[1] = rs.getString(1);
 		}
 
 		//Close the connections
