@@ -33,8 +33,8 @@ public class ListenerThread extends Thread{
 				Socket c2c = cSocket.accept();
 
 				//Debug text announcing a new connection
-				System.out.println("Server-to-Client Connection Established:\n " + c2s);
-				System.out.println("Client-to-Client Connection Established:\n" + c2c);
+				server.writeLog("Server-to-Client Connection Established:\n " + c2s);
+				server.writeLog("Client-to-Client Connection Established:\n" + c2c);
 
 				//Handle the rest of the connection in the new thread
 				new	ServerThread(server, c2s, c2c);

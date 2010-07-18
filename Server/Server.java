@@ -15,7 +15,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.ServerSocket;
@@ -25,6 +28,9 @@ import java.security.spec.RSAPublicKeySpec;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -39,6 +45,8 @@ public class Server {
 	//This socket will accept new connection
 	private ServerSocket c2ss;
 	private ServerSocket c2css;
+	private static File debugLog;
+	private static BufferedWriter debugWriter;
 	/**
 	 * Holds the usernames and hashed passwords read in from the database.
 	 */
@@ -150,10 +158,11 @@ public class Server {
 		System.out.println("**     Port 7777   &&   7778             **");
 		System.out.println("**                                       **");
 		System.out.println("*******************************************");
-
+		openLog(new File("logs/Aegis.txt"));
 		ListenerThread listener = new ListenerThread(c2ss,c2css,this);
 		listener.start();
-		
+		System.out.println("\n\nMenu:\nPlease Choose an Action -");
+		System.out.println("\n1. Change Debug Level\n2. Exit");
 		//Accept client connections forever
 		/*while (true) {
 			//Accept a new connection on the serversocket
@@ -169,6 +178,44 @@ public class Server {
 			new ServerThread(this, c2s, c2c);
 			System.gc();
 		}*/
+	}
+
+	public static void openLog(File fileName) {
+		try{
+			debugLog = fileName;
+			if (!(debugLog.exists())) {
+				boolean success = new File("logs").mkdirs();
+				if (success) {
+					debugLog.createNewFile();
+				} else {
+					debugLog.createNewFile();
+				}
+			}
+
+			debugWriter = new BufferedWriter(new FileWriter(debugLog));
+		} catch(Exception e) {
+			System.out.println("Unable to open log file");
+		}
+	}
+
+	public static String getDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+	public static void writeLog(String debugText) {
+		try{
+			debugWriter.write(getDateTime() + ": "+debugText+"\r\n");
+			debugWriter.flush();
+		} catch(Exception e){
+			//e.printStackTrace();
+			System.out.println("Unable to write to log file. Make sure the file is open for writing.");
+		}
+	}
+
+	public static void closeLog() throws IOException {
+		debugWriter.close();
 	}
 
 	/**
