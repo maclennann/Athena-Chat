@@ -171,7 +171,7 @@ public class Server {
 		//The Administration menu
 		while(true){
 			System.out.println("\n\nMenu:\nPlease Choose an Action -");
-			System.out.println("\n1. Change Debug Level\n2. View Log\n3. View Users\n4. Exit\n");
+			System.out.println("\n1. Change Debug Level\n2. View Log\n3. View Users\n4. Kick User\n5. Exit\n");
 			System.out.print("?> ");
 			int answer=in.nextInt();
 			if(answer==1){
@@ -193,7 +193,13 @@ public class Server {
 					System.out.println((String)userEnumeration.nextElement());
 				}
 			}
-			else if(answer == 4) {
+			else if(answer ==4) {
+				System.out.println("\nType username of person to kick:");
+				System.out.print("?> ");
+				String usernameToKick = in.nextLine();
+				removeConnection(userToServerSocket.get(usernameToKick),userToClientSocket.get(usernameToKick),usernameToKick);
+			}
+			else if(answer == 5) {
 				//Get a reason for the shutdown
 				System.out.println("\nPlease provide a reason for this shutdown:");
 				System.out.print("?> ");
