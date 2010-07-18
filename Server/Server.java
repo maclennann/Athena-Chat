@@ -185,10 +185,10 @@ public class Server {
 		for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
 			Socket sendToAllSocket = (Socket) e.nextElement();
 			String userToCheck = (String)usernameEnumeration.nextElement();
-
+			System.out.println("UserToCheck: "+userToCheck);
 			if(blockList != null && blockList.length!=0){
 				System.out.println("Blocklist exists");
-			for(int i=0;i<blockList.length-1;i++) {
+			for(int i=0;i<blockList.length;i++) {
 				System.out.println("Checking: "+blockList[i] + " against " + userToCheck);
 				if(blockList[i].equals(userToCheck)) send=0;
 			}}
