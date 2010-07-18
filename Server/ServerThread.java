@@ -1285,10 +1285,15 @@ public class ServerThread extends Thread {
 			if ((server.userToServerSocket.containsKey(findUserDecrypted))) {
 				serverDout.writeUTF(encryptServerPrivate("1"));
 				System.out.println("(Online)\n");
-			}} else {
+			} else {
+				serverDout.writeUTF(encryptServerPrivate("0"));
+				System.out.println("(Offline)\n");
+			}}
+			else {
 				serverDout.writeUTF(encryptServerPrivate("0"));
 				System.out.println("(Offline)\n");
 			}
+
 			
 		} catch (Exception e) {
 			e.printStackTrace();
