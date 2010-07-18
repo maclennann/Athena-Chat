@@ -242,7 +242,7 @@ public class Server {
 		for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
 			Socket sendToAllSocket = (Socket) e.nextElement();
 			String userToCheck = (String)usernameEnumeration.nextElement();
-			server.writeLog("UserToCheck: "+userToCheck);
+			writeLog("UserToCheck: "+userToCheck);
 			if(blockList != null && blockList.length!=0){
 				writeLog("Blocklist exists");
 			for(int i=0;i<blockList.length;i++) {
@@ -288,7 +288,7 @@ public class Server {
 	 */
 	void removeConnection(Socket servsock, Socket clientsock, String uname) {
 		// Debug text
-		server.writeLog("User Disconnected: " + uname + "\n\n");
+		writeLog("User Disconnected: " + uname + "\n\n");
 
 		// Remove thread's entries from hashtables
 		userToServerSocket.remove(uname);
