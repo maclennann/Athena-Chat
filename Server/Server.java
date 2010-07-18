@@ -242,11 +242,11 @@ public class Server {
 		for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
 			Socket sendToAllSocket = (Socket) e.nextElement();
 			String userToCheck = (String)usernameEnumeration.nextElement();
-			System.out.println("UserToCheck: "+userToCheck);
+			server.writeLog("UserToCheck: "+userToCheck);
 			if(blockList != null && blockList.length!=0){
-				System.out.println("Blocklist exists");
+				writeLog("Blocklist exists");
 			for(int i=0;i<blockList.length;i++) {
-				System.out.println("Checking: "+blockList[i] + " against " + userToCheck);
+				writeLog("Checking: "+blockList[i] + " against " + userToCheck);
 				if(blockList[i].equals(userToCheck)) send=0;
 			}}
 			if(send==1){
@@ -267,14 +267,14 @@ public class Server {
 	 */
 	void removeConnection(Socket servsock, Socket clientsock) {
 		// Debug text
-		System.out.println("Connection Terminated:\n" + servsock + "\n\n");
+		writeLog("Connection Terminated:\n" + servsock + "\n\n");
 
 		// Make sure it's closed
 		try {
 			servsock.close();
 			clientsock.close();
 		} catch (IOException ie) {
-			System.out.println("Error closing " + servsock);
+			writeLog("Error closing " + servsock);
 			ie.printStackTrace();
 		}
 		System.gc();
@@ -288,7 +288,7 @@ public class Server {
 	 */
 	void removeConnection(Socket servsock, Socket clientsock, String uname) {
 		// Debug text
-		System.out.println("User Disconnected: " + uname + "\n\n");
+		server.writeLog("User Disconnected: " + uname + "\n\n");
 
 		// Remove thread's entries from hashtables
 		userToServerSocket.remove(uname);
@@ -302,7 +302,7 @@ public class Server {
 			//Sending User Log off message after we close the socket
 			sendToAll("ServerLogOff", uname,null);
 		} catch (IOException ie) {
-			System.out.println("Error closing " + servsock);
+			writeLog("Error closing " + servsock);
 			ie.printStackTrace();
 		}
 		System.gc();
