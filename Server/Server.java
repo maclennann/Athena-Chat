@@ -147,12 +147,15 @@ public class Server {
 		System.out.println("**     v1.0.1b                           **");
 		System.out.println("**                                       **");
 		System.out.println("**     Server accepting connections:     **");
-		System.out.println("**     Port 7777                         **");
+		System.out.println("**     Port 7777   &&   7778             **");
 		System.out.println("**                                       **");
 		System.out.println("*******************************************");
 
+		ListenerThread listener = new ListenerThread(c2ss,c2css,this);
+		listener.start();
+		
 		//Accept client connections forever
-		while (true) {
+		/*while (true) {
 			//Accept a new connection on the serversocket
 			//Create a socket for it
 			Socket c2s = c2ss.accept();
@@ -165,7 +168,7 @@ public class Server {
 			//Handle the rest of the connection in the new thread
 			new ServerThread(this, c2s, c2c);
 			System.gc();
-		}
+		}*/
 	}
 
 	/**
