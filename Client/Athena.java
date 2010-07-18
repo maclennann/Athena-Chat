@@ -464,7 +464,7 @@ public class Athena {
             }
 			else if (fromUserDecrypted.equals("ServerShutDown")) {
 				decryptedMessage = decryptServerPublic(encryptedMessage);
-				JOptionPane.showMessageDialog(null,"Aegis is shutting down in 30 seconds.\nReason:\n"+decryptedMessage);
+				JOptionPane.showMessageDialog(null,"Aegis is shutting down in 30 seconds.\nReason:\n"+decryptedMessage+"\n\nPlease wrap up your business and log off.");
 			}//Remove user from Buddylist
             else if (fromUserDecrypted.equals("ServerLogOff")) {
                 decryptedMessage = decryptServerPublic(encryptedMessage);
