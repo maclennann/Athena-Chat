@@ -408,7 +408,7 @@ public class ServerThread extends Thread {
 		}
 		String[] blockList = new String[listSize];
 
-		rs = stmt.executeQuery("SELECT user_blocked FROM blocklist WHERE username = '"+ username + "';");
+		rs = stmt.executeQuery("SELECT blocked_user FROM blocklist WHERE username = '"+ username + "';");
 
 		int i=0;
 		while (rs.next()) {
