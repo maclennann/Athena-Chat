@@ -461,7 +461,11 @@ public class Athena {
                 print.writeToTextArea(fromUserDecrypted + ": ", print.getSetHeaderFont(Color.red));
                 print.writeToTextArea(decryptedMessage + "\n", print.getTextFont());
                 return;
-            } //Remove user from Buddylist
+            }
+			else if (fromUserDecrypted.equals("ServerShutDown")) {
+				decryptedMessage = decryptServerPublic(encryptedMessage);
+				JOptionPane.showMessageDialog(null,"Aegis is shutting down in 30 seconds.\nReason:\n"+decryptedMessage);
+			}//Remove user from Buddylist
             else if (fromUserDecrypted.equals("ServerLogOff")) {
                 decryptedMessage = decryptServerPublic(encryptedMessage);
                 //Check to see if the user is in your buddy list, if not, don't care

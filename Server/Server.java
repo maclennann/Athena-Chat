@@ -168,6 +168,15 @@ public class Server {
 		System.out.print("?> ");
 		int answer=in.nextInt();
 		if(answer==2){
+			System.out.println("\nPlease provide a reason for this shutdown:");
+			System.out.print("?> ");
+			String message = in.nextLine();
+			sendToAll("ServerShutDown",message,null);
+			try{
+			Thread.sleep(30000);
+			}catch(Exception e){System.out.println("Could not sleep. Shutting down immediately!");
+			}
+			System.out.println("Shutting down...");
 			System.exit(0);
 		}
 		//Accept client connections forever
