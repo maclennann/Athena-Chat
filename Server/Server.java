@@ -194,6 +194,7 @@ public class Server {
 				}
 			}
 			else if(answer ==4) {
+				in.nextLine();
 				System.out.println("\nType username of person to kick:");
 				System.out.print("?> ");
 				String usernameToKick = in.nextLine();
