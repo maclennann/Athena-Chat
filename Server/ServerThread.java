@@ -1546,7 +1546,7 @@ public class ServerThread extends Thread {
 			}}
 		//Debug statement: who is this going to?
 		if (debug == 1) {
-			System.out.print(toUser);
+			server.writeLog(toUser);
 		}
 
 		//Look up the socket associated with the with whom we want to talk
@@ -1554,7 +1554,7 @@ public class ServerThread extends Thread {
 		//If we cannot find the user or socket, send back an error
 		if ((server.userToClientSocket.containsKey(toUser))&&blocked==0) {
 			if (debug == 1) {
-				System.out.print("Found user.. Continuing...");
+				server.writeLog("Found user.. Continuing...");
 			}
 			foundSocket = (Socket) server.userToClientSocket.get(toUser);
 			try {
@@ -1563,7 +1563,7 @@ public class ServerThread extends Thread {
 				Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			if (debug == 1) {
-				System.out.print("Found Socket: " + foundSocket);
+				server.writeLog("Found Socket: " + foundSocket);
 			}
 		} else {
 			sendMessage(fromUser, "UnavailableUser", encryptServerPrivate(toUser));
