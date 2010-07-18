@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 /**
  * The main server component. Accepts/manages connections and threads
@@ -56,6 +57,7 @@ public class Server {
 	private static String dbPass = "";
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
+	private static Scanner in = new Scanner(System.in);
 	/**
 	 * A hashtable that maps users to their server socket
 	 */
@@ -162,7 +164,11 @@ public class Server {
 		ListenerThread listener = new ListenerThread(c2ss,c2css,this);
 		listener.start();
 		System.out.println("\n\nMenu:\nPlease Choose an Action -");
-		System.out.println("\n1. Change Debug Level\n2. Exit");
+		System.out.println("\n1. Change Debug Level\n2. Exit\n\n?> ");
+		int answer=in.nextInt();
+		if(answer==2){
+			System.exit(0);
+		}
 		//Accept client connections forever
 		/*while (true) {
 			//Accept a new connection on the serversocket

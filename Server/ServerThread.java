@@ -192,7 +192,7 @@ public class ServerThread extends Thread {
 			//Is the message an eventcode meant for the server?
 			if (toUser.equals("Aegis")) {
 				if (debug >= 1) {
-					System.out.print("Server eventcode detected! ");
+					server.writeLog("Server eventcode detected! ");
 				}
 				if (debug >= 1) {
 					server.writeLog(decryptServerPrivate(messageEncrypted));
