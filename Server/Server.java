@@ -160,60 +160,58 @@ public class Server {
 		System.out.println("**     Port 7777   &&   7778             **");
 		System.out.println("**                                       **");
 		System.out.println("*******************************************");
+
+		//Open the log file for writing
 		openLog(new File("logs/Aegis.txt"));
+
+		//Start listening for connections
 		ListenerThread listener = new ListenerThread(c2ss,c2css,this);
 		listener.start();
+
+		//The Administration menu
 		while(true){
-		System.out.println("\n\nMenu:\nPlease Choose an Action -");
-		System.out.println("\n1. Change Debug Level\n2. View Log\n3. View Users\n4. Exit\n");
-		System.out.print("?> ");
-		int answer=in.nextInt();
-		if(answer==1){
-			System.out.println("Choose new debug level (0,1,2):");
+			System.out.println("\n\nMenu:\nPlease Choose an Action -");
+			System.out.println("\n1. Change Debug Level\n2. View Log\n3. View Users\n4. Exit\n");
 			System.out.print("?> ");
-			debug = in.nextInt();
-		}
-		else if(answer == 2) {
-			Runtime.getRuntime().exec("tail ./logs/Aegis.txt");
-		}
-		else if(answer == 3) {
-			System.out.println(userToClientSocket.size() + " users connected:\n");
-			Enumeration userEnumeration = userToClientSocket.keys();
+			int answer=in.nextInt();
+			if(answer==1){
+				System.out.println("Choose new debug level (0,1,2):");
+				System.out.print("?> ");
+				debug = in.nextInt();
+			}
+			else if(answer == 2) {
+				//Need a better way to do this
+				Runtime.getRuntime().exec("tail ./logs/Aegis.txt");
+			}
+			else if(answer == 3) {
+				//Prints out number of users connected, then usernames
+				System.out.println(userToClientSocket.size() + " users connected:\n");
+				Enumeration userEnumeration = userToClientSocket.keys();
 
-			//Get the outputStream for each socket and send message
-			for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
-				System.out.println((String)userEnumeration.nextElement());
+				//Get the outputStream for each socket and send message
+				for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
+					System.out.println((String)userEnumeration.nextElement());
+				}
+			}
+			else if(answer == 4) {
+				//Get a reason for the shutdown
+				System.out.println("\nPlease provide a reason for this shutdown:");
+				System.out.print("?> ");
+				in.nextLine();
+				String message = in.nextLine();
+				//Inform users of the shutdown, and reason
+				sendToAll("ServerShutDown",message,null);
+				try{
+					//Wait 30 seconds before shutdown
+					Thread.sleep(30000);
+				}catch(Exception e){
+					System.out.println("Could not sleep. Shutting down immediately!");
+				}
+				System.out.println("Shutting down...");
+				System.exit(0);
 			}
 		}
-		else if(answer == 4) {
-			System.out.println("\nPlease provide a reason for this shutdown:");
-			System.out.print("?> ");
-			in.nextLine();
-			String message = in.nextLine();
-			sendToAll("ServerShutDown",message,null);
-			try{
-			Thread.sleep(30000);
-			}catch(Exception e){System.out.println("Could not sleep. Shutting down immediately!");
-			}
-			System.out.println("Shutting down...");
-			System.exit(0);
-		}
-		//Accept client connections forever
-		/*while (true) {
-			//Accept a new connection on the serversocket
-			//Create a socket for it
-			Socket c2s = c2ss.accept();
-			Socket c2c = c2css.accept();
-
-			//Debug text announcing a new connection
-			System.out.println("Server-to-Client Connection Established:\n " + c2s);
-			System.out.println("Client-to-Client Connection Established:\n" + c2c);
-
-			//Handle the rest of the connection in the new thread
-			new ServerThread(this, c2s, c2c);
-			System.gc();
-		}*/
-	}}
+	}
 
 	public static void openLog(File fileName) {
 		try{
