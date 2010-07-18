@@ -186,7 +186,7 @@ public class Server {
 			Socket sendToAllSocket = (Socket) e.nextElement();
 			String userToCheck = (String)usernameEnumeration.nextElement();
 
-			if(blockList.length!=0){
+			if(blockList != null && blockList.length!=0){
 			for(int i=0;i<blockList.length-1;i++) {
 				if(blockList[1].equals(userToCheck)) send=0;
 			}}
