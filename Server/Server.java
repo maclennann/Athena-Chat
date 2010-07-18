@@ -174,7 +174,7 @@ public class Server {
 			debug = in.nextInt();
 		}
 		else if(answer == 2) {
-			Runtime.getRuntime().exec("cat ./logs/Aegis.txt | tail");
+			Runtime.getRuntime().exec("tail ./logs/Aegis.txt");
 		}
 		else if(answer == 3) {
 			System.out.println(userToClientSocket.size() + " users connected:\n");
