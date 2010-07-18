@@ -165,7 +165,7 @@ public class Server {
 		listener.start();
 		System.out.println("\n\nMenu:\nPlease Choose an Action -");
 		System.out.println("\n1. Change Debug Level\n2. Exit\n");
-		System.out.prtin("?> ");
+		System.out.print("?> ");
 		int answer=in.nextInt();
 		if(answer==2){
 			System.exit(0);
