@@ -260,7 +260,7 @@ public class ServerThread extends Thread {
 				if (debug == 1) {
 					System.out.println("Event code received. senToAll() run.");
 				}
-				server.sendToAll("ServerLogOn", username);
+				server.sendToAll("ServerLogOn", username,getBlocklist());
 				break;
 			case 003:
 				if (debug == 1) {
@@ -382,9 +382,95 @@ public class ServerThread extends Thread {
 				}
 				fileResult();
 				break;
+			case 23:
+				if (debug >= 1) {
+					System.out.println("Event code received. addBlocklist() run.");
+				}
+				addBlocklist();
+				break;
 			default:
 				return;
 		}
+	}
+
+	private String[] getBlocklist() {
+		try{
+		//Grab a connection to the database
+		Connection con = server.dbConnect();
+		Statement stmt = con.createStatement();
+		int listSize=0;
+		ResultSet rs = null;
+
+		//Add user to chat in Database so they will get messages
+		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE username = "+ username + "');");
+		while (rs.next()) {
+			listSize = rs.getInt(1);
+		}
+		String[] blockList = new String[listSize];
+
+		rs = stmt.executeQuery("SELECT user_blocked FROM blocklist WHERE username = "+ username + "');");
+
+		int i=0;
+		while (rs.next()) {
+			blockList[1] = rs.getString(2);
+		}
+
+		//Close the connections
+		stmt.close();
+		con.close();
+		return blockList;
+		} catch(Exception e){e.printStackTrace();}return null;
+	}
+
+	private String[] getBlockedlist() {
+		try{
+		//Grab a connection to the database
+		Connection con = server.dbConnect();
+		Statement stmt = con.createStatement();
+		int listSize=0;
+		ResultSet rs = null;
+
+		//Add user to chat in Database so they will get messages
+		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE user_blocked = "+ username + "');");
+		while (rs.next()) {
+			listSize = rs.getInt(1);
+		}
+		String[] blockList = new String[listSize];
+
+		rs = stmt.executeQuery("SELECT username FROM blocklist WHERE user_blocked = "+ username + "');");
+
+		int i=0;
+		while (rs.next()) {
+			blockList[1] = rs.getString(2);
+		}
+
+		//Close the connections
+		stmt.close();
+		con.close();
+		return blockList;
+		} catch(Exception e){e.printStackTrace();}return null;
+	}
+
+	private void addBlocklist() {
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+
+			String userToBlock = decryptServerPrivate(serverDin.readUTF());
+
+			//Grab a connection to the database
+			Connection con = server.dbConnect();
+			Statement stmt = con.createStatement();
+
+			//Add user to chat in Database so they will get messages
+			stmt.executeUpdate("INSERT into blocklist (username,blocked_user) values('" + username + "','" + userToBlock + "');");
+			if (debug >= 1) {
+				System.out.println("User blocked: "+username+"/"+userToBlock);
+			}
+
+			//Close the connections
+			stmt.close();
+			con.close();
+		} catch(Exception e) { e.printStackTrace();}
 	}
 
 	private void fileResult() {
@@ -1170,17 +1256,25 @@ public class ServerThread extends Thread {
 	 */
 	public void negotiateClientStatus() {
 		try {
+			String[] blockedList = getBlockedlist();
 			//Listen for the username
 			String findUserCipher = serverDin.readUTF();
+			int blocked=0;
+			
 			if (debug >= 1) {
 				System.out.println("FINDUSERCIPHER!@$!#@" + findUserCipher);
 			}
 			byte[] findUserBytes = (new BigInteger(findUserCipher)).toByteArray();
 			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+
+			for(int i=0;i<blockedList.length-1;i++){
+				if(blockedList[i].equals(findUserDecrypted)) blocked=1;
+			}
 			//Print out the received username
 			if (debug >= 1) {
 				System.out.println("Username received: " + findUserDecrypted);
 			}
+			if(blocked==0){
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToServerSocket.containsKey(findUserDecrypted))) {
 				serverDout.writeUTF(encryptServerPrivate("1"));
@@ -1189,7 +1283,7 @@ public class ServerThread extends Thread {
 				serverDout.writeUTF(encryptServerPrivate("0"));
 				System.out.println("(Offline)\n");
 			}
-
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

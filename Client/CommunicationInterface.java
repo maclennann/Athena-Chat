@@ -380,6 +380,17 @@ public class CommunicationInterface extends JFrame {
 		web.setMnemonic(KeyEvent.VK_R);
 		help.add(bugReport);
 
+		JMenuItem blockUser = new JMenuItem("Block this user");
+		blockUser.setMnemonic(KeyEvent.VK_B);
+		edit.add(blockUser);
+
+		blockUser.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				Athena.blockUser();
+			}
+		});
+
 		// ActionListener to make the disconnect menu item disconnect
 		createChat.addActionListener(new ActionListener() {
 

@@ -129,6 +129,7 @@ public class Server {
 	 * @param port Port to listen on
 	 * @throws IOException
 	 */
+	@SuppressWarnings("ResultOfObjectAllocationIgnored")
 	private void listen(int port) throws IOException {
 		// Create the ServerSocket
 		c2ss = new ServerSocket(port);
@@ -172,22 +173,30 @@ public class Server {
 	 * @param eventCode What we are talking to them about
 	 * @param message The data
 	 */
-	synchronized void sendToAll(String eventCode, String message) {
+	synchronized void sendToAll(String eventCode, String message,String[] blockList) {
 		System.gc();
 		BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
 		BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
 		Enumeration userEnumeration = userToClientSocket.elements();
+		Enumeration usernameEnumeration = userToClientSocket.keys();
 
+		int send=1;
 		//Get the outputStream for each socket and send message
 		for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
 			Socket sendToAllSocket = (Socket) e.nextElement();
+			String userToCheck = (String)usernameEnumeration.nextElement();
+
+			for(int i=0;i<blockList.length-1;i++) {
+				if(blockList[1].equals(userToCheck)) send=0;
+			}
+			if(send==1){
 			try {
 				DataOutputStream dout = new DataOutputStream(sendToAllSocket.getOutputStream());
 				dout.writeUTF(eventCodeCipher.toString());
 				dout.writeUTF(messageCipher.toString());
 			} catch (IOException ie) {
 				System.out.println(ie);
-			}
+			}}send=1;
 		}
 	}
 
@@ -231,7 +240,7 @@ public class Server {
 			clientsock.close();
 
 			//Sending User Log off message after we close the socket
-			sendToAll("ServerLogOff", uname);
+			sendToAll("ServerLogOff", uname,null);
 		} catch (IOException ie) {
 			System.out.println("Error closing " + servsock);
 			ie.printStackTrace();

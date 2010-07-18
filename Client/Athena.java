@@ -218,6 +218,15 @@ public class Athena {
         }
     }
 
+	public static void blockUser(){
+		try{
+		String userToBlock = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+		systemMessage("23");
+		c2sdout.writeUTF(encryptServerPublic(userToBlock));
+		} catch(Exception e){e.printStackTrace();}
+	}
+
+
     /**
      * Method instantiate the buddy list
      * @throws Exception
