@@ -475,6 +475,7 @@ public class ServerThread extends Thread {
 			//Close the connections
 			stmt.close();
 			con.close();
+			sendMessage(userToBlock,"ServerLogOff", encryptServerPrivate(username));
 		} catch(Exception e) { e.printStackTrace();}
 	}
 
