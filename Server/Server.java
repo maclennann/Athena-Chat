@@ -163,11 +163,29 @@ public class Server {
 		openLog(new File("logs/Aegis.txt"));
 		ListenerThread listener = new ListenerThread(c2ss,c2css,this);
 		listener.start();
+		while(true){
 		System.out.println("\n\nMenu:\nPlease Choose an Action -");
-		System.out.println("\n1. Change Debug Level\n2. Exit\n");
+		System.out.println("\n1. Change Debug Level\n2. View Log\n3. View Users\n4. Exit\n");
 		System.out.print("?> ");
 		int answer=in.nextInt();
-		if(answer==2){
+		if(answer==1){
+			System.out.println("Choose new debug level (0,1,2):");
+			System.out.print("?> ");
+			debug = in.nextInt();
+		}
+		else if(answer == 2) {
+			Runtime.getRuntime().exec("cat ./logs/Aegis.txt | tail");
+		}
+		else if(answer == 3) {
+			System.out.println(userToClientSocket.size() + " users connected:\n");
+			Enumeration userEnumeration = userToClientSocket.keys();
+
+			//Get the outputStream for each socket and send message
+			for (Enumeration<?> e = userEnumeration; e.hasMoreElements();) {
+				System.out.println((String)userEnumeration.nextElement());
+			}
+		}
+		else if(answer == 4) {
 			System.out.println("\nPlease provide a reason for this shutdown:");
 			System.out.print("?> ");
 			in.nextLine();
@@ -195,7 +213,7 @@ public class Server {
 			new ServerThread(this, c2s, c2c);
 			System.gc();
 		}*/
-	}
+	}}
 
 	public static void openLog(File fileName) {
 		try{
