@@ -170,6 +170,7 @@ public class Server {
 		if(answer==2){
 			System.out.println("\nPlease provide a reason for this shutdown:");
 			System.out.print("?> ");
+			in.nextLine();
 			String message = in.nextLine();
 			sendToAll("ServerShutDown",message,null);
 			try{
