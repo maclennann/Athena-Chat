@@ -432,13 +432,13 @@ public class ServerThread extends Thread {
 
 		//Add user to chat in Database so they will get messages
 		System.out.println("THE FUCKING QUERY IS FUCKIN: SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "');");
-		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "');");
+		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "';");
 		while (rs.next()) {
 			listSize = rs.getInt(1);
 		}
 		String[] blockList = new String[listSize];
 
-		rs = stmt.executeQuery("SELECT username FROM blocklist WHERE blocked_user = '"+ username + "');");
+		rs = stmt.executeQuery("SELECT username FROM blocklist WHERE blocked_user = '"+ username + "';");
 
 		int i=0;
 		while (rs.next()) {
