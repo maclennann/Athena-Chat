@@ -95,6 +95,9 @@ public class PreferencesInterface extends JPanel {
 	private JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
 	private JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
 	private JFileChooser fc = new JFileChooser();
+	private JLabel logLevelLabel = new JLabel("Set Debug Log Level: ");
+	private String[] logLevel = new String[]{"0","1","2"};
+	private JComboBox logLevelBox = new JComboBox(logLevel);
 	private boolean systemTrayVal;
 	private boolean allowESCVal;
 	private boolean enableSCVal;
@@ -248,7 +251,13 @@ public class PreferencesInterface extends JPanel {
 		downDirJLabel.setVisible(true);
 		downDirLaunchButton.setVisible(true);
 		downDirTextField.setVisible(true);
+		logLevelLabel.setBounds(50,230,125,25);
+		logLevelBox.setBounds(199,230,50,25);
+		logLevelLabel.setVisible(true);
+		logLevelBox.setVisible(true);
 
+		generalPanel.add(logLevelBox);
+		generalPanel.add(logLevelLabel);
 		generalPanel.add(downDirJLabel);
 		generalPanel.add(downDirTextField);
 		generalPanel.add(downDirLaunchButton);
