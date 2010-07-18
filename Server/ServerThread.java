@@ -1267,9 +1267,10 @@ public class ServerThread extends Thread {
 			byte[] findUserBytes = (new BigInteger(findUserCipher)).toByteArray();
 			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
 
+			if(blockedList.length!=0){
 			for(int i=0;i<blockedList.length-1;i++){
 				if(blockedList[i].equals(findUserDecrypted)) blocked=1;
-			}
+			}}
 			//Print out the received username
 			if (debug >= 1) {
 				System.out.println("Username received: " + findUserDecrypted);
