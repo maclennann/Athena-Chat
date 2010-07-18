@@ -1337,9 +1337,11 @@ public class ServerThread extends Thread {
 	 */
 	public void negotiateClientStatus(String checkUserFlag) {
 		try {
+			String[] blockedList = getBlockedlist();
 			if (debug >= 1) {
 				System.out.println(username);
 			}
+			int blocked=0;
 			//Listen for the username
 			String findUser = decryptServerPrivate(serverDin.readUTF());
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -1350,18 +1352,23 @@ public class ServerThread extends Thread {
 			if (debug >= 1) {
 				System.out.println("Socket serverDout: " + serverDout.toString());
 			}
+			if(blockedList.length!=0){
+			for(int i=0;i<blockedList.length;i++){
+				if(blockedList[i].equals(findUser)) blocked=1;
+			}}
+			//Check to see if the username is in the current Hashtable, return result
+			if(blocked==0){
 			//Check to see if the username is in the current Hashtable, return result
 			if ((server.userToServerSocket.containsKey(findUser))) {
-
 				serverDout.writeUTF(encryptServerPrivate("1"));
-				if (debug >= 1) {
-					System.out.println("(Online)\n");
-				}
+				System.out.println("(Online)\n");
 			} else {
 				serverDout.writeUTF(encryptServerPrivate("0"));
-				if (debug >= 1) {
-					System.out.println("(Offline)\n");
-				}
+				System.out.println("(Offline)\n");
+			}}
+			else {
+				serverDout.writeUTF(encryptServerPrivate("0"));
+				System.out.println("(Offline)\n");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1531,6 +1538,12 @@ public class ServerThread extends Thread {
 		Socket foundSocket = null;
 		DataOutputStream clientDout = null;
 
+		String[] blockedList = getBlockedlist();
+		int blocked=0;
+		if(blockedList.length!=0){
+			for(int i=0;i<blockedList.length;i++){
+				if(blockedList[i].equals(toUser)&&fromUser.equals(username)) blocked=1;
+			}}
 		//Debug statement: who is this going to?
 		if (debug == 1) {
 			System.out.print(toUser);
@@ -1539,7 +1552,7 @@ public class ServerThread extends Thread {
 		//Look up the socket associated with the with whom we want to talk
 		//We will use this to find which outputstream to send out
 		//If we cannot find the user or socket, send back an error
-		if ((server.userToClientSocket.containsKey(toUser))) {
+		if ((server.userToClientSocket.containsKey(toUser))&&blocked==0) {
 			if (debug == 1) {
 				System.out.print("Found user.. Continuing...");
 			}
