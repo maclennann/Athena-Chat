@@ -53,7 +53,7 @@ public class ServerThread extends Thread {
 	private DataInputStream serverDin = null;
 	private DataInputStream clientDin = null;
 	private DataOutputStream serverDout = null;
-	private DataOutputStream clientDout = null;
+
 	// The Server that created this thread
 	private static Server server;
 	//Define Global Variable Username / Password
@@ -62,8 +62,7 @@ public class ServerThread extends Thread {
 	//Our current sockets
 	private Socket c2ssocket;
 	private Socket c2csocket;
-	//Message digest for the hashed password
-	private MessageDigest hashedPassword;
+
 	//Governs thread life. If connection is not alive, thread terminates
 	private int isAlive = 1;
 
