@@ -388,6 +388,12 @@ public class ServerThread extends Thread {
 				}
 				addBlocklist();
 				break;
+			case 24:
+				if (debug >= 1) {
+					System.out.println("Event code received. removeBlocklist() run.");
+				}
+				removeBlocklist();
+				break;
 			default:
 				return;
 		}
@@ -478,6 +484,31 @@ public class ServerThread extends Thread {
 			sendMessage(userToBlock,"ServerLogOff", encryptServerPrivate(username));
 		} catch(Exception e) { e.printStackTrace();}
 	}
+
+
+	private void removeBlocklist() {
+		try{
+			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+
+			String userToBlock = decryptServerPrivate(serverDin.readUTF());
+
+			//Grab a connection to the database
+			Connection con = server.dbConnect();
+			Statement stmt = con.createStatement();
+
+			//Add user to chat in Database so they will get messages
+			int deleted = stmt.executeUpdate("DELETE FROM blocklist WHERE username='" + username + "' AND blocked_user='" + userToBlock + "';");
+			if (deleted == 1 && debug >= 1) {
+				System.out.println(username + " unblocked "+userToBlock);
+			}
+
+			//Close the connections
+			stmt.close();
+			con.close();
+			sendMessage(userToBlock,"ServerLogOff", encryptServerPrivate(username));
+		} catch(Exception e) { e.printStackTrace();}
+	}
+
 
 	private void fileResult() {
 		try{

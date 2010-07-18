@@ -226,6 +226,14 @@ public class Athena {
 		} catch(Exception e){e.printStackTrace();}
 	}
 
+	public static void unblockUser(){
+		try{
+		String userToBlock = JOptionPane.showInputDialog(null,"Which user would you like to unblock?");
+		systemMessage("24");
+		c2sdout.writeUTF(encryptServerPublic(userToBlock));
+		} catch(Exception e){e.printStackTrace();}
+	}
+
 
     /**
      * Method instantiate the buddy list

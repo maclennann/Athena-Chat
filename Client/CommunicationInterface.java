@@ -384,6 +384,16 @@ public class CommunicationInterface extends JFrame {
 		blockUser.setMnemonic(KeyEvent.VK_B);
 		edit.add(blockUser);
 
+		JMenuItem unblockUser = new JMenuItem("Unblock Someone");
+		blockUser.setMnemonic(KeyEvent.VK_U);
+		edit.add(unblockUser);
+
+		blockUser.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				Athena.unblockUser();
+			}
+		});
 		blockUser.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
