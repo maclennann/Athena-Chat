@@ -164,7 +164,8 @@ public class Server {
 		ListenerThread listener = new ListenerThread(c2ss,c2css,this);
 		listener.start();
 		System.out.println("\n\nMenu:\nPlease Choose an Action -");
-		System.out.println("\n1. Change Debug Level\n2. Exit\n\n?> ");
+		System.out.println("\n1. Change Debug Level\n2. Exit\n");
+		System.out.prtin("?> ")
 		int answer=in.nextInt();
 		if(answer==2){
 			System.exit(0);
