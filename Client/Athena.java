@@ -1605,7 +1605,7 @@ public class Athena {
             out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
 
             for (int i = 0; i < buddyList.length; i++) {
-                encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(",")));
+                encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+buddyList[i].concat(","))));
                 out.write(encryptedUsername + "\n");
             }
             out.close();
