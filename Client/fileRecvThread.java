@@ -49,7 +49,6 @@ public class fileRecvThread extends Thread {
 			Socket fileSocket = null;
 
 			//Keep trying to connect to the sender on port 7779
-			//TODO Made rudimentary timeout after 15 seconds. Is this an okay time?
 			int i=0;
 			while(fileSocket == null && i < 15){
 				fileSocket = new Socket(socketIPReplace, 7779);

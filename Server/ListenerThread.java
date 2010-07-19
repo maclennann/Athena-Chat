@@ -29,12 +29,12 @@ import java.net.Socket;
 public class ListenerThread extends Thread{
 	ServerSocket sSocket;
 	ServerSocket cSocket;
-	Server server;
 
-	public ListenerThread(ServerSocket serverSocket, ServerSocket clientSocket, Server serv){
+
+	public ListenerThread(ServerSocket serverSocket, ServerSocket clientSocket){
 		sSocket = serverSocket;
 		cSocket = clientSocket;
-		server = serv;
+
 	}
 
 	public void run() {
@@ -47,11 +47,11 @@ public class ListenerThread extends Thread{
 				Socket c2c = cSocket.accept();
 
 				//Debug text announcing a new connection
-				server.writeLog("Server-to-Client Connection Established:\n " + c2s);
-				server.writeLog("Client-to-Client Connection Established:\n" + c2c);
+				Server.writeLog("Server-to-Client Connection Established:\n " + c2s);
+				Server.writeLog("Client-to-Client Connection Established:\n" + c2c);
 
 				//Handle the rest of the connection in the new thread
-				new	ServerThread(server, c2s, c2c);
+				new	ServerThread(c2s, c2c);
 				System.gc();
 			}
 		}catch(Exception e){e.printStackTrace();}

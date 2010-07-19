@@ -54,8 +54,6 @@ public class ServerThread extends Thread {
 	private DataInputStream clientDin = null;
 	private DataOutputStream serverDout = null;
 
-	// The Server that created this thread
-	private static Server server;
 	//Define Global Variable Username / Password
 	private String username;
 	private String password;
@@ -72,10 +70,9 @@ public class ServerThread extends Thread {
 	 * @param c2ssocket The "server" thread
 	 * @param c2csocket The "client" thread
 	 */
-	public ServerThread(Server server, Socket c2ssocket, Socket c2csocket) {
+	public ServerThread(Socket c2ssocket, Socket c2csocket) {
 
 		// Remember which socket we are on
-		this.server = server;
 		this.c2ssocket = c2ssocket;
 		this.c2csocket = c2csocket;
 
@@ -97,15 +94,15 @@ public class ServerThread extends Thread {
 			String usernameCipher = serverDin.readUTF();
 
 			if (debug == 2) {
-				server.writeLog("Encrypted Username: " + usernameCipher);
+				Server.writeLog("Encrypted Username: " + usernameCipher);
 			}
 
 			//Decrypt the username
 			username = RSACrypto.rsaDecryptPrivate(new BigInteger(usernameCipher).toByteArray(),
-					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+					Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent());
 
 			if (debug >= 1) {
-				server.writeLog("Decrypted Username: " + username);
+				Server.writeLog("Decrypted Username: " + username);
 			}
 
 			//Interupt means they want to create a new user
@@ -117,19 +114,19 @@ public class ServerThread extends Thread {
 
 				//Debug statements
 				if (debug >= 1) {
-					server.writeLog("Username: " + username);
-					server.writeLog("Password: " + password);
+					Server.writeLog("Username: " + username);
+					Server.writeLog("Password: " + password);
 				}
 
 				//Authenticate the user.
 				String loginOutcome = login(username, password);
 				if (debug >= 1) {
-					server.writeLog(loginOutcome);
+					Server.writeLog(loginOutcome);
 				}
 
 				//Maps username to socket after user logs in
-				server.mapUserServerSocket(username, c2ssocket);
-				server.mapUserClientSocket(username, c2csocket);
+				Server.mapUserServerSocket(username, c2ssocket);
+				Server.mapUserClientSocket(username, c2csocket);
 				System.gc();
 			}
 			if (username.equals("Interupt")) {
@@ -153,13 +150,13 @@ public class ServerThread extends Thread {
 			try {
 
 				if (debug >= 1) {
-					server.writeLog("REMOVING USERNAME: " + username);
+					Server.writeLog("REMOVING USERNAME: " + username);
 				}
 
 				if (username == null) {
-					server.removeConnection(c2ssocket, c2csocket);
+					Server.removeConnection(c2ssocket, c2csocket);
 				} else {
-					server.removeConnection(c2ssocket, c2csocket, username);
+					Server.removeConnection(c2ssocket, c2csocket, username);
 				}
 
 			} catch (Exception e) {
@@ -186,21 +183,21 @@ public class ServerThread extends Thread {
 			String messageEncrypted = serverDin.readUTF();
 
 			if (debug >= 1) {
-				server.writeLog("Decrypted:" + toUser);
+				Server.writeLog("Decrypted:" + toUser);
 			}
 
 			//Is the message an eventcode meant for the server?
 			if (toUser.equals("Aegis")) {
 				if (debug >= 1) {
-					server.writeLog("Server eventcode detected! ");
+					Server.writeLog("Server eventcode detected! ");
 				}
 				if (debug >= 1) {
-					server.writeLog(decryptServerPrivate(messageEncrypted));
+					Server.writeLog(decryptServerPrivate(messageEncrypted));
 				}
 				try {
 					systemMessageListener(Integer.parseInt(decryptServerPrivate(messageEncrypted)));
 				} catch (NumberFormatException e) {
-					server.writeLog("Message is NOT an eventcode. Ignoring...");
+					Server.writeLog("Message is NOT an eventcode. Ignoring...");
 				}
 				return;
 			}//Is the message someone trying to create an account?
@@ -208,16 +205,16 @@ public class ServerThread extends Thread {
 				try {
 					systemMessageListener(Integer.parseInt(decryptServerPrivate(messageEncrypted)));
 				} catch (NumberFormatException e) {
-					server.writeLog("Message is NOT an eventcode. Continuing...");
+					Server.writeLog("Message is NOT an eventcode. Continuing...");
 				}
 				return;
 			} //Is this a normal message to another client
 			else {
 				if (debug >= 1) {
-					server.writeLog("Routing normal message to: " + toUser + "\nmessage from: " + fromUser);
+					Server.writeLog("Routing normal message to: " + toUser + "\nmessage from: " + fromUser);
 				}
 				if (debug == 2) {
-					server.writeLog("\nEncrypted message: " + messageEncrypted);
+					Server.writeLog("\nEncrypted message: " + messageEncrypted);
 				}
 				sendMessage(toUser, fromUser, messageEncrypted);
 
@@ -245,151 +242,151 @@ public class ServerThread extends Thread {
 		switch (eventCode) {
 			case 000:
 				if (debug == 1) {
-					server.writeLog("Event code received. createUsername() run.");
+					Server.writeLog("Event code received. createUsername() run.");
 				}
 				createUsername();
 				break;
 			case 001:
 				if (debug == 1) {
-					server.writeLog("Event code received. negotiateClientStatus() run.");
+					Server.writeLog("Event code received. negotiateClientStatus() run.");
 				}
 				negotiateClientStatus();
 				break;
 			case 002:
 				if (debug == 1) {
-					server.writeLog("Event code received. senToAll() run.");
+					Server.writeLog("Event code received. senToAll() run.");
 				}
-				server.sendToAll("ServerLogOn", username,getBlocklist());
+				Server.sendToAll("ServerLogOn", username,getBlocklist());
 				break;
 			case 003:
 				if (debug == 1) {
-					server.writeLog("Event code received. negotiateClientStatus(\"Checkuserstatus\") run.");
+					Server.writeLog("Event code received. negotiateClientStatus(\"Checkuserstatus\") run.");
 				}
 				negotiateClientStatus("CheckUserStatus");
 				break;
 			case 004:
 				if (debug == 1) {
-					server.writeLog("Event code received. publicKeyRequest() run.");
+					Server.writeLog("Event code received. publicKeyRequest() run.");
 				}
 				publicKeyRequest();
 				break;
 			case 005:
 				if (debug == 1) {
-					server.writeLog("Event code received. returnBuddyListHash() run.");
+					Server.writeLog("Event code received. returnBuddyListHash() run.");
 				}
 				returnBuddyListHash();
 				break;
 			case 006:
 				if (debug == 1) {
-					server.writeLog("Event code received. receiveBuddyListfromClient() run.");
+					Server.writeLog("Event code received. receiveBuddyListfromClient() run.");
 				}
 				recieveBuddyListFromClient();
 				break;
 			case 007:
 				if (debug == 1) {
-					server.writeLog("Event code received. sendPrivateKeyToClients() run.");
+					Server.writeLog("Event code received. sendPrivateKeyToClients() run.");
 				}
 				sendPrivateKeyToClient();
 				break;
 			case 8:
 				if (debug == 1) {
-					server.writeLog("Event code received. sendBuddyListToClient() run.");
+					Server.writeLog("Event code received. sendBuddyListToClient() run.");
 				}
 				sendBuddyListToClient();
 				break;
 			case 9:
 				if (debug == 1) {
-					server.writeLog("Event code received. receiveBugReport() run.");
+					Server.writeLog("Event code received. receiveBugReport() run.");
 				}
 				receiveBugReport();
 				break;
 			case 10:
 				if (debug == 1) {
-					server.writeLog("Event code received. receiveBugReport(flag) run.");
+					Server.writeLog("Event code received. receiveBugReport(flag) run.");
 				}
 				receiveBugReport(true);
 				break;
 			case 11:
 				if (debug == 1) {
-					server.writeLog("Event code received. resetPassword() run.");
+					Server.writeLog("Event code received. resetPassword() run.");
 				}
 				resetPassword();
 				break;
 			case 12:
 				if (debug == 1) {
-					server.writeLog("Event code received. createChat() run.");
+					Server.writeLog("Event code received. createChat() run.");
 				}
 				createChat();
 				break;
 			case 13:
 				if (debug == 1) {
-					server.writeLog("Event code received. requestSocketInfo() run.");
+					Server.writeLog("Event code received. requestSocketInfo() run.");
 				}
 				requestSocketInfo();
 				break;
 			case 14:
 				if (debug == 1) {
-					server.writeLog("Event code received. joinChat() run.");
+					Server.writeLog("Event code received. joinChat() run.");
 				}
 				joinChat();
 				break;
 			case 15:
 				if (debug == 1) {
-					server.writeLog("Event code received. leaveChat() run.");
+					Server.writeLog("Event code received. leaveChat() run.");
 				}
 				leaveChat();
 				break;
 			case 16:
 				if (debug == 1) {
-					server.writeLog("Event code received. chatInvite() run.");
+					Server.writeLog("Event code received. chatInvite() run.");
 				}
 				chatInvite();
 				break;
 			case 17:
 				if (debug == 1) {
-					server.writeLog("Event code received. chatTalk() run.");
+					Server.writeLog("Event code received. chatTalk() run.");
 				}
 				chatTalk();
 				break;
 			case 18:
 				if (debug == 1) {
-					server.writeLog("Event code received. userList() run.");
+					Server.writeLog("Event code received. userList() run.");
 				}
 				userList();
 				break;
 			case 19:
 				if (debug >= 1) {
-					server.writeLog("Event code received. DPInvite() run.");
+					Server.writeLog("Event code received. DPInvite() run.");
 				}
 				dPInvite();
 				break;
 			case 20:
 				if (debug >= 1) {
-					server.writeLog("Event code received. dPResult() run.");
+					Server.writeLog("Event code received. dPResult() run.");
 				}
 				dPResult();
 				break;
 			case 21:
 				if (debug >= 1) {
-					server.writeLog("Event code received. fileInvite() run.");
+					Server.writeLog("Event code received. fileInvite() run.");
 				}
 				fileInvite();
 				break;
 			case 22:
 				if (debug >=1) {
-					server.writeLog("Event code received. fileResult() run.");
+					Server.writeLog("Event code received. fileResult() run.");
 				}
 				fileResult();
 				break;
 			case 23:
 				if (debug >= 1) {
-					server.writeLog("Event code received. addBlocklist() run.");
+					Server.writeLog("Event code received. addBlocklist() run.");
 				}
 				addBlocklist();
 				break;
 			case 24:
 				if (debug >= 1) {
-					server.writeLog("Event code received. removeBlocklist() run.");
+					Server.writeLog("Event code received. removeBlocklist() run.");
 				}
 				removeBlocklist();
 				break;
@@ -401,7 +398,7 @@ public class ServerThread extends Thread {
 	private String[] getBlocklist() {
 		try{
 		//Grab a connection to the database
-		Connection con = server.dbConnect();
+		Connection con = Server.dbConnect();
 		Statement stmt = con.createStatement();
 		int listSize=0;
 		ResultSet rs = null;
@@ -432,13 +429,13 @@ public class ServerThread extends Thread {
 	private String[] getBlockedlist() {
 		try{
 		//Grab a connection to the database
-		Connection con = server.dbConnect();
+		Connection con = Server.dbConnect();
 		Statement stmt = con.createStatement();
 		int listSize=0;
 		ResultSet rs = null;
 
 		//Add user to chat in Database so they will get messages
-		server.writeLog("THE FUCKING QUERY IS FUCKIN: SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "');");
+		Server.writeLog("THE FUCKING QUERY IS FUCKIN: SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "');");
 		rs = stmt.executeQuery("SELECT COUNT(*) FROM blocklist WHERE blocked_user = '"+ username + "';");
 		while (rs.next()) {
 			listSize = rs.getInt(1);
@@ -468,13 +465,13 @@ public class ServerThread extends Thread {
 			String userToBlock = decryptServerPrivate(serverDin.readUTF());
 
 			//Grab a connection to the database
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 			Statement stmt = con.createStatement();
 
 			//Add user to chat in Database so they will get messages
 			stmt.executeUpdate("INSERT into blocklist (username,blocked_user) values('" + username + "','" + userToBlock + "');");
 			if (debug >= 1) {
-				server.writeLog("User blocked: "+username+"/"+userToBlock);
+				Server.writeLog("User blocked: "+username+"/"+userToBlock);
 			}
 
 			//Close the connections
@@ -492,13 +489,13 @@ public class ServerThread extends Thread {
 			String userToBlock = decryptServerPrivate(serverDin.readUTF());
 
 			//Grab a connection to the database
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 			Statement stmt = con.createStatement();
 
 			//Add user to chat in Database so they will get messages
 			int deleted = stmt.executeUpdate("DELETE FROM blocklist WHERE username='" + username + "' AND blocked_user='" + userToBlock + "';");
 			if (deleted == 1 && debug >= 1) {
-				server.writeLog(username + " unblocked "+userToBlock);
+				Server.writeLog(username + " unblocked "+userToBlock);
 			}
 
 			//Close the connections
@@ -525,7 +522,7 @@ public class ServerThread extends Thread {
 	private void fileInvite() {
 		try {
 			if (debug == 1) {
-				server.writeLog("In fileInvite()");
+				Server.writeLog("In fileInvite()");
 			}
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 
@@ -534,12 +531,12 @@ public class ServerThread extends Thread {
 
 			//For each user to invite, take their name, and take the session key encrypted with their public key
 			if (debug == 1) {
-				server.writeLog("Trying to send file to: " + invitingUser);
+				Server.writeLog("Trying to send file to: " + invitingUser);
 			}
 			sendMessage(invitingUser, "FileInvite", inviteString);
 			//sendMessage(invitingUser, "DPSessionKey", sessionKey);
 			if (debug >= 1) {
-				server.writeLog("Sent invitation");
+				Server.writeLog("Sent invitation");
 			}
 
 		} catch (Exception e) {
@@ -565,7 +562,7 @@ public class ServerThread extends Thread {
 	private void dPInvite() {
 		try {
 			if (debug == 1) {
-				server.writeLog("In dPInvite()");
+				Server.writeLog("In dPInvite()");
 			}
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			
@@ -574,12 +571,12 @@ public class ServerThread extends Thread {
 
 			//For each user to invite, take their name, and take the session key encrypted with their public key
 			if (debug == 1) {
-				server.writeLog("Inviting user: " + invitingUser);
+				Server.writeLog("Inviting user: " + invitingUser);
 			}
 			sendMessage(invitingUser, "DPInvite", encryptServerPrivate(username));
 			sendMessage(invitingUser, "DPSessionKey", sessionKey);
 			if (debug >= 1) {
-				server.writeLog("Sent invitation");
+				Server.writeLog("Sent invitation");
 			}
 
 		} catch (Exception e) {
@@ -598,7 +595,7 @@ public class ServerThread extends Thread {
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 
 			//Grab a DB connection
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 			Statement stmt;
 			ResultSet rs = null;
 
@@ -607,7 +604,7 @@ public class ServerThread extends Thread {
 			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "';");
 
 			if (debug >= 1) {
-				server.writeLog("Got list of users");
+				Server.writeLog("Got list of users");
 			}
 
 			String message = "";
@@ -643,18 +640,18 @@ public class ServerThread extends Thread {
 
 			//We have the message. Now we have to find out who to send it to.
 			if (debug == 1) {
-				server.writeLog("Sending received message to chat number " + chatNum);
+				Server.writeLog("Sending received message to chat number " + chatNum);
 			}
 
 			//Grab a DB connection
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 			Statement stmt;
 			ResultSet rs = null;
 
 			//Get a list of existing chats
 			stmt = con.createStatement();
 			rs = stmt.executeQuery("SELECT username FROM chat WHERE chatid = '" + chatNum + "' AND username != '" + username + "';");
-			server.writeLog("Got list of users");
+			Server.writeLog("Got list of users");
 
 			//Send the message to the users in the chat
 			while (rs.next()) {
@@ -676,7 +673,7 @@ public class ServerThread extends Thread {
 	private void chatInvite() {
 		try {
 			if (debug == 1) {
-				server.writeLog("In chatInvite()");
+				Server.writeLog("In chatInvite()");
 			}
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 
@@ -688,10 +685,10 @@ public class ServerThread extends Thread {
 
 			//Debug statements
 			if (debug >= 1) {
-				server.writeLog("Received chat number: " + chatNum);
-				server.writeLog("Received chat name: " + chatName);
-				server.writeLog("Constructed inviteString: " + inviteString);
-				server.writeLog("Inviting " + inviteList + " people");
+				Server.writeLog("Received chat number: " + chatNum);
+				Server.writeLog("Received chat name: " + chatName);
+				Server.writeLog("Constructed inviteString: " + inviteString);
+				Server.writeLog("Inviting " + inviteList + " people");
 			}
 
 			String sessionKey = "";
@@ -703,14 +700,14 @@ public class ServerThread extends Thread {
 				invitingUser = decryptServerPrivate(serverDin.readUTF());
 				sessionKey = serverDin.readUTF();
 				if (debug == 1) {
-					server.writeLog("Inviting user: " + invitingUser);
+					Server.writeLog("Inviting user: " + invitingUser);
 				}
 				sendMessage(invitingUser, "ChatInvite", encryptServerPrivate(inviteString));
 				sendMessage(invitingUser, "SessionKey", sessionKey);
 			}
 
 			if (debug >= 1) {
-				server.writeLog("Invited " + (x + 1) + " people");
+				Server.writeLog("Invited " + (x + 1) + " people");
 			}
 
 		} catch (Exception e) {
@@ -729,11 +726,11 @@ public class ServerThread extends Thread {
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 
 			if (debug >= 1) {
-				server.writeLog("User " + username + " is leaving chat number " + chatNum + "!!!!");
+				Server.writeLog("User " + username + " is leaving chat number " + chatNum + "!!!!");
 			}
 
 			//Grab a connection to the database
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 			Statement stmt;
 			ResultSet rs = null;
 
@@ -741,7 +738,7 @@ public class ServerThread extends Thread {
 			stmt = con.createStatement();
 			int deleted = stmt.executeUpdate("DELETE FROM chat WHERE username='" + username + "' AND chatid='" + chatNum + "';");
 			if (deleted == 1 && debug >= 1) {
-				server.writeLog(username + " was successfully removed from the chat with UID " + chatNum);
+				Server.writeLog(username + " was successfully removed from the chat with UID " + chatNum);
 			}
 
 			//Get the users left in the chat
@@ -750,11 +747,11 @@ public class ServerThread extends Thread {
 			//Delete the whole chat if it is empty
 			if (rs.next()) {
 				if (debug >= 1) {
-					server.writeLog("Still people in the chat. Not closing.");
+					Server.writeLog("Still people in the chat. Not closing.");
 				}
 			} else {
 				if (debug >= 1) {
-					server.writeLog("No one is left in chat " + chatNum + " closing chat");
+					Server.writeLog("No one is left in chat " + chatNum + " closing chat");
 				}
 
 				stmt.executeUpdate("DELETE FROM allchats WHERE chatid='" + chatNum + "';");
@@ -780,17 +777,17 @@ public class ServerThread extends Thread {
 			int chatNum = Integer.parseInt(decryptServerPrivate(serverDin.readUTF()));
 
 			if (debug >= 1) {
-				server.writeLog("Joining user " + username + " to chat number " + chatNum + "!!!!!");
+				Server.writeLog("Joining user " + username + " to chat number " + chatNum + "!!!!!");
 			}
 
 			//Grab a connection to the database
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 			Statement stmt = con.createStatement();
 
 			//Add user to chat in Database so they will get messages
 			stmt.executeUpdate("INSERT into chat (username,chatid) values('" + username + "','" + chatNum + "')");
 			if (debug >= 1) {
-				server.writeLog("Inserted the chatid into the allchat table.");
+				Server.writeLog("Inserted the chatid into the allchat table.");
 			}
 
 			//Close the connections
@@ -808,7 +805,7 @@ public class ServerThread extends Thread {
 	private void requestSocketInfo() {
 		try {
 			//String userForSocket = decryptServerPrivate(serverDin.readUTF());
-			//Socket foundSocket = (Socket) server.userToClientSocket.get(userForSocket);
+			//Socket foundSocket = (Socket) Server.userToClientSocket.get(userForSocket);
 			//return foundSocket.getInetAddress().toString();
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			serverDout.writeUTF(encryptServerPrivate(c2ssocket.getInetAddress().toString()));
@@ -824,28 +821,28 @@ public class ServerThread extends Thread {
 	private void createChat() {
 		try {
 			if (debug >= 1) {
-				server.writeLog("In the method.");
+				Server.writeLog("In the method.");
 			}
 
 			//Grab output stream for the user.
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 
 			if (debug >= 1) {
-				server.writeLog("Created the output stream which we shouldn't have to do.");
+				Server.writeLog("Created the output stream which we shouldn't have to do.");
 			}
 
 			//Grab a connection to the database
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 
 			if (debug >= 1) {
-				server.writeLog("Connected to the database.");
+				Server.writeLog("Connected to the database.");
 			}
 
 			//Get the chat name from the user
 			String chatName = decryptServerPrivate(serverDin.readUTF());
 
 			if (debug >= 1) {
-				server.writeLog("Took in the desired chat name.");
+				Server.writeLog("Took in the desired chat name.");
 			}
 
 			//Is the chatID a dupe?
@@ -863,7 +860,7 @@ public class ServerThread extends Thread {
 				randInt = random.nextInt(9999);
 
 				if (debug >= 1) {
-					server.writeLog("Generated random chat ID: " + randInt);
+					Server.writeLog("Generated random chat ID: " + randInt);
 				}
 
 				//Get a list of existing chats
@@ -871,7 +868,7 @@ public class ServerThread extends Thread {
 				rs = stmt.executeQuery("SELECT chatid FROM allchats");
 
 				if (debug >= 1) {
-					server.writeLog("Got list of existing chats.");
+					Server.writeLog("Got list of existing chats.");
 				}
 
 				//Read chatIDs into array
@@ -889,20 +886,20 @@ public class ServerThread extends Thread {
 
 			//The chatID is not a duplicate. We can create the chat and add it to the DB
 			if (debug >= 1) {
-				server.writeLog("Generated number is not a duplicate.");
+				Server.writeLog("Generated number is not a duplicate.");
 			}
 
 			stmt.executeUpdate("INSERT into allchats (chatid,chatname) values('" + randInt + "','" + chatName.replace('\'', '\\') + "')");
 
 			if (debug >= 1) {
-				server.writeLog("Inserted the chatid into the allchat table.");
+				Server.writeLog("Inserted the chatid into the allchat table.");
 			}
 
 			//Now insert the username and the chat id into the chat table
 			stmt.executeUpdate("INSERT into chat (username, chatid) values('" + username + "','" + randInt + "')");
 
 			if (debug >= 1) {
-				server.writeLog("Inserted the username and chatid into the chat table.");
+				Server.writeLog("Inserted the username and chatid into the chat table.");
 			}
 
 			//Close the DB connections
@@ -924,7 +921,7 @@ public class ServerThread extends Thread {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 
 			//Use dbConnect() to connect to the database
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 
 			//Take in the username to find the secret question and answer for
 			String userToReset = decryptServerPrivate(serverDin.readUTF());
@@ -955,27 +952,27 @@ public class ServerThread extends Thread {
 			//Send the secret question to the client for answering
 			serverDout.writeUTF(encryptServerPrivate(secretQuestion));
 			if (debug >= 1) {
-				server.writeLog("SENT Question: " + secretQuestion);
+				Server.writeLog("SENT Question: " + secretQuestion);
 			}
 
 			//Read in the user's answer hash
 			String secretAnswerHash = decryptServerPrivate(serverDin.readUTF());
 			if (debug >= 1) {
-				server.writeLog("READ Answer: " + secretAnswerHash);
+				Server.writeLog("READ Answer: " + secretAnswerHash);
 			}
 
 			//Read in the user's desired passwordchange
 			String newPassword = decryptServerPrivate(serverDin.readUTF());
 
 			if (secretAnswerHash.equals(secretAnswer)) {
-				server.writeLog("HASHES MATCH");
+				Server.writeLog("HASHES MATCH");
 
 				String insertString = "UPDATE Users SET password='" + newPassword + "' WHERE username = '" + userToReset + "'";
 				insertSTMT = con.createStatement();
 				insertSTMT.executeUpdate(insertString);
 
 				if (debug >= 1) {
-					server.writeLog("PASSWORDCHANGED");
+					Server.writeLog("PASSWORDCHANGED");
 				}
 
 				//Close Connections
@@ -985,7 +982,7 @@ public class ServerThread extends Thread {
 				serverDout.writeUTF(encryptServerPrivate("1"));
 			} else {
 				if (debug >= 1) {
-					server.writeLog("HASH MISMATCH. ABORT");
+					Server.writeLog("HASH MISMATCH. ABORT");
 				}
 
 				//Failure message
@@ -1006,8 +1003,8 @@ public class ServerThread extends Thread {
 	 */
 	private void receiveBugReport() {
 		if (debug == 1) {
-			server.writeLog("Receiving bug report stacktrace");
-			server.writeLog("Receiving bug report comments");
+			Server.writeLog("Receiving bug report stacktrace");
+			Server.writeLog("Receiving bug report comments");
 		}
 
 		String trace = "";
@@ -1020,8 +1017,8 @@ public class ServerThread extends Thread {
 		}
 
 		if (debug >= 1) {
-			server.writeLog("Bug report received from " + username + ": " + comments);
-			server.writeLog("Stacktrace follows:" + trace);
+			Server.writeLog("Bug report received from " + username + ": " + comments);
+			Server.writeLog("Stacktrace follows:" + trace);
 		}
 	}
 
@@ -1031,7 +1028,7 @@ public class ServerThread extends Thread {
 	 */
 	private void receiveBugReport(boolean flag) {
 		if (debug == 1) {
-			server.writeLog("Receiving bug report/feature request");
+			Server.writeLog("Receiving bug report/feature request");
 		}
 
 		String title = "";
@@ -1047,13 +1044,13 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 		}
 		if (debug >= 1) {
-			server.writeLog("BEGIN BUG REPORT");
-			server.writeLog("Bug report received from " + username + ": ");
-			server.writeLog("Brief Description: " + title);
-			server.writeLog("Steps to recreate: " + recreate);
-			server.writeLog("Expected Outcome: " + expected);
-			server.writeLog("Actual Outcome: " + actual);
-			server.writeLog("END OF REPORT");
+			Server.writeLog("BEGIN BUG REPORT");
+			Server.writeLog("Bug report received from " + username + ": ");
+			Server.writeLog("Brief Description: " + title);
+			Server.writeLog("Steps to recreate: " + recreate);
+			Server.writeLog("Expected Outcome: " + expected);
+			Server.writeLog("Actual Outcome: " + actual);
+			Server.writeLog("END OF REPORT");
 		}
 	}
 
@@ -1066,12 +1063,12 @@ public class ServerThread extends Thread {
 
 		String[] buddyListArray = returnBuddyListArray(true);
 		if (debug >= 1) {
-			server.writeLog("Inside sendBuddyListToClient");
+			Server.writeLog("Inside sendBuddyListToClient");
 		}
 
 		int numLines = buddyListArray.length;
 		if (debug >= 1) {
-			server.writeLog("numLines: " + numLines);
+			Server.writeLog("numLines: " + numLines);
 		}
 
 		//Send Athena the number of lines we're sending
@@ -1156,15 +1153,15 @@ public class ServerThread extends Thread {
 		//Send over components
 		String privateKeyMod = privateKey.getModulus().toString();
 		if (debug == 2) {
-			server.writeLog("PRIVATE KEY MOD: " + privateKeyMod);
+			Server.writeLog("PRIVATE KEY MOD: " + privateKeyMod);
 		}
 		String privateKeyExp = privateKey.getPrivateExponent().toString();
 		if (debug == 2) {
-			server.writeLog("PRIVATE KEY MOD: " + privateKeyExp);
+			Server.writeLog("PRIVATE KEY MOD: " + privateKeyExp);
 		}
 		//Send half a time plz!
 		if (debug == 2) {
-			server.writeLog("Length of the private key: " + privateKeyMod.length());
+			Server.writeLog("Length of the private key: " + privateKeyMod.length());
 		}
 		//Send how many chunks will be coming		
 		if (privateKeyMod.length() > 245) {
@@ -1173,7 +1170,7 @@ public class ServerThread extends Thread {
 			serverDout.writeUTF(String.valueOf(messageNumbersInt));
 
 			if (debug >= 1) {
-				server.writeLog("MessageLength: " + privateKeyMod.length() + "\nMessageLength/245: " + messageNumbers + "\nCeiling of that: " + messageNumbersInt);
+				Server.writeLog("MessageLength: " + privateKeyMod.length() + "\nMessageLength/245: " + messageNumbers + "\nCeiling of that: " + messageNumbersInt);
 			}
 			//TODO THIS IS A MESSSSS
 			String[] messageChunks = new String[(int) messageNumbersInt];
@@ -1194,7 +1191,7 @@ public class ServerThread extends Thread {
 			serverDout.writeUTF(String.valueOf(messageNumbersInt));
 
 			if (debug >= 1) {
-				server.writeLog("MessageLength: " + privateKeyMod.length() + "\nMessageLength/245: " + messageNumbers + "\nCeiling of that: " + messageNumbersInt);
+				Server.writeLog("MessageLength: " + privateKeyMod.length() + "\nMessageLength/245: " + messageNumbers + "\nCeiling of that: " + messageNumbersInt);
 			}
 
 			String[] messageChunks = new String[(int) messageNumbersInt];
@@ -1238,7 +1235,7 @@ public class ServerThread extends Thread {
 			out.close();
 		} catch (Exception e) {
 			if (debug == 1) {
-				server.writeLog("ERROR WRITING BUDDYLIST");
+				Server.writeLog("ERROR WRITING BUDDYLIST");
 			}
 		}
 	}
@@ -1250,15 +1247,15 @@ public class ServerThread extends Thread {
 	private void recieveBuddyListFromClient() throws IOException {
 		String[] buddyListLines;
 
-		server.writeLog("Should be begin: " + decryptServerPrivate(serverDin.readUTF()));
+		Server.writeLog("Should be begin: " + decryptServerPrivate(serverDin.readUTF()));
 		buddyListLines = new String[(Integer.parseInt(decryptServerPrivate(serverDin.readUTF())))];
-		server.writeLog("Buddylist lines: " + buddyListLines.length);
+		Server.writeLog("Buddylist lines: " + buddyListLines.length);
 		for (int y = 0; y < buddyListLines.length; y++) {
 			buddyListLines[y] = decryptServerPrivate(serverDin.readUTF());
-			server.writeLog("Encrypted buddylist lines " + buddyListLines[y]);
+			Server.writeLog("Encrypted buddylist lines " + buddyListLines[y]);
 		}
 		writeBuddyListToFile(buddyListLines, username);
-		server.writeLog("Successfully wrote buddy list to file");
+		Server.writeLog("Successfully wrote buddy list to file");
 	}
 
 	/**
@@ -1270,7 +1267,7 @@ public class ServerThread extends Thread {
 		//Turn the String into a BigInteger. Get the bytes of the BigInteger for a byte[]
 		byte[] cipherBytes = (new BigInteger(ciphertext)).toByteArray();
 		//Decrypt the byte[], returns a String
-		return RSACrypto.rsaDecryptPrivate(cipherBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+		return RSACrypto.rsaDecryptPrivate(cipherBytes, Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent());
 	}
 
 	/**
@@ -1281,9 +1278,9 @@ public class ServerThread extends Thread {
 	 public static String encryptServerPrivate(String plaintext) {
 		//Encrypt the string and return it
 		if (debug == 1) {
-			server.writeLog("Plaintext in encryptServerPrivate: " + plaintext);
+			Server.writeLog("Plaintext in encryptServerPrivate: " + plaintext);
 		}
-		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+		BigInteger plaintextBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(plaintext, Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 		return plaintextBigInt.toString();
 	}
 
@@ -1298,10 +1295,10 @@ public class ServerThread extends Thread {
 			int blocked=0;
 			
 			if (debug >= 1) {
-				server.writeLog("FINDUSERCIPHER!@$!#@" + findUserCipher);
+				Server.writeLog("FINDUSERCIPHER!@$!#@" + findUserCipher);
 			}
 			byte[] findUserBytes = (new BigInteger(findUserCipher)).toByteArray();
-			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+			String findUserDecrypted = RSACrypto.rsaDecryptPrivate(findUserBytes, Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent());
 
 			if(blockedList.length!=0){
 			for(int i=0;i<blockedList.length;i++){
@@ -1309,20 +1306,20 @@ public class ServerThread extends Thread {
 			}}
 			//Print out the received username
 			if (debug >= 1) {
-				server.writeLog("Username received: " + findUserDecrypted);
+				Server.writeLog("Username received: " + findUserDecrypted);
 			}
 			if(blocked==0){
 			//Check to see if the username is in the current Hashtable, return result
-			if ((server.userToServerSocket.containsKey(findUserDecrypted))) {
+			if ((Server.userToServerSocket.containsKey(findUserDecrypted))) {
 				serverDout.writeUTF(encryptServerPrivate("1"));
-				server.writeLog("(Online)\n");
+				Server.writeLog("(Online)\n");
 			} else {
 				serverDout.writeUTF(encryptServerPrivate("0"));
-				server.writeLog("(Offline)\n");
+				Server.writeLog("(Offline)\n");
 			}}
 			else {
 				serverDout.writeUTF(encryptServerPrivate("0"));
-				server.writeLog("(Offline)\n");
+				Server.writeLog("(Offline)\n");
 			}
 
 			
@@ -1339,7 +1336,7 @@ public class ServerThread extends Thread {
 		try {
 			String[] blockedList = getBlockedlist();
 			if (debug >= 1) {
-				server.writeLog(username);
+				Server.writeLog(username);
 			}
 			int blocked=0;
 			//Listen for the username
@@ -1347,10 +1344,10 @@ public class ServerThread extends Thread {
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
 			//Print out the received username
 			if (debug >= 1) {
-				server.writeLog("Username received: " + findUser);
+				Server.writeLog("Username received: " + findUser);
 			}
 			if (debug >= 1) {
-				server.writeLog("Socket serverDout: " + serverDout.toString());
+				Server.writeLog("Socket serverDout: " + serverDout.toString());
 			}
 			if(blockedList.length!=0){
 			for(int i=0;i<blockedList.length;i++){
@@ -1359,16 +1356,16 @@ public class ServerThread extends Thread {
 			//Check to see if the username is in the current Hashtable, return result
 			if(blocked==0){
 			//Check to see if the username is in the current Hashtable, return result
-			if ((server.userToServerSocket.containsKey(findUser))) {
+			if ((Server.userToServerSocket.containsKey(findUser))) {
 				serverDout.writeUTF(encryptServerPrivate("1"));
-				server.writeLog("(Online)\n");
+				Server.writeLog("(Online)\n");
 			} else {
 				serverDout.writeUTF(encryptServerPrivate("0"));
-				server.writeLog("(Offline)\n");
+				Server.writeLog("(Offline)\n");
 			}}
 			else {
 				serverDout.writeUTF(encryptServerPrivate("0"));
-				server.writeLog("(Offline)\n");
+				Server.writeLog("(Offline)\n");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1382,7 +1379,7 @@ public class ServerThread extends Thread {
 		try {
 			String buddyListToFind = serverDin.readUTF();
 			byte[] buddyListBytes = (new BigInteger(buddyListToFind)).toByteArray();
-			String buddyListDecrypted = RSACrypto.rsaDecryptPrivate(buddyListBytes, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent());
+			String buddyListDecrypted = RSACrypto.rsaDecryptPrivate(buddyListBytes, Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent());
 
 			//Grab the hash of the buddy list
 			File buddylist = new File("buddylists/" + buddyListDecrypted + "/buddylist.csv");
@@ -1397,7 +1394,7 @@ public class ServerThread extends Thread {
 			String path = "buddylists/".concat(buddyListDecrypted).concat("/buddylist.csv");
 
 			if (debug >= 1) {
-				server.writeLog("PATH: " + path);
+				Server.writeLog("PATH: " + path);
 			}
 
 			String hashOfBuddyList = FileHash.getMD5Checksum(path);
@@ -1419,7 +1416,7 @@ public class ServerThread extends Thread {
 	public boolean createUsername() throws IOException {
 		try {
 			//Use dbConnect() to connect to the database
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 
 			//Get the DataOutputStream 
 			serverDout = new DataOutputStream(c2ssocket.getOutputStream());
@@ -1459,32 +1456,32 @@ public class ServerThread extends Thread {
 			//Write encrpyted private key to file		
 			RSACrypto.saveToFile("keys/" + newUser + ".priv", privateMod, privateExp);
 			if (debug >= 1) {
-				server.writeLog("New User Decrypted Information:");
-				server.writeLog("First Name: " + firstName);
-				server.writeLog("Last Name: " + lastName);
-				server.writeLog("Email Address: " + emailAddress);
-				server.writeLog("User Name: " + newUser);
-				server.writeLog("Password Hash: " + newPassword);
-				server.writeLog("Secret Question: " + secretQuestion);
-				server.writeLog("Secret Answer Hash: " + secretAnswer);
+				Server.writeLog("New User Decrypted Information:");
+				Server.writeLog("First Name: " + firstName);
+				Server.writeLog("Last Name: " + lastName);
+				Server.writeLog("Email Address: " + emailAddress);
+				Server.writeLog("User Name: " + newUser);
+				Server.writeLog("Password Hash: " + newPassword);
+				Server.writeLog("Secret Question: " + secretQuestion);
+				Server.writeLog("Secret Answer Hash: " + secretAnswer);
 			}
 
 			stmt = con.createStatement();
 			if (debug == 1) {
-				server.writeLog("Statement created\nCreating username: " + newUser + "\nPassword: " + newPassword);
+				Server.writeLog("Statement created\nCreating username: " + newUser + "\nPassword: " + newPassword);
 			}
 
 			//See if the username already exists.
 			rs = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + newUser + "'");
 			if (debug == 1) {
-				server.writeLog("newUser: " + newUser);
+				Server.writeLog("newUser: " + newUser);
 			}
 
 			//Test to see if there are any results
 			if (rs.next()) {
 				//Send status message that the username has already been taken.
 				BigInteger failedRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Username has already been taken, please try again.",
-						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+						Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(failedRegistrationResultBigInt.toString());
 				rs.close();
 				return false;
@@ -1508,7 +1505,7 @@ public class ServerThread extends Thread {
 
 				//Inform of our success
 				BigInteger successfulRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Account has been successfully created.",
-						server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+						Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 				serverDout.writeUTF(successfulRegistrationResultBigInt.toString());
 
 				//Close Connections
@@ -1522,7 +1519,7 @@ public class ServerThread extends Thread {
 		} catch (Exception e) {
 			//Inform of our failure
 			BigInteger exceptionRegistrationResultBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate("Something went wrong, please inform the Athena Administrators.",
-					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+					Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(exceptionRegistrationResultBigInt.toString());
 			return false;
 		}
@@ -1546,24 +1543,24 @@ public class ServerThread extends Thread {
 			}}
 		//Debug statement: who is this going to?
 		if (debug == 1) {
-			server.writeLog(toUser);
+			Server.writeLog(toUser);
 		}
 
 		//Look up the socket associated with the with whom we want to talk
 		//We will use this to find which outputstream to send out
 		//If we cannot find the user or socket, send back an error
-		if ((server.userToClientSocket.containsKey(toUser))&&blocked==0) {
+		if ((Server.userToClientSocket.containsKey(toUser))&&blocked==0) {
 			if (debug == 1) {
-				server.writeLog("Found user.. Continuing...");
+				Server.writeLog("Found user.. Continuing...");
 			}
-			foundSocket = (Socket) server.userToClientSocket.get(toUser);
+			foundSocket = (Socket) Server.userToClientSocket.get(toUser);
 			try {
 				clientDout = new DataOutputStream(foundSocket.getOutputStream());
 			} catch (IOException ex) {
 				Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			if (debug == 1) {
-				server.writeLog("Found Socket: " + foundSocket);
+				Server.writeLog("Found Socket: " + foundSocket);
 			}
 		} else {
 			sendMessage(fromUser, "UnavailableUser", encryptServerPrivate(toUser));
@@ -1577,14 +1574,14 @@ public class ServerThread extends Thread {
 			//TODO WTF were we thinking here?
 			//	   We are doing exactly what we said we shouldn't. FFS.
 			BigInteger fromUserCipherBigInt = new BigInteger(RSACrypto.rsaEncryptPrivate(fromUser,
-					server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+					Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 			clientDout.writeUTF(fromUserCipherBigInt.toString());
 			clientDout.writeUTF(message);
 		} catch (IOException ie) {
-			server.writeLog("Message could not be sent");
+			Server.writeLog("Message could not be sent");
 		}
 		if (debug >= 1) {
-			server.writeLog("message sent, i think");
+			Server.writeLog("message sent, i think");
 		}
 	}
 
@@ -1599,37 +1596,37 @@ public class ServerThread extends Thread {
 
 		//Debug statement: who is this going to?
 		if (debug == 1) {
-			server.writeLog("Who is this message going to? " + toUser);
+			Server.writeLog("Who is this message going to? " + toUser);
 		}
 
 		//Look up the socket associated with the with whom we want to talk
 		//We will use this to find which outputstream to send out
 		//If we cannot find the user or socket, send back an error
-		if ((server.userToServerSocket.containsKey(toUser))) {
+		if ((Server.userToServerSocket.containsKey(toUser))) {
 			if (debug == 1) {
-				server.writeLog("Found user.. Continuing...");
+				Server.writeLog("Found user.. Continuing...");
 			}
-			foundSocket = (Socket) server.userToServerSocket.get(toUser);
+			foundSocket = (Socket) Server.userToServerSocket.get(toUser);
 			try {
 				serverDout = new DataOutputStream(foundSocket.getOutputStream());
 			} catch (IOException ex) {
 				Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			if (debug == 1) {
-				server.writeLog("Found Socket: " + foundSocket);
+				Server.writeLog("Found Socket: " + foundSocket);
 			}
 		}
 
 		//Send the message, and the user it is from
 		try {
-			server.writeLog("TOUSER: " + toUser + "\nMESSAGE: " + message);
-			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			Server.writeLog("TOUSER: " + toUser + "\nMESSAGE: " + message);
+			BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(messageCipher.toString());
 			if (debug >= 1) {
-				server.writeLog("Message sent:\n " + message);
+				Server.writeLog("Message sent:\n " + message);
 			}
 		} catch (IOException ie) {
-			server.writeLog("Message could not be sent");
+			Server.writeLog("Message could not be sent");
 		}
 	}
 
@@ -1646,7 +1643,7 @@ public class ServerThread extends Thread {
 		try {
 			//Get the password from the database
 			//Grab a DB connection
-			Connection con = server.dbConnect();
+			Connection con = Server.dbConnect();
 			Statement stmt;
 			ResultSet rs = null;
 
@@ -1666,35 +1663,35 @@ public class ServerThread extends Thread {
 		} catch (Exception e) {
 			//Login fail handler
 			if (debug >= 1) {
-				server.writeLog("User has failed to login");
+				Server.writeLog("User has failed to login");
 			}
-			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(returnCipher.toString());
-			server.removeConnection(c2ssocket, c2csocket, clientName);
+			Server.removeConnection(c2ssocket, c2csocket, clientName);
 			return returnCipher.toString();
 		}
 
 		//Debug messages.
 		if (debug == 1) {
-			server.writeLog("User logging in...");
+			Server.writeLog("User logging in...");
 		}
 		if (debug == 1) {
-			server.writeLog("Hashed Password:" + localHashed);
+			Server.writeLog("Hashed Password:" + localHashed);
 		}
 		if (debug == 1) {
-			server.writeLog("Username :" + clientName);
+			Server.writeLog("Username :" + clientName);
 		}
 
 		//Verify the password hash provided from the user matches the one in the server's hashtable
 		if (clientPassword.equals(localHashed)) {
-			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Success", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Success", Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(returnCipher.toString());
 			return returnCipher.toString();
 		} else {
 			//Login fail handler
-			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", server.serverPriv.getModulus(), server.serverPriv.getPrivateExponent()));
+			BigInteger returnCipher = new BigInteger(RSACrypto.rsaEncryptPrivate("Failed", Server.serverPriv.getModulus(), Server.serverPriv.getPrivateExponent()));
 			serverDout.writeUTF(returnCipher.toString());
-			server.removeConnection(c2ssocket, c2csocket, clientName);
+			Server.removeConnection(c2ssocket, c2csocket, clientName);
 			return returnCipher.toString();
 		}
 	}
@@ -1730,7 +1727,7 @@ public class ServerThread extends Thread {
 	public void publicKeyRequest() throws IOException {
 
 		if (debug >= 1) {
-			server.writeLog(username);
+			Server.writeLog(username);
 		}
 
 		try {
@@ -1739,15 +1736,15 @@ public class ServerThread extends Thread {
 
 			//Print out the received username
 			if (debug >= 1) {
-				server.writeLog("Username received PUBLIC KEY REQUEST: " + findUser);
+				Server.writeLog("Username received PUBLIC KEY REQUEST: " + findUser);
 			}
 
 			File newFile = new File("keys/" + findUser + ".pub");
 			if ((newFile.exists())) {
 				RSAPublicKeySpec keyToReturn = RSACrypto.readPubKeyFromFile("keys/" + findUser + ".pub");
 				if (debug >= 1) {
-					server.writeLog("MOD: " + keyToReturn.getModulus().toString());
-					server.writeLog("EXP: " + keyToReturn.getPublicExponent().toString());
+					Server.writeLog("MOD: " + keyToReturn.getModulus().toString());
+					Server.writeLog("EXP: " + keyToReturn.getPublicExponent().toString());
 				}
 
 				//Check to see if the user has a key file on the server
@@ -1755,14 +1752,14 @@ public class ServerThread extends Thread {
 				serverDout.writeUTF(keyToReturn.getPublicExponent().toString());
 
 				if (debug >= 1) {
-					server.writeLog("Modulus Returned\n");
-					server.writeLog("Exponent Returned\n");
+					Server.writeLog("Modulus Returned\n");
+					Server.writeLog("Exponent Returned\n");
 				}
 
 			} else {
 				serverDout.writeUTF("-1");
 				if (debug >= 1) {
-					server.writeLog("User does not have a keyfile with us");
+					Server.writeLog("User does not have a keyfile with us");
 				}
 			}
 		} catch (Exception e) {
