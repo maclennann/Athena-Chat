@@ -44,8 +44,8 @@ public class Server {
 	//Change to 1 or 2 for debug output
 	private static int debug = 0;
 	//This socket will accept new connection
-	private static ServerSocket c2ss;
-	private static ServerSocket c2css;
+	//private static ServerSocket c2ss;
+	//private static ServerSocket c2css;
 	private static File debugLog;
 	private static BufferedWriter debugWriter;
 	/**
@@ -67,11 +67,11 @@ public class Server {
 	/**
 	 * Server's private RSA key
 	 */
-	public static RSAPrivateKeySpec serverPriv;
+	//public static RSAPrivateKeySpec serverPriv;
 	/**
 	 * Server's public key
 	 */
-	public static RSAPublicKeySpec serverPub;
+	//public static RSAPublicKeySpec serverPub;
 
 	/**
 	 * Starts the server listening
@@ -264,8 +264,8 @@ public class Server {
 	 */
 	static synchronized void sendToAll(String eventCode, String message,String[] blockList) {
 		System.gc();
-		BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
-		BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
+//		BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
+		//BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
 		Enumeration userEnumeration = userToClientSocket.elements();
 		Enumeration usernameEnumeration = userToClientSocket.keys();
 
@@ -284,8 +284,8 @@ public class Server {
 			if(send==1){
 			try {
 				DataOutputStream dout = new DataOutputStream(sendToAllSocket.getOutputStream());
-				dout.writeUTF(eventCodeCipher.toString());
-				dout.writeUTF(messageCipher.toString());
+		//		dout.writeUTF(eventCodeCipher.toString());
+		//		dout.writeUTF(messageCipher.toString());
 			} catch (IOException ie) {
 				System.out.println(ie);
 			}}send=1;
