@@ -42,20 +42,20 @@ import java.util.Scanner;
 public class Server {
 
 	//Change to 1 or 2 for debug output
-	private static int debug = 0;
+//	private static int debug = 0;
 	//This socket will accept new connection
 	//private static ServerSocket c2ss;
 	//private static ServerSocket c2css;
-	private static File debugLog;
-	private static BufferedWriter debugWriter;
+//	private static File debugLog;
+//	private static BufferedWriter debugWriter;
 	/**
 	 * Holds the usernames and hashed passwords read in from the database.
 	 */
-	private static String dbUser = "";
-	private static String dbPass = "";
+//	private static String dbUser = "";
+//	private static String dbPass = "";
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
-	private static Scanner in = new Scanner(System.in);
+//	private static Scanner in = new Scanner(System.in);
 	/**
 	 * A hashtable that maps users to their server socket
 	 */
@@ -86,7 +86,7 @@ public class Server {
 	 * Gets a connection to the database
 	 * @return The connection to the database
 	 */
-	public static Connection dbConnect() {
+	/*public static Connection dbConnect() {
 
 		//Location of the database
 		String url = "jdbc:mysql://localhost:3306/aegis";
@@ -161,7 +161,7 @@ public class Server {
 		System.out.println("*******************************************");
 
 		//Open the log file for writing
-		openLog(new File("logs/Aegis.txt"));
+	//	openLog(new File("logs/Aegis.txt"));
 		while(true){try{Thread.sleep(1000000);}catch(Exception e){}}
 		//Start listening for connections
 		/*ListenerThread listener = new ListenerThread(c2ss,c2css);
@@ -219,7 +219,7 @@ public class Server {
 		}*/
 	}
 
-	public static void openLog(File fileName) {
+/*	public static void openLog(File fileName) {
 		try{
 			debugLog = fileName;
 			if (!(debugLog.exists())) {
@@ -237,7 +237,7 @@ public class Server {
 		}
 	}
 
-	public static String getDateTime() {
+/*public static String getDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         return dateFormat.format(date);
@@ -297,7 +297,7 @@ public class Server {
 	 * @param servsock The "server" socket to remove
 	 * @param clientsock The "client" socket to remove
 	 */
-	static void removeConnection(Socket servsock, Socket clientsock) {
+/*	static void removeConnection(Socket servsock, Socket clientsock) {
 		// Debug text
 		writeLog("Connection Terminated:\n" + servsock + "\n\n");
 
@@ -383,8 +383,8 @@ public class Server {
 		 *1. UpdateHashTable
 		 *2. Listen for connections
 		 *3. The Universe collapses in on itself*/
-		dbUser = args[0];
-		dbPass = args[1];
+		//dbUser = args[0];
+		//dbPass = args[1];
 
 		// Create a Server object, which will automatically begin accepting connections.
 		listen(listenPort);
