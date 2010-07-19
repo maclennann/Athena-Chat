@@ -51,8 +51,6 @@ public class Server {
 	/**
 	 * Holds the usernames and hashed passwords read in from the database.
 	 */
-	//Creates a SQL connection object. See dbConnect()
-	//private static Connection con = null;
 	private static String dbUser = "";
 	private static String dbPass = "";
 	//Defines which port on which we listen for client
@@ -61,11 +59,11 @@ public class Server {
 	/**
 	 * A hashtable that maps users to their server socket
 	 */
-	public static Hashtable<String, Socket> userToServerSocket =  new Hashtable<String, Socket>();
+	public static Hashtable<String, Socket> userToServerSocket = null;// new Hashtable<String, Socket>();
 	/**
 	 * A hashtable that maps users to their client socket
 	 */
-	public static Hashtable<String, Socket> userToClientSocket = new Hashtable<String, Socket>();
+	public static Hashtable<String, Socket> userToClientSocket = null;//new Hashtable<String, Socket>();
 	/**
 	 * Server's private RSA key
 	 */
@@ -142,12 +140,12 @@ public class Server {
 	@SuppressWarnings("ResultOfObjectAllocationIgnored")
 	private static void listen(int port) throws IOException {
 		// Create the ServerSocket
-		c2ss = new ServerSocket(port);
-		c2css = new ServerSocket(7778);
+		//c2ss = new ServerSocket(port);
+		//c2css = new ServerSocket(7778);
 
 		//Fetch public and private keys so the threads can deal with encryption
-		serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
-		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+		//serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
+		//serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 
 		System.gc();System.gc();System.gc();System.gc();
 		// Tell the world we're ready to go
@@ -166,7 +164,7 @@ public class Server {
 		openLog(new File("logs/Aegis.txt"));
 
 		//Start listening for connections
-		ListenerThread listener = new ListenerThread(c2ss,c2css);
+		/*ListenerThread listener = new ListenerThread(c2ss,c2css);
 		listener.start();
 
 		//The Administration menu
@@ -218,7 +216,7 @@ public class Server {
 				System.out.println("Shutting down...");
 				System.exit(0);
 			}
-		}
+		}*/
 	}
 
 	public static void openLog(File fileName) {
