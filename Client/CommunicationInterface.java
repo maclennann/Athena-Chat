@@ -135,7 +135,7 @@ public class CommunicationInterface extends JFrame {
 	public Font[] allFonts = ge.getAllFonts();
 
 	private static final long serialVersionUID = -7742402292330782311L;
-	private static final int debug = 0;
+	public int debug = 0;
 	
 	// Define the listModel for the JList
 	public DefaultListModel contactListModel = new DefaultListModel();//TODO IS THIS OKAY? Athena.782
@@ -178,8 +178,10 @@ public class CommunicationInterface extends JFrame {
 	private boolean fontUnderline;
 	private int fontSize;
 	private int activeTheme;
+        private int debugLog;
+        private String downloadLocation = "users\\" + Athena.username + "\\downloads\\";
 	private boolean userStatusFlag = false;
-	private static Object[] currentSettings = new Object[11];
+	private static Object[] currentSettings = new Object[13];
         private String chatIDToLocate = null;
 
 	/**
@@ -279,15 +281,19 @@ public class CommunicationInterface extends JFrame {
 		closeTabWithESC(enableESCToClose);
 		enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
 		setSpellCheck(enableSpellCheck);
-		enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
+                if(!(settingsArray[3].toString().equals("")))
+                    downloadLocation = settingsArray[3].toString();
+                debugLog = Integer.parseInt(settingsArray[4].toString());
+                setDebugLog(debugLog);
+		enableSounds = Boolean.parseBoolean(settingsArray[5].toString());
 		Athena.setEnableSounds(enableSounds);
-		encryptionType = Integer.parseInt(settingsArray[4].toString());
-		fontFace = settingsArray[5].toString();
-		fontBold = Boolean.parseBoolean(settingsArray[6].toString());
-		fontItalic = Boolean.parseBoolean(settingsArray[7].toString());
-		fontUnderline = Boolean.parseBoolean(settingsArray[8].toString());
-		fontSize = Integer.parseInt(settingsArray[9].toString());
-		activeTheme = Integer.parseInt(settingsArray[10].toString());
+		encryptionType = Integer.parseInt(settingsArray[6].toString());
+		fontFace = settingsArray[7].toString();
+		fontBold = Boolean.parseBoolean(settingsArray[8].toString());
+		fontItalic = Boolean.parseBoolean(settingsArray[9].toString());
+		fontUnderline = Boolean.parseBoolean(settingsArray[10].toString());
+		fontSize = Integer.parseInt(settingsArray[11].toString());
+		activeTheme = Integer.parseInt(settingsArray[12].toString());
 		
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Athena.username);
@@ -346,7 +352,7 @@ public class CommunicationInterface extends JFrame {
 		// Create button Encryption -> Export Key Pair
 		JMenuItem exportKey = new JMenuItem("Export Key Pair");
 		encryption.add(exportKey);
-		JMenuItem startDP = new JMenuItem("Start/Stop DirectProtect Here");
+		JMenuItem startDP = new JMenuItem("Start/Stop DirectProtect");
 		encryption.add(startDP);
 
 		// Create the view menu
@@ -380,11 +386,11 @@ public class CommunicationInterface extends JFrame {
 		web.setMnemonic(KeyEvent.VK_R);
 		help.add(bugReport);
 
-		JMenuItem blockUser = new JMenuItem("Block this user");
+		JMenuItem blockUser = new JMenuItem("Block Selected User");
 		blockUser.setMnemonic(KeyEvent.VK_B);
 		edit.add(blockUser);
 
-		JMenuItem unblockUser = new JMenuItem("Unblock Someone");
+		JMenuItem unblockUser = new JMenuItem("Unblock A User");
 		blockUser.setMnemonic(KeyEvent.VK_U);
 		edit.add(unblockUser);
 
@@ -399,7 +405,7 @@ public class CommunicationInterface extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				if(imTabbedPane.getSelectedIndex()!=-1){
 					Athena.blockUser();
-				}else{JOptionPane.showMessageDialog(null,"Please select the user to block.");}
+				}else{JOptionPane.showMessageDialog(null,"Please select the user to block:");}
 			}
 		});
 
@@ -416,12 +422,12 @@ public class CommunicationInterface extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				if(imTabbedPane.getSelectedIndex()!=-1){
 				if(!Athena.sessionKeys.containsKey(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()))){
-					Athena.writeLog("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
+					Athena.writeLog("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to DirectProtect connection...");
 					Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
 				}
 				else {
 					Athena.leaveDP(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
-				}}else{JOptionPane.showMessageDialog(null,"Please open a tab with the user you wish to connect to.");}
+				}}else{JOptionPane.showMessageDialog(null,"Please open a tab for the user you wish to connect to.");}
 			}
 		});
 
@@ -436,7 +442,7 @@ public class CommunicationInterface extends JFrame {
 				try {
 					//Establish DP first!
 				if(!Athena.sessionKeys.containsKey(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()))){
-					Athena.writeLog("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
+					Athena.writeLog("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to DirectProtect connection...");
 					Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
 					Athena.sendFile(fc.getSelectedFile());
 				}
@@ -445,7 +451,7 @@ public class CommunicationInterface extends JFrame {
 				}
 				} catch (IOException e) {
 					e.printStackTrace();
-				}}else{JOptionPane.showMessageDialog(null,"Please open a tab with the user you wish to send a file to.");}
+				}}else{JOptionPane.showMessageDialog(null,"Please open a tab for the user you wish to send a file to.");}
 			}
 		});
 
@@ -1159,6 +1165,21 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+        public void setDebugLog(int debugLog)
+        {
+            debug = debugLog;
+        }
+
+        public void setDownloadLocation(String newDownloadLocation)
+        {
+           downloadLocation = newDownloadLocation;
+        }
+
+        public String getDownloadLocation()
+        {
+            return downloadLocation;
+        }
+
 	/**
 	 * Add an alert notifier to the specified tab index
 	 * @param index Tab index to add the listener on
@@ -1504,7 +1525,7 @@ public class CommunicationInterface extends JFrame {
 		if (debug == 1) {
 			Athena.writeLog("Importing preferences");
 		}
-		Object[] settingsArray = new Object[11];
+		Object[] settingsArray = new Object[13];
 		int arrayCount = 0;
 		String line = null;
 		String temp = null;
@@ -1569,6 +1590,14 @@ public class CommunicationInterface extends JFrame {
 					temp = inPref.readLine().substring(17);
 					settingsArray[arrayCount] = temp;
 					arrayCount++;
+                                        //Get downloadLocation (String)
+                                        temp = inPref.readLine().substring(17);
+                                        settingsArray[arrayCount] = temp;
+                                        arrayCount++;
+                                        //Get debugLog (int)
+                                        temp = inPref.readLine().substring(9);
+                                        settingsArray[arrayCount] = temp;
+                                        arrayCount++;
 				}
 				if (line.equals("[NOTIFICATIONS]")) {
 					//Get notification settings
@@ -2046,19 +2075,25 @@ class MapTextArea extends JFrame {
 	 * @param ftSize Font size
 	 */
 	public void setTextFont(String fontFace, boolean isBold, boolean isItalic, boolean isULine, int ftSize) {
-		miniKeyWord = myTP.getInputAttributes();
-		myTP.setFont(new Font(fontFace, Font.PLAIN, ftSize));
+                if(Athena.clientResource.imTabbedPane.getTabCount() > 0)
+                {
+                    miniKeyWord = myTP.getInputAttributes();
+                    myTP.setFont(new Font(fontFace, Font.PLAIN, ftSize));
+                }
 		StyleConstants.setBold(miniKeyWord, isBold);
 		StyleConstants.setItalic(miniKeyWord, isItalic);
 		StyleConstants.setUnderline(miniKeyWord, isULine);
 		StyleConstants.setFontSize(miniKeyWord, ftSize);
 		StyleConstants.setFontFamily(miniKeyWord, Athena.clientResource.fontFamilyTable.get(fontFace));
 		StyledDocument doc = myTP.getStyledDocument();
-		if (doc.getLength() > 0) {
-			doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
-		} else {
-			doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
-		}
+                if(Athena.clientResource.imTabbedPane.getTabCount() > 0)
+                {
+                    if (doc.getLength() > 0) {
+                            doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, false);
+                    } else {
+                            doc.setCharacterAttributes(0, doc.getLength() + 1, miniKeyWord, true);
+                    }
+                }
 	}
 
 	/**

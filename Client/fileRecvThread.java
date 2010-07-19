@@ -70,7 +70,9 @@ public class fileRecvThread extends Thread {
 
 			//Open the file for writing
 			//TODO Check to see if the downloads folder exists!
-			FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
+                        System.out.println("Saving file to: " + Athena.clientResource.getDownloadLocation() + filePathArray[arrSize-1]);
+                        FileOutputStream fos = new FileOutputStream(Athena.clientResource.getDownloadLocation() + filePathArray[arrSize-1]);
+			//FileOutputStream fos = new FileOutputStream("users/" + username + "/downloads/" + filePathArray[arrSize-1]);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 
 			//Start the progress bar with 100% being the total number of bytes were are reading in

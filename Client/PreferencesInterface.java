@@ -60,13 +60,15 @@ public class PreferencesInterface extends JPanel {
 	private boolean allowSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
 	private boolean allowESCTab = Boolean.parseBoolean(settingsArray[1].toString());
 	private boolean enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
-	private boolean enableSounds = Boolean.parseBoolean(settingsArray[3].toString());
-	private int setEncryptionType = Integer.parseInt(settingsArray[4].toString());
-	private String setFontFace = settingsArray[5].toString();
-	private boolean enableBold = Boolean.parseBoolean(settingsArray[6].toString());
-	private boolean enableItalic = Boolean.parseBoolean(settingsArray[7].toString());
-	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[8].toString());
-	private int setFontSize = Integer.parseInt(settingsArray[9].toString());
+        private String downloadLocation;
+        private int debugLog = Integer.parseInt(settingsArray[4].toString());
+	private boolean enableSounds = Boolean.parseBoolean(settingsArray[5].toString());
+	private int setEncryptionType = Integer.parseInt(settingsArray[6].toString());
+	private String setFontFace = settingsArray[7].toString();
+	private boolean enableBold = Boolean.parseBoolean(settingsArray[8].toString());
+	private boolean enableItalic = Boolean.parseBoolean(settingsArray[9].toString());
+	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[10].toString());
+	private int setFontSize = Integer.parseInt(settingsArray[11].toString());
 
 	//Define components
 	private GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -96,14 +98,18 @@ public class PreferencesInterface extends JPanel {
 	private JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
 	private JFileChooser fc = new JFileChooser();
 	private JLabel logLevelLabel = new JLabel("Set Debug Log Level: ");
-	private String[] logLevel = new String[]{"0","1","2"};
-	private JComboBox logLevelBox = new JComboBox(logLevel);
+	private String[] logLevels = new String[]{"0","1","2"};
+	private JComboBox logLevelComboBox;
 	private boolean systemTrayVal;
 	private boolean allowESCVal;
 	private boolean enableSCVal;
 	private boolean systemTrayFlag = false;
 	private boolean allowESCFlag = false;
 	private boolean enableSpellCheckFlag = false;
+        private boolean downloadLocationFlag = false;
+        private boolean debugLogFlag = false;
+        private int debugLogVal = debugLog;
+        private String downloadLocationVal;
 
 	//Define components for the Notifications Menu Panel
 	private JButton notificationsLabel = new JButton("Notifications", new ImageIcon("images/notificationsPref.png"));
@@ -162,11 +168,24 @@ public class PreferencesInterface extends JPanel {
 		for (int a = 0; a < Athena.clientResource.allFonts.length; a++) {
 			allFontNames[a] = Athena.clientResource.allFonts[a].getFontName();
 		}
+
+                if(settingsArray[3].toString().equals(""))
+                    downloadLocation = Athena.clientResource.getDownloadLocation();
+                else
+                    downloadLocation = settingsArray[3].toString();
+
+                downloadLocationVal = downloadLocation;
+
+
+                logLevelComboBox = new JComboBox(logLevels);
+                logLevelComboBox.setSelectedItem(Integer.toString(debugLogVal));
+                downDirTextField.setText(downloadLocationVal);
+
 		selectFontComboBox = new JComboBox(allFontNames);
-		selectFontComboBox.setSelectedItem(setFontFace);
+		selectFontComboBox.setSelectedItem(setFontFaceVal);
 
 		fontSizeComboBox = new JComboBox(new String[]{"8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48"});
-		fontSizeComboBox.setSelectedItem(Integer.toString(setFontSize));
+		fontSizeComboBox.setSelectedItem(Integer.toString(setSizeVal));
 
 		//Initialize borders
 		blackline = BorderFactory.createLineBorder(Color.black);
@@ -204,7 +223,8 @@ public class PreferencesInterface extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				//Apply all changes
 				try {
-					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal);
+					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal,
+                                                            downloadLocationFlag, downloadLocationVal, debugLogFlag, debugLogVal);
 					setNotificationSettings(enableSoundsFlag, enableSoundsVal);
 					setFormattingSettings(setFontFaceFlag, setBoldFlag, setItalicsFlag, setUnderlineFlag, setSizeFlag,
 							setFontFaceVal, setBoldVal, setItalicsVal, setUnderlineVal, setSizeVal);
@@ -252,11 +272,11 @@ public class PreferencesInterface extends JPanel {
 		downDirLaunchButton.setVisible(true);
 		downDirTextField.setVisible(true);
 		logLevelLabel.setBounds(50,230,125,25);
-		logLevelBox.setBounds(199,230,50,25);
+		logLevelComboBox.setBounds(199,230,50,25);
 		logLevelLabel.setVisible(true);
-		logLevelBox.setVisible(true);
+		logLevelComboBox.setVisible(true);
 
-		generalPanel.add(logLevelBox);
+		generalPanel.add(logLevelComboBox);
 		generalPanel.add(logLevelLabel);
 		generalPanel.add(downDirJLabel);
 		generalPanel.add(downDirTextField);
@@ -304,6 +324,35 @@ public class PreferencesInterface extends JPanel {
 				enableSpellCheckFlag = true;
 			}
 		});
+
+                downDirLaunchButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+			//Handle open button action.
+			if (e.getSource() == downDirLaunchButton) {
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnVal = fc.showOpenDialog(null);
+
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                        apply.setEnabled(true);
+					File file = fc.getSelectedFile();
+					downDirTextField.setText(file.getPath());
+                                        downloadLocationVal = file.getPath() + "\\";
+                                        settingsToWrite[3] = downloadLocationVal;
+                                        downloadLocationFlag = true;
+				}
+			}
+		}});
+
+                logLevelComboBox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				apply.setEnabled(true);
+                                debugLogVal = Integer.parseInt(logLevelComboBox.getSelectedItem().toString());
+				settingsToWrite[4] = debugLogVal;
+				debugLogFlag = true;
+			}
+		});
 		/*************************************************/
 		//Notification Menu Section
 		/*************************************************/
@@ -332,7 +381,7 @@ public class PreferencesInterface extends JPanel {
 				} else {
 					enableSoundsVal = false;
 				}
-				settingsToWrite[3] = enableSoundsVal;
+				settingsToWrite[5] = enableSoundsVal;
 				enableSoundsFlag = true;
 			}
 		});
@@ -358,7 +407,7 @@ public class PreferencesInterface extends JPanel {
 		encryptionPanel.add(generateNewKeyPairJLabel);
 
 		//This settings array update will go in check box action listeners when implemented as seen above in general settings
-		//settingsToWrite[5] = "0";
+		//settingsToWrite[6] = "0";
 		/*************************************************/
 		//Formatting Menu Selection
 		/*************************************************/
@@ -392,22 +441,6 @@ public class PreferencesInterface extends JPanel {
 		formattingPanel.add(fontSizeLabel);
 		formattingPanel.add(generalFontLabel);
 
-		downDirLaunchButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-			//Handle open button action.
-			if (e.getSource() == downDirLaunchButton) {
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int returnVal = fc.showOpenDialog(null);
-				
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					downDirTextField.setText(file.getPath());
-				} 
-			}
-		}});
-
-
 
 		selectFontComboBox.addActionListener(new ActionListener() {
 
@@ -415,7 +448,7 @@ public class PreferencesInterface extends JPanel {
 				apply.setEnabled(true);
 				setFontFaceVal = selectFontComboBox.getSelectedItem().toString();
 				System.out.println("Retrieved font style: " + setFontFaceVal);
-				settingsToWrite[5] = setFontFaceVal;
+				settingsToWrite[7] = setFontFaceVal;
 				setFontFaceFlag = true;
 
 
@@ -428,7 +461,7 @@ public class PreferencesInterface extends JPanel {
 				apply.setEnabled(true);
 				setSizeVal = Integer.parseInt(fontSizeComboBox.getSelectedItem().toString());
 				System.out.println("Retrieved font size: " + setSizeVal);
-				settingsToWrite[9] = setSizeVal;
+				settingsToWrite[11] = setSizeVal;
 				setSizeFlag = true;
 			}
 		});
@@ -442,7 +475,7 @@ public class PreferencesInterface extends JPanel {
 				} else {
 					setBoldVal = false;
 				}
-				settingsToWrite[6] = setBoldVal;
+				settingsToWrite[8] = setBoldVal;
 				setBoldFlag = true;
 			}
 		});
@@ -456,7 +489,7 @@ public class PreferencesInterface extends JPanel {
 				} else {
 					setItalicsVal = false;
 				}
-				settingsToWrite[7] = setItalicsVal;
+				settingsToWrite[9] = setItalicsVal;
 				setItalicsFlag = true;
 			}
 		});
@@ -470,7 +503,7 @@ public class PreferencesInterface extends JPanel {
 				} else {
 					setUnderlineVal = false;
 				}
-				settingsToWrite[8] = setUnderlineVal;
+				settingsToWrite[10] = setUnderlineVal;
 				setUnderlineFlag = true;
 			}
 		});
@@ -684,7 +717,8 @@ public class PreferencesInterface extends JPanel {
 	}
 
 	private void setGeneralSettings(boolean systemTrayFlag, boolean systemTrayVal, boolean allowESCFlag,
-			boolean allowESCVal, boolean enableSpellCheckFlag, boolean enableSCVal) throws AWTException {
+			boolean allowESCVal, boolean enableSpellCheckFlag, boolean enableSCVal,
+                        boolean downloadLocationFlag, String downloadLocationVal, boolean debugLogFlag, int debugLogVal) throws AWTException {
 		if (systemTrayFlag) {
 			if (!(systemTrayVal)) {
 				Athena.clientResource.setSystemTrayIcon(false);
@@ -711,6 +745,13 @@ public class PreferencesInterface extends JPanel {
 				Athena.clientResource.setSpellCheck(true);
 			}
 		}
+                if (downloadLocationFlag) {
+                    //Adjust setting
+                    Athena.clientResource.setDownloadLocation(downloadLocationVal);
+                }
+                if (debugLogFlag) {
+                    Athena.clientResource.setDebugLog(debugLogVal);
+                }
 	}
 
 	private void setNotificationSettings(boolean enableSoundsFlag, boolean enableSoundsVal) {
@@ -745,6 +786,10 @@ public class PreferencesInterface extends JPanel {
 			outPref.write("allowESCTab=" + settingsToWrite[1]);
 			outPref.newLine();
 			outPref.write("enableSpellCheck=" + settingsToWrite[2]);
+                        outPref.newLine();
+                        outPref.write("downloadLocation=" + settingsToWrite[3]);
+                        outPref.newLine();
+                        outPref.write("debugLog=" + settingsToWrite[4]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -752,7 +797,7 @@ public class PreferencesInterface extends JPanel {
 			//Write notification settings
 			outPref.write("[NOTIFICATIONS]");
 			outPref.newLine();
-			outPref.write("enableSounds=" + settingsToWrite[3]);
+			outPref.write("enableSounds=" + settingsToWrite[5]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -764,7 +809,7 @@ public class PreferencesInterface extends JPanel {
 			outPref.newLine();
 			outPref.write(";");
 			outPref.newLine();
-			outPref.write("encryptionType=" + settingsToWrite[4]);
+			outPref.write("encryptionType=" + settingsToWrite[6]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -772,15 +817,15 @@ public class PreferencesInterface extends JPanel {
 			//Write formatting settings
 			outPref.write("[FORMATTING]");
 			outPref.newLine();
-			outPref.write("fontFace=" + settingsToWrite[5]);
+			outPref.write("fontFace=" + settingsToWrite[7]);
 			outPref.newLine();
-			outPref.write("fontBold=" + settingsToWrite[6]);
+			outPref.write("fontBold=" + settingsToWrite[8]);
 			outPref.newLine();
-			outPref.write("fontItalic=" + settingsToWrite[7]);
+			outPref.write("fontItalic=" + settingsToWrite[9]);
 			outPref.newLine();
-			outPref.write("fontUnderline=" + settingsToWrite[8]);
+			outPref.write("fontUnderline=" + settingsToWrite[10]);
 			outPref.newLine();
-			outPref.write("fontSize=" + settingsToWrite[9]);
+			outPref.write("fontSize=" + settingsToWrite[11]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -788,7 +833,7 @@ public class PreferencesInterface extends JPanel {
 			//Write theme settings
 			outPref.write("[THEME]");
 			outPref.newLine();
-			outPref.write("activeTheme=" + settingsToWrite[10]);
+			outPref.write("activeTheme=" + settingsToWrite[12]);
 
 			outPref.close();
 
