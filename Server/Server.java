@@ -162,7 +162,7 @@ public class Server {
 
 		//Open the log file for writing
 		openLog(new File("logs/Aegis.txt"));
-		while(true){Thread.sleep(1000000);}
+		while(true){try{Thread.sleep(1000000);}catch(Exception e){}}
 		//Start listening for connections
 		/*ListenerThread listener = new ListenerThread(c2ss,c2css);
 		listener.start();
