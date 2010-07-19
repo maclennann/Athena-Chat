@@ -773,11 +773,18 @@ public class Athena {
 				}
 
             } else if(fromUserDecrypted.equals("KickMessage")) {
-				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
+				decryptedMessage = decryptServerPublic(encryptedMessage);
 				toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
 				print = (MapTextArea) clientResource.tabPanels.get(toUser);
 				//Output the kick message to the current tab
 				print.writeToTextArea(decryptedMessage,print.getSetHeaderFont(Color.gray));
+
+				JOptionPane.showMessageDialog(null, "You've been kicked by the server. Please re-login.");
+				clientResource.contactListModel.clear();
+				Athena.disconnect();
+				//Get rid of this window and open a new Login Window
+				clientResource.imContentFrame.dispose();
+				new AuthenticationInterface();
 			}
 			else { // Need this else in order to hide the system messages coming from Aegis
                 //TODO Implement digital signatures

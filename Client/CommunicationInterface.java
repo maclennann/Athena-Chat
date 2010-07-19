@@ -138,7 +138,7 @@ public class CommunicationInterface extends JFrame {
 	private static final int debug = 0;
 	
 	// Define the listModel for the JList
-	private DefaultListModel contactListModel = new DefaultListModel();
+	public DefaultListModel contactListModel = new DefaultListModel();//TODO IS THIS OKAY? Athena.782
 	private DefaultListModel inviteListModel = new DefaultListModel();
         public Hashtable<String, DefaultListModel> chatListModels = new Hashtable<String, DefaultListModel>();
 
