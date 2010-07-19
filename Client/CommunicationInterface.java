@@ -526,7 +526,9 @@ public class CommunicationInterface extends JFrame {
 		exportKey.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Your exported keys will be in the users/[yourusername]/keys folder.", JOptionPane.INFORMATION_MESSAGE);
+                                RSACrypto.exportPrivate(Athena.toUserPublic.getModulous(), Athena.toUserPublic.getPublicExponent(), Athena.username);
+                                RSACrypto.exportPrivate(Athena.userPrivate.getModulous(), Athena.userPrivate.getPrivateExponent(), Athena.username);
 			}
 		});
 
