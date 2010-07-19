@@ -42,36 +42,38 @@ import java.util.Scanner;
 public class Server {
 
 	//Change to 1 or 2 for debug output
-//	private static int debug = 0;
+	private static int debug = 0;
 	//This socket will accept new connection
-	//private static ServerSocket c2ss;
-	//private static ServerSocket c2css;
-//	private static File debugLog;
-//	private static BufferedWriter debugWriter;
+	private static ServerSocket c2ss;
+	private static ServerSocket c2css;
+	private static File debugLog;
+	private static BufferedWriter debugWriter;
 	/**
 	 * Holds the usernames and hashed passwords read in from the database.
 	 */
-//	private static String dbUser = "";
-//	private static String dbPass = "";
+	//Creates a SQL connection object. See dbConnect()
+	private static Connection con = null;
+	private static String dbUser = "";
+	private static String dbPass = "";
 	//Defines which port on which we listen for client
 	private static int listenPort = 7777;
-//	private static Scanner in = new Scanner(System.in);
+	private static Scanner in = new Scanner(System.in);
 	/**
 	 * A hashtable that maps users to their server socket
 	 */
-//	public static Hashtable<String, Socket> userToServerSocket = null;// new Hashtable<String, Socket>();
+	public static Hashtable<String, Socket> userToServerSocket = new Hashtable<String, Socket>();
 	/**
 	 * A hashtable that maps users to their client socket
 	 */
-//	public static Hashtable<String, Socket> userToClientSocket = null;//new Hashtable<String, Socket>();
+	public static Hashtable<String, Socket> userToClientSocket = new Hashtable<String, Socket>();
 	/**
 	 * Server's private RSA key
 	 */
-	//public static RSAPrivateKeySpec serverPriv;
+	public static RSAPrivateKeySpec serverPriv;
 	/**
 	 * Server's public key
 	 */
-	//public static RSAPublicKeySpec serverPub;
+	public static RSAPublicKeySpec serverPub;
 
 	/**
 	 * Starts the server listening
@@ -86,7 +88,7 @@ public class Server {
 	 * Gets a connection to the database
 	 * @return The connection to the database
 	 */
-	/*public static Connection dbConnect() {
+	public static Connection dbConnect() {
 
 		//Location of the database
 		String url = "jdbc:mysql://localhost:3306/aegis";
@@ -103,7 +105,7 @@ public class Server {
 
 		//Connect to the database using the driver
 		try {
-			Connection con = DriverManager.getConnection(url, un, pw);
+			con = DriverManager.getConnection(url, un, pw);
 
 			//Return the established connection
 			return con;
@@ -119,7 +121,7 @@ public class Server {
 	 * @param username The username
 	 * @param userSocket The socket to map the username to
 	 */
-/*	public static void mapUserServerSocket(String username, Socket userSocket) {
+	public static void mapUserServerSocket(String username, Socket userSocket) {
 		userToServerSocket.put(username, userSocket);
 	}
 
@@ -128,7 +130,7 @@ public class Server {
 	 * @param username The username
 	 * @param userSocket The socket to map the username to
 	 */
-/*	public static void mapUserClientSocket(String username, Socket userSocket) {
+	public static void mapUserClientSocket(String username, Socket userSocket) {
 		userToClientSocket.put(username, userSocket);
 	}
 
@@ -140,14 +142,13 @@ public class Server {
 	@SuppressWarnings("ResultOfObjectAllocationIgnored")
 	private static void listen(int port) throws IOException {
 		// Create the ServerSocket
-		//c2ss = new ServerSocket(port);
-		//c2css = new ServerSocket(7778);
+		c2ss = new ServerSocket(port);
+		c2css = new ServerSocket(7778);
 
 		//Fetch public and private keys so the threads can deal with encryption
-		//serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
-		//serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+		serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
+		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 
-		System.gc();System.gc();System.gc();System.gc();
 		// Tell the world we're ready to go
 		System.out.println("*******************************************");
 		System.out.println("**     Welcome to Athena Chat Server     **");
@@ -161,10 +162,10 @@ public class Server {
 		System.out.println("*******************************************");
 
 		//Open the log file for writing
-	//	openLog(new File("logs/Aegis.txt"));
-		while(true){try{Thread.sleep(1000000);}catch(Exception e){}}
+		openLog(new File("logs/Aegis.txt"));
+
 		//Start listening for connections
-		/*ListenerThread listener = new ListenerThread(c2ss,c2css);
+		ListenerThread listener = new ListenerThread(c2ss,c2css);
 		listener.start();
 
 		//The Administration menu
@@ -216,10 +217,10 @@ public class Server {
 				System.out.println("Shutting down...");
 				System.exit(0);
 			}
-		}*/
+		}
 	}
 
-/*	public static void openLog(File fileName) {
+	public static void openLog(File fileName) {
 		try{
 			debugLog = fileName;
 			if (!(debugLog.exists())) {
@@ -237,7 +238,7 @@ public class Server {
 		}
 	}
 
-/*public static String getDateTime() {
+	public static String getDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         return dateFormat.format(date);
@@ -262,10 +263,10 @@ public class Server {
 	 * @param eventCode What we are talking to them about
 	 * @param message The data
 	 */
-/*	static synchronized void sendToAll(String eventCode, String message,String[] blockList) {
+	static synchronized void sendToAll(String eventCode, String message,String[] blockList) {
 		System.gc();
-//		BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
-		//BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
+		BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
+		BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
 		Enumeration userEnumeration = userToClientSocket.elements();
 		Enumeration usernameEnumeration = userToClientSocket.keys();
 
@@ -284,8 +285,8 @@ public class Server {
 			if(send==1){
 			try {
 				DataOutputStream dout = new DataOutputStream(sendToAllSocket.getOutputStream());
-		//		dout.writeUTF(eventCodeCipher.toString());
-		//		dout.writeUTF(messageCipher.toString());
+				dout.writeUTF(eventCodeCipher.toString());
+				dout.writeUTF(messageCipher.toString());
 			} catch (IOException ie) {
 				System.out.println(ie);
 			}}send=1;
@@ -297,7 +298,7 @@ public class Server {
 	 * @param servsock The "server" socket to remove
 	 * @param clientsock The "client" socket to remove
 	 */
-/*	static void removeConnection(Socket servsock, Socket clientsock) {
+	static void removeConnection(Socket servsock, Socket clientsock) {
 		// Debug text
 		writeLog("Connection Terminated:\n" + servsock + "\n\n");
 
@@ -318,7 +319,7 @@ public class Server {
 	 * @param clientsock The "client" socket
 	 * @param uname The username
 	 */
-/*	static void removeConnection(Socket servsock, Socket clientsock, String uname) {
+	static void removeConnection(Socket servsock, Socket clientsock, String uname) {
 		// Debug text
 		writeLog("User Disconnected: " + uname + "\n\n");
 
@@ -346,7 +347,7 @@ public class Server {
 	 * @param clientsock The "client" socket
 	 * @param uname The username
 	 */
-	/*static void kickUser(Socket servsock, Socket clientsock, String uname) throws IOException {
+	static void kickUser(Socket servsock, Socket clientsock, String uname) throws IOException {
 		// Debug text
 		writeLog("User Kicked: " + uname + "\n\n");
 
@@ -383,8 +384,8 @@ public class Server {
 		 *1. UpdateHashTable
 		 *2. Listen for connections
 		 *3. The Universe collapses in on itself*/
-		//dbUser = args[0];
-		//dbPass = args[1];
+		dbUser = args[0];
+		dbPass = args[1];
 
 		// Create a Server object, which will automatically begin accepting connections.
 		listen(listenPort);
