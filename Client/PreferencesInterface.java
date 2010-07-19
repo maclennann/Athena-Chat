@@ -336,7 +336,7 @@ public class PreferencesInterface extends JPanel {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
                                         apply.setEnabled(true);
 					File file = fc.getSelectedFile();
-					downDirTextField.setText(file.getPath());
+					downDirTextField.setText(file.getPath() + "\\");
                                         downloadLocationVal = file.getPath() + "\\";
                                         settingsToWrite[3] = downloadLocationVal;
                                         downloadLocationFlag = true;
