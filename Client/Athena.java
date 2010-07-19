@@ -772,7 +772,14 @@ public class Athena {
 					}
 				}
 
-            } else { // Need this else in order to hide the system messages coming from Aegis
+            } else if(fromUserDecrypted.equals("KickMessage")) {
+				decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
+				toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
+				print = (MapTextArea) clientResource.tabPanels.get(toUser);
+				//Output the kick message to the current tab
+				print.writeToTextArea(decryptedMessage,print.getSetHeaderFont(Color.gray));
+			}
+			else { // Need this else in order to hide the system messages coming from Aegis
                 //TODO Implement digital signatures
                 decryptedMessage = RSACrypto.rsaDecryptPrivate(messageBytes, usersPrivateKey.getModulus(), usersPrivateKey.getPrivateExponent());
 

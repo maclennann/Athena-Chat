@@ -198,7 +198,7 @@ public class Server {
 				System.out.println("\nType username of person to kick:");
 				System.out.print("?> ");
 				String usernameToKick = in.nextLine();
-				removeConnection(userToServerSocket.get(usernameToKick),userToClientSocket.get(usernameToKick),usernameToKick);
+				kickUser(userToServerSocket.get(usernameToKick),userToClientSocket.get(usernameToKick),usernameToKick);
 			}
 			else if(answer == 5) {
 				//Get a reason for the shutdown
@@ -326,6 +326,39 @@ public class Server {
 		// Remove thread's entries from hashtables
 		userToServerSocket.remove(uname);
 		userToClientSocket.remove(uname);
+
+		// Make sure the socket is closed
+		try {
+			servsock.close();
+			clientsock.close();
+
+			//Sending User Log off message after we close the socket
+			sendToAll("ServerLogOff", uname,null);
+		} catch (IOException ie) {
+			writeLog("Error closing " + servsock);
+			ie.printStackTrace();
+		}
+		System.gc();
+	}
+
+		/**
+	 * Remove a socket/outputstream and user/socket relationship (i.e. user disconnects)
+	 * @param servsock The "server" socket
+	 * @param clientsock The "client" socket
+	 * @param uname The username
+	 */
+	void kickUser(Socket servsock, Socket clientsock, String uname) throws IOException {
+		// Debug text
+		writeLog("User Kicked: " + uname + "\n\n");
+
+		// Remove thread's entries from hashtables
+		userToServerSocket.remove(uname);
+		userToClientSocket.remove(uname);
+
+		//Send that user a message notifying him that he's being kicked
+		DataOutputStream kickDos = (DataOutputStream)clientsock.getOutputStream();
+		kickDos.writeUTF(ServerThread.encryptServerPrivate("KickMessage"));
+		kickDos.writeUTF(ServerThread.encryptServerPrivate("You've been kicked by the server."));
 
 		// Make sure the socket is closed
 		try {

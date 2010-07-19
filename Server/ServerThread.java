@@ -1278,7 +1278,7 @@ public class ServerThread extends Thread {
 	 * @param plaintext The plaintext message
 	 * @return The encrypted message
 	 */
-	public String encryptServerPrivate(String plaintext) {
+	 public static String encryptServerPrivate(String plaintext) {
 		//Encrypt the string and return it
 		if (debug == 1) {
 			server.writeLog("Plaintext in encryptServerPrivate: " + plaintext);
