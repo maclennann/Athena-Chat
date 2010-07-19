@@ -68,6 +68,8 @@ public class Athena {
      * The server's public key. Used for server communication
      */
     public static RSAPublicKeySpec serverPublic;
+	public static RSAPublicKeySpec toUserPublic;// = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
+	public static RSAPrivateKeySpec userPrivate;//
     /**
      * The main window. We use this object to manipulate the window.
      */
@@ -119,8 +121,11 @@ public class Athena {
      * @throws Exception
      */
     public static void connect(String usernameToConnect, String hashedPassword) throws InterruptedException, AWTException, Exception {
+		toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
 		ConnectThread connect = new ConnectThread(usernameToConnect, hashedPassword);
 		connect.start();
+		userPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + toUser + ".priv", descrypto);
+
     }
 
 	public static void openLog(File fileName) {

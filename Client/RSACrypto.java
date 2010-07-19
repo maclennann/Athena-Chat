@@ -31,6 +31,7 @@ import java.security.PublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import javax.crypto.Cipher;
+import sun.misc.BASE64Encoder;
 
 /**
  * RSA Cryptography library methods
@@ -160,6 +161,32 @@ public class RSACrypto {
 			System.out.println("An error has occured in 'rsaEncryptPrivate'");
 		}
 		return null;
+	}
+
+		public static void rsaExportPrivate(BigInteger mod, BigInteger exp, String username){
+		try{
+		ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("user/"+username+"/keys/"+username+"Private.pem")));
+		PrivateKey privKey = makePrivateKey(mod, exp);
+		BASE64Encoder myB64 = new BASE64Encoder();
+		String b64 = myB64.encode(privKey.getEncoded());
+		oout.writeObject("-----BEGIN PRIVATE KEY-----");
+		oout.writeObject(b64);
+		oout.writeObject("-----END PRIVATE KEY-----");
+		oout.close();
+		}catch (Exception e){}
+	}
+
+	public static void rsaExportPublic(BigInteger mod, BigInteger exp, String username){
+		try{
+		ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("user/"+username+"/keys/"+username+"Public.pem")));
+		PrivateKey privKey = makePrivateKey(mod, exp);
+		BASE64Encoder myB64 = new BASE64Encoder();
+		String b64 = myB64.encode(privKey.getEncoded());
+		oout.writeObject("-----BEGIN PRIVATE KEY-----");
+		oout.writeObject(b64);
+		oout.writeObject("-----END PRIVATE KEY-----");
+		oout.close();
+		}catch (Exception e){}
 	}
 
 	/**
