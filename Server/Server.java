@@ -52,7 +52,7 @@ public class Server {
 	 * Holds the usernames and hashed passwords read in from the database.
 	 */
 	//Creates a SQL connection object. See dbConnect()
-	private static Connection con = null;
+	//private static Connection con = null;
 	private static String dbUser = "";
 	private static String dbPass = "";
 	//Defines which port on which we listen for client
@@ -105,7 +105,7 @@ public class Server {
 
 		//Connect to the database using the driver
 		try {
-			con = DriverManager.getConnection(url, un, pw);
+			Connection con = DriverManager.getConnection(url, un, pw);
 
 			//Return the established connection
 			return con;
@@ -149,6 +149,7 @@ public class Server {
 		serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
 		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 
+		System.gc();System.gc();System.gc();System.gc();
 		// Tell the world we're ready to go
 		System.out.println("*******************************************");
 		System.out.println("**     Welcome to Athena Chat Server     **");
