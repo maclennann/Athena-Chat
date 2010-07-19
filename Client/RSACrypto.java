@@ -165,26 +165,30 @@ public class RSACrypto {
 
 		public static void rsaExportPrivate(BigInteger mod, BigInteger exp, String username){
 		try{
-		ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("user/"+username+"/keys/"+username+"Private.pem")));
+		BufferedOutputStream oout = new BufferedOutputStream(new FileOutputStream("users/"+username+"/keys/"+username+"Private.pem"));
 		PrivateKey privKey = makePrivateKey(mod, exp);
 		BASE64Encoder myB64 = new BASE64Encoder();
 		String b64 = myB64.encode(privKey.getEncoded());
-		oout.writeObject("-----BEGIN PRIVATE KEY-----");
-		oout.writeObject(b64);
-		oout.writeObject("-----END PRIVATE KEY-----");
+		oout.write("-----BEGIN PRIVATE KEY----\r\n-".getBytes());
+		oout.write(b64.getBytes());
+		oout.write("\r\n".getBytes());
+		oout.write("-----END PRIVATE KEY-----\r\n".getBytes());
+		oout.flush();
 		oout.close();
 		}catch (Exception e){}
 	}
 
 	public static void rsaExportPublic(BigInteger mod, BigInteger exp, String username){
 		try{
-		ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("user/"+username+"/keys/"+username+"Public.pem")));
+		BufferedOutputStream oout = new BufferedOutputStream(new FileOutputStream("users/"+username+"/keys/"+username+"Public.pem"));
 		PrivateKey privKey = makePrivateKey(mod, exp);
 		BASE64Encoder myB64 = new BASE64Encoder();
 		String b64 = myB64.encode(privKey.getEncoded());
-		oout.writeObject("-----BEGIN PRIVATE KEY-----");
-		oout.writeObject(b64);
-		oout.writeObject("-----END PRIVATE KEY-----");
+		oout.write("-----BEGIN PRIVATE KEY----\r\n-".getBytes());
+		oout.write(b64.getBytes());
+		oout.write("\r\n".getBytes());
+		oout.write("-----END PRIVATE KEY-----\r\n".getBytes());
+		oout.flush();
 		oout.close();
 		}catch (Exception e){}
 	}
