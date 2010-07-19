@@ -146,8 +146,8 @@ public class Server {
 		c2css = new ServerSocket(7778);
 
 		//Fetch public and private keys so the threads can deal with encryption
-		serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
-		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+		serverPub = null;//RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
+		serverPriv = null;//RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 
 		System.gc();System.gc();System.gc();System.gc();
 		// Tell the world we're ready to go
