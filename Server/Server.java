@@ -59,11 +59,11 @@ public class Server {
 	/**
 	 * A hashtable that maps users to their server socket
 	 */
-	public static Hashtable<String, Socket> userToServerSocket = null;// new Hashtable<String, Socket>();
+//	public static Hashtable<String, Socket> userToServerSocket = null;// new Hashtable<String, Socket>();
 	/**
 	 * A hashtable that maps users to their client socket
 	 */
-	public static Hashtable<String, Socket> userToClientSocket = null;//new Hashtable<String, Socket>();
+//	public static Hashtable<String, Socket> userToClientSocket = null;//new Hashtable<String, Socket>();
 	/**
 	 * Server's private RSA key
 	 */
@@ -119,7 +119,7 @@ public class Server {
 	 * @param username The username
 	 * @param userSocket The socket to map the username to
 	 */
-	public static void mapUserServerSocket(String username, Socket userSocket) {
+/*	public static void mapUserServerSocket(String username, Socket userSocket) {
 		userToServerSocket.put(username, userSocket);
 	}
 
@@ -128,7 +128,7 @@ public class Server {
 	 * @param username The username
 	 * @param userSocket The socket to map the username to
 	 */
-	public static void mapUserClientSocket(String username, Socket userSocket) {
+/*	public static void mapUserClientSocket(String username, Socket userSocket) {
 		userToClientSocket.put(username, userSocket);
 	}
 
@@ -262,7 +262,7 @@ public class Server {
 	 * @param eventCode What we are talking to them about
 	 * @param message The data
 	 */
-	static synchronized void sendToAll(String eventCode, String message,String[] blockList) {
+/*	static synchronized void sendToAll(String eventCode, String message,String[] blockList) {
 		System.gc();
 //		BigInteger eventCodeCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(eventCode, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
 		//BigInteger messageCipher = new BigInteger(RSACrypto.rsaEncryptPrivate(message, serverPriv.getModulus(), serverPriv.getPrivateExponent()));
@@ -318,7 +318,7 @@ public class Server {
 	 * @param clientsock The "client" socket
 	 * @param uname The username
 	 */
-	static void removeConnection(Socket servsock, Socket clientsock, String uname) {
+/*	static void removeConnection(Socket servsock, Socket clientsock, String uname) {
 		// Debug text
 		writeLog("User Disconnected: " + uname + "\n\n");
 
@@ -346,7 +346,7 @@ public class Server {
 	 * @param clientsock The "client" socket
 	 * @param uname The username
 	 */
-	static void kickUser(Socket servsock, Socket clientsock, String uname) throws IOException {
+	/*static void kickUser(Socket servsock, Socket clientsock, String uname) throws IOException {
 		// Debug text
 		writeLog("User Kicked: " + uname + "\n\n");
 
