@@ -526,9 +526,9 @@ public class CommunicationInterface extends JFrame {
 		exportKey.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				JOptionPane.showMessageDialog(null, "Your exported keys will be in the users/[yourusername]/keys folder.", JOptionPane.INFORMATION_MESSAGE);
-                                RSACrypto.exportPrivate(Athena.toUserPublic.getModulous(), Athena.toUserPublic.getPublicExponent(), Athena.username);
-                                RSACrypto.exportPrivate(Athena.userPrivate.getModulous(), Athena.userPrivate.getPrivateExponent(), Athena.username);
+				JOptionPane.showMessageDialog(null, "Your exported keys will be in the users/[yourusername]/keys folder.","FU", JOptionPane.INFORMATION_MESSAGE);
+                                RSACrypto.rsaExportPublic(Athena.toUserPublic.getModulus(), Athena.toUserPublic.getPublicExponent(), Athena.username);
+                                RSACrypto.rsaExportPrivate(Athena.userPrivate.getModulus(), Athena.userPrivate.getPrivateExponent(), Athena.username);
 			}
 		});
 
