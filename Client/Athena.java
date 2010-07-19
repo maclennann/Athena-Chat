@@ -125,8 +125,8 @@ public class Athena {
 		ConnectThread connect = new ConnectThread(usernameToConnect, hashedPassword);
 		connect.start();
 		//System.out.println("THE USERNAME IS: "+username)
-		toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + username + ".pub");
-		userPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
+//		toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + username + ".pub");
+//		userPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
     }
 

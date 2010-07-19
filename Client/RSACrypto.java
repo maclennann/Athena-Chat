@@ -312,6 +312,7 @@ public class RSACrypto {
 			//Return the private key
 			return keySpec;
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("An error has occured in readPrivKeyFromFile");
 		} finally {
 			oin.close();

@@ -85,6 +85,9 @@ public class ConnectThread extends Thread {
 			loginBar.iterate(400,"Opening Secure Sockets");
             //Read in the server's public key for encryption of headers
             Athena.serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
+			Athena.toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + username + ".pub");
+			Athena.userPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", Athena.descrypto);
+
 
             //Send username and hashed password over the socket for authentication
             if (Athena.debug >= 1) {
