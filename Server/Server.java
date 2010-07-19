@@ -61,11 +61,11 @@ public class Server {
 	/**
 	 * A hashtable that maps users to their server socket
 	 */
-	public static Hashtable<String, Socket> userToServerSocket = new Hashtable<String, Socket>();
+	public static Hashtable<String, Socket> userToServerSocket = null;// new Hashtable<String, Socket>();
 	/**
 	 * A hashtable that maps users to their client socket
 	 */
-	public static Hashtable<String, Socket> userToClientSocket = new Hashtable<String, Socket>();
+	public static Hashtable<String, Socket> userToClientSocket = null;//new Hashtable<String, Socket>();
 	/**
 	 * Server's private RSA key
 	 */
@@ -146,8 +146,8 @@ public class Server {
 		c2css = new ServerSocket(7778);
 
 		//Fetch public and private keys so the threads can deal with encryption
-		serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
-		serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
+		//serverPub = RSACrypto.readPubKeyFromFile("keys/Aegis.pub");
+		//serverPriv = RSACrypto.readPrivKeyFromFile("keys/Aegis.priv");
 
 		System.gc();System.gc();System.gc();System.gc();
 		// Tell the world we're ready to go
