@@ -356,7 +356,7 @@ public class Server {
 		userToClientSocket.remove(uname);
 
 		//Send that user a message notifying him that he's being kicked
-		DataOutputStream kickDos = (DataOutputStream)clientsock.getOutputStream();
+		DataOutputStream kickDos = new DataOutputStream(clientsock.getOutputStream());
 		kickDos.writeUTF(ServerThread.encryptServerPrivate("KickMessage"));
 		kickDos.writeUTF(ServerThread.encryptServerPrivate("You've been kicked by the server."));
 
