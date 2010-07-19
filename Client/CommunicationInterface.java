@@ -397,7 +397,9 @@ public class CommunicationInterface extends JFrame {
 		blockUser.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				Athena.blockUser();
+				if(imTabbedPane.getSelectedIndex()!=-1){
+					Athena.blockUser();
+				}else{JOptionPane.showMessageDialog(null,"Please select the user to block.");}
 			}
 		});
 
@@ -412,19 +414,21 @@ public class CommunicationInterface extends JFrame {
 		// ActionListener to make the disconnect menu item disconnect
 		startDP.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				if(imTabbedPane.getSelectedIndex()!=-1){
 				if(!Athena.sessionKeys.containsKey(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()))){
 					Athena.writeLog("Inviting user " + imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()) + " to connect directly to us.");
 					Athena.directProtect(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
 				}
 				else {
 					Athena.leaveDP(imTabbedPane.getTitleAt(imTabbedPane.getSelectedIndex()));
-				}
+				}}else{JOptionPane.showMessageDialog(null,"Please open a tab with the user you wish to connect to.");}
 			}
 		});
 
 		// ActionListener to make the disconnect menu item disconnect
 		sendFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				if(imTabbedPane.getSelectedIndex()!=-1){
 				//Create a file chooser
 				final JFileChooser fc = new JFileChooser();
 				//Open the file chooser
@@ -441,7 +445,7 @@ public class CommunicationInterface extends JFrame {
 				}
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}}else{JOptionPane.showMessageDialog(null,"Please open a tab with the user you wish to send a file to.");}
 			}
 		});
 
