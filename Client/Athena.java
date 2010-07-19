@@ -121,10 +121,12 @@ public class Athena {
      * @throws Exception
      */
     public static void connect(String usernameToConnect, String hashedPassword) throws InterruptedException, AWTException, Exception {
-		toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + toUser + ".pub");
+		
 		ConnectThread connect = new ConnectThread(usernameToConnect, hashedPassword);
 		connect.start();
-		userPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + toUser + ".priv", descrypto);
+		//System.out.println("THE USERNAME IS: "+username)
+		toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + username + ".pub");
+		userPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
 
     }
 
