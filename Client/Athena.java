@@ -292,7 +292,11 @@ public class Athena {
         //Grab string array of the buddylist.csv file
         String[] usernames = returnBuddyListArray();
 		loginBar.iterate(1500,"Querying User Status");
-		int moveIt = (1900-1500)/usernames.length;
+		int moveIt=0;
+		if(usernames.length !=0){
+		moveIt = (1900-1500)/usernames.length;
+		}
+ else{ moveIt = 1900-1500;}
 		int current = 1500;
         //Check entire buddylist and fill hashtable with user online statuses
         for (int i = 0; i < usernames.length; i++) {
@@ -1934,8 +1938,9 @@ public class Athena {
 
                 String foo[] = str.split(",");
                 usernames[x] = foo[0];
-                if(foo.length > 1)
-                    aliases[x] = foo[1];
+				if(foo.length==2){
+                aliases[x] = foo[1];
+				}else{aliases[x] = foo[0];}
                 x++;
             }
             setAliasArray(aliases, x);
