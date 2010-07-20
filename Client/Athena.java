@@ -425,12 +425,13 @@ public class Athena {
             clientResource.mapUserStatus(usernameToCheck, result);
             if (result == 1) {
                 clientResource.newBuddyListItems(usernameToCheck);
-                /*(int x = 0; x < clientResource.contactListModel.getSize(); x++)
+                String[] usernames = returnBuddyListArray();
+                String[] aliases = returnAliasArray();
+                for(int x = 0; x < usernames.length; x++)
                 {
-                    String[] users = returnBuddyListArray();
-                    if(users[x].equals(usernameToCheck))
-                        clientResource.newAliasListItems(aliasArray[x]);
-                }*/
+                    if(usernames[x].equals(usernameToCheck))
+                        clientResource.newAliasListItems(aliases[x]);
+                }
             }
             if (debug >= 1) {
                 writeLog("SENT SERVER FLAG 003");

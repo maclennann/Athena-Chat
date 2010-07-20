@@ -283,7 +283,7 @@ public class PreferencesInterface extends JPanel {
 		enableSpellCheckCheckBox.setBounds(50, 100, 200, 50);
 		downDirJLabel.setBounds(50,150,200,25);
 		downDirTextField.setBounds(50,170,200,25);
-		downDirLaunchButton.setBounds(165,195,84,25);
+		downDirLaunchButton.setBounds(155,195,94,25);
 		downDirJLabel.setVisible(true);
 		downDirLaunchButton.setVisible(true);
 		downDirTextField.setVisible(true);
