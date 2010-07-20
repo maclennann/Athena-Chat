@@ -862,30 +862,18 @@ public class PreferencesInterface extends JPanel {
 			outPref.newLine();
 			outPref.newLine();
 
-			//Write encryption settings
-			outPref.write("[ENCRYPTION]");
-			outPref.newLine();
-			outPref.write(";");
-			outPref.newLine();
-			outPref.write(";");
-			outPref.newLine();
-			outPref.write("encryptionType=" + settingsToWrite[6]);
-			outPref.newLine();
-			outPref.newLine();
-			outPref.newLine();
-
 			//Write formatting settings
 			outPref.write("[FORMATTING]");
 			outPref.newLine();
-			outPref.write("fontFace=" + settingsToWrite[7]);
+			outPref.write("fontFace=" + settingsToWrite[6]);
 			outPref.newLine();
-			outPref.write("fontBold=" + settingsToWrite[8]);
+			outPref.write("fontBold=" + settingsToWrite[7]);
 			outPref.newLine();
-			outPref.write("fontItalic=" + settingsToWrite[9]);
+			outPref.write("fontItalic=" + settingsToWrite[8]);
 			outPref.newLine();
-			outPref.write("fontUnderline=" + settingsToWrite[10]);
+			outPref.write("fontUnderline=" + settingsToWrite[9]);
 			outPref.newLine();
-			outPref.write("fontSize=" + settingsToWrite[11]);
+			outPref.write("fontSize=" + settingsToWrite[10]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -893,7 +881,7 @@ public class PreferencesInterface extends JPanel {
 			//Write theme settings
 			outPref.write("[THEME]");
 			outPref.newLine();
-			outPref.write("activeTheme=" + settingsToWrite[12]);
+			outPref.write("activeTheme=" + settingsToWrite[11]);
 
 			outPref.close();
 
