@@ -797,13 +797,10 @@ public class Athena {
 				}
 
             } else if(fromUserDecrypted.equals("KickMessage")) {
-				decryptedMessage = decryptServerPublic(encryptedMessage);
-				toUser = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
-				print = (MapTextArea) clientResource.tabPanels.get(toUser);
-				//Output the kick message to the current tab
-				print.writeToTextArea(decryptedMessage,print.getSetHeaderFont(Color.gray));
-
-				JOptionPane.showMessageDialog(null, "You've been kicked by the server. Please re-login.");
+				decryptedMessage = decryptServerPublic(encryptedMessage);			
+				
+				//Output the kick message to a JOption Pane
+                                JOptionPane.showMessageDialog(null, "You've been kicked by the server. Please re-login.");
 				clientResource.contactListModel.clear();
 				Athena.disconnect();
 				//Get rid of this window and open a new Login Window
