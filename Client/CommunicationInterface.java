@@ -364,7 +364,7 @@ public class CommunicationInterface extends JFrame {
 		view.add(offlineUsers);
 
 		// Create button View -> Contact Aliases
-		JMenuItem contactAlias = new JMenuItem("Contact Aliases");
+		JMenuItem contactAlias = new JMenuItem("Toggle Alias View");
 		view.add(contactAlias);
 
 		// Create the help menu
