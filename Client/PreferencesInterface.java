@@ -24,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -41,6 +43,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -63,12 +66,11 @@ public class PreferencesInterface extends JPanel {
         private String downloadLocation;
         private int debugLog = Integer.parseInt(settingsArray[4].toString());
 	private boolean enableSounds = Boolean.parseBoolean(settingsArray[5].toString());
-	private int setEncryptionType = Integer.parseInt(settingsArray[6].toString());
-	private String setFontFace = settingsArray[7].toString();
-	private boolean enableBold = Boolean.parseBoolean(settingsArray[8].toString());
-	private boolean enableItalic = Boolean.parseBoolean(settingsArray[9].toString());
-	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[10].toString());
-	private int setFontSize = Integer.parseInt(settingsArray[11].toString());
+	private String setFontFace = settingsArray[6].toString();
+	private boolean enableBold = Boolean.parseBoolean(settingsArray[7].toString());
+	private boolean enableItalic = Boolean.parseBoolean(settingsArray[8].toString());
+	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[9].toString());
+	private int setFontSize = Integer.parseInt(settingsArray[10].toString());
 
 	//Define components
 	private GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -79,18 +81,18 @@ public class PreferencesInterface extends JPanel {
 		"com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
 	private JFrame preferences;
 	private JPanel contentPane = new JPanel();
-	private JPanel generalPanel, notificationsPanel, encryptionPanel, formattingPanel, themePanel;
+	private JPanel generalPanel, notificationsPanel, contactPrefPanel, formattingPanel, themePanel;
 	private JPanel prefLabelPaneLeft = new JPanel();
 	private JPanel prefLabelPaneRight = new JPanel();
 	private JButton apply = new JButton("Apply");
 	private JButton cancel = new JButton("Close");
 	private Border blackline, whiteline;
 	private Color originalColor;
-	private TitledBorder generalTitledBorder, notificationsTitledBorder, encryptionTitledBorder, formattingTitledBorder, themeTitleBorder;
+	private TitledBorder generalTitledBorder, notificationsTitledBorder, contactPrefTitledBorder, formattingTitledBorder, themeTitleBorder;
 
 	//Define components for the General Menu Panel
-	private JTextField downDirTextField = new JTextField("C:\\Program Files\\Athena\\users\\"+Athena.username+"\\downloads\\");
-	private JButton downDirLaunchButton = new JButton ("Browse");
+	private JTextField downDirTextField = new JTextField(downloadLocation);
+	private JButton downDirLaunchButton = new JButton ("Browse...");
 	private JLabel downDirJLabel = new JLabel("Download Directory:");
 	private JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
 	private JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
@@ -117,10 +119,16 @@ public class PreferencesInterface extends JPanel {
 	private boolean enableSoundsVal;
 	private boolean enableSoundsFlag = false;
 
-	//Define components for the Encryption Menu Panel
-	private JButton encryptionLabel = new JButton("Encryption", new ImageIcon("images/encryptionPref.png"));
-	private JLabel generateNewKeyPairJLabel = new JLabel("Generate New Encryption Key Pair");
-	private JButton generateNewKeyPairJButton = new JButton("Generate");
+	//Define components for the Contact List Menu Panel
+	private JButton contactPrefLabel = new JButton("Contact List", new ImageIcon("images/contactPref.png"));
+	private JLabel contactAliasJLabel = new JLabel("Contact Alias Adjustment");
+        private JLabel aliasDropdownLabel = new JLabel("Select A Contact:");
+        private JComboBox contactAliasComboBox;
+        private JLabel updateAliasLabel = new JLabel("Current Alias:");
+        private JLabel newAliasLabel = new JLabel("New Alias:");
+        private JLabel currentAliasLabel = new JLabel("N/A");
+        private JTextField updateAliasTextField = new JTextField();
+        private JButton updateAliasButton = new JButton("Set Alias");
 
 	//Define components for the Formatting Menu Panel
 	private JButton formattingLabel = new JButton("Formatting", new ImageIcon("images/fontPref.png"));
@@ -153,7 +161,7 @@ public class PreferencesInterface extends JPanel {
 	private Object[] settingsToWrite = settingsArray;
 
 	//Constructor
-	PreferencesInterface() {
+	PreferencesInterface() throws IOException {
 
 		//Initialize Preferences Window
 		preferences = new JFrame("Preferences");
@@ -181,6 +189,9 @@ public class PreferencesInterface extends JPanel {
                 logLevelComboBox.setSelectedItem(Integer.toString(debugLogVal));
                 downDirTextField.setText(downloadLocationVal);
 
+                String[] usernames = Athena.returnBuddyListArray();
+                contactAliasComboBox = new JComboBox(usernames);
+
 		selectFontComboBox = new JComboBox(allFontNames);
 		selectFontComboBox.setSelectedItem(setFontFaceVal);
 
@@ -197,8 +208,8 @@ public class PreferencesInterface extends JPanel {
 		Border prefBorder = BorderFactory.createCompoundBorder(blackBorder, labelBorder);
 		generalTitledBorder = BorderFactory.createTitledBorder(
 				prefBorder, "System Options");
-		encryptionTitledBorder = BorderFactory.createTitledBorder(
-				prefBorder, "Encryption Options");
+		contactPrefTitledBorder = BorderFactory.createTitledBorder(
+				prefBorder, "Contact List Options");
 		formattingTitledBorder = BorderFactory.createTitledBorder(
 				prefBorder, "Formatting Options");
 		notificationsTitledBorder = BorderFactory.createTitledBorder(
@@ -386,28 +397,75 @@ public class PreferencesInterface extends JPanel {
 			}
 		});
 		/*************************************************/
-		//Encrpytion Menu Selection
+		//Contact List Menu Selection
 		/*************************************************/
-		encryptionLabel.setForeground(Color.black);
-		encryptionLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		encryptionLabel.setHorizontalTextPosition(JLabel.CENTER);
-		encryptionLabel.setBounds(30, 180, 75, 75);
-		encryptionLabel.setBorder(labelBorder);
+		contactPrefLabel.setForeground(Color.black);
+		contactPrefLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		contactPrefLabel.setHorizontalTextPosition(JLabel.CENTER);
+		contactPrefLabel.setBounds(30, 180, 75, 75);
+		contactPrefLabel.setBorder(labelBorder);
 
-		encryptionPanel = new JPanel();
-		encryptionPanel.setLayout(null);
-		encryptionPanel.setBorder(encryptionTitledBorder);
-		encryptionPanel.setBounds(140, 15, 300, 300);
-		encryptionPanel.setVisible(false);
+		contactPrefPanel = new JPanel();
+		contactPrefPanel.setLayout(null);
+		contactPrefPanel.setBorder(contactPrefTitledBorder);
+		contactPrefPanel.setBounds(140, 15, 300, 300);
+		contactPrefPanel.setVisible(false);
 
-		generateNewKeyPairJLabel.setBounds(50, 20, 200, 50);
-		generateNewKeyPairJButton.setBounds(50, 70, 100, 50);
+		contactAliasJLabel.setBounds(50, 20, 200, 20);
+                aliasDropdownLabel.setBounds(50, 60, 200, 20);
+                contactAliasComboBox.setBounds(50, 85, 200, 20);
+                updateAliasLabel.setBounds(50, 120, 80, 20);
+                currentAliasLabel.setBounds(140, 120, 120, 20);
+                currentAliasLabel.setForeground(Color.red);
+                newAliasLabel.setBounds(50, 150, 80, 20);
+                updateAliasTextField.setBounds(140, 150, 120, 20);
+                updateAliasButton.setBounds(140, 180, 120, 30);
+                updateAliasButton.setEnabled(false);
 
-		encryptionPanel.add(generateNewKeyPairJButton);
-		encryptionPanel.add(generateNewKeyPairJLabel);
+                contactAliasComboBox.addActionListener(new ActionListener() {
 
-		//This settings array update will go in check box action listeners when implemented as seen above in general settings
-		//settingsToWrite[6] = "0";
+			public void actionPerformed(ActionEvent event) {
+				String currentContact = contactAliasComboBox.getSelectedItem().toString();
+                                currentAliasLabel.setText(currentContact);
+			}
+		});
+
+                updateAliasTextField.addKeyListener(new KeyListener() {
+                    public void keyTyped(KeyEvent e) {
+                        updateAliasButton.setEnabled(true);
+                    }
+
+                    public void keyPressed(KeyEvent e) {
+                        if(updateAliasTextField.getText().length() == 16)
+                            e.consume();
+                     }
+
+                     public void keyReleased(KeyEvent e) {
+                     }
+                });
+
+                updateAliasButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+			//Handle open button action.
+
+			if(updateAliasTextField.getText().trim().length() < 3)
+                            JOptionPane.showMessageDialog(null, "Contact alias must be at least 3 characters long.");
+                        else
+                        {
+                            currentAliasLabel.setText(updateAliasTextField.getText());
+                            updateAliasButton.setEnabled(false);
+                        }
+		}});
+
+		contactPrefPanel.add(contactAliasJLabel);
+                contactPrefPanel.add(contactAliasComboBox);
+                contactPrefPanel.add(updateAliasLabel);
+                contactPrefPanel.add(updateAliasButton);
+                contactPrefPanel.add(currentAliasLabel);
+                contactPrefPanel.add(aliasDropdownLabel);
+                contactPrefPanel.add(updateAliasTextField);
+                contactPrefPanel.add(newAliasLabel);
+
 		/*************************************************/
 		//Formatting Menu Selection
 		/*************************************************/
@@ -573,7 +631,7 @@ public class PreferencesInterface extends JPanel {
 		MouseListener mouseListenerEncryption = new MouseAdapter() {
 
 			public void mouseClicked(MouseEvent mouseEvent) {
-				refreshSettingsView(encryptionLabel);
+				refreshSettingsView(contactPrefLabel);
 			}
 		};
 
@@ -597,7 +655,7 @@ public class PreferencesInterface extends JPanel {
 		//Add the mouseListeners to the Labels
 		generalLabel.addMouseListener(mouseListenerGeneral);
 		notificationsLabel.addMouseListener(mouseListenerNotifications);
-		encryptionLabel.addMouseListener(mouseListenerEncryption);
+		contactPrefLabel.addMouseListener(mouseListenerEncryption);
 		formattingLabel.addMouseListener(mouseListenerFormatting);
 		themeLabel.addMouseListener(mouseListenerTheme);
 
@@ -605,14 +663,14 @@ public class PreferencesInterface extends JPanel {
 		//Add the Drawing Panels to the LabelPane
 		prefLabelPaneLeft.add(generalLabel);
 		prefLabelPaneLeft.add(notificationsLabel);
-		prefLabelPaneLeft.add(encryptionLabel);
+		prefLabelPaneLeft.add(contactPrefLabel);
 		prefLabelPaneRight.add(formattingLabel);
 		prefLabelPaneRight.add(themeLabel);
 
 		//Add the JPanels to the ContentPane (set to default until Label Image is clicked)
 		contentPane.add(notificationsPanel);
 		contentPane.add(generalPanel);
-		contentPane.add(encryptionPanel);
+		contentPane.add(contactPrefPanel);
 		contentPane.add(formattingPanel);
 		contentPane.add(themePanel);
 		contentPane.add(prefLabelPaneLeft);
@@ -636,9 +694,9 @@ public class PreferencesInterface extends JPanel {
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
-			encryptionPanel.setVisible(false);
-			encryptionLabel.setBackground(originalColor);
-			encryptionLabel.setForeground(Color.black);
+			contactPrefPanel.setVisible(false);
+			contactPrefLabel.setBackground(originalColor);
+			contactPrefLabel.setForeground(Color.black);
 			formattingPanel.setVisible(false);
 			formattingLabel.setBackground(originalColor);
 			formattingLabel.setForeground(Color.black);
@@ -653,9 +711,9 @@ public class PreferencesInterface extends JPanel {
 			notificationsPanel.setVisible(true);
 			notificationsLabel.setBackground(Color.black);
 			notificationsLabel.setForeground(Color.white);
-			encryptionPanel.setVisible(false);
-			encryptionLabel.setBackground(originalColor);
-			encryptionLabel.setForeground(Color.black);
+			contactPrefPanel.setVisible(false);
+			contactPrefLabel.setBackground(originalColor);
+			contactPrefLabel.setForeground(Color.black);
 			formattingPanel.setVisible(false);
 			formattingLabel.setBackground(originalColor);
 			formattingLabel.setForeground(Color.black);
@@ -663,16 +721,18 @@ public class PreferencesInterface extends JPanel {
 			themeLabel.setBackground(originalColor);
 			themeLabel.setForeground(Color.black);
 		}
-		if (activeButton == encryptionLabel) {
+		if (activeButton == contactPrefLabel) {
 			generalPanel.setVisible(false);
 			generalLabel.setBackground(originalColor);
 			generalLabel.setForeground(Color.black);
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
-			encryptionPanel.setVisible(true);
-			encryptionLabel.setBackground(Color.black);
-			encryptionLabel.setForeground(Color.white);
+			contactPrefPanel.setVisible(true);
+			contactPrefLabel.setBackground(Color.black);
+			contactPrefLabel.setForeground(Color.white);
+                        currentAliasLabel.setText("N/A");
+                        updateAliasTextField.setText("");
 			formattingPanel.setVisible(false);
 			formattingLabel.setBackground(originalColor);
 			formattingLabel.setForeground(Color.black);
@@ -687,9 +747,9 @@ public class PreferencesInterface extends JPanel {
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
-			encryptionPanel.setVisible(false);
-			encryptionLabel.setBackground(originalColor);
-			encryptionLabel.setForeground(Color.black);
+			contactPrefPanel.setVisible(false);
+			contactPrefLabel.setBackground(originalColor);
+			contactPrefLabel.setForeground(Color.black);
 			formattingPanel.setVisible(true);
 			formattingLabel.setBackground(Color.black);
 			formattingLabel.setForeground(Color.white);
@@ -704,9 +764,9 @@ public class PreferencesInterface extends JPanel {
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
-			encryptionPanel.setVisible(false);
-			encryptionLabel.setBackground(originalColor);
-			encryptionLabel.setForeground(Color.black);
+			contactPrefPanel.setVisible(false);
+			contactPrefLabel.setBackground(originalColor);
+			contactPrefLabel.setForeground(Color.black);
 			formattingPanel.setVisible(false);
 			formattingLabel.setBackground(originalColor);
 			formattingLabel.setForeground(Color.black);

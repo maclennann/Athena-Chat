@@ -171,7 +171,6 @@ public class CommunicationInterface extends JFrame {
 	private boolean enableESCToClose;
 	private boolean enableSpellCheck;
 	private boolean enableSounds;
-	private int encryptionType;
 	private String fontFace;
 	private boolean fontBold;
 	private boolean fontItalic;
@@ -287,13 +286,12 @@ public class CommunicationInterface extends JFrame {
                 setDebugLog(debugLog);
 		enableSounds = Boolean.parseBoolean(settingsArray[5].toString());
 		Athena.setEnableSounds(enableSounds);
-		encryptionType = Integer.parseInt(settingsArray[6].toString());
-		fontFace = settingsArray[7].toString();
-		fontBold = Boolean.parseBoolean(settingsArray[8].toString());
-		fontItalic = Boolean.parseBoolean(settingsArray[9].toString());
-		fontUnderline = Boolean.parseBoolean(settingsArray[10].toString());
-		fontSize = Integer.parseInt(settingsArray[11].toString());
-		activeTheme = Integer.parseInt(settingsArray[12].toString());
+		fontFace = settingsArray[6].toString();
+		fontBold = Boolean.parseBoolean(settingsArray[7].toString());
+		fontItalic = Boolean.parseBoolean(settingsArray[8].toString());
+		fontUnderline = Boolean.parseBoolean(settingsArray[9].toString());
+		fontSize = Integer.parseInt(settingsArray[10].toString());
+		activeTheme = Integer.parseInt(settingsArray[11].toString());
 		
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Athena.username);
@@ -485,7 +483,11 @@ public class CommunicationInterface extends JFrame {
 		preferences.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				new PreferencesInterface();
+                try {
+                    new PreferencesInterface();
+                } catch (IOException ex) {
+                    Logger.getLogger(CommunicationInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
 			}
 		});
 
@@ -1603,15 +1605,6 @@ public class CommunicationInterface extends JFrame {
 					//Get notification settings
 					//Get enableSounds (boolean)
 					temp = inPref.readLine().substring(13);
-					settingsArray[arrayCount] = temp;
-					arrayCount++;
-				}
-				if (line.equals("[ENCRYPTION]")) {
-					//Get encryption settings
-					//Get encryptionType (integer)
-					inPref.readLine();
-					inPref.readLine();
-					temp = inPref.readLine().substring(15);
 					settingsArray[arrayCount] = temp;
 					arrayCount++;
 				}
