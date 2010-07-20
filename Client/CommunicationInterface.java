@@ -789,7 +789,8 @@ public class CommunicationInterface extends JFrame {
 					if (r.contains(mouseEvent.getPoint())) {
 
 						// Get the buddy that was double-clicked
-						o = theList.getModel().getElementAt(index);
+						//o = theList.getModel().getElementAt(index);
+                                                o = contactListModel.getElementAt(index);
 
 						// Create a tab for the conversation if it doesn't exist
 						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
