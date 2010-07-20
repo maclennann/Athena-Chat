@@ -139,6 +139,7 @@ public class CommunicationInterface extends JFrame {
 	
 	// Define the listModel for the JList
 	public DefaultListModel contactListModel = new DefaultListModel();//TODO IS THIS OKAY? Athena.782
+        public DefaultListModel aliasListModel = new DefaultListModel();
 	private DefaultListModel inviteListModel = new DefaultListModel();
         public Hashtable<String, DefaultListModel> chatListModels = new Hashtable<String, DefaultListModel>();
 
@@ -554,7 +555,18 @@ public class CommunicationInterface extends JFrame {
 		contactAlias.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
+                            String[] currentAliases = Athena.returnAliasArray();
+                            if(aliasListModel.getSize() == 0)
+                            {
+                                for(int z = 0; z < currentAliases.length; z++)
+                                {
+                                    aliasListModel.addElement(currentAliases[z].toString());
+                                }
+                            }
+				if(userBox.getModel().equals(contactListModel))
+                                    userBox.setModel(aliasListModel);
+                                else
+                                    userBox.setModel(contactListModel);
 			}
 		});
 

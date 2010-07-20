@@ -160,6 +160,10 @@ public class PreferencesInterface extends JPanel {
 	//Initialize array to hold current file settings and accept all new setting changes
 	private Object[] settingsToWrite = settingsArray;
 
+        //Arrays for editing contact aliases
+        private String[] currentContacts;
+        private String[] currentAliases;
+
 	//Constructor
 	PreferencesInterface() throws IOException {
 
@@ -189,8 +193,9 @@ public class PreferencesInterface extends JPanel {
                 logLevelComboBox.setSelectedItem(Integer.toString(debugLogVal));
                 downDirTextField.setText(downloadLocationVal);
 
-                String[] usernames = Athena.returnBuddyListArray();
-                contactAliasComboBox = new JComboBox(usernames);
+                currentContacts = Athena.returnBuddyListArray();
+                currentAliases = Athena.returnAliasArray();
+                contactAliasComboBox = new JComboBox(currentContacts);
 
 		selectFontComboBox = new JComboBox(allFontNames);
 		selectFontComboBox.setSelectedItem(setFontFaceVal);
@@ -425,8 +430,18 @@ public class PreferencesInterface extends JPanel {
                 contactAliasComboBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
+                            boolean aliasFlag = false;
 				String currentContact = contactAliasComboBox.getSelectedItem().toString();
-                                currentAliasLabel.setText(currentContact);
+                                for(int x = 0; x < contactAliasComboBox.getItemCount(); x++ )
+                                {
+                                    if(currentContact.equals(currentContacts[x]))
+                                    {
+                                        aliasFlag = true;
+                                        currentAliasLabel.setText(currentAliases[x]);
+                                    }
+                                }
+                                if(!aliasFlag)
+                                    currentAliasLabel.setText("No Alias!");
 			}
 		});
 
@@ -452,8 +467,20 @@ public class PreferencesInterface extends JPanel {
                             JOptionPane.showMessageDialog(null, "Contact alias must be at least 3 characters long.");
                         else
                         {
-                            currentAliasLabel.setText(updateAliasTextField.getText());
-                            updateAliasButton.setEnabled(false);
+                            String newAlias = updateAliasTextField.getText();
+                            String currentContact = contactAliasComboBox.getSelectedItem().toString();
+                                for(int x = 0; x < contactAliasComboBox.getItemCount(); x++ )
+                                {
+                                    if(currentContact.equals(currentContacts[x]))
+                                    {
+                                        currentAliases[x] = newAlias;
+                                        Athena.setAliasArray(currentAliases, contactAliasComboBox.getItemCount());
+                                        Athena.writeBuddyListToFile(currentContacts);
+                                        currentAliasLabel.setText(newAlias);
+                                        updateAliasButton.setEnabled(false);
+                                        updateAliasTextField.setText("");
+                                    }
+                                }
                         }
 		}});
 

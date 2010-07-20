@@ -104,6 +104,7 @@ public class Athena {
     private static boolean enableSounds; //Flag to control sound notifications
     private static BigInteger modOfBuddy = null;
     private static BigInteger expOfBuddy = null;
+    private static String[] aliasArray;
 	static File debugLog;
     //private static ServerSocket directProtectSocket; //Direct protect socket!
     //private static Socket dpSocket;
@@ -1575,7 +1576,7 @@ public class Athena {
                     }
                 }
                 out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv", true));
-                encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(",")));
+                encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(","+usernameToAdd.concat(","))));
                 out.write(encryptedUsername + "\n");
                 out.close();
             }
@@ -1591,6 +1592,7 @@ public class Athena {
      */
     static void writeBuddyListToFile(String[] buddyList) {
         BigInteger encryptedUsername;
+        String[] aliasList = returnAliasArray();
         BufferedWriter out;
         File newFile = new File("users/" + username + "/buddylist.csv");
         try {
@@ -1605,7 +1607,7 @@ public class Athena {
             out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
 
             for (int i = 0; i < buddyList.length; i++) {
-                encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+buddyList[i].concat(","))));
+                encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+aliasList[i].concat(","))));
                 out.write(encryptedUsername + "\n");
             }
             out.close();
@@ -1893,6 +1895,7 @@ public class Athena {
 
         //Make the string array the size of the number of lines in the file
         String[] usernames = new String[count];
+        String[] aliases = new String[count];
 
         //If there are no lines in the file we know that the user has no buddies! :(
         if (count == 0) {
@@ -1916,12 +1919,28 @@ public class Athena {
 
                 String foo[] = str.split(",");
                 usernames[x] = foo[0];
+                aliases[x] = foo[1];
                 x++;
             }
+            setAliasArray(aliases, x);
             return usernames;
         }
 
     }
+
+    //Retrieve aliases from buddy list from returnBuddyListArray method
+    public static void setAliasArray(String[] newAliasArray, int currentCount)
+    {
+        aliasArray = new String[currentCount];
+        aliasArray = newAliasArray;
+    }
+
+    public static String[] returnAliasArray()
+    {
+        return aliasArray;
+    }
+
+
     //This method returns a nice string array full of the usernames (for now) that are in the buddylist file
 
     /**
@@ -1975,8 +1994,7 @@ public class Athena {
             String raw;
             //Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
             while ((raw = in.readLine()) != null) {
-                String foo[] = raw.split(",");
-                usernames[x] = foo[0];
+                usernames[x] = raw;
                 x++;
             }
             return usernames;
