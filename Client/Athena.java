@@ -333,6 +333,7 @@ public class Athena {
                         writeLog("Online user:" + currentE);
                     }
                     clientResource.newBuddyListItems(currentE);
+                    clientResource.newAliasListItems(aliasArray[y]);
                 }
             } catch (java.util.NoSuchElementException ie) {
                 sendBugReport(getStackTraceAsString(ie));
@@ -428,6 +429,12 @@ public class Athena {
             clientResource.mapUserStatus(usernameToCheck, result);
             if (result == 1) {
                 clientResource.newBuddyListItems(usernameToCheck);
+                /*(int x = 0; x < clientResource.contactListModel.getSize(); x++)
+                {
+                    String[] users = returnBuddyListArray();
+                    if(users[x].equals(usernameToCheck))
+                        clientResource.newAliasListItems(aliasArray[x]);
+                }*/
             }
             if (debug >= 1) {
                 writeLog("SENT SERVER FLAG 003");
@@ -482,10 +489,12 @@ public class Athena {
                 decryptedMessage = decryptServerPublic(encryptedMessage);
                 //Check to see if the user is in your buddy list, if not, don't care
                 String[] usernames = returnBuddyListArray();
+                String[] aliases = returnAliasArray();
                 for (int x = 0; x < usernames.length; x++) {
                     if (usernames[x].equals(decryptedMessage)) {
                         //We know that the buddy is in his/her buddy list!
                         clientResource.buddySignOff(decryptedMessage);
+                        clientResource.aliasSignOff(aliases[x]);
                         // If enabled, open an input stream  to the audio file.
                         if (getEnableSounds()) {
                             InputStream in = new FileInputStream("sounds/signOff.wav");
@@ -514,10 +523,12 @@ public class Athena {
                 if (!(decryptedMessage.equals(username))) {
                     //Check to see if the user is in your buddylist, if not, don't care
                     String[] usernames = returnBuddyListArray();
+                    String[] aliases = returnAliasArray();
                     for (int x = 0; x < usernames.length; x++) {
                         if (usernames[x].equals(decryptedMessage)) {
                             //We know that the buddy is in his/her buddy list!
                             clientResource.newBuddyListItems(decryptedMessage);
+                            clientResource.newAliasListItems(aliases[x]);
                             //** add this into your application code as appropriate
                             if (getEnableSounds()) {
                                 // If enabled, open an input stream  to the audio file.
@@ -1611,7 +1622,10 @@ public class Athena {
             out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
 
             for (int i = 0; i < buddyList.length; i++) {
-                encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+aliasList[i].concat(","))));
+                if(aliasList.length > 0)
+                    encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+aliasList[i].concat(","))));
+                else
+                    encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+buddyList[i].concat(","))));
                 out.write(encryptedUsername + "\n");
             }
             out.close();

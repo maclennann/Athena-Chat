@@ -194,6 +194,12 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
+        public void newAliasListItems(String availableUserAlias) {
+            if (aliasListModel.indexOf(availableUserAlias) == -1) {
+			aliasListModel.addElement(availableUserAlias);
+		}
+        }
+
 	/**
 	 * Method to remove user from the JList who signs off
 	 * @param offlineUser The user to remove from the buddylist
@@ -201,6 +207,10 @@ public class CommunicationInterface extends JFrame {
 	public void buddySignOff(String offlineUser) {
 		contactListModel.removeElement(offlineUser);
 	}
+
+        public void aliasSignOff(String offlineAlias) {
+            aliasListModel.removeElement(offlineAlias);
+        }
 
 	/**
 	 * Method to remove user from the JList who signs off
@@ -556,13 +566,13 @@ public class CommunicationInterface extends JFrame {
 
 			public void actionPerformed(ActionEvent event) {
                             String[] currentAliases = Athena.returnAliasArray();
-                            if(aliasListModel.getSize() == 0)
-                            {
-                                for(int z = 0; z < currentAliases.length; z++)
-                                {
-                                    aliasListModel.addElement(currentAliases[z].toString());
-                                }
-                            }
+                            //if(aliasListModel.getSize() == 0)
+                            //{
+                            //    for(int z = 0; z < currentAliases.length; z++)
+                            //    {
+                            //        aliasListModel.addElement(currentAliases[z].toString());
+                            //    }
+                            //}
 				if(userBox.getModel().equals(contactListModel))
                                     userBox.setModel(aliasListModel);
                                 else
