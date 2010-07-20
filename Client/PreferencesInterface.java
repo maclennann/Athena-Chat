@@ -430,18 +430,14 @@ public class PreferencesInterface extends JPanel {
                 contactAliasComboBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-                            boolean aliasFlag = false;
 				String currentContact = contactAliasComboBox.getSelectedItem().toString();
                                 for(int x = 0; x < contactAliasComboBox.getItemCount(); x++ )
                                 {
                                     if(currentContact.equals(currentContacts[x]))
                                     {
-                                        aliasFlag = true;
                                         currentAliasLabel.setText(currentAliases[x]);
                                     }
                                 }
-                                if(!aliasFlag)
-                                    currentAliasLabel.setText("No Alias!");
 			}
 		});
 
@@ -473,9 +469,11 @@ public class PreferencesInterface extends JPanel {
                                 {
                                     if(currentContact.equals(currentContacts[x]))
                                     {
+                                        Athena.clientResource.aliasSignOff(currentAliases[x]);
                                         currentAliases[x] = newAlias;
                                         Athena.setAliasArray(currentAliases, contactAliasComboBox.getItemCount());
                                         Athena.writeBuddyListToFile(currentContacts);
+                                        Athena.checkUserStatus(currentContacts[x], "PauseThread!");
                                         currentAliasLabel.setText(newAlias);
                                         updateAliasButton.setEnabled(false);
                                         updateAliasTextField.setText("");

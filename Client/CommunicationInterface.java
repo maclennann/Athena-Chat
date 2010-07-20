@@ -197,6 +197,7 @@ public class CommunicationInterface extends JFrame {
         public void newAliasListItems(String availableUserAlias) {
             if (aliasListModel.indexOf(availableUserAlias) == -1) {
 			aliasListModel.addElement(availableUserAlias);
+                        System.out.println("Added Alias to ListModel: " + availableUserAlias);
 		}
         }
 
@@ -210,6 +211,7 @@ public class CommunicationInterface extends JFrame {
 
         public void aliasSignOff(String offlineAlias) {
             aliasListModel.removeElement(offlineAlias);
+            System.out.println("Removed Alias from ListModel: " + offlineAlias);
         }
 
 	/**
@@ -566,13 +568,13 @@ public class CommunicationInterface extends JFrame {
 
 			public void actionPerformed(ActionEvent event) {
                             String[] currentAliases = Athena.returnAliasArray();
-                            //if(aliasListModel.getSize() == 0)
-                            //{
-                            //    for(int z = 0; z < currentAliases.length; z++)
-                            //    {
-                            //        aliasListModel.addElement(currentAliases[z].toString());
-                            //    }
-                            //}
+                            /*if(aliasListModel.getSize() == 0)
+                            {
+                                for(int z = 0; z < currentAliases.length; z++)
+                                {
+                                    aliasListModel.addElement(currentAliases[z].toString());
+                                }
+                            }*/
 				if(userBox.getModel().equals(contactListModel))
                                     userBox.setModel(aliasListModel);
                                 else
@@ -678,7 +680,17 @@ public class CommunicationInterface extends JFrame {
 					if (index >= 0) {
 
 						// Get the buddy that was double-clicked
-						Object o = theList.getModel().getElementAt(index);
+                                            Object o, a;
+                                                if(theList.getModel().equals(contactListModel))
+                                                {
+                                                    o = theList.getModel().getElementAt(index);
+                                                    a = aliasListModel.getElementAt(index);
+                                                }
+                                                else
+                                                {
+                                                    o = contactListModel.getElementAt(index);
+                                                    a = theList.getModel().getElementAt(index);
+                                                }
 
 						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + o.toString() + "?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
 						if (ans == JOptionPane.YES_OPTION) {
@@ -686,6 +698,7 @@ public class CommunicationInterface extends JFrame {
 							list.removeAll(Arrays.asList(o));
 							usernames = list.toArray(new String[0]);
 							buddySignOff(o.toString());
+                                                        aliasSignOff(a.toString());
 
 							// Print the array back to the file (will overwrite the
 							// previous file
@@ -731,12 +744,17 @@ public class CommunicationInterface extends JFrame {
 							public void actionPerformed(ActionEvent event) {
 								try {
 									String[] usernames = Athena.returnBuddyListArray();
-
+                                                                        String[] aliases = Athena.returnAliasArray();
 									Object o = listOfUsersJComboBox.getSelectedItem();
 									ArrayList<String> list = new ArrayList<String>(Arrays.asList(usernames));
 									list.removeAll(Arrays.asList(o));
+                                                                        for(int z = 0; z < usernames.length; z++)
+                                                                        {
+                                                                            if(usernames[z].equals(o.toString()))
+                                                                                aliasSignOff(aliases[z]);
+                                                                        }
 									usernames = list.toArray(new String[0]);
-									buddySignOff(o.toString());
+									buddySignOff(o.toString());                        
 
 									// Print the array back to the file (will overwrite the
 									// previous file
