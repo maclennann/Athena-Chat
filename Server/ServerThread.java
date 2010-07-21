@@ -1513,6 +1513,10 @@ public class ServerThread extends Thread {
 				insertSTMT.close();
 				con.close();
 				rs.close();
+
+				SendMail sendMail = new SendMail("admins@athenachat.org", emailAddress, "Welcome To AthenaChat", firstName+",\n\nYour AthenaChat account has been successfully created. You can now securely share information with anyone. Enjoy!\n\nThanks,\nAthenaChat Admins");
+				sendMail.send();
+
 				return true;
 			}
 
