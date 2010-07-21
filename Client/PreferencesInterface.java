@@ -24,8 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -194,7 +194,6 @@ public class PreferencesInterface extends JPanel {
                 downDirTextField.setText(downloadLocationVal);
 
                 currentContacts = Athena.getContactsArrayFromTable();
-                //currentAliases = Athena.returnAliasArray();
                 contactAliasComboBox = new JComboBox(currentContacts);
 
 		selectFontComboBox = new JComboBox(allFontNames);
@@ -436,17 +435,20 @@ public class PreferencesInterface extends JPanel {
 			}
 		});
 
-                updateAliasTextField.addKeyListener(new KeyListener() {
+                updateAliasTextField.addKeyListener(new KeyAdapter() {
                     public void keyTyped(KeyEvent e) {
+                        updateAliasButton.setEnabled(true);
+                        if (updateAliasTextField.getText().length() == 16) {
+					e.consume();
+				}
                     }
 
                     public void keyPressed(KeyEvent e) {
-                        updateAliasButton.setEnabled(true);
-                        if(updateAliasTextField.getText().length() > 15)
-                            e.consume();
+                        //Do nothing
                      }
 
                      public void keyReleased(KeyEvent e) {
+                         //Do nothing
                      }
                 });
 
@@ -750,7 +752,10 @@ public class PreferencesInterface extends JPanel {
 			contactPrefPanel.setVisible(true);
 			contactPrefLabel.setBackground(Color.black);
 			contactPrefLabel.setForeground(Color.white);
-                        currentAliasLabel.setText("N/A");
+                        if(Athena.contactsTable.size() > 0)
+                            currentAliasLabel.setText(Athena.contactsTable.get(contactAliasComboBox.getSelectedItem().toString()));
+                        else
+                            currentAliasLabel.setText("N/A");
                         updateAliasTextField.setText("");
 			formattingPanel.setVisible(false);
 			formattingLabel.setBackground(originalColor);
