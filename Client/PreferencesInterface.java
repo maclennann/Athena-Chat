@@ -193,8 +193,8 @@ public class PreferencesInterface extends JPanel {
                 logLevelComboBox.setSelectedItem(Integer.toString(debugLogVal));
                 downDirTextField.setText(downloadLocationVal);
 
-                currentContacts = Athena.returnBuddyListArray();
-                currentAliases = Athena.returnAliasArray();
+                currentContacts = Athena.getContactsArrayFromTable();
+                //currentAliases = Athena.returnAliasArray();
                 contactAliasComboBox = new JComboBox(currentContacts);
 
 		selectFontComboBox = new JComboBox(allFontNames);
@@ -431,23 +431,18 @@ public class PreferencesInterface extends JPanel {
 
 			public void actionPerformed(ActionEvent event) {
 				String currentContact = contactAliasComboBox.getSelectedItem().toString();
-                                for(int x = 0; x < contactAliasComboBox.getItemCount(); x++ )
-                                {
-                                    if(currentContact.equals(currentContacts[x]))
-                                    {
-                                        currentAliasLabel.setText(currentAliases[x]);
-                                    }
-                                }
+                                    if(Athena.contactsTable.containsKey(currentContact))
+                                        currentAliasLabel.setText(Athena.contactsTable.get(currentContact));
 			}
 		});
 
                 updateAliasTextField.addKeyListener(new KeyListener() {
                     public void keyTyped(KeyEvent e) {
-                        updateAliasButton.setEnabled(true);
                     }
 
                     public void keyPressed(KeyEvent e) {
-                        if(updateAliasTextField.getText().length() == 16)
+                        updateAliasButton.setEnabled(true);
+                        if(updateAliasTextField.getText().length() > 15)
                             e.consume();
                      }
 
@@ -465,20 +460,19 @@ public class PreferencesInterface extends JPanel {
                         {
                             String newAlias = updateAliasTextField.getText();
                             String currentContact = contactAliasComboBox.getSelectedItem().toString();
-                                for(int x = 0; x < contactAliasComboBox.getItemCount(); x++ )
-                                {
-                                    if(currentContact.equals(currentContacts[x]))
+                                    if(Athena.contactsTable.containsKey(currentContact))
                                     {
-                                        Athena.clientResource.aliasSignOff(currentAliases[x]);
-                                        currentAliases[x] = newAlias;
-                                        Athena.setAliasArray(currentAliases, contactAliasComboBox.getItemCount());
-                                        Athena.writeBuddyListToFile(currentContacts);
-                                        Athena.checkUserStatus(currentContacts[x], "PauseThread!");
+                                        if(Athena.clientResource.aliasListModel.contains(Athena.contactsTable.get(currentContact)))
+                                            Athena.clientResource.aliasSignOff(Athena.contactsTable.get(currentContact));
+
+                                        Athena.contactsTable.remove(currentContact);
+                                        Athena.contactsTable.put(currentContact, newAlias);
+                                        Athena.writeBuddyListToFile(Athena.getContactsArrayFromTable());
+                                        Athena.checkUserStatus(currentContact, "PauseThread!");
                                         currentAliasLabel.setText(newAlias);
                                         updateAliasButton.setEnabled(false);
                                         updateAliasTextField.setText("");
                                     }
-                                }
                         }
 		}});
 

@@ -111,6 +111,8 @@ public class Athena {
     //private static RSAPrivateKeySpec usersPrivate; //User's public key
     public static Hashtable<String, SecretKeySpec> sessionKeys = new Hashtable<String, SecretKeySpec>();
 	static BufferedWriter debugWriter;
+
+    public static Hashtable<String, String> contactsTable = new Hashtable<String, String>();
     //End private variables
 
     /**
@@ -290,7 +292,8 @@ public class Athena {
 
 
         //Grab string array of the buddylist.csv file
-        String[] usernames = returnBuddyListArray();
+        returnBuddyListArray();
+        String[] usernames = getContactsArrayFromTable();
 		loginBar.iterate(1500,"Querying User Status");
 		int moveIt=0;
 		if(usernames.length !=0){
@@ -306,7 +309,7 @@ public class Athena {
             //Check to see if the user's public key is there
             File pubKey = new File("users/" + username + "/keys/" + usernames[i] + ".pub");
             if (!(pubKey.exists())) {
-                getUsersPublicKeyFromAegis(usernames[i]);
+                boolean temp = getUsersPublicKeyFromAegis(usernames[i]);
             }
             checkUserStatus(usernames[i]);
 			current+=moveIt;
@@ -333,7 +336,7 @@ public class Athena {
                         writeLog("Online user:" + currentE);
                     }
                     clientResource.newBuddyListItems(currentE);
-                    clientResource.newAliasListItems(aliasArray[y]);
+                    clientResource.newAliasListItems(contactsTable.get(currentE));
                 }
             } catch (java.util.NoSuchElementException ie) {
                 sendBugReport(getStackTraceAsString(ie));
@@ -356,13 +359,17 @@ public class Athena {
      * @param usernameToInstantiate Username of buddy to add to the buddylist
      * @throws IOException
      */
-    public static void instantiateBuddyList(String usernameToInstantiate) throws IOException {
+    public static void instantiateBuddyList(String usernameToInstantiate) throws IOException, Exception {
 
         if (debug >= 1) {
             writeLog("Current Buddy To Check: " + usernameToInstantiate);
         }
-        checkUserStatus(usernameToInstantiate, "PauseThread!");
-        getUsersPublicKeyFromAegis(usernameToInstantiate);
+        boolean isExist = getUsersPublicKeyFromAegis(usernameToInstantiate);
+        if(isExist)
+        {
+            buddyList(usernameToInstantiate);
+            checkUserStatus(usernameToInstantiate, "PauseThread!");
+        }
     }
 
     /**
@@ -429,13 +436,7 @@ public class Athena {
             clientResource.mapUserStatus(usernameToCheck, result);
             if (result == 1) {
                 clientResource.newBuddyListItems(usernameToCheck);
-                String[] usernames = returnBuddyListArray();
-                String[] aliases = returnAliasArray();
-                for(int x = 0; x < usernames.length; x++)
-                {
-                    if(usernames[x].equals(usernameToCheck))
-                        clientResource.newAliasListItems(aliases[x]);
-                }
+                clientResource.newAliasListItems(contactsTable.get(usernameToCheck));
             }
             if (debug >= 1) {
                 writeLog("SENT SERVER FLAG 003");
@@ -486,16 +487,14 @@ public class Athena {
 				decryptedMessage = decryptServerPublic(encryptedMessage);
 				JOptionPane.showMessageDialog(null,"Aegis is shutting down in 30 seconds.\nReason:\n"+decryptedMessage+"\n\nPlease wrap up your business and log off.");
 			}//Remove user from Buddylist
-            else if (fromUserDecrypted.equals("ServerLogOff")) {
+            else if (fromUserDecrypted.equals("ServerLogOff"))
+            {
                 decryptedMessage = decryptServerPublic(encryptedMessage);
                 //Check to see if the user is in your buddy list, if not, don't care
-                String[] usernames = returnBuddyListArray();
-                String[] aliases = returnAliasArray();
-                for (int x = 0; x < usernames.length; x++) {
-                    if (usernames[x].equals(decryptedMessage)) {
+                    if (contactsTable.containsKey(decryptedMessage)) {
                         //We know that the buddy is in his/her buddy list!
                         clientResource.buddySignOff(decryptedMessage);
-                        clientResource.aliasSignOff(aliases[x]);
+                        clientResource.aliasSignOff(contactsTable.get(decryptedMessage));
                         // If enabled, open an input stream  to the audio file.
                         if (getEnableSounds()) {
                             InputStream in = new FileInputStream("sounds/signOff.wav");
@@ -506,7 +505,8 @@ public class Athena {
                             AudioPlayer.player.start(as);
                         }
                     }
-                    if ((usernames[x].equals(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) {
+
+                    if ((contactsTable.containsKey(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) {
                         print = (MapTextArea) clientResource.tabPanels.get(decryptedMessage);
                         print.writeToTextArea(decryptedMessage + " has signed off.\n", print.getSetHeaderFont(Color.gray));
 						if(sessionKeys.containsKey(decryptedMessage)){
@@ -515,7 +515,6 @@ public class Athena {
 							sessionKeys.remove(decryptedMessage);
 						}
                     }
-                }
                 return;
             } //Create buddy list entry for user sign on
             else if (fromUserDecrypted.equals("ServerLogOn")) {
@@ -523,13 +522,10 @@ public class Athena {
                 decryptedMessage = decryptServerPublic(encryptedMessage);
                 if (!(decryptedMessage.equals(username))) {
                     //Check to see if the user is in your buddylist, if not, don't care
-                    String[] usernames = returnBuddyListArray();
-                    String[] aliases = returnAliasArray();
-                    for (int x = 0; x < usernames.length; x++) {
-                        if (usernames[x].equals(decryptedMessage)) {
+                        if (contactsTable.containsKey(decryptedMessage)) {
                             //We know that the buddy is in his/her buddy list!
                             clientResource.newBuddyListItems(decryptedMessage);
-                            clientResource.newAliasListItems(aliases[x]);
+                            clientResource.newAliasListItems(contactsTable.get(decryptedMessage));
                             //** add this into your application code as appropriate
                             if (getEnableSounds()) {
                                 // If enabled, open an input stream  to the audio file.
@@ -540,11 +536,10 @@ public class Athena {
                                 AudioPlayer.player.start(as);
                             }
                         }
-                        if ((usernames[x].equals(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) {
+                        if ((contactsTable.containsKey(decryptedMessage)) && (clientResource.tabPanels.containsKey(decryptedMessage))) {
                             print = (MapTextArea) clientResource.tabPanels.get(decryptedMessage);
                             print.writeToTextArea(decryptedMessage + " has signed on.\n", print.getSetHeaderFont(Color.gray));
                         }
-                    }
                     return;
                 }
             } //Pop up chat invite
@@ -1564,15 +1559,10 @@ public class Athena {
         int exists = 0;
         BufferedWriter out;
         try {
-            //Call the returnBuddyListArray method, this reads in the buddylist file and puts the user names into an array for us to use
-            String[] usernames = returnBuddyListArray();
-
             //This for loop checks to see if the usernameToAdd is already in the buddylist file, if so, set exists to 1
-            for (int y = 0; y < usernames.length; y++) {
-                if (usernames[y].equals(usernameToAdd)) {
+                if (contactsTable.containsKey(usernameToAdd)) {
                     exists = 1;
                 }
-            }
 
             //If the usernameToAdd IS NOT in the buddylist file, add it
             if (exists == 0) {
@@ -1590,6 +1580,9 @@ public class Athena {
                 }
                 out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv", true));
                 encryptedUsername = new BigInteger(descrypto.encryptData(usernameToAdd.concat(","+usernameToAdd.concat(","))));
+                //Add new username to contact alias hashtable with username as default alias
+                contactsTable.put(usernameToAdd, usernameToAdd);
+
                 out.write(encryptedUsername + "\n");
                 out.close();
             }
@@ -1605,7 +1598,6 @@ public class Athena {
      */
     static void writeBuddyListToFile(String[] buddyList) {
         BigInteger encryptedUsername;
-        String[] aliasList = returnAliasArray();
         BufferedWriter out;
         File newFile = new File("users/" + username + "/buddylist.csv");
         try {
@@ -1620,10 +1612,7 @@ public class Athena {
             out = new BufferedWriter(new FileWriter("./users/" + username + "/buddylist.csv"));
 
             for (int i = 0; i < buddyList.length; i++) {
-                if(aliasList.length > 0)
-                    encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+aliasList[i].concat(","))));
-                else
-                    encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+buddyList[i].concat(","))));
+                    encryptedUsername = new BigInteger(descrypto.encryptData(buddyList[i].concat(","+contactsTable.get(buddyList[i]).concat(","))));
                 out.write(encryptedUsername + "\n");
             }
             out.close();
@@ -1784,7 +1773,7 @@ public class Athena {
      * @param publicKeyToFind The user to find the key for
      * @throws IOException
      */
-    public static void getUsersPublicKeyFromAegis(String publicKeyToFind) throws IOException {
+    public static boolean getUsersPublicKeyFromAegis(String publicKeyToFind) throws IOException {
         if (debug >= 1) {
             writeLog("Getting " + publicKeyToFind + "'s public key!");
         }
@@ -1798,11 +1787,12 @@ public class Athena {
         if (modOfBuddy.toString().equals("-1")) {
             JOptionPane.showMessageDialog(null, "Cannot find user's public key.\n"
                     + "Make sure you typed their username correctly and try again.", "Error Retrieving Key", JOptionPane.ERROR_MESSAGE);
+            return false;
         } else {
             expOfBuddy = new BigInteger(c2sdin.readUTF());
             writeBuddysPubKeyToFile(publicKeyToFind, modOfBuddy, expOfBuddy);
         }
-
+        return true;
     }
 
     /**
@@ -1880,7 +1870,7 @@ public class Athena {
      * @throws IOException Cannot read the file
      * @return String array of the buddylist
      */
-    public static String[] returnBuddyListArray() throws IOException {
+    public static void returnBuddyListArray() throws IOException {
         int count;
         int readChars;
         InputStream is;
@@ -1910,12 +1900,13 @@ public class Athena {
         } //End section
 
         //Make the string array the size of the number of lines in the file
-        String[] usernames = new String[count];
-        String[] aliases = new String[count];
+        //String[] usernames = new String[count];
+        //String[] aliases = new String[count];
 
         //If there are no lines in the file we know that the user has no buddies! :(
         if (count == 0) {
-            return usernames;
+            System.out.println("No lines in buddylist file found!");
+            //return usernames;
         } else {
             File newFile2 = new File("users/" + username + "/buddylist.csv");
             if (!(newFile2.exists())) {
@@ -1927,35 +1918,46 @@ public class Athena {
             BigInteger strNum;
 
             //Split each line on every ',' then take the string before that and add it to the usernames array | God I love split.
-            while ((raw = in.readLine()) != null) {
+            while ((raw = in.readLine()) != null)
+            {
                 // Read in the BigInteger in String form. Turn it to a BigInteger
                 // Turn the BigInteger to a byteArray, and decrypt it.
                 strNum = new BigInteger(raw);
                 str = descrypto.decryptData(strNum.toByteArray());
 
                 String foo[] = str.split(",");
-                usernames[x] = foo[0];
-				if(foo.length==2){
-                aliases[x] = foo[1];
-				}else{aliases[x] = foo[0];}
+
+		if(foo.length==2)
+                    contactsTable.put(foo[0], foo[1]);
+                else
+                    contactsTable.put(foo[0], foo[0]);
                 x++;
             }
-            setAliasArray(aliases, x);
-            return usernames;
+            //return usernames;
         }
 
     }
 
     //Retrieve aliases from buddy list from returnBuddyListArray method
-    public static void setAliasArray(String[] newAliasArray, int currentCount)
+    public static String[] getContactsArrayFromTable()
     {
-        aliasArray = new String[currentCount];
-        aliasArray = newAliasArray;
-    }
-
-    public static String[] returnAliasArray()
-    {
-        return aliasArray;
+        Enumeration userEnumeration = contactsTable.keys();
+        String[] contacts = new String[contactsTable.size()];
+        int count = 0;
+        //Get all user names from the hashtable and return as array
+        if(contacts.length > 0)
+        {
+            for (Enumeration<?> e = userEnumeration; e.hasMoreElements();)
+            {
+                contacts[count] = e.nextElement().toString();
+                count++;
+            }
+        }
+        else
+        {
+           System.out.println("Contact Array Not Filled! Count = " + count);
+        }
+        return contacts;
     }
 
 

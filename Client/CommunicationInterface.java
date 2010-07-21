@@ -89,6 +89,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import com.inet.jortho.SpellChecker;
+import java.util.Map;
 import javax.swing.ListModel;
 
 /**
@@ -472,6 +473,7 @@ public class CommunicationInterface extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				// Clear the Buddy list when disconnected
 				contactListModel.clear();
+                                aliasListModel.clear();
 				Athena.disconnect();
 				//Get rid of this window and open a new Login Window
 				imContentFrame.dispose();
@@ -567,14 +569,6 @@ public class CommunicationInterface extends JFrame {
 		contactAlias.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-                            String[] currentAliases = Athena.returnAliasArray();
-                            /*if(aliasListModel.getSize() == 0)
-                            {
-                                for(int z = 0; z < currentAliases.length; z++)
-                                {
-                                    aliasListModel.addElement(currentAliases[z].toString());
-                                }
-                            }*/
 				if(userBox.getModel().equals(contactListModel))
                                     userBox.setModel(aliasListModel);
                                 else
@@ -652,7 +646,7 @@ public class CommunicationInterface extends JFrame {
 				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
 				try {
 					if (usernameToAdd != null) {
-						Athena.buddyList(usernameToAdd);
+						//Athena.buddyList(usernameToAdd);
 						Athena.instantiateBuddyList(usernameToAdd);
 					}
 				} catch (Exception e) {
@@ -670,7 +664,7 @@ public class CommunicationInterface extends JFrame {
 
 				try {
 					JList theList = (JList) userBox;
-					String[] usernames = Athena.returnBuddyListArray();
+					String[] usernames = Athena.getContactsArrayFromTable();
 
 					// Find out what was double-clicked
 					int index = theList.getSelectedIndex();
@@ -680,29 +674,33 @@ public class CommunicationInterface extends JFrame {
 					if (index >= 0) {
 
 						// Get the buddy that was double-clicked
-                                            Object o, a;
+                                            String name = null;
+                                            String alias = null;
                                                 if(theList.getModel().equals(contactListModel))
                                                 {
-                                                    o = theList.getModel().getElementAt(index);
-                                                    a = aliasListModel.getElementAt(index);
+                                                    name = theList.getModel().getElementAt(index).toString();
+                                                    alias = Athena.contactsTable.get(name);
                                                 }
                                                 else
                                                 {
-                                                    o = contactListModel.getElementAt(index);
-                                                    a = theList.getModel().getElementAt(index);
+                                                    alias = theList.getModel().getElementAt(index).toString();
+                                                    for(Map.Entry<String, String> entry : Athena.contactsTable.entrySet())
+                                                    {
+                                                        if(entry.getValue().equals(alias)){
+                                                                name = entry.getKey();
+                                                        }
+                                                    }
                                                 }
 
-						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + o.toString() + "?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
-						if (ans == JOptionPane.YES_OPTION) {
-							ArrayList<String> list = new ArrayList<String>(Arrays.asList(usernames));
-							list.removeAll(Arrays.asList(o));
-							usernames = list.toArray(new String[0]);
-							buddySignOff(o.toString());
-                                                        aliasSignOff(a.toString());
+						int ans = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + name + " (" + alias + ")?", "Confirm Removal", JOptionPane.YES_NO_OPTION);
+						if (ans == JOptionPane.YES_OPTION) {			
+                                                        Athena.contactsTable.remove(name);
+							buddySignOff(name);
+                                                        aliasSignOff(alias);
 
 							// Print the array back to the file (will overwrite the
 							// previous file
-							Athena.writeBuddyListToFile(usernames);
+							Athena.writeBuddyListToFile(Athena.getContactsArrayFromTable());
 
 						} else {
 							return;
@@ -710,14 +708,14 @@ public class CommunicationInterface extends JFrame {
 					} //If there wasn't something selected, bring up a new window that will let them choose who they want to remove
 					else {
 
-						final JFrame removeWindow = new JFrame("Remove user");
+						final JFrame removeWindow = new JFrame("Remove User");
 						final JPanel contentPane = new JPanel();
 						final JComboBox listOfUsersJComboBox = new JComboBox();
 						final JButton removeJButton, cancelJButton;
 						removeJButton = new JButton("Remove");
 						removeWindow.setResizable(false);
 						removeWindow.setLocationRelativeTo(imContentFrame);
-						cancelJButton = new JButton("Done");
+						cancelJButton = new JButton("Close");
 
 						contentPane.setLayout(null);
 
@@ -743,22 +741,18 @@ public class CommunicationInterface extends JFrame {
 
 							public void actionPerformed(ActionEvent event) {
 								try {
-									String[] usernames = Athena.returnBuddyListArray();
-                                                                        String[] aliases = Athena.returnAliasArray();
-									Object o = listOfUsersJComboBox.getSelectedItem();
-									ArrayList<String> list = new ArrayList<String>(Arrays.asList(usernames));
-									list.removeAll(Arrays.asList(o));
-                                                                        for(int z = 0; z < usernames.length; z++)
-                                                                        {
-                                                                            if(usernames[z].equals(o.toString()))
-                                                                                aliasSignOff(aliases[z]);
-                                                                        }
-									usernames = list.toArray(new String[0]);
-									buddySignOff(o.toString());                        
+									//String[] usernames = Athena.returnBuddyListArray();
+                                                                        //String[] aliases = Athena.returnAliasArray();
+									String currentUser = listOfUsersJComboBox.getSelectedItem().toString();
+									//ArrayList<String> list = new ArrayList<String>(Arrays.asList(usernames));
+									//list.removeAll(Arrays.asList(o));
+                                                                        buddySignOff(currentUser);
+                                                                        aliasSignOff(Athena.contactsTable.get(currentUser));
+                                                                        Athena.contactsTable.remove(currentUser);
 
 									// Print the array back to the file (will overwrite the
 									// previous file
-									Athena.writeBuddyListToFile(usernames);
+									Athena.writeBuddyListToFile(Athena.getContactsArrayFromTable());
 									listOfUsersJComboBox.removeItemAt(listOfUsersJComboBox.getSelectedIndex());
 									if (listOfUsersJComboBox.getItemCount() == 0) {
 										removeJButton.setEnabled(false);
@@ -796,7 +790,6 @@ public class CommunicationInterface extends JFrame {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				//JList theList = (JList) mouseEvent.getSource();
 				JList theList = (JList) userBox;
-				Object o;
 				// If it was double-clicked
 				if (mouseEvent.getClickCount() == 1 && (!(theList.getModel().toString().equals("[]")))) {
 					int index = theList.locationToIndex(mouseEvent.getPoint());
@@ -817,19 +810,34 @@ public class CommunicationInterface extends JFrame {
 					if (r.contains(mouseEvent.getPoint())) {
 
 						// Get the buddy that was double-clicked
-						//o = theList.getModel().getElementAt(index);
-                                                o = contactListModel.getElementAt(index);
+                                            String name = null;
+                                            String alias = null;
+                                                if(theList.getModel().equals(contactListModel))
+                                                {
+                                                    name = theList.getModel().getElementAt(index).toString();
+                                                    alias = Athena.contactsTable.get(name);
+                                                }
+                                                else
+                                                {
+                                                    alias = theList.getModel().getElementAt(index).toString();
+                                                    for(Map.Entry<String, String> entry : Athena.contactsTable.entrySet())
+                                                    {
+                                                        if(entry.getValue().equals(alias)){
+                                                                name = entry.getKey();
+                                                        }
+                                                    }
+                                                }
 
 						// Create a tab for the conversation if it doesn't exist
-						if (imTabbedPane.indexOfTab(o.toString()) == -1) {
-							makeTab(o.toString(), true);
+						if (imTabbedPane.indexOfTab(name) == -1) {
+							makeTab(name, true);
 							if (!(userStatusFlag)) {
 								FocusCurrentTextField();
 							}
 						} else {
 							// Focus the tab for this user name if it already
 							// exists
-							imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(o.toString()));
+							imTabbedPane.setSelectedIndex(imTabbedPane.indexOfTab(name));
 							if (!(userStatusFlag)) {
 								FocusCurrentTextField();
 							}
