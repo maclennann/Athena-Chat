@@ -34,6 +34,7 @@ public class ConnectThread extends Thread {
 	public void run() {
 		try{
 			Athena.openLog(new File("users/"+username+"/logs/"+Athena.getCleanDateTime()+"-debugLog.txt"));
+			Athena.writeLog("===============================================");
 			//Try to connect with and authenticate to the socket
     		LoginProgress loginBar = new LoginProgress();
 			loginBar.pack();
@@ -87,18 +88,13 @@ public class ConnectThread extends Thread {
             Athena.serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
 			
 
-            //Send username and hashed password over the socket for authentication
-            if (Athena.debug >= 1) {
-                Athena.writeLog("User's hashed password: " + password);
-            }
-
             Athena.c2sdout.writeUTF(Athena.encryptServerPublic(username));	   //Sending Username
             Athena.c2sdout.writeUTF(Athena.encryptServerPublic(password)); //Sending Password
             String result = Athena.decryptServerPublic(Athena.c2sdin.readUTF()); //Read in the result
 
 			loginBar.iterate(500,"Transmitting Credentials");
             if (Athena.debug >= 1) {
-                Athena.writeLog("Result: " + result);
+                Athena.writeLog("Login Result: " + result);
             }
             if (result.equals("Failed")) {
                 Athena.disconnect();
@@ -140,10 +136,12 @@ public class ConnectThread extends Thread {
                 File privateKey = new File("users/" + username + "/keys/" + username + ".priv");
                 if (!(privateKey.exists())) {
                     //Check to see if the public key is there too
+					if(Athena.debug >= 1)Athena.writeLog("ERROR: Private key is not there. Will atempt to retrieve from server.");
                     boolean success = new File("users/" + username + "/keys/").mkdirs();
                     if (success) {
                         try {
                             Athena.receivePrivateKeyFromServer();
+							if(Athena.debug >= 1)Athena.writeLog("Private key retreieved. Continuing...");
                         } catch (IOException e) {
                             Athena.sendBugReport(Athena.getStackTraceAsString(e));
                             e.printStackTrace();
@@ -152,6 +150,7 @@ public class ConnectThread extends Thread {
                     } else {
                         try {
                             Athena.receivePrivateKeyFromServer();
+							if(Athena.debug >= 1)Athena.writeLog("Private key retreieved. Continuing...");
                         } catch (IOException e) {
                             Athena.sendBugReport(Athena.getStackTraceAsString(e));
                             e.printStackTrace();
@@ -161,10 +160,9 @@ public class ConnectThread extends Thread {
                 }
 
 
-				Athena.toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + username + ".pub");
+			Athena.toUserPublic = RSACrypto.readPubKeyFromFile("users/" + username + "/keys/" + username + ".pub");
 			Athena.userPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", Athena.descrypto);
 
-                //usersPrivate = RSACrypto.readPrivKeyFromFile("users/" + username + "/keys/" + username + ".priv", descrypto);
             }
             //Start the thread
             if (Athena.listeningProcedureClientToClient != null) {
@@ -175,7 +173,9 @@ public class ConnectThread extends Thread {
             //Check to see if the user's public key is there
             File publicKey = new File("users/" + username + "/keys/" + username + ".pub");
             if (!(publicKey.exists())) {
+				if(Athena.debug >= 1)Athena.writeLog("ERROR: Public key is not there. Will atempt to retrieve from server.");
                 Athena.getUsersPublicKeyFromAegis(username);
+				if(Athena.debug >= 1)Athena.writeLog("Public key retreived. Continuing.");
             }
 			loginBar.iterate(2000,"Connected!");
 			loginBar.dispose();
