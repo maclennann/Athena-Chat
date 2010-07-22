@@ -178,11 +178,11 @@ public class CommunicationInterface extends JFrame {
 	private boolean fontUnderline;
 	private int fontSize;
 	private int activeTheme;
-        private int debugLog;
-        private String downloadLocation = "users\\" + Athena.username + "\\downloads\\";
+    private int debugLog;
+    private String downloadLocation = "users\\" + Athena.username + "\\downloads\\";
 	private boolean userStatusFlag = false;
 	private static Object[] currentSettings = new Object[13];
-        private String chatIDToLocate = null;
+    private String chatIDToLocate = null;
 
 	/**
 	 * Method to add users to the JList when they sign on
@@ -194,12 +194,12 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
-        public void newAliasListItems(String availableUserAlias) {
-            if (aliasListModel.indexOf(availableUserAlias) == -1) {
+    public void newAliasListItems(String availableUserAlias) {
+        if (aliasListModel.indexOf(availableUserAlias) == -1) {
 			aliasListModel.addElement(availableUserAlias);
-                        System.out.println("Added Alias to ListModel: " + availableUserAlias);
+            System.out.println("Added Alias to ListModel: " + availableUserAlias);
 		}
-        }
+	}
 
 	/**
 	 * Method to remove user from the JList who signs off
@@ -209,20 +209,20 @@ public class CommunicationInterface extends JFrame {
 		contactListModel.removeElement(offlineUser);
 	}
 
-        public void aliasSignOff(String offlineAlias) {
-            aliasListModel.removeElement(offlineAlias);
-            System.out.println("Removed Alias from ListModel: " + offlineAlias);
-        }
+    public void aliasSignOff(String offlineAlias) {
+        aliasListModel.removeElement(offlineAlias);
+        System.out.println("Removed Alias from ListModel: " + offlineAlias);
+    }
 
 	/**
 	 * Method to remove user from the JList who signs off
 	 * @param offlineUser The user to remove from the chat userlist
 	 */
 	public void chatSignOff(String offlineUser, String chatUID) {
-                DefaultListModel currentListModel = chatListModels.get(chatUID);
-                chatListModels.remove(chatUID);
+        DefaultListModel currentListModel = chatListModels.get(chatUID);
+        chatListModels.remove(chatUID);
 		currentListModel.removeElement(offlineUser);
-                chatListModels.put(chatUID, currentListModel);
+        chatListModels.put(chatUID, currentListModel);
 	}
 
 	/**
@@ -230,24 +230,24 @@ public class CommunicationInterface extends JFrame {
 	 * @param availableUser User to add to the chat userlist
 	 */
 	public void newChatListItems(String[] availableUsers, String chatUID) {
-            DefaultListModel currentListModel = new DefaultListModel();
+        DefaultListModel currentListModel = new DefaultListModel();
 
-            for (int x = 0; x < availableUsers.length; x++) {
-                    if (currentListModel.indexOf(availableUsers[x]) == -1) {
-                       	currentListModel.addElement(availableUsers[x]);
-                    }
-                }
-            chatListModels.put(chatUID, currentListModel);
+        for (int x = 0; x < availableUsers.length; x++) {
+			if (currentListModel.indexOf(availableUsers[x]) == -1) {
+				currentListModel.addElement(availableUsers[x]);
+            }
+        }
+        chatListModels.put(chatUID, currentListModel);
 	}
 
-        public void newChatListItems(String availableUser, String chatUID) {
-            DefaultListModel currentListModel = chatListModels.get(chatUID);
-            chatListModels.remove(chatUID);
-            if (currentListModel.indexOf(availableUser) == -1) {
-                       	currentListModel.addElement(availableUser);
-                    }
-            chatListModels.put(chatUID, currentListModel);
+    public void newChatListItems(String availableUser, String chatUID) {
+        DefaultListModel currentListModel = chatListModels.get(chatUID);
+        chatListModels.remove(chatUID);
+        if (currentListModel.indexOf(availableUser) == -1) {
+			currentListModel.addElement(availableUser);
         }
+        chatListModels.put(chatUID, currentListModel);
+	}
 
 	/**
 	 * The main window. IM/Chat tabs and buddylist.
@@ -365,7 +365,9 @@ public class CommunicationInterface extends JFrame {
 		encryption.add(exportKey);
 		JMenuItem startDP = new JMenuItem("Start/Stop DirectProtect");
 		encryption.add(startDP);
-
+		JMenuItem sendEmail = new JMenuItem("Send Anonymous Email");
+		encryption.add(sendEmail);
+		
 		// Create the view menu
 		view = new JMenu("View");
 		view.setMnemonic(KeyEvent.VK_V);
@@ -548,6 +550,14 @@ public class CommunicationInterface extends JFrame {
 				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
+
+		sendEmail.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				Athena.sendEmail();
+			}
+		});
+
 
 		exportKey.addActionListener(new ActionListener() {
 

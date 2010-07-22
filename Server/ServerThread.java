@@ -37,6 +37,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.security.SecureRandom;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sun.misc.BASE64Encoder;
@@ -390,11 +391,32 @@ public class ServerThread extends Thread {
 				}
 				removeBlocklist();
 				break;
+			case 25:
+				if (debug >= 1) {
+					Server.writeLog("Event code received. sendEmail() run.");
+				}
+				sendEmail();
+				break;
 			default:
 				return;
 		}
 	}
 
+	private void sendEmail() throws IOException{
+		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+		String toEmail = decryptServerPrivate(serverDin.readUTF());
+		String subject = decryptServerPrivate(serverDin.readUTF());
+		String body = decryptServerPrivate(serverDin.readUTF());
+
+		String uuid = UUID.randomUUID().toString();
+		uuid = uuid.replace("-","");
+		uuid = uuid.substring(0,5);
+
+
+		SendMail sendMail = new SendMail(uuid+"@athenachat.org", toEmail, subject, body+"\n\nSent using AthenaChat anonymous email system.");
+		sendMail.send();
+	}
+	
 	private String[] getBlocklist() {
 		try{
 		//Grab a connection to the database
