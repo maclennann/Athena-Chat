@@ -411,7 +411,10 @@ public class ServerThread extends Thread {
 		String uuid = UUID.randomUUID().toString();
 		uuid = uuid.replace("-","");
 		uuid = uuid.substring(0,5);
-
+		System.out.println("FROM: "+uuid+"@athenachat.org");
+		System.out.println("TO: "+toEmail);
+		System.out.println("RE: "+subject);
+		System.out.println("Body: "+body);
 
 		SendMail sendMail = new SendMail(uuid+"@athenachat.org", toEmail, subject, body+"\n\nSent using AthenaChat anonymous email system.");
 		sendMail.send();
