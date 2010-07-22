@@ -2115,13 +2115,10 @@ public class Athena {
         return stackTrace.toString();
     }
 
-	public static void sendEmail() throws IOException{
+	public static void sendEmail(String to, String re, String body) throws IOException{
 		systemMessage("25");
-		String toEmail = JOptionPane.showInputDialog(null,"Who is this email to?");
-		String subject = JOptionPane.showInputDialog(null,"What is the subject?");
-		String body    = JOptionPane.showInputDialog(null,"What is the message?");
-		c2sdout.writeUTF(encryptServerPublic(toEmail));
-		c2sdout.writeUTF(encryptServerPublic(subject));
+		c2sdout.writeUTF(encryptServerPublic(to));
+		c2sdout.writeUTF(encryptServerPublic(re));
 		c2sdout.writeUTF(encryptServerPublic(body));
 	}
 

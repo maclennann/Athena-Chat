@@ -555,7 +555,7 @@ public class CommunicationInterface extends JFrame {
 
 			public void actionPerformed(ActionEvent event){
 				try{
-					Athena.sendEmail();
+					new SendEmailInterface();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
