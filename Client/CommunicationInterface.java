@@ -551,10 +551,14 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-		sendEmail.addActionListener(new ActionListener() {
+		sendEmail.addActionListener(new ActionListener(){
 
-			public void actionPerformed(ActionEvent event) {
-				Athena.sendEmail();
+			public void actionPerformed(ActionEvent event){
+				try{
+					Athena.sendEmail();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
