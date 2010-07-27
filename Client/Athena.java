@@ -43,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import javax.crypto.spec.*;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.text.BadLocationException;
@@ -481,6 +482,7 @@ public class Athena {
 						if(sessionKeys.containsKey(decryptedMessage)){
 							print.writeToTextArea("DirectProtect session aborted!\n", print.getSetHeaderFont(Color.gray));
 							print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
+                                                        print.encType.setIcon(new ImageIcon("images/unlockDP.png"));
 							sessionKeys.remove(decryptedMessage);
 						}
                     }
@@ -624,6 +626,7 @@ public class Athena {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
                         print.writeToTextArea("Joining Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
 						print.encType.setText("Encryption Type: AES - DirectProtect Active");
+                                                print.encType.setIcon(new ImageIcon("images/lockDP.png"));
 					}
                 }
 				else {
@@ -631,6 +634,7 @@ public class Athena {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
                         print.writeToTextArea("Aborting Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
 						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
+                                                print.encType.setIcon(new ImageIcon("images/unlockDP.png"));
 					}
                    //Send server a confirm message
                     systemMessage("20");
@@ -645,6 +649,7 @@ public class Athena {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("Direct Protect session started!\n", print.getSetHeaderFont(Color.gray));
 						print.encType.setText("Encryption Type: AES - DirectProtect Active");
+                                                print.encType.setIcon(new ImageIcon("images/lockDP.png"));
 					}
 				}
 				else{
@@ -652,6 +657,7 @@ public class Athena {
 						print = (MapTextArea) clientResource.tabPanels.get(inviteInformation[0]);
 						print.writeToTextArea("DirectProtect session aborted!\n", print.getSetHeaderFont(Color.gray));
 						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
+                                                print.encType.setIcon(new ImageIcon("images/unlockDP.png"));
 					}
 					if(sessionKeys.containsKey(inviteInformation[0])){
 						sessionKeys.remove(inviteInformation[0]);
@@ -1027,6 +1033,7 @@ public class Athena {
 				print = (MapTextArea) clientResource.tabPanels.get(user);
 				print.writeToTextArea("DirectProtect session has been terminated.\n", print.getSetHeaderFont(Color.gray));
 				print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
+                                print.encType.setIcon(new ImageIcon("images/unlockDP.png"));
            }
 		}}catch(Exception e){}
 	}

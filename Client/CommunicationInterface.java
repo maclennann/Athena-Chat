@@ -1925,7 +1925,8 @@ class MapTextArea extends JFrame {
 	private static final long serialVersionUID = 2557115166519071868L;
 	//private int chatUID = -1;
 	//private boolean isChat = false;
-	public JLabel encType = new JLabel("Encryption Type: RSA - DirectProtect Inactive");
+        ImageIcon unlockIcon = new ImageIcon("images/unlockDP.png");
+	public JLabel encType = new JLabel("Encryption Type: RSA - DirectProtect Inactive", unlockIcon, JLabel.LEFT);
 	
 	// The user name associated with the tab
 	private String username = null;
@@ -2016,6 +2017,7 @@ class MapTextArea extends JFrame {
 
 		if(Athena.sessionKeys.containsKey(user)){
 			encType.setText("Encryption Type: AES - DirectProtect Active");
+                        encType.setIcon(new ImageIcon("images/lockDP.png"));
 		}
 		encType.setBounds(11,418,300,20);
 		encType.setVisible(true);
