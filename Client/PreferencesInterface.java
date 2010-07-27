@@ -116,6 +116,10 @@ public class PreferencesInterface extends JPanel {
 	//Define components for the Notifications Menu Panel
 	private JButton notificationsLabel = new JButton("Notifications", new ImageIcon("images/notificationsPref.png"));
 	private JCheckBox enableSoundsCheckBox = new JCheckBox("Enable Sounds", enableSounds);
+        private JComboBox msgSoundComboBox, inSoundComboBox, outSoundComboBox;
+        private JLabel msgSoundLabel = new JLabel("When receiving a message, play:");
+        private JLabel inSoundLabel = new JLabel("When a contact connects, play:");
+        private JLabel outSoundLabel = new JLabel("When a contact disconnects, play:");
 	private boolean enableSoundsVal;
 	private boolean enableSoundsFlag = false;
 
@@ -188,10 +192,26 @@ public class PreferencesInterface extends JPanel {
 
                 downloadLocationVal = downloadLocation;
 
-
+                //Initiate combo boxes and set default values
                 logLevelComboBox = new JComboBox(logLevels);
                 logLevelComboBox.setSelectedItem(Integer.toString(debugLogVal));
                 downDirTextField.setText(downloadLocationVal);
+
+                //Initialize sound lists from folder and instantiate combo boxes with default values
+                File folder = new File("sounds/");
+                File[] listOfFiles = folder.listFiles();
+                String[] fileNames = new String[listOfFiles.length];
+                for (int i = 0; i < listOfFiles.length; i++)
+                {
+                    if (listOfFiles[i].isFile())
+                        fileNames[i] = listOfFiles[i].getName();
+                }
+                msgSoundComboBox = new JComboBox(fileNames);
+                inSoundComboBox = new JComboBox(fileNames);
+                outSoundComboBox = new JComboBox(fileNames);
+                //msgSoundComboBox.setSelectedItem(null);
+                //inSoundComboBox.setSelectedItem(null);
+                //outSoundComboBox.setSelectedItem(null);
 
                 currentContacts = Athena.getContactsArrayFromTable();
                 contactAliasComboBox = new JComboBox(currentContacts);
@@ -377,6 +397,13 @@ public class PreferencesInterface extends JPanel {
 		notificationsLabel.setBounds(30, 100, 75, 75);
 		notificationsLabel.setBorder(labelBorder);
 
+                msgSoundLabel.setBounds(30, 70, 250, 30);
+                inSoundLabel.setBounds(30, 140, 250, 30);
+                outSoundLabel.setBounds(30, 210, 250, 30);
+                msgSoundComboBox.setBounds(140, 100, 120, 20);
+                inSoundComboBox.setBounds(140, 170, 120, 20);
+                outSoundComboBox.setBounds(140, 240, 120, 20);
+
 		notificationsPanel = new JPanel();
 		notificationsPanel.setLayout(null);
 		notificationsPanel.setBorder(notificationsTitledBorder);
@@ -386,6 +413,12 @@ public class PreferencesInterface extends JPanel {
 		enableSoundsCheckBox.setBounds(50, 20, 200, 50);
 
 		notificationsPanel.add(enableSoundsCheckBox);
+                notificationsPanel.add(msgSoundLabel);
+                notificationsPanel.add(inSoundLabel);
+                notificationsPanel.add(outSoundLabel);
+                notificationsPanel.add(msgSoundComboBox);
+                notificationsPanel.add(inSoundComboBox);
+                notificationsPanel.add(outSoundComboBox);
 
 		enableSoundsCheckBox.addItemListener(new ItemListener() {
 
