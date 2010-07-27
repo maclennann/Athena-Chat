@@ -679,9 +679,9 @@ public class Athena {
 				//Open up an alert!
 				if ((clientResource.tabPanels.containsKey(inviteInformationArray[0]))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformationArray[0]);
-                        print.writeToTextArea(inviteInformationArray[0] + " wants to send us a file.\n", print.getSetHeaderFont(Color.gray));
+                        print.writeToTextArea(inviteInformationArray[0] + " would like to transfer a file.\n", print.getSetHeaderFont(Color.gray));
                 }
-                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " wants to send us a file.\nFile name: " + filePathArray[filePathArray.length-1] + "\nFile Size: "+Integer.parseInt(inviteInformationArray[2])/1000+"kb");
+                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " would like to transfer a file.\nFile name: " + filePathArray[filePathArray.length-1] + "\nFile Size: "+Integer.parseInt(inviteInformationArray[2])/1000+"kb");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
 					systemMessage("22");
