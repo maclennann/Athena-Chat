@@ -921,14 +921,8 @@ public class PreferencesInterface extends JPanel {
 				Athena.setEnableSounds(true);
 			}
 		}
-                if (msgSoundFlag) {
-                    //Set new message sound in program with msgSoundFile
-                }
-                if (inSoundFlag) {
-                    //Set new sign in sound in program with inSoundFile
-                }
-                if (outSoundFlag) {
-                    //Set new sign out sound in program with outSoundFile
+                if (msgSoundFlag || inSoundFlag || outSoundFlag) {
+                    Athena.setSoundFiles(msgSoundFile, inSoundFile, outSoundFile);
                 }
 	}
 

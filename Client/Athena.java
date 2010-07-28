@@ -95,6 +95,9 @@ public class Athena {
 	static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password
     private static String toUser; //Recipient for message
     private static String awayText; //Away message text
+    private static String currentMsgSound;
+    private static String currentInSound;
+    private static String currentOutSound;
     static Socket c2ssocket; // The socket connecting us to the server for client communication
     static Socket c2csocket; // The socket connecting us to the server for server communication
     static DataOutputStream c2sdout; // Client to Server DataOutputStream
@@ -467,7 +470,7 @@ public class Athena {
                         clientResource.aliasSignOff(contactsTable.get(decryptedMessage));
                         // If enabled, open an input stream  to the audio file.
                         if (getEnableSounds()) {
-                            InputStream in = new FileInputStream("sounds/signOff.wav");
+                            InputStream in = new FileInputStream(currentOutSound);
                             // Create an AudioStream object from the input stream.
                             AudioStream as = new AudioStream(in);
                             // Use the static class member "player" from class AudioPlayer to play
@@ -500,7 +503,7 @@ public class Athena {
                             //** add this into your application code as appropriate
                             if (getEnableSounds()) {
                                 // If enabled, open an input stream  to the audio file.
-                                InputStream in = new FileInputStream("sounds/signOn.wav");
+                                InputStream in = new FileInputStream(currentInSound);
                                 // Create an AudioStream object from the input stream.
                                 AudioStream as = new AudioStream(in);
                                 // Use the static class member "player" from class AudioPlayer to play
@@ -781,7 +784,7 @@ public class Athena {
                         }
                     }
 					else if (getEnableSounds()) {
-                        InputStream in = new FileInputStream("sounds/recvMesg.wav");
+                        InputStream in = new FileInputStream(currentMsgSound);
                         // Create an AudioStream object from the input stream.
                         AudioStream as = new AudioStream(in);
                         // Use the static class member "player" from class AudioPlayer to play
@@ -845,7 +848,7 @@ public class Athena {
                         }
                     }  // If enabled, open an input stream  to the audio file.
                     else if (getEnableSounds()) {
-                        InputStream in = new FileInputStream("sounds/recvMesg.wav");
+                        InputStream in = new FileInputStream(currentMsgSound);
                         // Create an AudioStream object from the input stream.
                         AudioStream as = new AudioStream(in);
                         // Use the static class member "player" from class AudioPlayer to play
@@ -2028,6 +2031,13 @@ public class Athena {
         } else {
             enableSounds = false;
         }
+    }
+
+    public static void setSoundFiles(String msgSound, String inSound, String outSound)
+    {
+        currentMsgSound = "sounds/" + msgSound;
+        currentInSound = "sounds/" + inSound;
+        currentOutSound = "sounds/" + outSound;
     }
 
     /**

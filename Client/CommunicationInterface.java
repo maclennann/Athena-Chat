@@ -303,6 +303,7 @@ public class CommunicationInterface extends JFrame {
                 msgSound = settingsArray[6].toString();
                 inSound = settingsArray[7].toString();
                 outSound = settingsArray[8].toString();
+                Athena.setSoundFiles(msgSound, inSound, outSound);
 		fontFace = settingsArray[9].toString();
 		fontBold = Boolean.parseBoolean(settingsArray[10].toString());
 		fontItalic = Boolean.parseBoolean(settingsArray[11].toString());
