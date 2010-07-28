@@ -152,7 +152,7 @@ public class CommunicationInterface extends JFrame {
 	private JFrame chatWindow;
 	private JScrollPane contactList, chatList;
 	private JMenuBar menuBar = new JMenuBar();
-	private JMenu file, edit, encryption, view, help;
+	private JMenu file, edit, security, view, help;
 	private JMenuItem disconnect, exit, preferences, createChat, sendFile;
 	private JPanel panel;
 	private JComboBox statusBox = new JComboBox(new String[]{"Available", "Busy"});
@@ -172,16 +172,17 @@ public class CommunicationInterface extends JFrame {
 	private boolean enableESCToClose;
 	private boolean enableSpellCheck;
 	private boolean enableSounds;
+        private String msgSound, inSound, outSound;
 	private String fontFace;
 	private boolean fontBold;
 	private boolean fontItalic;
 	private boolean fontUnderline;
 	private int fontSize;
 	private int activeTheme;
-    private int debugLog;
-    private String downloadLocation = "users\\" + Athena.username + "\\downloads\\";
+        private int debugLog;
+        private String downloadLocation = "users\\" + Athena.username + "\\downloads\\";
 	private boolean userStatusFlag = false;
-	private static Object[] currentSettings = new Object[13];
+	private static Object[] currentSettings = new Object[15];
     private String chatIDToLocate = null;
 
 	/**
@@ -299,12 +300,15 @@ public class CommunicationInterface extends JFrame {
                 setDebugLog(debugLog);
 		enableSounds = Boolean.parseBoolean(settingsArray[5].toString());
 		Athena.setEnableSounds(enableSounds);
-		fontFace = settingsArray[6].toString();
-		fontBold = Boolean.parseBoolean(settingsArray[7].toString());
-		fontItalic = Boolean.parseBoolean(settingsArray[8].toString());
-		fontUnderline = Boolean.parseBoolean(settingsArray[9].toString());
-		fontSize = Integer.parseInt(settingsArray[10].toString());
-		activeTheme = Integer.parseInt(settingsArray[11].toString());
+                msgSound = settingsArray[6].toString();
+                inSound = settingsArray[7].toString();
+                outSound = settingsArray[8].toString();
+		fontFace = settingsArray[9].toString();
+		fontBold = Boolean.parseBoolean(settingsArray[10].toString());
+		fontItalic = Boolean.parseBoolean(settingsArray[11].toString());
+		fontUnderline = Boolean.parseBoolean(settingsArray[12].toString());
+		fontSize = Integer.parseInt(settingsArray[13].toString());
+		activeTheme = Integer.parseInt(settingsArray[14].toString());
 		
 		//This is the main frame for the IMs
 		imContentFrame = new JFrame("Athena Chat Application - " + Athena.username);
@@ -351,31 +355,31 @@ public class CommunicationInterface extends JFrame {
 		preferences.setMnemonic(KeyEvent.VK_P);
 		edit.add(preferences);
 
-		// Create button Edit -> Change Password
-		JMenuItem changePassword = new JMenuItem("Change Password");
-		edit.add(changePassword);
+                JMenuItem blockUser = new JMenuItem("Block Selected User");
+		blockUser.setMnemonic(KeyEvent.VK_B);
+		edit.add(blockUser);
 
-		// Create the encryption menu.
-		encryption = new JMenu("Encryption");
-		encryption.setMnemonic(KeyEvent.VK_C);
-		menuBar.add(encryption);
+		JMenuItem unblockUser = new JMenuItem("Unblock A User");
+		blockUser.setMnemonic(KeyEvent.VK_U);
+		edit.add(unblockUser);
+
+		// Create the security menu.
+		security = new JMenu("Security");
+		security.setMnemonic(KeyEvent.VK_C);
+		menuBar.add(security);
 
 		// Create button Encryption -> Export Key Pair
 		JMenuItem exportKey = new JMenuItem("Export Key Pair");
-		encryption.add(exportKey);
+		security.add(exportKey);
 		JMenuItem startDP = new JMenuItem("Start/Stop DirectProtect");
-		encryption.add(startDP);
+		security.add(startDP);
 		JMenuItem sendEmail = new JMenuItem("Send Anonymous Email");
-		encryption.add(sendEmail);
+		security.add(sendEmail);
 		
 		// Create the view menu
 		view = new JMenu("View");
 		view.setMnemonic(KeyEvent.VK_V);
 		menuBar.add(view);
-
-		// Create button View -> Offline users in contact list
-		JMenuItem offlineUsers = new JMenuItem("Offline Contacts in List");
-		view.add(offlineUsers);
 
 		// Create button View -> Contact Aliases
 		JMenuItem contactAlias = new JMenuItem("Toggle Alias View");
@@ -398,14 +402,6 @@ public class CommunicationInterface extends JFrame {
 		JMenuItem bugReport = new JMenuItem("Report a bug!");
 		web.setMnemonic(KeyEvent.VK_R);
 		help.add(bugReport);
-
-		JMenuItem blockUser = new JMenuItem("Block Selected User");
-		blockUser.setMnemonic(KeyEvent.VK_B);
-		edit.add(blockUser);
-
-		JMenuItem unblockUser = new JMenuItem("Unblock A User");
-		blockUser.setMnemonic(KeyEvent.VK_U);
-		edit.add(unblockUser);
 
 		unblockUser.addActionListener(new ActionListener() {
 
@@ -544,13 +540,6 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-		changePassword.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
-
 		sendEmail.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent event){
@@ -566,16 +555,9 @@ public class CommunicationInterface extends JFrame {
 		exportKey.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				JOptionPane.showMessageDialog(null, "Your exported keys will be in the users/[yourusername]/keys folder.","FU", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Your exported keys will be in the users/[yourusername]/keys folder.","Export Complete", JOptionPane.INFORMATION_MESSAGE);
                 RSACrypto.rsaExportPublic(Athena.toUserPublic.getModulus(), Athena.toUserPublic.getPublicExponent(), Athena.username);
                 RSACrypto.rsaExportPrivate(Athena.userPrivate.getModulus(), Athena.userPrivate.getPrivateExponent(), Athena.username);
-			}
-		});
-
-		offlineUsers.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				JOptionPane.showMessageDialog(null, "This feature will be implemented during the summer semester, stay tuned!", "To Be Continued...", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
@@ -1589,7 +1571,7 @@ public class CommunicationInterface extends JFrame {
 		if (debug == 1) {
 			Athena.writeLog("Importing preferences");
 		}
-		Object[] settingsArray = new Object[13];
+		Object[] settingsArray = new Object[15];
 		int arrayCount = 0;
 		String line = null;
 		String temp = null;
@@ -1669,6 +1651,15 @@ public class CommunicationInterface extends JFrame {
 					temp = inPref.readLine().substring(13);
 					settingsArray[arrayCount] = temp;
 					arrayCount++;
+                                        temp = inPref.readLine().substring(9);
+                                        settingsArray[arrayCount] = temp;
+                                        arrayCount++;
+                                        temp = inPref.readLine().substring(8);
+                                        settingsArray[arrayCount] = temp;
+                                        arrayCount++;
+                                        temp = inPref.readLine().substring(9);
+                                        settingsArray[arrayCount] = temp;
+                                        arrayCount++;
 				}
 				if (line.equals("[FORMATTING]")) {
 					//Get formatting settings

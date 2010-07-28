@@ -66,11 +66,14 @@ public class PreferencesInterface extends JPanel {
         private String downloadLocation;
         private int debugLog = Integer.parseInt(settingsArray[4].toString());
 	private boolean enableSounds = Boolean.parseBoolean(settingsArray[5].toString());
-	private String setFontFace = settingsArray[6].toString();
-	private boolean enableBold = Boolean.parseBoolean(settingsArray[7].toString());
-	private boolean enableItalic = Boolean.parseBoolean(settingsArray[8].toString());
-	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[9].toString());
-	private int setFontSize = Integer.parseInt(settingsArray[10].toString());
+        private String msgSound = settingsArray[6].toString();
+        private String inSound = settingsArray[7].toString();
+        private String outSound = settingsArray[8].toString();
+	private String setFontFace = settingsArray[9].toString();
+	private boolean enableBold = Boolean.parseBoolean(settingsArray[10].toString());
+	private boolean enableItalic = Boolean.parseBoolean(settingsArray[11].toString());
+	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[12].toString());
+	private int setFontSize = Integer.parseInt(settingsArray[13].toString());
 
 	//Define components
 	private GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -122,6 +125,12 @@ public class PreferencesInterface extends JPanel {
         private JLabel outSoundLabel = new JLabel("When a contact disconnects, play:");
 	private boolean enableSoundsVal;
 	private boolean enableSoundsFlag = false;
+        private boolean msgSoundFlag = false;
+        private boolean inSoundFlag = false;
+        private boolean outSoundFlag = false;
+        private String msgSoundFile = msgSound;
+        private String inSoundFile = inSound;
+        private String outSoundFile = outSound;
 
 	//Define components for the Contact List Menu Panel
 	private JButton contactPrefLabel = new JButton("Contact List", new ImageIcon("images/contactPref.png"));
@@ -209,9 +218,9 @@ public class PreferencesInterface extends JPanel {
                 msgSoundComboBox = new JComboBox(fileNames);
                 inSoundComboBox = new JComboBox(fileNames);
                 outSoundComboBox = new JComboBox(fileNames);
-                //msgSoundComboBox.setSelectedItem(null);
-                //inSoundComboBox.setSelectedItem(null);
-                //outSoundComboBox.setSelectedItem(null);
+                msgSoundComboBox.setSelectedItem(msgSoundFile);
+                inSoundComboBox.setSelectedItem(inSoundFile);
+                outSoundComboBox.setSelectedItem(outSoundFile);
 
                 currentContacts = Athena.getContactsArrayFromTable();
                 contactAliasComboBox = new JComboBox(currentContacts);
@@ -260,7 +269,8 @@ public class PreferencesInterface extends JPanel {
 				try {
 					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal,
                                                             downloadLocationFlag, downloadLocationVal, debugLogFlag, debugLogVal);
-					setNotificationSettings(enableSoundsFlag, enableSoundsVal);
+					setNotificationSettings(enableSoundsFlag, enableSoundsVal, msgSoundFlag, msgSoundFile, inSoundFlag,
+                                                                    inSoundFile, outSoundFlag, outSoundFile);
 					setFormattingSettings(setFontFaceFlag, setBoldFlag, setItalicsFlag, setUnderlineFlag, setSizeFlag,
 							setFontFaceVal, setBoldVal, setItalicsVal, setUnderlineVal, setSizeVal);
 					writeSavedPreferences(settingsToWrite);
@@ -433,6 +443,36 @@ public class PreferencesInterface extends JPanel {
 				enableSoundsFlag = true;
 			}
 		});
+
+                msgSoundComboBox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				apply.setEnabled(true);
+                                msgSoundFile = msgSoundComboBox.getSelectedItem().toString();
+                                settingsToWrite[6] = msgSoundFile;
+                                msgSoundFlag = true;
+			}
+		});
+
+                inSoundComboBox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				apply.setEnabled(true);
+                                inSoundFile = inSoundComboBox.getSelectedItem().toString();
+                                settingsToWrite[7] = inSoundFile;
+                                inSoundFlag = true;
+			}
+		});
+
+                outSoundComboBox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				apply.setEnabled(true);
+                                outSoundFile = outSoundComboBox.getSelectedItem().toString();
+                                settingsToWrite[8] = outSoundFile;
+                                outSoundFlag = true;
+			}
+		});
 		/*************************************************/
 		//Contact List Menu Selection
 		/*************************************************/
@@ -560,7 +600,7 @@ public class PreferencesInterface extends JPanel {
 				apply.setEnabled(true);
 				setFontFaceVal = selectFontComboBox.getSelectedItem().toString();
 				System.out.println("Retrieved font style: " + setFontFaceVal);
-				settingsToWrite[7] = setFontFaceVal;
+				settingsToWrite[9] = setFontFaceVal;
 				setFontFaceFlag = true;
 
 
@@ -573,7 +613,7 @@ public class PreferencesInterface extends JPanel {
 				apply.setEnabled(true);
 				setSizeVal = Integer.parseInt(fontSizeComboBox.getSelectedItem().toString());
 				System.out.println("Retrieved font size: " + setSizeVal);
-				settingsToWrite[11] = setSizeVal;
+				settingsToWrite[13] = setSizeVal;
 				setSizeFlag = true;
 			}
 		});
@@ -587,7 +627,7 @@ public class PreferencesInterface extends JPanel {
 				} else {
 					setBoldVal = false;
 				}
-				settingsToWrite[8] = setBoldVal;
+				settingsToWrite[10] = setBoldVal;
 				setBoldFlag = true;
 			}
 		});
@@ -601,7 +641,7 @@ public class PreferencesInterface extends JPanel {
 				} else {
 					setItalicsVal = false;
 				}
-				settingsToWrite[9] = setItalicsVal;
+				settingsToWrite[11] = setItalicsVal;
 				setItalicsFlag = true;
 			}
 		});
@@ -615,7 +655,7 @@ public class PreferencesInterface extends JPanel {
 				} else {
 					setUnderlineVal = false;
 				}
-				settingsToWrite[10] = setUnderlineVal;
+				settingsToWrite[12] = setUnderlineVal;
 				setUnderlineFlag = true;
 			}
 		});
@@ -871,7 +911,8 @@ public class PreferencesInterface extends JPanel {
                 }
 	}
 
-	private void setNotificationSettings(boolean enableSoundsFlag, boolean enableSoundsVal) {
+	private void setNotificationSettings(boolean enableSoundsFlag, boolean enableSoundsVal, boolean msgSoundFlag, String msgSoundFile,
+                                                boolean inSoundFlag, String inSoundFile, boolean outSoundFlag, String outSoundFile) {
 		if (enableSoundsFlag) {
 			if (!(enableSoundsVal)) {
 				Athena.setEnableSounds(false);
@@ -880,6 +921,15 @@ public class PreferencesInterface extends JPanel {
 				Athena.setEnableSounds(true);
 			}
 		}
+                if (msgSoundFlag) {
+                    //Set new message sound in program with msgSoundFile
+                }
+                if (inSoundFlag) {
+                    //Set new sign in sound in program with inSoundFile
+                }
+                if (outSoundFlag) {
+                    //Set new sign out sound in program with outSoundFile
+                }
 	}
 
 	private void setFormattingSettings(boolean setFontFaceFlag, boolean setBoldFlag, boolean setItalicsFlag, boolean setUnderlineFlag, boolean setSizeFlag,
@@ -915,6 +965,12 @@ public class PreferencesInterface extends JPanel {
 			outPref.write("[NOTIFICATIONS]");
 			outPref.newLine();
 			outPref.write("enableSounds=" + settingsToWrite[5]);
+                        outPref.newLine();
+                        outPref.write("msgSound=" + settingsToWrite[6]);
+                        outPref.newLine();
+                        outPref.write("inSound=" + settingsToWrite[7]);
+                        outPref.newLine();
+                        outPref.write("outSound=" + settingsToWrite[8]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -922,15 +978,15 @@ public class PreferencesInterface extends JPanel {
 			//Write formatting settings
 			outPref.write("[FORMATTING]");
 			outPref.newLine();
-			outPref.write("fontFace=" + settingsToWrite[6]);
+			outPref.write("fontFace=" + settingsToWrite[9]);
 			outPref.newLine();
-			outPref.write("fontBold=" + settingsToWrite[7]);
+			outPref.write("fontBold=" + settingsToWrite[10]);
 			outPref.newLine();
-			outPref.write("fontItalic=" + settingsToWrite[8]);
+			outPref.write("fontItalic=" + settingsToWrite[11]);
 			outPref.newLine();
-			outPref.write("fontUnderline=" + settingsToWrite[9]);
+			outPref.write("fontUnderline=" + settingsToWrite[12]);
 			outPref.newLine();
-			outPref.write("fontSize=" + settingsToWrite[10]);
+			outPref.write("fontSize=" + settingsToWrite[13]);
 			outPref.newLine();
 			outPref.newLine();
 			outPref.newLine();
@@ -938,7 +994,7 @@ public class PreferencesInterface extends JPanel {
 			//Write theme settings
 			outPref.write("[THEME]");
 			outPref.newLine();
-			outPref.write("activeTheme=" + settingsToWrite[11]);
+			outPref.write("activeTheme=" + settingsToWrite[14]);
 
 			outPref.close();
 
