@@ -59,7 +59,7 @@ public class Athena {
     /**
      * Print debug messages during runtime (0=off,1=on,2=verbose)
      */
-    public static final int debug = 2; //Show debug messages?
+    public static int debug = 2; //Show debug messages?
     //public static String[] inviteInformationArray;
     /**
      * The current user's username. Used globally

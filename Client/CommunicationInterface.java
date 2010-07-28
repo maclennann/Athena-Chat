@@ -1214,6 +1214,7 @@ public class CommunicationInterface extends JFrame {
 
         public void setDebugLog(int debugLog)
         {
+			Athena.debug = debugLog;
             debug = debugLog;
         }
 
