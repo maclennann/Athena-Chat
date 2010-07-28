@@ -33,6 +33,8 @@ public class ConnectThread extends Thread {
 
 	public void run() {
 		try{
+			boolean successs = new File("users/" + username + "/logs/").mkdirs();
+			successs = new File("users/" + username + "/downloads/").mkdirs();
 			Athena.openLog(new File("users/"+username+"/logs/"+Athena.getCleanDateTime()+"-debugLog.txt"));
 			Athena.writeLog("===============================================");
 			//Try to connect with and authenticate to the socket
@@ -53,6 +55,7 @@ public class ConnectThread extends Thread {
 	                //We can't connect to the server at the specified port for some reason
 	                JOptionPane.showMessageDialog(null, "Could not connect to the server.\n"
 	                        + "Please check your Internet connection.\n\n", "Connection Error", JOptionPane.ERROR_MESSAGE);
+					loginBar.dispose();
 	                AuthenticationInterface loginGUI = new AuthenticationInterface();
 	                return;
             }
@@ -98,6 +101,7 @@ public class ConnectThread extends Thread {
             }
             if (result.equals("Failed")) {
                 Athena.disconnect();
+				loginBar.dispose();
                 new LoginFailedInterface();
                 return;
             } else {
