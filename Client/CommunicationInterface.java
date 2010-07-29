@@ -587,7 +587,6 @@ public class CommunicationInterface extends JFrame {
                 chatBox.setBackground(new Color(238, 232, 170));
 		chatList = new JScrollPane(chatBox);
 		contactList.setBounds(600, 2, 195, 450);
-                //contactList.setBackground(Color.black);
 		chatList.setBounds(600, 2, 195, 450);
 
                 //Create detailed border pattern for contact/chat lists by combining several individual borders
@@ -1111,10 +1110,10 @@ public class CommunicationInterface extends JFrame {
 		Component[] currentTabComponents = currentTab.getComponents();
 		JTextPane textFieldToFocus = (JTextPane) currentTabComponents[1];
 		textFieldToFocus.setEnabled(false);
-		textFieldToFocus.setFont(new Font("Arial", Font.ITALIC, 14));
-		textFieldToFocus.setBackground(Color.gray);
-		textFieldToFocus.setForeground(Color.black);
-		textFieldToFocus.setText("Change user status to [Available] to resume communication...");
+                textFieldToFocus.setFont(new Font("Arial", Font.ITALIC, 14));
+                textFieldToFocus.setText("Change user status to [Available] to resume communication...");
+                textFieldToFocus.setBackground(new Color(238, 232, 170));
+		textFieldToFocus.setForeground(Color.red);
 	}
 
 	/**
