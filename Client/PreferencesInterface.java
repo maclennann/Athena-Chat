@@ -75,7 +75,7 @@ public class PreferencesInterface extends JPanel {
 	private boolean enableUnderline = Boolean.parseBoolean(settingsArray[12].toString());
 	private int setFontSize = Integer.parseInt(settingsArray[13].toString());
 
-	//Define components
+	//Define major components
 	private GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	//String[] allFontFamilies = ge.getAvailableFontFamilyNames();
 	private Font[] allFonts = ge.getAllFonts();
@@ -84,20 +84,20 @@ public class PreferencesInterface extends JPanel {
 		"com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"};
 	private JFrame preferences;
 	private JPanel contentPane = new JPanel();
-	private JPanel generalPanel, notificationsPanel, contactPrefPanel, formattingPanel, themePanel;
+	private JPanel systemPanel, notificationsPanel, contactPrefPanel, formattingPanel, themePanel;
 	private JPanel prefLabelPaneLeft = new JPanel();
 	private JPanel prefLabelPaneRight = new JPanel();
 	private JButton apply = new JButton("Apply");
 	private JButton cancel = new JButton("Close");
 	private Border blackline, whiteline;
 	private Color originalColor;
-	private TitledBorder generalTitledBorder, notificationsTitledBorder, contactPrefTitledBorder, formattingTitledBorder, themeTitleBorder;
+	private TitledBorder systemTitledBorder, notificationsTitledBorder, contactPrefTitledBorder, formattingTitledBorder, themeTitleBorder;
 
-	//Define components for the General Menu Panel
+	//Define components for the System Menu Panel
 	private JTextField downDirTextField = new JTextField(downloadLocation);
 	private JButton downDirLaunchButton = new JButton ("Browse...");
 	private JLabel downDirJLabel = new JLabel("Download Directory:");
-	private JButton generalLabel = new JButton("System", new ImageIcon("images/generalPref.png"));
+	private JButton systemLabel = new JButton("System", new ImageIcon("images/systemPref.png"));
 	private JCheckBox systemTrayCheckBox = new JCheckBox("Show Athena in System Tray", allowSystemTray);
 	private JCheckBox allowESCCheckBox = new JCheckBox("Allow ESC Key to Close a Tab", allowESCTab);
 	private JCheckBox enableSpellCheckCheckBox = new JCheckBox("Enable Spell Check", enableSpellCheck);
@@ -147,7 +147,7 @@ public class PreferencesInterface extends JPanel {
 	private JButton formattingLabel = new JButton("Formatting", new ImageIcon("images/fontPref.png"));
 	private JLabel selectFontLabel = new JLabel("Font Type:");
 	private JLabel fontSizeLabel = new JLabel("Font Size:");
-	private JLabel generalFontLabel = new JLabel("Font Style:");
+	private JLabel systemFontLabel = new JLabel("Font Style:");
 	private JComboBox selectFontComboBox, fontSizeComboBox;
 	private JCheckBox setBoldCheckBox = new JCheckBox("Bold", enableBold);
 	private JCheckBox setItalicsCheckBox = new JCheckBox("Italics", enableItalic);
@@ -175,7 +175,6 @@ public class PreferencesInterface extends JPanel {
 
         //Arrays for editing contact aliases
         private String[] currentContacts;
-        private String[] currentAliases;
 
 	//Constructor
 	PreferencesInterface() throws IOException {
@@ -194,11 +193,11 @@ public class PreferencesInterface extends JPanel {
 			allFontNames[a] = Athena.clientResource.allFonts[a].getFontName();
 		}
 
+                //Set download location to location on file or default if file parameter is empty
                 if(settingsArray[3].toString().equals(""))
                     downloadLocation = Athena.clientResource.getDownloadLocation();
                 else
                     downloadLocation = settingsArray[3].toString();
-
                 downloadLocationVal = downloadLocation;
 
                 //Initiate combo boxes and set default values
@@ -222,12 +221,15 @@ public class PreferencesInterface extends JPanel {
                 inSoundComboBox.setSelectedItem(inSoundFile);
                 outSoundComboBox.setSelectedItem(outSoundFile);
 
+                //Populate contact alias combo box
                 currentContacts = Athena.getContactsArrayFromTable();
                 contactAliasComboBox = new JComboBox(currentContacts);
 
+                //Populate font name combo box
 		selectFontComboBox = new JComboBox(allFontNames);
 		selectFontComboBox.setSelectedItem(setFontFaceVal);
 
+                //Populate font size combo box
 		fontSizeComboBox = new JComboBox(new String[]{"8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48"});
 		fontSizeComboBox.setSelectedItem(Integer.toString(setSizeVal));
 
@@ -239,7 +241,7 @@ public class PreferencesInterface extends JPanel {
 		Border extraBorder = BorderFactory.createLoweredBevelBorder();
 		Border prefAltBorder = BorderFactory.createCompoundBorder(labelBorder, extraBorder);
 		Border prefBorder = BorderFactory.createCompoundBorder(blackBorder, labelBorder);
-		generalTitledBorder = BorderFactory.createTitledBorder(
+		systemTitledBorder = BorderFactory.createTitledBorder(
 				prefBorder, "System Options");
 		contactPrefTitledBorder = BorderFactory.createTitledBorder(
 				prefBorder, "Contact List Options");
@@ -267,7 +269,7 @@ public class PreferencesInterface extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				//Apply all changes
 				try {
-					setGeneralSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal,
+					setSystemSettings(systemTrayFlag, systemTrayVal, allowESCFlag, allowESCVal, enableSpellCheckFlag, enableSCVal,
                                                             downloadLocationFlag, downloadLocationVal, debugLogFlag, debugLogVal);
 					setNotificationSettings(enableSoundsFlag, enableSoundsVal, msgSoundFlag, msgSoundFile, inSoundFlag,
                                                                     inSoundFile, outSoundFlag, outSoundFile);
@@ -282,6 +284,7 @@ public class PreferencesInterface extends JPanel {
 			}
 		});
 
+                //Add cancel button action
 		cancel.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -289,23 +292,24 @@ public class PreferencesInterface extends JPanel {
 			}
 		});
 
-		//Initialize the JPanels for each of the options
-		//General Menu Section
-		/*************************************************/
-		generalLabel.setForeground(Color.white);
-		originalColor = generalLabel.getBackground();
-		generalLabel.setBackground(Color.black);
-		generalLabel.setBorder(whiteline);
-		generalLabel.setVerticalTextPosition(JLabel.BOTTOM);
-		generalLabel.setHorizontalTextPosition(JLabel.CENTER);
-		generalLabel.setBounds(30, 20, 75, 75);
-		generalLabel.setBorder(labelBorder);
+		//Initialize the JPanels and components for each of the options
 
-		generalPanel = new JPanel();
-		generalPanel.setLayout(null);
-		generalPanel.setBorder(generalTitledBorder);
-		generalPanel.setBounds(140, 15, 300, 300);
-		generalPanel.setVisible(true);
+		//System Menu Section
+		/*************************************************/
+		systemLabel.setForeground(Color.white);
+		originalColor = systemLabel.getBackground();
+		systemLabel.setBackground(Color.black);
+		systemLabel.setBorder(whiteline);
+		systemLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		systemLabel.setHorizontalTextPosition(JLabel.CENTER);
+		systemLabel.setBounds(30, 20, 75, 75);
+		systemLabel.setBorder(labelBorder);
+
+		systemPanel = new JPanel();
+		systemPanel.setLayout(null);
+		systemPanel.setBorder(systemTitledBorder);
+		systemPanel.setBounds(140, 15, 300, 300);
+		systemPanel.setVisible(true);
 
 		systemTrayCheckBox.setBounds(50, 20, 200, 50);
 		allowESCCheckBox.setBounds(50, 60, 200, 50);
@@ -321,15 +325,16 @@ public class PreferencesInterface extends JPanel {
 		logLevelLabel.setVisible(true);
 		logLevelComboBox.setVisible(true);
 
-		generalPanel.add(logLevelComboBox);
-		generalPanel.add(logLevelLabel);
-		generalPanel.add(downDirJLabel);
-		generalPanel.add(downDirTextField);
-		generalPanel.add(downDirLaunchButton);
-		generalPanel.add(systemTrayCheckBox);
-		generalPanel.add(allowESCCheckBox);
-		generalPanel.add(enableSpellCheckCheckBox);
+		systemPanel.add(logLevelComboBox);
+		systemPanel.add(logLevelLabel);
+		systemPanel.add(downDirJLabel);
+		systemPanel.add(downDirTextField);
+		systemPanel.add(downDirLaunchButton);
+		systemPanel.add(systemTrayCheckBox);
+		systemPanel.add(allowESCCheckBox);
+		systemPanel.add(enableSpellCheckCheckBox);
 
+                //Add action listeners to the appropriate components
 		systemTrayCheckBox.addItemListener(new ItemListener() {
 
 			public void itemStateChanged(ItemEvent e) {
@@ -343,6 +348,7 @@ public class PreferencesInterface extends JPanel {
 				systemTrayFlag = true;
 			}
 		});
+
 		allowESCCheckBox.addItemListener(new ItemListener() {
 
 			public void itemStateChanged(ItemEvent e) {
@@ -356,6 +362,7 @@ public class PreferencesInterface extends JPanel {
 				allowESCFlag = true;
 			}
 		});
+
 		enableSpellCheckCheckBox.addItemListener(new ItemListener() {
 
 			public void itemStateChanged(ItemEvent e) {
@@ -430,6 +437,7 @@ public class PreferencesInterface extends JPanel {
                 notificationsPanel.add(inSoundComboBox);
                 notificationsPanel.add(outSoundComboBox);
 
+                //Add action listeners to the appropriate components
 		enableSoundsCheckBox.addItemListener(new ItemListener() {
 
 			public void itemStateChanged(ItemEvent e) {
@@ -499,6 +507,7 @@ public class PreferencesInterface extends JPanel {
                 updateAliasButton.setBounds(140, 180, 120, 30);
                 updateAliasButton.setEnabled(false);
 
+                //Add action listeners to the appropriate components
                 contactAliasComboBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -527,29 +536,27 @@ public class PreferencesInterface extends JPanel {
 
                 updateAliasButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-			//Handle open button action.
+                            if(updateAliasTextField.getText().trim().length() < 3)
+                                JOptionPane.showMessageDialog(null, "Contact alias must be at least 3 characters long.");
+                            else
+                            {
+                                String newAlias = updateAliasTextField.getText();
+                                String currentContact = contactAliasComboBox.getSelectedItem().toString();
+                                        if(Athena.contactsTable.containsKey(currentContact))
+                                        {
+                                            if(Athena.clientResource.aliasListModel.contains(Athena.contactsTable.get(currentContact)))
+                                                Athena.clientResource.aliasSignOff(Athena.contactsTable.get(currentContact));
 
-			if(updateAliasTextField.getText().trim().length() < 3)
-                            JOptionPane.showMessageDialog(null, "Contact alias must be at least 3 characters long.");
-                        else
-                        {
-                            String newAlias = updateAliasTextField.getText();
-                            String currentContact = contactAliasComboBox.getSelectedItem().toString();
-                                    if(Athena.contactsTable.containsKey(currentContact))
-                                    {
-                                        if(Athena.clientResource.aliasListModel.contains(Athena.contactsTable.get(currentContact)))
-                                            Athena.clientResource.aliasSignOff(Athena.contactsTable.get(currentContact));
-
-                                        Athena.contactsTable.remove(currentContact);
-                                        Athena.contactsTable.put(currentContact, newAlias);
-                                        Athena.writeBuddyListToFile(Athena.getContactsArrayFromTable());
-                                        Athena.checkUserStatus(currentContact, "PauseThread!");
-                                        currentAliasLabel.setText(newAlias);
-                                        updateAliasButton.setEnabled(false);
-                                        updateAliasTextField.setText("");
-                                    }
-                        }
-		}});
+                                            Athena.contactsTable.remove(currentContact);
+                                            Athena.contactsTable.put(currentContact, newAlias);
+                                            Athena.writeBuddyListToFile(Athena.getContactsArrayFromTable());
+                                            Athena.checkUserStatus(currentContact, "PauseThread!");
+                                            currentAliasLabel.setText(newAlias);
+                                            updateAliasButton.setEnabled(false);
+                                            updateAliasTextField.setText("");
+                                        }
+                            }
+                    }});
 
 		contactPrefPanel.add(contactAliasJLabel);
                 contactPrefPanel.add(contactAliasComboBox);
@@ -582,7 +589,7 @@ public class PreferencesInterface extends JPanel {
 		setUnderlineCheckBox.setBounds(50, 185, 100, 30);
 		selectFontLabel.setBounds(50, 30, 100, 20);
 		fontSizeLabel.setBounds(190, 95, 100, 20);
-		generalFontLabel.setBounds(50, 95, 100, 20);
+		systemFontLabel.setBounds(50, 95, 100, 20);
 
 		formattingPanel.add(selectFontComboBox);
 		formattingPanel.add(setBoldCheckBox);
@@ -591,9 +598,9 @@ public class PreferencesInterface extends JPanel {
 		formattingPanel.add(fontSizeComboBox);
 		formattingPanel.add(selectFontLabel);
 		formattingPanel.add(fontSizeLabel);
-		formattingPanel.add(generalFontLabel);
+		formattingPanel.add(systemFontLabel);
 
-
+                //Add action listeners to the appropriate components
 		selectFontComboBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -685,10 +692,7 @@ public class PreferencesInterface extends JPanel {
 		themePanel.add(installNewThemeJButton);
 		themePanel.add(installNewThemeJLabel);
 
-		//This settings array update will go in check box action listeners when implemented as seen above in general settings
-		//settingsToWrite[10] = "0";
-		/*************************************************/
-		//ActionListener to make the connect menu item connect
+                //Add action listener to the appropriate components
 		selectThemeComboBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -703,12 +707,11 @@ public class PreferencesInterface extends JPanel {
 			}
 		});
 
-		//Mouse Listener for the options
-		//MouseListener for the generalPreferences
-		MouseListener mouseListenerGeneral = new MouseAdapter() {
+		//MouseListener for the systemPreferences
+		MouseListener mouseListenerSystem = new MouseAdapter() {
 
 			public void mouseClicked(MouseEvent mouseEvent) {
-				refreshSettingsView(generalLabel);
+				refreshSettingsView(systemLabel);
 			}
 		};
 
@@ -747,23 +750,23 @@ public class PreferencesInterface extends JPanel {
 
 
 		//Add the mouseListeners to the Labels
-		generalLabel.addMouseListener(mouseListenerGeneral);
+		systemLabel.addMouseListener(mouseListenerSystem);
 		notificationsLabel.addMouseListener(mouseListenerNotifications);
 		contactPrefLabel.addMouseListener(mouseListenerEncryption);
 		formattingLabel.addMouseListener(mouseListenerFormatting);
 		themeLabel.addMouseListener(mouseListenerTheme);
 
 
-		//Add the Drawing Panels to the LabelPane
-		prefLabelPaneLeft.add(generalLabel);
+		//Add the preference buttons to the LabelPane
+		prefLabelPaneLeft.add(systemLabel);
 		prefLabelPaneLeft.add(notificationsLabel);
 		prefLabelPaneLeft.add(contactPrefLabel);
 		prefLabelPaneRight.add(formattingLabel);
 		prefLabelPaneRight.add(themeLabel);
 
-		//Add the JPanels to the ContentPane (set to default until Label Image is clicked)
+		//Add the JPanels to the ContentPane (set to default until different button is clicked)
 		contentPane.add(notificationsPanel);
-		contentPane.add(generalPanel);
+		contentPane.add(systemPanel);
 		contentPane.add(contactPrefPanel);
 		contentPane.add(formattingPanel);
 		contentPane.add(themePanel);
@@ -772,7 +775,6 @@ public class PreferencesInterface extends JPanel {
 		contentPane.add(apply);
 		contentPane.add(cancel);
 
-
 		//Initialize Frame
 		preferences.setContentPane(contentPane);
 		preferences.setVisible(true);
@@ -780,11 +782,12 @@ public class PreferencesInterface extends JPanel {
 
 	}
 
+        //Method to refresh preference window and activate corresponding components when a specific preference button is clicked
 	private void refreshSettingsView(JButton activeButton) {
-		if (activeButton == generalLabel) {
-			generalPanel.setVisible(true);
-			generalLabel.setBackground(Color.black);
-			generalLabel.setForeground(Color.white);
+		if (activeButton == systemLabel) {
+			systemPanel.setVisible(true);
+			systemLabel.setBackground(Color.black);
+			systemLabel.setForeground(Color.white);
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
@@ -799,9 +802,9 @@ public class PreferencesInterface extends JPanel {
 			themeLabel.setForeground(Color.black);
 		}
 		if (activeButton == notificationsLabel) {
-			generalPanel.setVisible(false);
-			generalLabel.setBackground(originalColor);
-			generalLabel.setForeground(Color.black);
+			systemPanel.setVisible(false);
+			systemLabel.setBackground(originalColor);
+			systemLabel.setForeground(Color.black);
 			notificationsPanel.setVisible(true);
 			notificationsLabel.setBackground(Color.black);
 			notificationsLabel.setForeground(Color.white);
@@ -816,9 +819,9 @@ public class PreferencesInterface extends JPanel {
 			themeLabel.setForeground(Color.black);
 		}
 		if (activeButton == contactPrefLabel) {
-			generalPanel.setVisible(false);
-			generalLabel.setBackground(originalColor);
-			generalLabel.setForeground(Color.black);
+			systemPanel.setVisible(false);
+			systemLabel.setBackground(originalColor);
+			systemLabel.setForeground(Color.black);
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
@@ -838,9 +841,9 @@ public class PreferencesInterface extends JPanel {
 			themeLabel.setForeground(Color.black);
 		}
 		if (activeButton == formattingLabel) {
-			generalPanel.setVisible(false);
-			generalLabel.setBackground(originalColor);
-			generalLabel.setForeground(Color.black);
+			systemPanel.setVisible(false);
+			systemLabel.setBackground(originalColor);
+			systemLabel.setForeground(Color.black);
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
@@ -855,9 +858,9 @@ public class PreferencesInterface extends JPanel {
 			themeLabel.setForeground(Color.black);
 		}
 		if (activeButton == themeLabel) {
-			generalPanel.setVisible(false);
-			generalLabel.setBackground(originalColor);
-			generalLabel.setForeground(Color.black);
+			systemPanel.setVisible(false);
+			systemLabel.setBackground(originalColor);
+			systemLabel.setForeground(Color.black);
 			notificationsPanel.setVisible(false);
 			notificationsLabel.setBackground(originalColor);
 			notificationsLabel.setForeground(Color.black);
@@ -873,9 +876,9 @@ public class PreferencesInterface extends JPanel {
 		}
 	}
 
-	private void setGeneralSettings(boolean systemTrayFlag, boolean systemTrayVal, boolean allowESCFlag,
-			boolean allowESCVal, boolean enableSpellCheckFlag, boolean enableSCVal,
-                        boolean downloadLocationFlag, String downloadLocationVal, boolean debugLogFlag, int debugLogVal) throws AWTException {
+        //Method to update all changed system settings in current instance of application when Apply is clicked
+	private void setSystemSettings(boolean systemTrayFlag, boolean systemTrayVal, boolean allowESCFlag, boolean allowESCVal, boolean enableSpellCheckFlag,
+                    boolean enableSCVal, boolean downloadLocationFlag, String downloadLocationVal, boolean debugLogFlag, int debugLogVal) throws AWTException {
 		if (systemTrayFlag) {
 			if (!(systemTrayVal)) {
 				Athena.clientResource.setSystemTrayIcon(false);
@@ -903,7 +906,6 @@ public class PreferencesInterface extends JPanel {
 			}
 		}
                 if (downloadLocationFlag) {
-                    //Adjust setting
                     Athena.clientResource.setDownloadLocation(downloadLocationVal);
                 }
                 if (debugLogFlag) {
@@ -911,6 +913,7 @@ public class PreferencesInterface extends JPanel {
                 }
 	}
 
+        //Method to update all changed notification settings in current instance of application when Apply is clicked
 	private void setNotificationSettings(boolean enableSoundsFlag, boolean enableSoundsVal, boolean msgSoundFlag, String msgSoundFile,
                                                 boolean inSoundFlag, String inSoundFile, boolean outSoundFlag, String outSoundFile) {
 		if (enableSoundsFlag) {
@@ -926,6 +929,7 @@ public class PreferencesInterface extends JPanel {
                 }
 	}
 
+        //Method to update all changed formatting settings in current instance of application when Apply is clicked
 	private void setFormattingSettings(boolean setFontFaceFlag, boolean setBoldFlag, boolean setItalicsFlag, boolean setUnderlineFlag, boolean setSizeFlag,
 			String setFontFaceVal, boolean setBoldVal, boolean setItalicsVal, boolean setUnderlineVal, int setSizeVal) {
 		if (setFontFaceFlag || setBoldFlag || setItalicsFlag || setUnderlineFlag || setSizeFlag) {
@@ -935,12 +939,13 @@ public class PreferencesInterface extends JPanel {
 		}
 	}
 
+        //Method to write array of changed preferences to configuration file when Apply is clicked
 	private void writeSavedPreferences(Object[] settingsToWrite) {
 		try {
 			BufferedWriter outPref = new BufferedWriter(new FileWriter("./users/" + Athena.username + "/athena.conf"));
 
-			//Write general settings
-			outPref.write("[GENERAL]");
+			//Write system settings
+			outPref.write("[SYSTEM]");
 			outPref.newLine();
 			outPref.write("allowSystemTray=" + settingsToWrite[0]);
 			outPref.newLine();

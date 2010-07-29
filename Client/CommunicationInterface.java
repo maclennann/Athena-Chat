@@ -1624,8 +1624,8 @@ public class CommunicationInterface extends JFrame {
 			}
 			BufferedReader inPref = new BufferedReader(new FileReader("./users/" + Athena.username + "/athena.conf"));
 			while ((line = inPref.readLine()) != null) {
-				if (line.equals("[GENERAL]")) {
-					//Get general settings
+				if (line.equals("[SYSTEM]")) {
+					//Get system settings
 					//Get allowSystemTray (boolean)
 					temp = inPref.readLine().substring(16);
 					settingsArray[arrayCount] = temp;
