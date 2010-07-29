@@ -583,8 +583,8 @@ public class CommunicationInterface extends JFrame {
 		// Adds the contact list to a scroll pane
 		userBox.setCellRenderer(new MyCellRenderer());
                 userBox.setBackground(new Color(220, 217, 240));
-                //userBox.setBackground(new Color(240, 240, 240));
                 contactList = new JScrollPane(userBox);
+                chatBox.setBackground(new Color(238, 232, 170));
 		chatList = new JScrollPane(chatBox);
 		contactList.setBounds(600, 2, 195, 450);
                 //contactList.setBackground(Color.black);
@@ -592,7 +592,6 @@ public class CommunicationInterface extends JFrame {
 
                 //Create detailed border pattern for contact/chat lists by combining several individual borders
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
-		//Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
                 Border contactListBorderB = BorderFactory.createCompoundBorder(threeColor, contactListBorderA);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, threeColor);
@@ -603,8 +602,8 @@ public class CommunicationInterface extends JFrame {
 		Border chatListBorderC = BorderFactory.createCompoundBorder(chatListBorderB, twoColor);
 		Border chatListBorderAA = BorderFactory.createCompoundBorder(chatListBorderC, twoColor);
 		contactListBorder = contactListBorderAA;
-		chatListBorder = chatListBorderAA;
-		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, "+ Contact List +", TitledBorder.CENTER,
+		chatListBorder = contactListBorderAA;
+		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, "= Contact List =", TitledBorder.CENTER,
 				TitledBorder.ABOVE_TOP, new Font("Arial", Font.BOLD, 14), Color.black);
 
                 //Set borders to corresponding lists
@@ -1070,8 +1069,8 @@ public class CommunicationInterface extends JFrame {
 			contactList.setVisible(false);
 
                         Athena.writeLog("CURRENT LISTMODEL: " + chatListModels.get(chatUID));
-                        TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, chatName + " Chat List", TitledBorder.CENTER,
-                            TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
+                        TitledBorder newChatListBorder = BorderFactory.createTitledBorder(chatListBorder, "+ " + chatName + " Chat List +", TitledBorder.CENTER,
+                            TitledBorder.ABOVE_TOP, new Font("Arial", Font.BOLD, 14), Color.black);
 			chatList.setBorder(newChatListBorder);
                         chatBox.setModel(chatListModels.get(chatUID));
 			chatList.setViewportView(chatBox);
