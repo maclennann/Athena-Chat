@@ -582,8 +582,8 @@ public class CommunicationInterface extends JFrame {
 
 		// Adds the contact list to a scroll pane
 		userBox.setCellRenderer(new MyCellRenderer());
-                //userBox.setBackground(new Color(220, 217, 240));
-                userBox.setBackground(new Color(240, 240, 240));
+                userBox.setBackground(new Color(220, 217, 240));
+                //userBox.setBackground(new Color(240, 240, 240));
                 contactList = new JScrollPane(userBox);
 		chatList = new JScrollPane(chatBox);
 		contactList.setBounds(600, 2, 195, 450);
@@ -592,9 +592,11 @@ public class CommunicationInterface extends JFrame {
 
                 //Create detailed border pattern for contact/chat lists by combining several individual borders
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
-		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
+		//Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
+                Border contactListBorderB = BorderFactory.createCompoundBorder(threeColor, contactListBorderA);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
 		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, threeColor);
+                contactListBorderAA = BorderFactory.createCompoundBorder(oneColor, contactListBorderAA);
 
                 Border chatListBorderA = BorderFactory.createCompoundBorder(twoColor, twoColor);
 		Border chatListBorderB = BorderFactory.createCompoundBorder(chatListBorderA, whiteColor);
@@ -602,8 +604,8 @@ public class CommunicationInterface extends JFrame {
 		Border chatListBorderAA = BorderFactory.createCompoundBorder(chatListBorderC, twoColor);
 		contactListBorder = contactListBorderAA;
 		chatListBorder = chatListBorderAA;
-		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
-				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.BOLD, 12), Color.black);
+		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, "+ Contact List +", TitledBorder.CENTER,
+				TitledBorder.ABOVE_TOP, new Font("Arial", Font.BOLD, 14), Color.black);
 
                 //Set borders to corresponding lists
 		contactList.setBorder(buddyBorder);
