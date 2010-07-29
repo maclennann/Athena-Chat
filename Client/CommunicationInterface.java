@@ -158,7 +158,7 @@ public class CommunicationInterface extends JFrame {
 	private Border whiteColor = BorderFactory.createLineBorder(Color.white);
 	private Border oneColor = BorderFactory.createLineBorder(Color.black);
 	private Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
-	private Border threeColor = BorderFactory.createLineBorder(new Color(238, 232, 170)); //Goldenrod
+	private Border threeColor = BorderFactory.createLineBorder(new Color(238, 232, 170)); //Pale Goldenrod
 	private Border contactListBorder, chatListBorder;
 	private ImageIcon lockIcon = new ImageIcon("images/lockicon.png");
 	private ImageIcon logoIcon = new ImageIcon("images/logo.png");
@@ -582,11 +582,12 @@ public class CommunicationInterface extends JFrame {
 
 		// Adds the contact list to a scroll pane
 		userBox.setCellRenderer(new MyCellRenderer());
-                userBox.setBackground(new Color(220, 217, 240));
-		contactList = new JScrollPane(userBox);
+                //userBox.setBackground(new Color(220, 217, 240));
+                userBox.setBackground(new Color(240, 240, 240));
+                contactList = new JScrollPane(userBox);
 		chatList = new JScrollPane(chatBox);
 		contactList.setBounds(600, 2, 195, 450);
-                contactList.setBackground(Color.black);
+                //contactList.setBackground(Color.black);
 		chatList.setBounds(600, 2, 195, 450);
 
                 //Create detailed border pattern for contact/chat lists by combining several individual borders
@@ -602,7 +603,7 @@ public class CommunicationInterface extends JFrame {
 		contactListBorder = contactListBorderAA;
 		chatListBorder = chatListBorderAA;
 		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
-				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.BOLD, 12), new Color(238, 232, 170));
+				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.BOLD, 12), Color.black);
 
                 //Set borders to corresponding lists
 		contactList.setBorder(buddyBorder);
@@ -1420,7 +1421,7 @@ public class CommunicationInterface extends JFrame {
 
 		JButton inviteButton = new JButton("Invite");
 		inviteButton.setForeground(Color.black);
-		inviteButton.setBackground(new Color(218, 165, 32));
+		inviteButton.setBackground(new Color(238, 232, 170));
 		inviteButton.setBounds(30, 310, 150, 30);
 		inviteButton.setBorder(buttonBorder);
 		inviteButton.addMouseListener(new MouseAdapter() {
@@ -1455,8 +1456,8 @@ public class CommunicationInterface extends JFrame {
 		});
 
 		JButton removeButton = new JButton("Remove");
-		removeButton.setForeground(Color.white);
-		removeButton.setBackground(new Color(0, 0, 120));
+		removeButton.setForeground(Color.black);
+		removeButton.setBackground(new Color(220, 217, 240));
 		removeButton.setBounds(200, 310, 150, 30);
 		removeButton.setBorder(buttonBorder);
 		removeButton.addMouseListener(new MouseAdapter() {
@@ -1504,7 +1505,7 @@ public class CommunicationInterface extends JFrame {
 
 		JButton createChatButton = new JButton("Create Chat");
 		createChatButton.setForeground(Color.black);
-		createChatButton.setBackground(new Color(218, 165, 32));
+		createChatButton.setBackground(new Color(238, 232, 170));
 		createChatButton.setBounds(30, 400, 150, 30);
 		createChatButton.setBorder(buttonBorder);
 		createChatButton.addActionListener(new ActionListener() {
@@ -1542,8 +1543,8 @@ public class CommunicationInterface extends JFrame {
 		});
 
 		JButton cancelChatButton = new JButton("Cancel");
-		cancelChatButton.setForeground(Color.white);
-		cancelChatButton.setBackground(new Color(0, 0, 120));
+		cancelChatButton.setForeground(Color.black);
+		cancelChatButton.setBackground(new Color(220, 217, 240));
 		cancelChatButton.setBounds(200, 400, 150, 30);
 		cancelChatButton.setBorder(buttonBorder);
 		cancelChatButton.addActionListener(new ActionListener() {
