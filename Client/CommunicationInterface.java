@@ -52,7 +52,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.Hashtable;
 import javax.swing.text.Document;
 import javax.swing.border.Border;
