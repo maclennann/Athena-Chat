@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-//import java.util.Arrays;
 import java.util.Hashtable;
 import javax.swing.text.Document;
 import javax.swing.border.Border;
@@ -135,7 +134,6 @@ public class CommunicationInterface extends JFrame {
 	public Font[] allFonts = ge.getAllFonts();
 
 	private static final long serialVersionUID = -7742402292330782311L;
-	public int debug = 0;
 	
 	// Define the listModel for the JList
 	public DefaultListModel contactListModel = new DefaultListModel();//TODO IS THIS OKAY? Athena.782
@@ -143,7 +141,7 @@ public class CommunicationInterface extends JFrame {
 	private DefaultListModel inviteListModel = new DefaultListModel();
         public Hashtable<String, DefaultListModel> chatListModels = new Hashtable<String, DefaultListModel>();
 
-	// Components for the visual display of the chat windows
+	// Components for the visual display of the chat windows and components
 	private JList userBox = new JList(contactListModel);
 	private JList inviteBox = new JList(inviteListModel);
         private JList chatBox = new JList(new DefaultListModel());
@@ -160,7 +158,7 @@ public class CommunicationInterface extends JFrame {
 	private Border whiteColor = BorderFactory.createLineBorder(Color.white);
 	private Border oneColor = BorderFactory.createLineBorder(Color.black);
 	private Border twoColor = BorderFactory.createLineBorder(new Color(0, 0, 120)); //Dark blue
-	private Border threeColor = BorderFactory.createLineBorder(new Color(218, 165, 32)); //Goldenrod
+	private Border threeColor = BorderFactory.createLineBorder(new Color(238, 232, 170)); //Goldenrod
 	private Border contactListBorder, chatListBorder;
 	private ImageIcon lockIcon = new ImageIcon("images/lockicon.png");
 	private ImageIcon logoIcon = new ImageIcon("images/logo.png");
@@ -168,6 +166,8 @@ public class CommunicationInterface extends JFrame {
 	private static JLabel lockIconLabel = new JLabel();
 	private static JLabel logoIconLabel = new JLabel();
 	private TitledBorder buddyBorder;
+
+        //Declare variables for storing loaded preference settings
 	private boolean enableSystemTray;
 	private boolean enableESCToClose;
 	private boolean enableSpellCheck;
@@ -195,12 +195,13 @@ public class CommunicationInterface extends JFrame {
 		}
 	}
 
-    public void newAliasListItems(String availableUserAlias) {
-        if (aliasListModel.indexOf(availableUserAlias) == -1) {
-			aliasListModel.addElement(availableUserAlias);
-            System.out.println("Added Alias to ListModel: " + availableUserAlias);
-		}
-	}
+        //Method to add user alias to the alias list
+        public void newAliasListItems(String availableUserAlias) {
+            if (aliasListModel.indexOf(availableUserAlias) == -1) {
+                            aliasListModel.addElement(availableUserAlias);
+                System.out.println("Added Alias to ListModel: " + availableUserAlias);
+                    }
+            }
 
 	/**
 	 * Method to remove user from the JList who signs off
@@ -210,10 +211,11 @@ public class CommunicationInterface extends JFrame {
 		contactListModel.removeElement(offlineUser);
 	}
 
-    public void aliasSignOff(String offlineAlias) {
-        aliasListModel.removeElement(offlineAlias);
-        System.out.println("Removed Alias from ListModel: " + offlineAlias);
-    }
+        //Method to remove user from the alias list
+        public void aliasSignOff(String offlineAlias) {
+            aliasListModel.removeElement(offlineAlias);
+            System.out.println("Removed Alias from ListModel: " + offlineAlias);
+        }
 
 	/**
 	 * Method to remove user from the JList who signs off
@@ -241,17 +243,18 @@ public class CommunicationInterface extends JFrame {
         chatListModels.put(chatUID, currentListModel);
 	}
 
-    public void newChatListItems(String availableUser, String chatUID) {
-        DefaultListModel currentListModel = chatListModels.get(chatUID);
-        chatListModels.remove(chatUID);
-        if (currentListModel.indexOf(availableUser) == -1) {
-			currentListModel.addElement(availableUser);
+        //Method to add an individual user to the corresponding chat list
+        public void newChatListItem(String availableUser, String chatUID) {
+            DefaultListModel currentListModel = chatListModels.get(chatUID);
+            chatListModels.remove(chatUID);
+            if (currentListModel.indexOf(availableUser) == -1) {
+                            currentListModel.addElement(availableUser);
+            }
+            chatListModels.put(chatUID, currentListModel);
         }
-        chatListModels.put(chatUID, currentListModel);
-	}
 
 	/**
-	 * The main window. IM/Chat tabs and buddylist.
+	 * The main window. IM/Chat tabs and contact list
 	 */
 	CommunicationInterface() {
 
@@ -278,7 +281,7 @@ public class CommunicationInterface extends JFrame {
 			//Athena.writeLog("FONT NAME: " + allFonts[a].getFontName() + "\t\tFONT FAMILY: " + allFonts[a].getFamily());
 		}
 
-		//Load preference settings
+		//Load preference settings into local variables and set default settings
 		Object[] settingsArray = loadSavedPreferences();
 		setCurrentSettingsArray(settingsArray);
 		enableSystemTray = Boolean.parseBoolean(settingsArray[0].toString());
@@ -288,8 +291,6 @@ public class CommunicationInterface extends JFrame {
 
 			e1.printStackTrace();
 		}
-
-		//Load preferences
 		enableESCToClose = Boolean.parseBoolean(settingsArray[1].toString());
 		closeTabWithESC(enableESCToClose);
 		enableSpellCheck = Boolean.parseBoolean(settingsArray[2].toString());
@@ -356,10 +357,12 @@ public class CommunicationInterface extends JFrame {
 		preferences.setMnemonic(KeyEvent.VK_P);
 		edit.add(preferences);
 
+                //Create Block User button in edit menu
                 JMenuItem blockUser = new JMenuItem("Block Selected User");
 		blockUser.setMnemonic(KeyEvent.VK_B);
 		edit.add(blockUser);
 
+                //Create Unblock User button in edit menu
 		JMenuItem unblockUser = new JMenuItem("Unblock A User");
 		blockUser.setMnemonic(KeyEvent.VK_U);
 		edit.add(unblockUser);
@@ -396,14 +399,17 @@ public class CommunicationInterface extends JFrame {
 		about.setMnemonic(KeyEvent.VK_A);
 		help.add(about);
 
+                //Create the button for Athena website
 		JMenuItem web = new JMenuItem("Athena Website");
 		web.setMnemonic(KeyEvent.VK_W);
 		help.add(web);
 
+                //Create the button for Bug Reports
 		JMenuItem bugReport = new JMenuItem("Report a bug!");
 		web.setMnemonic(KeyEvent.VK_R);
 		help.add(bugReport);
 
+                //Add action listener to the block/unblock user menu buttons
 		unblockUser.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -419,7 +425,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-		// ActionListener to make the disconnect menu item disconnect
+		// ActionListener for the group chat menu button
 		createChat.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -427,7 +433,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-		// ActionListener to make the disconnect menu item disconnect
+		// ActionListener to start/stop direct protect from security menu
 		startDP.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(imTabbedPane.getSelectedIndex()!=-1){
@@ -441,7 +447,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-		// ActionListener to make the disconnect menu item disconnect
+		// ActionListener for send file menu button
 		sendFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(imTabbedPane.getSelectedIndex()!=-1){
@@ -469,7 +475,7 @@ public class CommunicationInterface extends JFrame {
 		disconnect.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				// Clear the Buddy list when disconnected
+				// Clear the contact list when disconnected
 				contactListModel.clear();
                                 aliasListModel.clear();
 				Athena.disconnect();
@@ -516,7 +522,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-		// ActionListener to show About Athena window
+		// ActionListener to show Bug Report window
 		bugReport.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -541,6 +547,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
+                //ActionListener to open anonymous email window
 		sendEmail.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent event){
@@ -552,7 +559,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-
+                //ActionListener to export current encryption key pair
 		exportKey.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -562,6 +569,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
+                //ActionListener to toggle contact list to/from alias view
 		contactAlias.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -574,24 +582,29 @@ public class CommunicationInterface extends JFrame {
 
 		// Adds the contact list to a scroll pane
 		userBox.setCellRenderer(new MyCellRenderer());
+                userBox.setBackground(new Color(220, 217, 240));
 		contactList = new JScrollPane(userBox);
 		chatList = new JScrollPane(chatBox);
 		contactList.setBounds(600, 2, 195, 450);
+                contactList.setBackground(Color.black);
 		chatList.setBounds(600, 2, 195, 450);
+
+                //Create detailed border pattern for contact/chat lists by combining several individual borders
 		Border contactListBorderA = BorderFactory.createCompoundBorder(oneColor, oneColor);
-		Border chatListBorderA = BorderFactory.createCompoundBorder(twoColor, twoColor);
 		Border contactListBorderB = BorderFactory.createCompoundBorder(contactListBorderA, threeColor);
 		Border contactListBorderC = BorderFactory.createCompoundBorder(contactListBorderB, oneColor);
-		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, oneColor);
+		Border contactListBorderAA = BorderFactory.createCompoundBorder(contactListBorderC, threeColor);
+
+                Border chatListBorderA = BorderFactory.createCompoundBorder(twoColor, twoColor);
 		Border chatListBorderB = BorderFactory.createCompoundBorder(chatListBorderA, whiteColor);
 		Border chatListBorderC = BorderFactory.createCompoundBorder(chatListBorderB, twoColor);
 		Border chatListBorderAA = BorderFactory.createCompoundBorder(chatListBorderC, twoColor);
 		contactListBorder = contactListBorderAA;
 		chatListBorder = chatListBorderAA;
 		buddyBorder = BorderFactory.createTitledBorder(contactListBorderAA, Athena.username + "'s Contact List", TitledBorder.CENTER,
-				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), Color.black);
-		//chatListBorder = BorderFactory.createTitledBorder(chatListBorderAA, "Group Chat List", TitledBorder.CENTER,
-		//		TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.PLAIN, 14), new Color(0, 0, 120));
+				TitledBorder.DEFAULT_POSITION, new Font("Arial", Font.BOLD, 12), new Color(238, 232, 170));
+
+                //Set borders to corresponding lists
 		contactList.setBorder(buddyBorder);
 		chatList.setBorder(chatListBorder);
 
@@ -664,7 +677,7 @@ public class CommunicationInterface extends JFrame {
 
 					// Find out what was double-clicked
 					int index = theList.getSelectedIndex();
-					if (debug == 1) {
+					if (Athena.debug == 1) {
 						Athena.writeLog(String.valueOf(index));
 					}
 					if (index >= 0) {
@@ -847,7 +860,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		};
 
-		statusBox.setBounds(602, 452, 191, 25);
+		statusBox.setBounds(602, 458, 191, 25);
 		statusBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
@@ -977,10 +990,10 @@ public class CommunicationInterface extends JFrame {
 
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(user));
 		currentTab.setName("-1");
-		if (debug >= 1) {
+		if (Athena.debug >= 1) {
 			Athena.writeLog("Chat Name = " + currentTab.getName());
 		}
-		if (debug >= 1) {
+		if (Athena.debug >= 1) {
 			Athena.writeLog("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(user)));
 		}
 
@@ -1043,10 +1056,10 @@ public class CommunicationInterface extends JFrame {
 
 		JPanel currentTab = (JPanel) imTabbedPane.getComponentAt(imTabbedPane.indexOfTab(chatName));
 		currentTab.setName(chatUID);
-		if (debug >= 1) {
+		if (Athena.debug >= 1) {
 			Athena.writeLog("Chat Name = " + currentTab.getName());
 		}
-		if (debug >= 1) {
+		if (Athena.debug >= 1) {
 			Athena.writeLog("Chat Title = " + imTabbedPane.getTitleAt(imTabbedPane.indexOfTab(chatName)));
 		}
 
@@ -1133,7 +1146,7 @@ public class CommunicationInterface extends JFrame {
 				ActionListener exitListener = new ActionListener() {
 
 					public void actionPerformed(ActionEvent e) {
-						if (debug == 1) {
+						if (Athena.debug == 1) {
 							Athena.writeLog("Exiting...");
 						}
 						System.exit(0);
@@ -1215,7 +1228,7 @@ public class CommunicationInterface extends JFrame {
         public void setDebugLog(int debugLog)
         {
 			Athena.debug = debugLog;
-            debug = debugLog;
+            Athena.debug = debugLog;
         }
 
         public void setDownloadLocation(String newDownloadLocation)
@@ -1238,7 +1251,7 @@ public class CommunicationInterface extends JFrame {
 		Component[] currentTabComponents = currentTab.getComponents();
 		JScrollPane currentScrollPane = (JScrollPane) currentTabComponents[0];
 		JEditorPane currentEditorPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
-		if (debug >= 1) {
+		if (Athena.debug >= 1) {
 			Athena.writeLog("Alert listener on: " + currentEditorPane.toString());
 		}
 		currentEditorPane.getDocument().addDocumentListener(new DocumentListener() {
@@ -1559,7 +1572,7 @@ public class CommunicationInterface extends JFrame {
 	 * @param status Their current status
 	 */
 	public void mapUserStatus(String username, int status) {
-		if (debug == 1) {
+		if (Athena.debug == 1) {
 			Athena.writeLog("Username: " + username + "\nStatus: " + status);
 		}
 		userStatus.put(username, status);
@@ -1570,7 +1583,7 @@ public class CommunicationInterface extends JFrame {
 	 * @return The object[] of the current settings
 	 */
 	private Object[] loadSavedPreferences() {
-		if (debug == 1) {
+		if (Athena.debug == 1) {
 			Athena.writeLog("Importing preferences");
 		}
 		Object[] settingsArray = new Object[15];
@@ -1583,7 +1596,7 @@ public class CommunicationInterface extends JFrame {
 			if (!(newPrefFile.exists())) {
 				boolean success = new File("users/" + Athena.username + "/").mkdirs();
 				if (success) {
-					if (debug == 1) {
+					if (Athena.debug == 1) {
 						Athena.writeLog("File Not Found! Copying...");
 					}
 					File oldFile = new File("users/Aegis/athena.conf");
@@ -1602,7 +1615,7 @@ public class CommunicationInterface extends JFrame {
 						}
 					}
 				} else {
-					if (debug == 1) {
+					if (Athena.debug == 1) {
 						Athena.writeLog("File Not Found! Copying...");
 					}
 					File oldFile = new File("users/Aegis/athena.conf");
@@ -1723,7 +1736,7 @@ public class CommunicationInterface extends JFrame {
 			setText(s);
 			setIcon(new ImageIcon("images/available.png"));
 			if (isSelected) {
-				setBackground(list.getSelectionBackground());
+				setBackground(new Color(238, 232, 170));
 				setForeground(list.getSelectionForeground());
 			} else {
 				setBackground(list.getBackground());
@@ -1802,7 +1815,7 @@ public class CommunicationInterface extends JFrame {
 				tabPanels.remove(userToRemove);
                                 chatListModels.remove(chatUID);
                                 //chatLists.remove(chatUID);
-				if (debug >= 1) {
+				if (Athena.debug >= 1) {
 					Athena.writeLog("Removed Tab for user: " + userToRemove);
 				}
 				if (imTabbedPane.getTabCount() > 0) {
@@ -1812,11 +1825,11 @@ public class CommunicationInterface extends JFrame {
 					JEditorPane currentTextPane = (JEditorPane) currentScrollPane.getViewport().getComponent(0);
 					uniqueIDHash.remove(currentTextPane.getDocument());
 					//Retrieve the mapTextArea, then see if the tab is a chat tab
-					if (debug >= 1) {
+					if (Athena.debug >= 1) {
 						Athena.writeLog("ChatUID: " + chatUID);
 					}
 					if (!(chatUID.equals("-1"))) {
-						if (debug >= 1) {
+						if (Athena.debug >= 1) {
 							Athena.writeLog("Leaving chat!");
 						}
 						Athena.leaveChat(chatUID);
@@ -1826,7 +1839,7 @@ public class CommunicationInterface extends JFrame {
 				if (imTabbedPane.getTabCount() == 0) {
 					CommunicationInterface.lockIconLabel.setVisible(true);
 					CommunicationInterface.logoIconLabel.setVisible(true);
-					if (debug >= 1) {
+					if (Athena.debug >= 1) {
 						Athena.writeLog("ChatUID: " + chatUID);
 					}
 					if (!(chatUID.equals("-1"))) {

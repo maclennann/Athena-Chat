@@ -811,7 +811,7 @@ public class Athena {
                             } else if (chatMessage[0].equals("ChatJoin")) {
                                 //Format a chat join message
                                 print.writeToTextArea(chatMessage[1] + " has joined the chat.\n", print.getSetHeaderFont(Color.gray));
-                                clientResource.newChatListItems(chatMessage[1], tabToCheck.getName());
+                                clientResource.newChatListItem(chatMessage[1], tabToCheck.getName());
                             } else {
                                 print.writeToTextArea(chatMessage[0] + ": ", print.getSetHeaderFont(new Color(0, 0, 130)));
                                 parseMarkdown(chatMessage[1], print);
