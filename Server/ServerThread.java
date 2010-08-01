@@ -412,7 +412,7 @@ public class ServerThread extends Thread {
 		String[] myBlockList = getBlocklist();
 		String csvList="";
 		for(int i=0;i<myBlockList.length;i++){
-			csvList+=myBlockList+",";
+			csvList+=myBlockList[i]+",";
 		}
 		serverDout.writeUTF(encryptServerPrivate(csvList));
 	}
