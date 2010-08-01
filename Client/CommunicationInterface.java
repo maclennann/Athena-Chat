@@ -413,7 +413,7 @@ public class CommunicationInterface extends JFrame {
 		unblockUser.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				Athena.unblockUser();
+				new UnblockInterface();
 			}
 		});
 		blockUser.addActionListener(new ActionListener() {

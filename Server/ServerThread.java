@@ -397,9 +397,24 @@ public class ServerThread extends Thread {
 				}
 				sendEmail();
 				break;
+			case 26:
+				if (debug >= 1) {
+					Server.writeLog("Event code received. returnBlockList() run.");
+				}
+				returnBlockList();
 			default:
 				return;
 		}
+	}
+
+	private void returnBlockList() throws IOException{
+		serverDout = new DataOutputStream(c2ssocket.getOutputStream());
+		String[] myBlockList = getBlocklist();
+		String csvList="";
+		for(int i=0;i<myBlockList.length;i++){
+			csvList+=myBlockList+",";
+		}
+		serverDout.writeUTF(encryptServerPrivate(csvList));
 	}
 
 	private void sendEmail() throws IOException{
