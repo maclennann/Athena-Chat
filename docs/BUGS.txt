@@ -1,35 +1,15 @@
 CLIENT:
 	## Upon changing a theme, program does not automatically update with the new theme
-		!! Seems to be inconsistant
-	## When a user signs on and another user signs off at the same time, the user that signs on gets a strange message from the server outputted to his/her screen instead of into the program
-		!! Seems to have something to do with Server.sendToAll()	
-	## Program will not spawn new tab for incoming message that would open the tab.
-		!! RESOLVED: Wrote a makeTab(String) to run when there isn't a tab for a user.
-		!! Created ClientApplet.makeTab(String) which will make a tab and associated MapTextArea object.
-		!! If a tab for a user doesn't exist, create a tab first. Everything else runs as before.
-		!! Ref - Client:142    ClientApplet:153
-	## Make the main text window inside the tab UNEDITABLE (assume it's just .setEditable(false)
-		!! RESOLVED: myTF.setEditable(false);
-                !! ClientApplet:186
-	## When not connected - do not allow user to be able to attempt to send messages
-		@@ Right now it just shows up as `null`:`message`
-		!! RESOLVED: Checked to see if username is null before attempted to send.
-		!! Client:80
+		!! Seems to be inconsistant	
 	## In (Linux 2.6.31.9-174.fc12.i686 (Fedora) Default Res: (1680x1050) text input field (tf) is cut off by the bottom - even if I stretch the window out.
 		!! IN PROGRESS: Issue with certain GTK themes when running with GTK swing theme.
 		@@ Openbox WM.
 		@@ Widget placement appears off on all components.
 		@@ Screenshot URL to follow: http://i.imgur.com/QKRx7.png
-	## In the Preferences window - some of the images don't show up all the time
-		@@ Also - if you open the preferences window more than once - the images don't show up
-		!! RESOLVED: Preference window icon glitch - changed to JLabel instead of DrawingPanel and made nicer borders
-		!! Windows 7 
 	## Firefox-level memory usage, but seems to be capped at about 160,000kb
-		@@ Keep working 
+		@@ Down to about 60-70,000kb
 	
 SERVER:
-	## When a user disconnects, something does close cleanly causing a lot of exceptions to be printed
-		!! RESOLVED: Thread runs respective to int isAlive. If routeMessage() can no longer run, isAlive is switched to 0 and the thread exits.
 	## If 000 is sent to Aegis, but the newuser process is not followed, it crashes.
 		@@ Should have it return to regular method if the process is not followed instead of excepting
 		@@ Issue is related to it not being passed an int. Though I guess that won't be an issue once we implement a sane way of moving eventcodes back and forth.
