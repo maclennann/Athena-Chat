@@ -2,8 +2,8 @@ h2. Introduction
 
 *Athena* is a suite of encrypted communication software. *Athena* is made of two parts:
 
-* Athena client software
-* Aegis server software
+* Athena client software.
+* Aegis server software.
 
 We are in VERY early development at the moment. At its completion, *Athena* will use RSA strong encryption for simple, confidential communication.
 
