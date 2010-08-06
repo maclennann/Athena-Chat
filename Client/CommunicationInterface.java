@@ -653,7 +653,7 @@ public class CommunicationInterface extends JFrame {
 		MouseListener addBuddyMouseListener = new MouseAdapter() {
 
 			public void mouseClicked(MouseEvent mouseEvent) {
-				String usernameToAdd = JOptionPane.showInputDialog("Input the user name to add to your contact list:");
+				String usernameToAdd = JOptionPane.showInputDialog("Please input the user name to add to your contact list:");
 				try {
 					if (usernameToAdd != null) {
 						//Athena.buddyList(usernameToAdd);
@@ -1437,16 +1437,16 @@ public class CommunicationInterface extends JFrame {
 						// Add selected item to invite list
 						if (inviteListModel.contains(contactListModel.getElementAt(index))) {
 							JOptionPane.showMessageDialog(null, contactListModel.getElementAt(index).toString()
-									+ " is already invited.", "Attention!", JOptionPane.ERROR_MESSAGE);
+									+ " is already invited.", "Error", JOptionPane.ERROR_MESSAGE);
 						} else if (contactListModel.getElementAt(index).equals(Athena.username)) {
 							JOptionPane.showMessageDialog(null, "As chat creator, you are already\n included in the chat roster.",
-									"Attention!", JOptionPane.ERROR_MESSAGE);
+									"Error", JOptionPane.ERROR_MESSAGE);
 						} else {
 							inviteListModel.addElement(contactListModel.getElementAt(index));
 						}
 					} //If there wasn't something selected, bring up a new window that will let them choose who they want to remove
 					else {
-						JOptionPane.showMessageDialog(null, "No contact selected for invite.", "Attention!", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "No contact selected for invite.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (Exception e) {
 
@@ -1474,7 +1474,7 @@ public class CommunicationInterface extends JFrame {
 						inviteListModel.removeElementAt(index);
 					} //If there wasn't something selected, bring up a new window that will let them choose who they want to remove
 					else {
-						JOptionPane.showMessageDialog(null, "No contact selected for removal.", "Attention!", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "No contact selected for removal.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (Exception e) {
 
@@ -1512,9 +1512,9 @@ public class CommunicationInterface extends JFrame {
 
 			public void actionPerformed(ActionEvent event) {
 				if (inviteListModel.isEmpty()) {
-					JOptionPane.showMessageDialog(null, "No contacts selected for group chat.", "Attention!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "No contacts selected for group chat.", "Error", JOptionPane.ERROR_MESSAGE);
 				} else if (chatNameField.getText().trim().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please enter a chat room name.", "Attention!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Please enter a chat room name.", "Error", JOptionPane.ERROR_MESSAGE);
 				} else {
 					//Run the createChat method in Athena, returns the chatUID
 					String chatUID = Athena.createChat(chatNameField.getText());

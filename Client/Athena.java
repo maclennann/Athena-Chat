@@ -520,7 +520,7 @@ public class Athena {
             else if (fromUserDecrypted.equals("ChatInvite")) {
                 decryptedMessage = decryptServerPublic(encryptedMessage);
                 String[] chatName = decryptedMessage.split(",");
-                int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to join the group chat: " + chatName[0] + " , by " + chatName[1] + ".");
+                int toJoin = JOptionPane.showConfirmDialog(null, "You have been invited by " + chatName[1] + " to join\nthe group chat: " + chatName[0] + "...");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
                     systemMessage("14");
@@ -611,9 +611,9 @@ public class Athena {
                 //Open up an alert!
 				if ((clientResource.tabPanels.containsKey(inviteInformation))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
-                        print.writeToTextArea(inviteInformation + " has invited us to a Direct Protect session.\n", print.getSetHeaderFont(Color.gray));
+                        print.writeToTextArea(inviteInformation + " has initiated a Direct Protect session...\n", print.getSetHeaderFont(Color.gray));
                 }
-                int toJoin = JOptionPane.showConfirmDialog(null, "You've been invited to direct protect with: " + inviteInformation + ".");
+                int toJoin = JOptionPane.showConfirmDialog(null, "You have been invited to a Direct Protect session with: " + inviteInformation + "...");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
 					systemMessage("20");
@@ -627,7 +627,7 @@ public class Athena {
 					//dpInputStream = new DataInputStream(dpSocket.getInputStream());
                     if ((clientResource.tabPanels.containsKey(inviteInformation))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
-                        print.writeToTextArea("Joining Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
+                        print.writeToTextArea("Joining Direct Protect session with "+inviteInformation+"...\n", print.getSetHeaderFont(Color.gray));
 						print.encType.setText("Encryption Type: AES - DirectProtect Active");
                                                 print.encType.setIcon(new ImageIcon("images/lockDP.png"));
 					}
@@ -635,7 +635,7 @@ public class Athena {
 				else {
 					if ((clientResource.tabPanels.containsKey(inviteInformation))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformation);
-                        print.writeToTextArea("Aborting Direct Protect session with "+inviteInformation+".\n", print.getSetHeaderFont(Color.gray));
+                        print.writeToTextArea("Aborting Direct Protect session with "+inviteInformation+"...\n", print.getSetHeaderFont(Color.gray));
 						print.encType.setText("Encryption Type: RSA - DirectProtect Inactive");
                                                 print.encType.setIcon(new ImageIcon("images/unlockDP.png"));
 					}
@@ -682,9 +682,9 @@ public class Athena {
 				//Open up an alert!
 				if ((clientResource.tabPanels.containsKey(inviteInformationArray[0]))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteInformationArray[0]);
-                        print.writeToTextArea(inviteInformationArray[0] + " would like to transfer a file.\n", print.getSetHeaderFont(Color.gray));
+                        print.writeToTextArea(inviteInformationArray[0] + " would like to transfer a file...\n", print.getSetHeaderFont(Color.gray));
                 }
-                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " would like to transfer a file.\nFile name: " + filePathArray[filePathArray.length-1] + "\nFile Size: "+Integer.parseInt(inviteInformationArray[2])/1000+"kb");
+                int toJoin = JOptionPane.showConfirmDialog(null, inviteInformationArray[0] + " would like to transfer a file:\nFile name: " + filePathArray[filePathArray.length-1] + "\nFile Size: "+Integer.parseInt(inviteInformationArray[2])/1000+"kb");
                 if (toJoin == JOptionPane.YES_OPTION) {
                     //Send server a confirm message
 					systemMessage("22");
@@ -745,7 +745,7 @@ public class Athena {
 				decryptedMessage = decryptServerPublic(encryptedMessage);			
 				
 				//Output the kick message to a JOption Pane
-                JOptionPane.showMessageDialog(null, "You've been kicked by the server. Please re-login.");
+                JOptionPane.showMessageDialog(null, "You have been kicked by the server. Please re-login.");
 				clientResource.contactListModel.clear();
 				Athena.disconnect();
 				//Get rid of this window and open a new Login Window
@@ -1064,7 +1064,7 @@ public class Athena {
 
 			if ((clientResource.tabPanels.containsKey(inviteUser))) {
                         print = (MapTextArea) clientResource.tabPanels.get(inviteUser);
-                        print.writeToTextArea("Inviting "+inviteUser+" to a Direct Protect session.\n", print.getSetHeaderFont(Color.gray));
+                        print.writeToTextArea("Inviting "+inviteUser+" to a Direct Protect session...\n", print.getSetHeaderFont(Color.gray));
             }
 
         } catch (Exception ie) {
@@ -1443,7 +1443,7 @@ public class Athena {
                 if (debug >= 1) {
                     writeLog(getStackTraceAsString(ie));
                 }
-                print.writeToTextArea("Error: You probably don't have the user's public key. Please add them to your list!\n", print.getSetHeaderFont(new Color(130, 0, 0)));
+                print.writeToTextArea("Error: You probably don't have the user's public key. Please add them to your contact list!\n", print.getSetHeaderFont(new Color(130, 0, 0)));
                 print.moveToEnd();
                 print.clearTextField();
             } catch (Exception e) {
