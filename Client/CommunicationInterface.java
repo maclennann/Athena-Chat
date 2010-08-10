@@ -1034,6 +1034,8 @@ public class CommunicationInterface extends JFrame {
 		tabPanels.put(chatName, new MapTextArea(chatName, enableSpellCheck, uniqueIDHash));
 		// Make a temporary object for that JPanel
 		MapTextArea temp = (MapTextArea) tabPanels.get(chatName);
+		temp.encType.setText("Encryption Type: AES - Group Chat");
+		temp.encType.setIcon(new ImageIcon("images/lockDP.png"));
 		// Actually pull the JPanel out
 		JPanel tempPanel = temp.getJPanel();
 		// Create a tab with that JPanel on it and add tab to ID hash table
