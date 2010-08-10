@@ -94,7 +94,7 @@ public class BlockUserInterface extends JPanel {
 			public void actionPerformed(ActionEvent event) {
                                 String userToUnblock = buddyList.getSelectedItem().toString();
                                     Athena.unblockUser(userToUnblock);
-                                    JOptionPane.showMessageDialog(null,  userToUnblock + " has been unblocked.\nPlease disconnect and reconnect\nto reflect your recent changes.", "Unblock Complete", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(null,  userToUnblock + " has been unblocked.", "Unblock Complete", JOptionPane.INFORMATION_MESSAGE);
                                     blockUserJFrame.dispose();
 			}
 		});

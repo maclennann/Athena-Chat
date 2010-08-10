@@ -917,6 +917,8 @@ public class CommunicationInterface extends JFrame {
 		imContentFrame.setContentPane(panel);
 		imContentFrame.setVisible(true);
 
+                userBox.setModel(contactListModel);
+
 	}
 
 	/**
