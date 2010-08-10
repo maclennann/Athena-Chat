@@ -85,8 +85,7 @@ public class BlockUserInterface extends JPanel {
 		//Confirm and Cancel JButtons
 		confirmJButton.setBounds(10, 70, 100, 25);
 		cancelJButton.setBounds(125, 70, 100, 25);
-                System.out.println("Blocklist item = *" + buddyList.getItemAt(0) + "*");
-                if(buddyList.getItemCount() == 0)
+                if(buddyList.getItemAt(0).toString().trim().equals(""))
                     confirmJButton.setEnabled(false);
 
 		//ActionListener to make the connect menu item connect
@@ -94,9 +93,9 @@ public class BlockUserInterface extends JPanel {
 
 			public void actionPerformed(ActionEvent event) {
                                 String userToUnblock = buddyList.getSelectedItem().toString();
-				Athena.unblockUser(userToUnblock);
-				JOptionPane.showMessageDialog(null,  userToUnblock + " has been unblocked.\nPlease disconnect and reconnect\nto reflect your recent changes.", "Unblock Complete", JOptionPane.INFORMATION_MESSAGE);
-				blockUserJFrame.dispose();
+                                    Athena.unblockUser(userToUnblock);
+                                    JOptionPane.showMessageDialog(null,  userToUnblock + " has been unblocked.\nPlease disconnect and reconnect\nto reflect your recent changes.", "Unblock Complete", JOptionPane.INFORMATION_MESSAGE);
+                                    blockUserJFrame.dispose();
 			}
 		});
 
@@ -125,7 +124,6 @@ public class BlockUserInterface extends JPanel {
 
         BlockUserInterface(boolean blockUser) {
 		try{
-			//buddyList = new JComboBox(Athena.getContactsArrayFromTable());
                         Enumeration userEnumeration = Athena.clientResource.contactListModel.elements();
                         String[] onlineContacts = new String[Athena.clientResource.contactListModel.size()];
                         int count = 0;
@@ -171,23 +169,28 @@ public class BlockUserInterface extends JPanel {
                     System.out.println("Retrieved blocklist with length " + blockedUsers.length);
                     boolean blockFlag = false;
 
-                    //Check to see if user is already blocked
-                    for(int z = 0; z < blockedUsers.length; z++)
+                    if(userToBlock.equals(Athena.username))
+                        JOptionPane.showMessageDialog(null,  "Sorry, you cannot block yourself.", "Unblock Failed", JOptionPane.INFORMATION_MESSAGE);
+                    else
                     {
-                        if(blockedUsers[z].equals(userToBlock))
+                        //Check to see if user is already blocked
+                        for(int z = 0; z < blockedUsers.length; z++)
                         {
-                            JOptionPane.showMessageDialog(null, userToBlock + " is already blocked.", "Block Complete", JOptionPane.INFORMATION_MESSAGE);
-                            blockFlag = true;
+                            if(blockedUsers[z].equals(userToBlock))
+                            {
+                                JOptionPane.showMessageDialog(null, userToBlock + " is already blocked.", "Block Complete", JOptionPane.INFORMATION_MESSAGE);
+                                blockFlag = true;
+                            }
+
                         }
 
+                        if(!blockFlag)
+                        {
+                            Athena.blockUser(userToBlock);
+                            JOptionPane.showMessageDialog(null, userToBlock + " has been blocked.", "Block Complete", JOptionPane.INFORMATION_MESSAGE);
+                            blockUserJFrame.dispose();
+                        }
                     }
-
-                    if(!blockFlag)
-                    {
-                        Athena.blockUser(userToBlock);
-                        JOptionPane.showMessageDialog(null, userToBlock + " has been blocked.", "Block Complete", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                    blockUserJFrame.dispose();
 
                 } catch (IOException ex) {
                     Logger.getLogger(BlockUserInterface.class.getName()).log(Level.SEVERE, null, ex);
