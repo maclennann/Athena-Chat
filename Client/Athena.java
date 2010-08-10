@@ -91,6 +91,7 @@ public class Athena {
     static String serverIP = "aegis.athenachat.org"; //IP of the server
     static int connected = 0; 	//If the client is connect to the server
     private static int away = 0; //Is the user away?
+	private static LoginProgress loginBar;
     private static SecretKeySpec chatSessionKey, dpSessionKey; //Secret key for group chat session key
 	static DESCrypto descrypto; //DESCrpyto Object for encrypting with user's password
     private static String toUser; //Recipient for message
@@ -251,8 +252,9 @@ public class Athena {
      * Method instantiate the buddy list
      * @throws Exception
      */
-    public static void instantiateBuddyList(LoginProgress loginBar) throws Exception {
-        //First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
+    public static void instantiateBuddyList(LoginProgress myloginBar) throws Exception {
+        loginBar = myloginBar;
+		//First we need to compare the hash of the buddy list we have to the one on the server to make sure nothing has been changed.
         String hashOfLocalBuddyList = returnHashOfLocalBuddyList(username);
         //Now we need to get the hash of the user's buddy list on the server
         String[] remoteVals = returnHashOfRemoteBuddyList(username);
@@ -2101,6 +2103,9 @@ public class Athena {
      * @param stackTrace the StackTrace of the exception
      */
     public static void sendBugReport(String stackTrace) {
+		if(loginBar != null){
+			loginBar.dispose();
+		}
         int toSend = JOptionPane.showConfirmDialog(null, "Sorry, it looks like something went wrong.\n"
                 + "Would you like to submit this as a bug report?", "File a Bug Report?", JOptionPane.YES_NO_OPTION);
         if (toSend == JOptionPane.YES_OPTION) {
