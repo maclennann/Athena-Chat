@@ -918,6 +918,7 @@ public class CommunicationInterface extends JFrame {
 		imContentFrame.setVisible(true);
 
                 userBox.setModel(contactListModel);
+                userBox.updateUI();
 
 	}
 
@@ -1401,6 +1402,7 @@ public class CommunicationInterface extends JFrame {
 	public void createChatWindow() {
 		chatWindow = new JFrame("Group Chat Initiation");
 		chatWindow.setSize(400, 480);
+                chatWindow.setLocationRelativeTo(imContentFrame);
 
 		JPanel chatPanel = new JPanel();
 		chatPanel.setBounds(10, 10, 400, 480);

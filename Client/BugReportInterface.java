@@ -75,7 +75,7 @@ public class BugReportInterface extends JPanel {
 	BugReportInterface() {
 		//Create the Main Frame
 		submitBugJFrame = new JFrame("Submit Bug Report/Feature Request");
-		submitBugJFrame.setSize(500, 550);
+		submitBugJFrame.setSize(500, 560);
 		submitBugJFrame.setResizable(false);
 		submitBugJFrame.setLocationRelativeTo(CommunicationInterface.imContentFrame);
 

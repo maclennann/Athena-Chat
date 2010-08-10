@@ -33,7 +33,7 @@ public class AboutInterface extends JFrame {
 	//Components for the visual display of the aboutWindow window
 	private JFrame aboutWindow;
 	private JPanel contentPane = new JPanel();
-	private JLabel usernameLabel = new JLabel("Athena Chat Client v1.0.1b");
+	private JLabel usernameLabel = new JLabel("Athena Chat Client v1.1");
 	private JButton cancel = new JButton("OK");
 	private ImageIcon logoicon = new ImageIcon("images/splash.png");
 	private JLabel logo = new JLabel();
