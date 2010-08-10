@@ -2127,6 +2127,7 @@ public class Athena {
                 e.printStackTrace();
             }
         }
+		System.exit(0);
     }
 
     /**
