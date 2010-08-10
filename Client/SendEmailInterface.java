@@ -61,7 +61,7 @@ public class SendEmailInterface extends JPanel {
 	SendEmailInterface() {
 		//Create the Main Frame
 		sendEmailJFrame = new JFrame("Send an Anonymous Email");
-		sendEmailJFrame.setSize(500, 350);
+		sendEmailJFrame.setSize(500, 360);
 		sendEmailJFrame.setResizable(false);
 		sendEmailJFrame.setLocationRelativeTo(CommunicationInterface.imContentFrame);
 

@@ -232,9 +232,8 @@ public class Athena {
         }
     }
 
-	public static void blockUser(){
+	public static void blockUser(String userToBlock){
 		try{
-		String userToBlock = clientResource.imTabbedPane.getTitleAt(clientResource.imTabbedPane.getSelectedIndex());
 		systemMessage("23");
 		c2sdout.writeUTF(encryptServerPublic(userToBlock));
 		} catch(Exception e){e.printStackTrace();}
@@ -242,7 +241,6 @@ public class Athena {
 
 	public static void unblockUser(String userToUnblock){
 		try{
-		//String userToBlock = JOptionPane.showInputDialog(null,"Which user would you like to unblock?");
 		systemMessage("24");
 		c2sdout.writeUTF(encryptServerPublic(userToUnblock));
 		} catch(Exception e){e.printStackTrace();}

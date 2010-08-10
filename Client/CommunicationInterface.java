@@ -358,12 +358,12 @@ public class CommunicationInterface extends JFrame {
 		edit.add(preferences);
 
                 //Create Block User button in edit menu
-                JMenuItem blockUser = new JMenuItem("Block Selected User");
+                JMenuItem blockUser = new JMenuItem("Block User");
 		blockUser.setMnemonic(KeyEvent.VK_B);
 		edit.add(blockUser);
 
                 //Create Unblock User button in edit menu
-		JMenuItem unblockUser = new JMenuItem("Unblock A User");
+		JMenuItem unblockUser = new JMenuItem("Unblock User");
 		blockUser.setMnemonic(KeyEvent.VK_U);
 		edit.add(unblockUser);
 
@@ -375,7 +375,7 @@ public class CommunicationInterface extends JFrame {
 		// Create button Encryption -> Export Key Pair
 		JMenuItem exportKey = new JMenuItem("Export Key Pair");
 		security.add(exportKey);
-		JMenuItem startDP = new JMenuItem("Start/Stop DirectProtect");
+		JMenuItem startDP = new JMenuItem("Start/Stop Direct-Protect");
 		security.add(startDP);
 		JMenuItem sendEmail = new JMenuItem("Send Anonymous Email");
 		security.add(sendEmail);
@@ -386,7 +386,7 @@ public class CommunicationInterface extends JFrame {
 		menuBar.add(view);
 
 		// Create button View -> Contact Aliases
-		JMenuItem contactAlias = new JMenuItem("Toggle Alias View");
+		JMenuItem contactAlias = new JMenuItem("Change Alias List View");
 		view.add(contactAlias);
 
 		// Create the help menu
@@ -405,7 +405,7 @@ public class CommunicationInterface extends JFrame {
 		help.add(web);
 
                 //Create the button for Bug Reports
-		JMenuItem bugReport = new JMenuItem("Report a bug!");
+		JMenuItem bugReport = new JMenuItem("Report a Bug");
 		web.setMnemonic(KeyEvent.VK_R);
 		help.add(bugReport);
 
@@ -413,15 +413,13 @@ public class CommunicationInterface extends JFrame {
 		unblockUser.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				new UnblockInterface();
+				new BlockUserInterface();
 			}
 		});
 		blockUser.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				if(imTabbedPane.getSelectedIndex()!=-1){
-					Athena.blockUser();
-				}else{JOptionPane.showMessageDialog(null,"Please select the user to block:");}
+                               new BlockUserInterface(true);
 			}
 		});
 
