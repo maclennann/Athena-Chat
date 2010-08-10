@@ -2140,7 +2140,7 @@ public class Athena {
 	public static String[] getBlockList() throws IOException{
 		systemMessage("26");
 		String blockedUsers = decryptServerPublic(c2sdin.readUTF());
-		System.out.println(blockedUsers);
+		System.out.println("CURRENT BLOCKLIST: " + blockedUsers);
 		String[] blockedUsersArray = blockedUsers.split(",");
 		return blockedUsersArray;
 	}

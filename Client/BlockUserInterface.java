@@ -40,6 +40,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Toolkit;
+import java.util.Enumeration;
 import javax.swing.JComboBox;
 
 /**
@@ -84,6 +85,7 @@ public class BlockUserInterface extends JPanel {
 		//Confirm and Cancel JButtons
 		confirmJButton.setBounds(10, 70, 100, 25);
 		cancelJButton.setBounds(125, 70, 100, 25);
+                System.out.println("Blocklist item = *" + buddyList.getItemAt(0) + "*");
                 if(buddyList.getItemCount() == 0)
                     confirmJButton.setEnabled(false);
 
@@ -123,7 +125,16 @@ public class BlockUserInterface extends JPanel {
 
         BlockUserInterface(boolean blockUser) {
 		try{
-			buddyList = new JComboBox(Athena.getContactsArrayFromTable());
+			//buddyList = new JComboBox(Athena.getContactsArrayFromTable());
+                        Enumeration userEnumeration = Athena.clientResource.contactListModel.elements();
+                        String[] onlineContacts = new String[Athena.clientResource.contactListModel.size()];
+                        int count = 0;
+                        for (Enumeration<?> e = userEnumeration; e.hasMoreElements();)
+                        {
+                            onlineContacts[count] = e.nextElement().toString();
+                            count++;
+                        }
+                        buddyList = new JComboBox(onlineContacts);
 		}catch(Exception e){}
 
 		//Create the Main Frame
@@ -157,7 +168,7 @@ public class BlockUserInterface extends JPanel {
                 try {
                     String userToBlock = buddyList.getSelectedItem().toString();
                     String[] blockedUsers = Athena.getBlockList();
-                    System.out.println("Retrieved blocklist!");
+                    System.out.println("Retrieved blocklist with length " + blockedUsers.length);
                     boolean blockFlag = false;
 
                     //Check to see if user is already blocked

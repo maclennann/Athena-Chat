@@ -77,7 +77,7 @@ public class SendEmailInterface extends JPanel {
 		generalTitledBorder = BorderFactory.createTitledBorder(
 				blackline, "Anonymous Email Submission Form");
 
-		//Username Input
+		//User Input components
 		toJTextField = new JTextField();
 		toJLabel.setBounds(15, 20, 150, 25);
 		toJTextField.setBounds(15, 40, 470, 25);
@@ -117,8 +117,7 @@ public class SendEmailInterface extends JPanel {
 				try{
 				if (!(toJTextField.getText().equals("")) && !(reJTextField.getText().equals(""))) {
 					Athena.sendEmail(toJTextField.getText(),reJTextField.getText(),bodyJTextArea.getText());
-					//sendInfoToAegis(descriptionJTextField.getText(), recreationJTextArea.getText(), expectedJTextArea.getText(), actualJTextArea.getText());
-					JOptionPane.showMessageDialog(null, "Your anonymous email has been sent.", "Thanks!", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Your anonymous email has been sent.", "Email Sent", JOptionPane.INFORMATION_MESSAGE);
 					sendEmailJFrame.dispose();
 
 				} else {
@@ -156,37 +155,5 @@ public class SendEmailInterface extends JPanel {
 		//Let the Frame know what's up
 		sendEmailJFrame.setContentPane(contentPane);
 		sendEmailJFrame.setVisible(true);
-	}
-
-	/**
-	 * Compile the report information and send it to Aegis
-	 * @param titles Summary of bug/feature
-	 * @param recreates Recreation steps for bug
-	 * @param expecteds Expected outcome of action
-	 * @param actuals The bug
-	 */
-	public void sendInfoToAegis(String titles, String recreates, String expecteds, String actuals) {
-
-		//Get a connection
-		//Client.connect();
-
-		//Give me back my filet of DataOutputStream + DataInputStream
-		DataOutputStream dout = Athena.returnDOUT();
-		//DataInputStream din = Client.returnDIN();
-
-
-		try {
-			Athena.systemMessage("10");
-			dout.writeUTF(Athena.encryptServerPublic(titles));
-			dout.writeUTF(Athena.encryptServerPublic(recreates));
-			dout.writeUTF(Athena.encryptServerPublic(expecteds));
-			dout.writeUTF(Athena.encryptServerPublic(actuals));
-			//Close the connection
-			//dout.close();
-			//Client.disconnect();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 }
