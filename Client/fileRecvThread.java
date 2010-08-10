@@ -79,6 +79,7 @@ public class fileRecvThread extends Thread {
 			Progress frame = new Progress(filePathArray[arrSize-1],Integer.parseInt(fileSize));
 			frame.pack();
 			frame.setVisible(true);
+                        frame.setLocationRelativeTo(CommunicationInterface.imContentFrame);
 
 			//Start the stopwatch so we know how much time as elapsed
 			StopWatch s = new StopWatch();
