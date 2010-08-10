@@ -142,11 +142,11 @@ public class BugReportInterface extends JPanel {
 			public void actionPerformed(ActionEvent event) {
 				if (!(descriptionJTextField.getText().equals("")) && !(recreationJTextArea.getText().equals(""))) {
 					sendInfoToAegis(descriptionJTextField.getText(), recreationJTextArea.getText(), expectedJTextArea.getText(), actualJTextArea.getText());
-					JOptionPane.showMessageDialog(null, "Thank you for submitting this report. It has been added to our database", "Thanks!", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Thank you for submitting this report. It has been added to our database", "Report Submitted", JOptionPane.INFORMATION_MESSAGE);
 					submitBugJFrame.dispose();
 
 				} else {
-					JOptionPane.showMessageDialog(null, "Please fill in all required fields.", "Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Please fill in all required fields.", "Submission Error", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}

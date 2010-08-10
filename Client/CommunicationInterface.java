@@ -405,7 +405,7 @@ public class CommunicationInterface extends JFrame {
 		help.add(web);
 
                 //Create the button for Bug Reports
-		JMenuItem bugReport = new JMenuItem("Report a Bug");
+		JMenuItem bugReport = new JMenuItem("Report A Bug");
 		web.setMnemonic(KeyEvent.VK_R);
 		help.add(bugReport);
 
@@ -496,7 +496,7 @@ public class CommunicationInterface extends JFrame {
 			}
 		});
 
-		// ActionListener to show Preferences window
+		// ActionListener to show Preferences Interface window
 		preferences.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
