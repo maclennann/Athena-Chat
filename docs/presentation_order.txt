@@ -1,0 +1,24 @@
+== FINAL PRESENTATION ORDER ==
+
+Slide 1 [Group Intro]: 	Steve
+Slide 2 [Athena Intro]: Greg
+Slide 3 [Encryption]: 	Norm
+Slide 4 [Encryption]: 	Norm
+Slide 5 [Encryption]: 	Norm
+Slide 6 [Athena 1.0]: 	Steve
+Slide 7 [Athena 1.1]: 	Steve
+
+**BEGIN DEMO**
+
+Group Chat: 	Norm
+Secure Email: 	Norm
+Direct Protect:	Greg
+File Transfer	Greg
+Block/Unblock:	Greg
+Aliases:	Steve
+Custom Sounds:	Steve
+New Settings:	Steve
+
+**END DEMO**
+
+Slide 8 [Conclusion]: 	[All] Questions/comments?
