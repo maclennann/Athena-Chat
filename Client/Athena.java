@@ -229,7 +229,7 @@ public class Athena {
             serverPublic = RSACrypto.readPubKeyFromFile("users/Aegis/keys/Aegis.pub");
             System.gc();
         } catch (IOException ie) {
-            sendBugReport(getStackTraceAsString(ie));
+            sendBugReport(getStackTraceAsString(ie),null);
         }
     }
 
@@ -329,10 +329,10 @@ public class Athena {
                     clientResource.newAliasListItems(contactsTable.get(currentE));
                 }
             } catch (java.util.NoSuchElementException ie) {
-                sendBugReport(getStackTraceAsString(ie));
+                sendBugReport(getStackTraceAsString(ie),null);
                 ie.printStackTrace();
             } catch (Exception ie) {
-                sendBugReport(getStackTraceAsString(ie));
+                sendBugReport(getStackTraceAsString(ie),null);
                 ie.printStackTrace();
             }
         }
@@ -387,7 +387,7 @@ public class Athena {
             //Call the mapUserStatus method in ClientApplet to fill the Hashtable of user's statuses
             clientResource.mapUserStatus(findUserName, result);
         } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             if (debug >= 1) {
                 e.printStackTrace();
             }
@@ -422,7 +422,7 @@ public class Athena {
                 clientResource.newAliasListItems(contactsTable.get(usernameToCheck));
             }
         } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             if (debug >= 1) {
                 e.printStackTrace();
             }
@@ -861,7 +861,7 @@ public class Athena {
         } catch (IOException ie) {
             connected = 0;
         } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             if (debug >= 1) {
                 e.printStackTrace();
             }
@@ -922,7 +922,7 @@ public class Athena {
                         //Print an escaped asterisk
                         print.writeToTextArea(String.valueOf(current), print.getTextFont());
                     } catch (Exception e) {
-                        sendBugReport(getStackTraceAsString(e));
+                        sendBugReport(getStackTraceAsString(e),null);
                         e.printStackTrace();
                     }
 
@@ -992,7 +992,7 @@ public class Athena {
             //Newline after parsing the message
             print.writeToTextArea("\n", print.getTextFont());
         } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             e.printStackTrace();
         }
         //Revert to default font
@@ -1355,7 +1355,7 @@ public class Athena {
                     print.moveToEnd();
                     print.clearTextField();
                 } catch (Exception e) {
-                    sendBugReport(getStackTraceAsString(e));
+                    sendBugReport(getStackTraceAsString(e),null);
 
                     e.printStackTrace();
                 }
@@ -1447,7 +1447,7 @@ public class Athena {
                 print.moveToEnd();
                 print.clearTextField();
             } catch (Exception e) {
-                sendBugReport(getStackTraceAsString(e));
+                sendBugReport(getStackTraceAsString(e),null);
                 e.printStackTrace();
             }
         }
@@ -1494,7 +1494,7 @@ public class Athena {
                 out.close();
             }
         } catch (IOException e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             e.printStackTrace();
         }
     }
@@ -1524,7 +1524,7 @@ public class Athena {
             }
             out.close();
         } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             if (debug >= 1) {
                 writeLog("ERROR: Writing to buddylist.");
             }
@@ -1560,7 +1560,7 @@ public class Athena {
             }
             out.close();
         } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             if (debug >= 1) {
                 writeLog("ERROR: Writing to buddylist.");
             }
@@ -2014,7 +2014,7 @@ public class Athena {
             return remoteValues;
 
         } catch (Exception e) {
-            sendBugReport(getStackTraceAsString(e));
+            sendBugReport(getStackTraceAsString(e),null);
             e.printStackTrace();
             return null;
         }
@@ -2102,9 +2102,14 @@ public class Athena {
      * Send a bug report to Aegis as a result of an exception
      * @param stackTrace the StackTrace of the exception
      */
-    public static void sendBugReport(String stackTrace) {
-		if(loginBar != null){
-			loginBar.dispose();
+    public static void sendBugReport(String stackTrace,LoginProgress myloginBar) {
+		System.out.println("In sendBugReport");
+		if(myloginBar != null){
+			System.out.println("closing the loginbar");
+			myloginBar.dispose();
+		}
+		else{
+			System.out.println("There was no loginbar");
 		}
         int toSend = JOptionPane.showConfirmDialog(null, "Sorry, it looks like something went wrong.\n"
                 + "Would you like to submit this as a bug report?", "File a Bug Report?", JOptionPane.YES_NO_OPTION);

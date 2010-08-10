@@ -147,7 +147,7 @@ public class ConnectThread extends Thread {
                             Athena.receivePrivateKeyFromServer();
 							if(Athena.debug >= 1)Athena.writeLog("Private key retreieved. Continuing...");
                         } catch (IOException e) {
-                            Athena.sendBugReport(Athena.getStackTraceAsString(e));
+                            Athena.sendBugReport(Athena.getStackTraceAsString(e),loginBar);
                             e.printStackTrace();
                         }
 
@@ -156,7 +156,7 @@ public class ConnectThread extends Thread {
                             Athena.receivePrivateKeyFromServer();
 							if(Athena.debug >= 1)Athena.writeLog("Private key retreieved. Continuing...");
                         } catch (IOException e) {
-                            Athena.sendBugReport(Athena.getStackTraceAsString(e));
+                            Athena.sendBugReport(Athena.getStackTraceAsString(e),loginBar);
                             e.printStackTrace();
                         }
 
@@ -187,7 +187,7 @@ public class ConnectThread extends Thread {
             System.gc();
 			//Athena.clientResource.setVisible(true);
         } catch (Exception e) {
-            Athena.sendBugReport(Athena.getStackTraceAsString(e));
+            Athena.sendBugReport(Athena.getStackTraceAsString(e),loginBar);
             e.printStackTrace();
             Athena.loginGUI.dispose();
         }
